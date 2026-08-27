@@ -2751,10 +2751,27 @@ function renderLayout(route) {
   `;
 
   if (isHome) {
-    // revamp999: no home subnav band. The docked layout's top bar already says
-    // where you are (the Home pill), so the "Home | Browse Topics" strip was a
-    // second voice saying the same thing (#img656).
+    // revamp1000: at rest the docked sidebar IS the nav, so the top bar and a
+    // grey "Home" ident bar only slide in once the page scrolls (#img663-668).
+    // The body carries its own "Home" page title instead.
     document.body.classList.add('home-mode');
+    subHeader.classList.add('is-subnav', 'is-home-ident', 'home-mode');
+    subHeader.innerHTML = `
+      <div class="topic-banner"><div class="topic-banner-row home-ident-row">
+        <div class="subnav-ident">
+          <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg></span>
+          <span class="subnav-ident-name">Home</span>
+        </div>
+      </div></div>`;
+    if (!window.__homeScrollWire) {
+      window.__homeScrollWire = true;
+      const onScroll = () => {
+        if (!document.body.classList.contains('home-search')) return;
+        document.body.classList.toggle('home-scrolled', (window.scrollY || 0) > 12);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+    document.body.classList.toggle('home-scrolled', (window.scrollY || 0) > 12);
     if (heroEl) heroEl.innerHTML = '';
     setupResponsiveNav();
     return;
@@ -4607,6 +4624,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     container.innerHTML = `
       <div class="topic-layout home-grid" id="topic-layout">
         ${bodyTabsRow({ showSearchTrends: true })}
+        <header class="home-pagehead"><h1 class="home-pagetitle">Home</h1></header>
         <div class="home-sections home-v2">
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
@@ -4625,14 +4643,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               </div>
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Browse all prompts${HQ_ARROW}</button></div>
-            </section>
-            <section class="hf-card hf-card--topics hf-card--labelled hs-block" data-hf="topics">
-              <div class="hb-head hf-labelhead">
-                <h3 class="hb-title">Explore Topics</h3>
-                <a class="hb-all" href="#/topics">100+ pages${SUBPAGE_ARROW}</a>
-              </div>
-              <div class="hf-chips" data-hq-topics></div>
-              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>View all topics${HQ_ARROW}</button></div>
             </section>
           </aside>
         </div>

@@ -25371,3 +25371,60 @@ body.home-search #content { background: #fff !important; }
   flex-wrap: wrap !important; white-space: normal !important;
 }
 .home-v2 .hb-hero--side .tdi-eyebrow { white-space: nowrap; }
+
+/* ============================================================
+   revamp1000 — home: title in the body, chrome on scroll, carded
+   second column (#img663-669)
+   ============================================================ */
+
+/* At rest the docked sidebar IS the nav, so the top bar hides until the page
+   scrolls; content owns the top of the viewport. Only in the docked world —
+   the overlay/mobile layouts keep the always-on bar. */
+body.nav-docked.home-search #content { padding-top: 0 !important; }
+body.nav-docked.home-search:not(.home-scrolled) #site-header.is-sticky-hero {
+  transform: translateY(-100%); opacity: 0; pointer-events: none;
+}
+/* The grey "Home" ident bar rides under the nav bar, both only when scrolled. */
+body.home-search #sub-header.is-home-ident {
+  transform: translateY(-140%); opacity: 0; pointer-events: none;
+  transition: transform .22s ease, opacity .22s ease;
+}
+body.home-search.home-scrolled #sub-header.is-home-ident {
+  transform: translateY(0); opacity: 1; pointer-events: auto;
+}
+#sub-header.is-home-ident .home-ident-row { display: flex; align-items: center; padding: 0.62rem 0; }
+#sub-header.is-home-ident .subnav-ident { display: inline-flex; align-items: center; gap: 10px; }
+#sub-header.is-home-ident .subnav-ident-ico { display: inline-flex; color: #1c2a4a; }
+#sub-header.is-home-ident .subnav-ident-name {
+  font-family: var(--font-display, var(--font-family));
+  font-weight: 800; font-size: 1.28rem; letter-spacing: -0.015em; color: #14204a;
+}
+
+/* The page title the body carries instead. */
+.home-pagehead { padding: 1.9rem 0 0; }
+.home-pagetitle {
+  margin: 0; font-family: var(--font-display, var(--font-family));
+  font-weight: 800; font-size: 2.1rem; letter-spacing: -0.02em; color: #14204a;
+}
+.home-v2 { padding-top: 1.1rem !important; }
+/* Non-docked (overlay/mobile): the bar stays, so give the title nav clearance. */
+body.home-search:not(.nav-docked) .home-pagehead { padding-top: 0.4rem; }
+
+/* News Feed tab row closes with rules on both sides (#img669). */
+.home-v2 .nf-tabs {
+  border-top: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent);
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+/* Column 2: every section is its own card; Explore Topics is gone. */
+.home-v2 .home-side .hs-block {
+  background: #fff;
+  border: 1px solid #e4eaf3;
+  border-radius: 16px;
+  padding: 1.05rem 1.15rem 1rem;
+  box-shadow: 0 6px 18px -14px rgba(31, 49, 99, 0.18);
+}
+.home-v2 .home-side .hf-card.hs-block { box-shadow: 0 6px 18px -14px rgba(31, 49, 99, 0.18); }
+.home-v2 .home-trending .trending-topics { border: 0 !important; background: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
