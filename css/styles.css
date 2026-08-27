@@ -25645,7 +25645,7 @@ body:not(.tt-on) .topic-band .topic-home {
 body:not(.tt-on) .topic-band .topic-home > .aii-tabhead-spacer { grid-column: 1 / -1; grid-row: 1; }
 body:not(.tt-on) .topic-band .topic-home > .topic-bodyhead { grid-column: 1 / -1; grid-row: 2; }
 body:not(.tt-on) .topic-band .topic-home > .topic-viewtabs { display: none; }
-body:not(.tt-on) .topic-band .topic-home > .topic-news-wrap { grid-column: 1; grid-row: 4; min-width: 0; }
+body:not(.tt-on) .topic-band .topic-home > .topic-news-wrap { grid-column: 1; grid-row: 4; min-width: 0; margin-top: 0 !important; }
 body:not(.tt-on) .topic-band .topic-home > .topic-top {
   grid-column: 2; grid-row: 4;
   display: flex !important; grid-template-columns: none !important;
@@ -25870,8 +25870,11 @@ body.tt-on .tview-tools [data-pr-expand] .aii-fi-sec { margin-top: 14px !importa
 #sub-header.pagenav .topic-subnav-title { padding-top: 0 !important; padding-bottom: 0 !important; }
 #sub-header.pagenav { min-height: 56px; display: flex; align-items: center; }
 #sub-header.pagenav .topic-subnav-title { width: 100%; }
+html body.pagenav-mode.sticky-always.has-subnav #content,
+html body.pagenav-mode.custom-mode #content,
+html body.pagenav-mode #content,
 body.pagenav-mode #content {
-  padding-top: calc(var(--nav-h) + 56px + 22px) !important;
+  padding-top: calc(var(--nav-h) + 60px + 22px) !important;
 }
 
 /* ── Search controls: grey ground (a step darker than the chrome), dark
