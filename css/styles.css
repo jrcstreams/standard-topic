@@ -25752,7 +25752,12 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   /* ── Briefing tab is a READING view: no topic label (the subnav says it),
         the date + edition masthead stays. ── */
   .tview-brief .tdi-topiclabel,
-  .tview-brief .tdi-topiclabel--inline { display: none !important; }
+  .tview-brief .tdi-topiclabel--inline,
+  .tview-brief .tdi-openhead-topic { display: none !important; }
+  /* The pipe that followed the topic would lead the row as an orphan. */
+  .tview-brief .tdi-openhead-topic + * { border-left: 0 !important; }
+  .tview-brief .tdi-openhead-meta > .tdi-stamp-sep:first-child,
+  .tview-brief .tdi-openhead-meta > *:first-child + .tdi-stamp-sep { }
   /* ── Prompts tab: the library's big section headers condense. ── */
   .tview-tools [data-pr-expand] h2,
   .tview-tools [data-pr-expand] h3,
