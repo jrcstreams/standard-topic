@@ -25456,5 +25456,10 @@ body.nav-docked.home-search .home-pagetitle { line-height: 1.1; }
 /* revamp1001 — the head's own 2px rule under the tab row read as a second,
    thicker separator above the stories (#img674/675); the tab row's 1px
    bottom border is the only line there now. */
-.home-v2 .newsfeed-head { border-bottom: 0 !important; padding-bottom: 0 !important; margin-bottom: 0 !important; }
+/* body.home-search #section-newsfeed .newsfeed-head carries the 2px rule at
+   (1,2,2) important — match it and go one higher. */
+body.home-search #section-newsfeed .home-v2 .newsfeed-head,
+body.home-search .home-v2 #section-newsfeed .newsfeed-head {
+  border-bottom: 0 !important; padding-bottom: 0 !important; margin-bottom: 0 !important;
+}
 .home-v2 .news-list { margin-top: 14px !important; }
