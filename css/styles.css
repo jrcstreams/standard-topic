@@ -25704,3 +25704,61 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
     flex-direction: column; margin-top: 0.9rem !important;
   }
 }
+
+/* ============================================================
+   revamp1006 — tabbed topic widths: the grey nav is the identity,
+   the tabs are its attached second row; tabs land INSIDE their
+   content; the rail lists every prompt
+   ============================================================ */
+
+/* Wide rail: every prompt row shows (the old four-row cap goes), and with
+   the whole list present the "View all tools" foot is redundant. */
+@media (min-width: 880px) {
+  .topic-top-side .tpr-row:nth-child(n + 5) { display: block !important; }
+}
+@media (min-width: 1200px) {
+  .topic-band .topic-home .tpr-card:not(.is-open) .tpr-go { display: none !important; }
+}
+
+@media (max-width: 1199.98px) {
+  /* ── The grey subnav is ALWAYS on at tab widths — it replaces the in-body
+        title block entirely (its Change Topic control covers the related
+        topics that used to be pills). ── */
+  body.app-mode:not(.home-mode) #sub-header.is-subnav {
+    opacity: 1 !important; visibility: visible !important;
+    transform: none !important; pointer-events: auto !important;
+  }
+  .topic-band .topic-home > .topic-bodyhead { display: none !important; }
+
+  /* Content starts right under the two bars — the tabs row is the first
+     thing in it and reads as the subnav's attached second row. */
+  html body.app-mode.sticky-always.has-subnav #content,
+  body.app-mode #content {
+    padding-top: calc(var(--nav-h) + var(--subnav-height, 58px)) !important;
+  }
+  .topic-band .topic-home > .aii-tabhead-spacer { display: none; }
+
+  /* ── Sticky tabs: pinned under the subnav, full-bleed, a lighter grey so it
+        reads as a subsection of the band above it. ── */
+  .topic-band .topic-viewtabs {
+    position: sticky;
+    top: calc(var(--nav-h) + var(--subnav-height, 58px));
+    z-index: 60;
+    background: #f8f9fc;
+    margin: 0 -2rem;
+    padding: 9px 2rem 9px;
+    border-bottom: 1px solid #e5e9f2;
+  }
+  /* ── Briefing tab is a READING view: no topic label (the subnav says it),
+        the date + edition masthead stays. ── */
+  .tview-brief .tdi-topiclabel,
+  .tview-brief .tdi-topiclabel--inline { display: none !important; }
+  /* ── Prompts tab: the library's big section headers condense. ── */
+  .tview-tools [data-pr-expand] h2,
+  .tview-tools [data-pr-expand] h3,
+  .tview-tools [data-pr-expand] .aii-fi-sec-title { font-size: 0.98rem !important; }
+  .tview-tools [data-pr-expand] .aii-fi-sec { margin-top: 14px !important; }
+}
+@media (max-width: 640px) {
+  .topic-band .topic-viewtabs { margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; }
+}

@@ -2467,9 +2467,10 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // PLACE: the opened card takes the full width and the other drops beneath
     // it, so neither ever navigates away. The news feed follows under its own
     // "News Feed" head.
-    // Six are rendered; CSS shows four in the desktop card and lets the phone
-    // rail scroll through the rest (#img627/628).
-    const featuredPrompts = shortcuts.slice(0, 6);
+    // revamp1006: the rail card lists EVERY prompt for the topic — it is the
+    // last component in the right column, so it can simply run long (John:
+    // "whether there's 30 or 100").
+    const featuredPrompts = shortcuts;
     body.innerHTML = `<div class="topic-home">
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
@@ -2541,6 +2542,16 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
           x.classList.toggle('is-active', on);
           x.setAttribute('aria-selected', String(on));
         });
+        // The tab IS the destination: Today's Briefing lands with the brief
+        // open and readable; AI Prompts lands inside the library. No second
+        // click on a teaser card.
+        const top = home.querySelector('.topic-top');
+        if (v === 'brief' && top && !top.classList.contains('is-di-open')) {
+          home.querySelector('[data-di-toggle]')?.click();
+        }
+        if (v === 'tools' && top && !top.classList.contains('is-pr-open')) {
+          home.querySelector('[data-pr-toggle]')?.click();
+        }
       }));
     }
     wireTopicHeroCondense();
