@@ -25362,3 +25362,12 @@ body.home-search #content { background: #fff !important; }
   margin-left: 0 !important; margin-right: 0 !important;
   padding-left: 0 !important; padding-right: 0 !important;
 }
+
+/* revamp999b — the compact sidebar briefing card is ~300px wide, where the
+   one-line TOPIC | DATE | EDITION rule (revamp993) runs off the card edge.
+   In this card the row may wrap, and the copy takes the full width. */
+.home-v2 .hb-hero--side .tdi-briefcol { max-width: 100% !important; }
+.home-v2 .hb-hero--side .tdi-metarow {
+  flex-wrap: wrap !important; white-space: normal !important;
+}
+.home-v2 .hb-hero--side .tdi-eyebrow { white-space: nowrap; }
