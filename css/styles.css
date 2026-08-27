@@ -25752,12 +25752,7 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   /* ── Briefing tab is a READING view: no topic label (the subnav says it),
         the date + edition masthead stays. ── */
   .tview-brief .tdi-topiclabel,
-  .tview-brief .tdi-topiclabel--inline,
-  .tview-brief .tdi-openhead-topic { display: none !important; }
-  /* The pipe that followed the topic would lead the row as an orphan. */
-  .tview-brief .tdi-openhead-topic + * { border-left: 0 !important; }
-  .tview-brief .tdi-openhead-meta > .tdi-stamp-sep:first-child,
-  .tview-brief .tdi-openhead-meta > *:first-child + .tdi-stamp-sep { }
+  .tview-brief .tdi-topiclabel--inline { display: none !important; }
   /* ── Prompts tab: the library's big section headers condense. ── */
   .tview-tools [data-pr-expand] h2,
   .tview-tools [data-pr-expand] h3,
@@ -25866,5 +25861,58 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   html body.app-mode.sticky-always.has-subnav:not(.home-search):has(.topic-home) #content,
   html body.app-mode.sticky-always.has-subnav:has(.topic-home) #content {
     padding-top: calc(var(--nav-h) + var(--subnav-height, 53px) + 53px) !important;
+  }
+}
+
+/* ============================================================
+   revamp1008 — tab-view polish (#img714-720): news attaches, the
+   briefing reads as a plain document with one masthead line
+   ============================================================ */
+@media (max-width: 1199.98px) {
+  /* News sits right under the tabs, and the first card keeps the same
+     border every other card has (a global first-child border-kill was
+     clipping its top edge in the card grid). */
+  .topic-band .topic-home > .topic-news-wrap { margin-top: 10px !important; }
+  .topic-band .topic-home #section-newsfeed .news-list { margin-top: 0 !important; }
+  .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
+    border-top: 1px solid var(--color-surface-border, #e4eaf3) !important;
+    padding-top: 12px !important;
+  }
+
+  /* ── Briefing tab: ONE masthead line — TOPIC | DATE | EDITION. The card's
+        teaser column (orange eyebrow etc.) and the "AI Briefing" head row
+        both go; the tab already names the section. ── */
+  .tview-brief .tdi-card.is-open .tdi-hero-body { display: none !important; }
+  .tview-brief .tdi-openhead > *:not(.tdi-openhead-meta) { display: none !important; }
+  .tview-brief .tdi-openhead { margin-bottom: 0 !important; }
+  /* One type treatment for every part of the masthead, evenly piped. */
+  .tview-brief .tdi-openhead-meta,
+  .tview-brief .tdi-openhead-meta * {
+    font-weight: 650 !important; color: #52618a !important;
+    letter-spacing: 0.08em !important;
+  }
+  .tview-brief .tdi-openhead-meta { display: flex; align-items: center; gap: 10px !important; }
+  .tview-brief .tdi-openhead-meta .tdi-stamp-sep,
+  .tview-brief .tdi-openhead-meta .tdi-meta-sep {
+    width: 1px !important; height: 11px !important; opacity: .35 !important;
+    margin: 0 !important; background: currentColor !important;
+  }
+  .tview-brief .tdi-openhead-meta > *:first-child.tdi-stamp-sep { display: none !important; }
+
+  /* ── The briefing is a document, not a card: no tinted ground, no border,
+        content on the page itself. ── */
+  .tview-brief .tdi-card,
+  .tview-brief .tdi-card.is-open {
+    background: #fff !important; border: 0 !important;
+    box-shadow: none !important; border-radius: 0 !important;
+  }
+  .tview-brief .tdi-expand-inner { padding-left: 0 !important; padding-right: 0 !important; }
+
+  /* ── Provenance: a quiet line under a hairline, not a boxed chip. ── */
+  .tview-brief .di-prov2 {
+    background: none !important; border: 0 !important; border-radius: 0 !important;
+    border-top: 1px solid #e5e9f2 !important;
+    padding: 10px 0 0 !important; margin: 4px 0 0 !important;
+    font-size: 0.8rem !important; color: #6b7a92 !important;
   }
 }

@@ -2549,6 +2549,16 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         if (v === 'brief' && top && !top.classList.contains('is-di-open')) {
           home.querySelector('[data-di-toggle]')?.click();
         }
+        // The tab's reading surface is white; the night edition's navy card
+        // theme (is-evening) would put light text on it. Park the class while
+        // the tab is active and restore it on the way out.
+        home.querySelectorAll('.tdi-card').forEach((c) => {
+          if (v === 'brief') {
+            if (c.classList.contains('is-evening')) { c.classList.add('was-evening'); c.classList.remove('is-evening'); }
+          } else if (c.classList.contains('was-evening')) {
+            c.classList.remove('was-evening'); c.classList.add('is-evening');
+          }
+        });
         if (v === 'tools' && top && !top.classList.contains('is-pr-open')) {
           home.querySelector('[data-pr-toggle]')?.click();
         }
