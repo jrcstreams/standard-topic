@@ -25203,14 +25203,12 @@ body.nav-docked .navmenu-panel {
 /* Everything fixed to the viewport's left edge moves over with the panel. */
 body.nav-docked #site-header.is-sticky-hero { left: var(--sbw); }
 body.nav-docked #sub-header.is-subnav { left: var(--sbw); }
-body.nav-docked #content { margin-left: var(--sbw); }
-/* app-mode pins #content with position:fixed + left:0/right:0, so margin
-   can't move it — the inset itself has to carry the sidebar's width there. */
-body.nav-docked.app-mode #content,
-body.nav-docked.app-mode.sticky-always.has-subnav #content {
-  left: var(--sbw) !important;
-  margin-left: 0 !important;
-}
+/* One rule for every #content positioning scheme. When it's static (topic +
+   home since revamp819) the margin shifts it; when app-mode pins it fixed
+   with left:0/right:0, a margin-left on a both-inset box shifts and shrinks
+   it identically to moving the inset. !important because app-mode variants
+   out-specify this selector. */
+body.nav-docked #content { margin-left: var(--sbw) !important; }
 body.nav-docked .aii-nav-dd { left: var(--sbw); }
 body.nav-docked .aii-nav-overlay { left: var(--sbw); }
 body.nav-docked .tsp-panelwrap { left: var(--sbw); }
