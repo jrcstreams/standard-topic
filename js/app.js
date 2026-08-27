@@ -4353,7 +4353,7 @@ function renderStickyHeroBar(container, route) {
   //    primary chrome — pinned open by default, content flowing beside it,
   //    with the whole page usable while it shows. The overlay drawer remains
   //    the sub-1200px behaviour. Preference persists across visits. ──
-  const DOCK_MQ = window.matchMedia('(min-width: 1200px)');
+  const DOCK_MQ = window.matchMedia('(min-width: 1000px)');
   const dockWanted = () => { try { return localStorage.getItem('st:sidebar') !== 'closed'; } catch (_) { return true; } };
   const setDockPref = (open) => { try { localStorage.setItem('st:sidebar', open ? 'open' : 'closed'); } catch (_) {} };
   const applyDock = () => {
@@ -4624,7 +4624,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     container.innerHTML = `
       <div class="topic-layout home-grid" id="topic-layout">
         ${bodyTabsRow({ showSearchTrends: true })}
-        <header class="home-pagehead"><h1 class="home-pagetitle">Home</h1></header>
         <div class="home-sections home-v2">
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
@@ -4652,7 +4651,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Trending is now the only sidebar card, so it can run much longer.
     // revamp981: a shorter sidebar list — "View more trending" carries the rest
     // through to the trending page rather than the sidebar being the whole list.
-    renderTrendingHome(container.querySelector('#home-trending'), { limit: 6 });
+    renderTrendingHome(container.querySelector('#home-trending'), { limit: 5 });
     // revamp949: the homepage leads with a Featured AI Briefings row built from
     // the same cards as the AI Briefings page.
     renderFeaturedBriefings(container.querySelector('[data-home-featbriefs]'), {

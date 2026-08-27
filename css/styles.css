@@ -102,7 +102,7 @@
   /* Main-nav (sticky hero) height. Desktop 64px; mobile shrinks it (#1) — every
      fixed-layout offset that reserves the nav reads this var instead of a literal
      64px, so the trim cascades correctly. */
-  --nav-h: 72px;
+  --nav-h: 56px;   /* revamp1004: one 56px chrome contract everywhere */
 }
 @media (max-width: 899.98px) { :root { --nav-h: 54px; } }
 
@@ -25496,3 +25496,99 @@ body.home-search .home-v2 #section-newsfeed .newsfeed-head {
 .navmenu-footer-sticky { background: #f1f2f5 !important; border-top-color: #e0e2e7; }
 .navmenu-searchrow { border-color: #d9dce2 !important; }
 .navmenu-panel .navmenu-cta { border-color: #dcdfe5 !important; }
+
+/* ============================================================
+   revamp1004 — the chrome model settles (#img683-704):
+   · 56px bars everywhere, docked or not
+   · docked = no main nav on ANY page; grey ident bars ride top:0
+   · grey ident bars are ALWAYS on (no scroll gate), no in-body titles
+   · mobile loses the nav links row
+   · column-2 de-carded, trending greyed + capped
+   · navy sidebar search, thinner sidebar down to 1000px
+   ============================================================ */
+
+/* ── One 56px chrome height, everywhere. ── */
+#site-header.is-sticky-hero { height: 56px; }
+.sticky-hero-inner {
+  height: 56px !important; min-height: 0 !important;
+  padding-top: 0 !important; padding-bottom: 0 !important;
+  display: flex; align-items: center;
+}
+
+/* ── Docked: the sidebar is the nav — the top bar never renders, and every
+      fixed offset keyed to --nav-h collapses to the top edge. ── */
+body.nav-docked { --nav-h: 0px; }
+body.nav-docked #site-header.is-sticky-hero {
+  transform: translateY(-100%) !important; opacity: 0 !important; pointer-events: none !important;
+}
+
+/* ── The grey ident bars are the default state, not a scroll reward. ── */
+body.pagenav-mode #sub-header.pagenav { opacity: 1 !important; visibility: visible !important; }
+body.home-search #sub-header.is-home-ident {
+  transform: none !important; opacity: 1 !important; pointer-events: auto !important;
+}
+#sub-header.is-home-ident { top: var(--nav-h); height: 56px; display: flex; align-items: center; }
+#sub-header.is-home-ident .topic-banner { width: 100%; padding-top: 0; padding-bottom: 0; }
+#sub-header.is-home-ident .home-ident-row { padding: 0; }
+/* The bar carries the page identity, so the in-body back bar + title head go. */
+body.pagenav-mode .aii-nav-dd-pagelike .page-backbar,
+body.pagenav-mode .aii-nav-dd-pagelike .aii-nav-dd-head,
+body.pagenav-mode .search-page .page-backbar { display: none !important; }
+
+/* Content clears one bar when docked (ident only) and two when not
+   (nav + ident) — var(--nav-h) is 0 in the docked world, so one formula. */
+html body.nav-docked.home-search.app-mode #content,
+html body.home-search.app-mode.sticky-always #content,
+body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !important; }
+
+/* ── Mobile: brand + Search only; the links live in the drawer. ── */
+@media (max-width: 899px) {
+  #site-header #nav-links { display: none !important; }
+  .sticky-hero-inner.nav-wrap { flex-wrap: nowrap !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+}
+
+/* ── Column 2: no backdrop panel behind the stack (#img683/684). ── */
+@media (min-width: 1024px) {
+  body.home-search .home-side {
+    background: none !important; border: 0 !important;
+    border-radius: 0 !important; padding: 0 !important;
+  }
+}
+/* What's Trending is the one grey card in the stack. */
+.home-v2 .home-side #home-trending.hs-block {
+  background: #f1f2f5 !important; border-color: #e0e2e7 !important;
+}
+/* 5 trends on desktop (the render limit); 3 in the single-column flow. */
+@media (max-width: 1023px) {
+  .home-v2 #home-trending .trend-card:nth-of-type(n + 4) { display: none !important; }
+}
+
+/* ── News Feed title hugs its tab row (#img683). ── */
+.home-v2 .newsfeed-headrow { margin-bottom: 0 !important; }
+.home-v2 .newsfeed-title { margin-bottom: 0 !important; }
+.home-v2 .nf-tabs { margin-top: 10px !important; }
+
+/* ── The sidebar search wears the nav Search pill's identity (#img700). ── */
+.navmenu-searchrow {
+  background: #1e3a8a !important; border-color: #1e3a8a !important;
+  border-radius: 999px; color: #c7d2f0;
+}
+.navmenu-searchrow:focus-within {
+  border-color: #3b5bc4 !important;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.22);
+}
+.navmenu-searchinput { color: #fff; }
+.navmenu-searchinput::placeholder { color: rgba(255, 255, 255, 0.72); }
+
+/* ── The sidebar holds down to 1000px, slimming to 264px on the way. ── */
+@media (max-width: 1280px) {
+  body.nav-docked { --sbw: 264px; }
+  body.nav-docked .navmenu-panel { width: 264px; max-width: 264px; }
+  body.nav-docked .navmenu-title { font-size: 1.16rem; }
+  body.nav-docked .navmenu-searchrow { margin: 12px 12px 2px; padding: 8px 12px; }
+  body.nav-docked .navmenu-quicklinks { padding-left: 12px; padding-right: 12px; }
+  body.nav-docked .navmenu-cta { min-height: 38px; }
+  body.nav-docked .navmenu-cta-label { font-size: 0.88rem; }
+  body.nav-docked .navmenu-scroll { padding-left: 4px; padding-right: 4px; }
+  body.nav-docked .navmenu-topic-name { font-size: 0.88rem; }
+}
