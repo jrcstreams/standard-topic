@@ -25827,3 +25827,25 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   .sticky-hero-inner #nav-search.navbtn { background: #f1f0ed; border-color: #ddd9d0; border-radius: 10px; }
   .sticky-hero-inner #nav-search .navbtn-ico { color: #33415e; }
 }
+
+/* revamp1007b — the tab bar attaches for real (#img712/713). Three losses:
+   the head-hider lost to a TWO-id selector, the content pad lost to a
+   :has(.topic-home) selector, and the layout's own top padding held the
+   tabs 26px off the subnav. */
+@media (max-width: 1199.98px) {
+  #topic-tab-body .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head,
+  .topic-band .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head {
+    display: none !important;
+  }
+  html body.app-mode.sticky-always.has-subnav:not(.home-search):has(.topic-home) #content,
+  html body.app-mode.sticky-always.has-subnav #content,
+  html body.app-mode #content {
+    padding-top: calc(var(--nav-h) + var(--subnav-height, 58px)) !important;
+  }
+  /* Tabs sit flush under the subnav: the layout's top pad goes, the tabs
+     row carries its own inner air instead. */
+  body.app-mode .topic-band.topic-layout { padding-top: 0 !important; }
+  .topic-band .topic-viewtabs { margin-top: 0 !important; }
+  /* The bar itself matches the 56px chrome. */
+  #sub-header.is-subnav .topic-subnav-inner { padding-top: 12px !important; padding-bottom: 12px !important; }
+}
