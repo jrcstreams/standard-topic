@@ -1244,6 +1244,9 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '', variant
   // On the homepage the active tab chooses the feed; isHome stays true so the
   // head (and its tabs) keep rendering rather than falling back to the topic head.
   // The bottom feed defaults to World; the top one is the cross-topic home feed.
+  // homev2 (revamp999): the homepage's single feed. Tab one is "Today's News"
+  // (the cross-topic home feed, slug ''); the rest are the topic tabs the old
+  // bottom Latest News carried. Nothing else about the pipeline changes.
   const curTab = variant === 'latest' ? (activeTab || 'world') : activeTab;
   const slug = isHome ? (curTab || 'home') : (topic && topic.slug);
   const label = isHome ? '' : ((topic && topic.name) || '');
@@ -1252,18 +1255,23 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '', variant
   // page (revamp763).
   // Plain text heads — the news icon chip is retired (revamp772); title size
   // and weight unify across homepage + topic pages in CSS.
+  const tabbed = variant === 'latest' || variant === 'homev2';
+  const tabSet = variant === 'homev2'
+    ? [{ slug: '', label: "Today's News" }].concat(HOME_TABS)
+    : HOME_TABS;
+  const feedTitle = variant === 'homev2' ? 'News Feed' : (variant === 'latest' ? 'Latest News' : "Today's News");
   const headHTML = isHome
     ? `
-    <div class="newsfeed-head section-card-head newsfeed-head--home${variant === 'latest' ? ' newsfeed-head--latest' : ''}">
+    <div class="newsfeed-head section-card-head newsfeed-head--home${tabbed ? ' newsfeed-head--latest' : ''}">
       <div class="newsfeed-headrow">
         <div class="newsfeed-headtext">
-          <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">${variant === 'latest' ? 'Latest News' : "Today's News"}</span></h3>
+          <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">${feedTitle}</span></h3>
         </div>
-        ${variant === 'latest' ? `<a class="nf-more nf-more--head" href="#/topics">More topics${NF_ARROW}</a>` : ''}
+        ${tabbed ? `<a class="nf-more nf-more--head" href="#/topics">More topics${NF_ARROW}</a>` : ''}
       </div>
-      ${variant === 'latest' ? `
+      ${tabbed ? `
       <div class="nf-tabs" role="tablist" aria-label="Filter news by topic">
-        ${HOME_TABS.map((t) => `<button type="button" class="nf-tab${t.slug === curTab ? ' is-active' : ''}" role="tab" aria-selected="${t.slug === curTab ? 'true' : 'false'}" data-nf-tab="${t.slug}">${t.label}</button>`).join('')}
+        ${tabSet.map((t) => `<button type="button" class="nf-tab${t.slug === curTab ? ' is-active' : ''}" role="tab" aria-selected="${t.slug === curTab ? 'true' : 'false'}" data-nf-tab="${t.slug}">${t.label}</button>`).join('')}
         <a class="nf-more nf-more--tabs" href="#/topics">More topics${NF_ARROW}</a>
       </div>` : ''}
     </div>`
@@ -1298,7 +1306,7 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '', variant
     });
   });
 
-  if (variant === 'latest') fitNewsTabs(container);
+  if (variant === 'latest' || variant === 'homev2') fitNewsTabs(container);
 
   startFeed({ card, scrollWrap, foot, slug, label, isHome });
 }

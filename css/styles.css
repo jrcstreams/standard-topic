@@ -25313,3 +25313,52 @@ body.nav-docked .home-latest {
 .navmenu-searchinput::placeholder { color: #8c99b0; }
 .navmenu-searchinput::-webkit-search-decoration,
 .navmenu-searchinput::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+/* ============================================================
+   revamp999 — homepage v2: hero retired, one news column + one
+   utility column (#img654-662)
+   ============================================================ */
+
+/* The search hero is gone (search lives in the sidebar), and with it the
+   grey band — home sits on the same white as everything else. */
+body.home-search,
+body.home-search #content { background: #fff !important; }
+
+/* Column 1: the whole news feed. Column 2: briefing, trending, tools,
+   topics, stacked. */
+.home-sections.home-v2 {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 384px !important;
+  gap: 2rem !important;
+  align-items: start;
+  padding-top: 1.4rem;
+}
+@media (max-width: 1180px) {
+  .home-sections.home-v2 { grid-template-columns: minmax(0, 1fr) 348px !important; }
+}
+@media (max-width: 1023px) {
+  .home-sections.home-v2 { grid-template-columns: 1fr !important; }
+}
+.home-v2 .home-main { min-width: 0; padding-top: 0 !important; }
+.home-v2 .home-side {
+  display: flex; flex-direction: column; gap: 18px;
+  min-width: 0; padding-top: 0 !important; margin: 0;
+}
+.home-v2 .hs-block { margin: 0 !important; }
+/* The utility cards keep the hf-card language outside the old band scope. */
+.home-v2 .hf-card { padding: 1rem 1.15rem 0.95rem; }
+.home-v2 .hf-chips { display: grid !important; grid-template-columns: 1fr !important; gap: 2px; }
+/* Cap the lists at column length — eight topics, five prompts. */
+.home-v2 [data-hq-topics] .hq-row:nth-child(n + 9) { display: none !important; }
+.home-v2 .hb-hero--side { min-width: 0; }
+.home-v2 .hb-hero--side .tdi-card { width: 100%; }
+
+/* News Feed head: title + tab row, no full-bleed rules in a column. */
+.home-v2 .newsfeed-head--latest {
+  margin-left: 0 !important; margin-right: 0 !important;
+  padding-left: 0 !important; padding-right: 0 !important;
+}
+.home-v2 .nf-tabs {
+  margin-left: 0 !important; margin-right: 0 !important;
+  padding-left: 0 !important; padding-right: 0 !important;
+}

@@ -1867,6 +1867,27 @@ function renderFeaturedBriefings(host, opts) {
   if (!picks.length) return;
   const X_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const X_BIG = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  // revamp999: the homepage sidebar's compact form — head + the single
+  // cross-topic briefing card, no 4-up topic grid (that lives on /intelligence).
+  if (o.compact) {
+    host.innerHTML = `
+      <div class="hb-head hf-labelhead">
+        <h3 class="hb-title">${escapeHTML(o.title || "Today's AI Briefing")}</h3>
+        <a class="hb-all" href="#/intelligence">View all${SUBPAGE_ARROW}</a>
+      </div>
+      <div class="hb-hero hb-hero--side" data-home-briefing>
+        <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
+          noHeader: true, hubLink: false, art: true, topicLabel: 'Standard Topic',
+          sublabel: 'Your daily briefing across every topic we cover.',
+        })}</div>
+      </div>`;
+    wireHomeDailyIntelligence(host);
+    fetchDailyBrief('home', false, true).then((d) => {
+      if (d && d.generatedAt && host.isConnected) applyBriefArt(host, d.generatedAt);
+    }).catch(() => {});
+    return;
+  }
+
   const card = (t) => `
     <button type="button" class="dih-item" data-fb-item="${escapeAttr(t.name)}" data-fb-slug="${escapeAttr(t.slug)}">
       <span class="dih-item-head">
@@ -2730,32 +2751,12 @@ function renderLayout(route) {
   `;
 
   if (isHome) {
-    document.body.classList.add('home-mode', 'has-subnav');
-    // home-mode also on #sub-header so the many `#sub-header...:not(.home-mode)` topic
-    // rules (which check the class on the wrong element) correctly skip the home subnav.
-    subHeader.classList.add('is-subnav', 'home-mode');
-
-    // Homepage now uses the SAME dropdown picker as topic pages (#88) — a "Home"
-    // label whose dropdown lists the featured topics (replaces the old chip row).
-    subHeader.innerHTML = `
-      <div class="topic-banner">
-        <div class="topic-banner-row topic-banner-row--home-picker">
-          <div class="subnav-ident">
-            <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg></span>
-            <span class="subnav-ident-name">Home</span>
-          </div>
-          <span class="subnav-ident-sep" aria-hidden="true"></span>
-          ${homeSubnavPickerHTML()}
-        </div>
-      </div>
-    `;
-    wireSubnavPicker(subHeader);
-    setupHomeSubnavReveal();
-
+    // revamp999: no home subnav band. The docked layout's top bar already says
+    // where you are (the Home pill), so the "Home | Browse Topics" strip was a
+    // second voice saying the same thing (#img656).
+    document.body.classList.add('home-mode');
     if (heroEl) heroEl.innerHTML = '';
-
     setupResponsiveNav();
-    wireSubnavCompactMeasure();
     return;
   }
 
@@ -4606,45 +4607,38 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     container.innerHTML = `
       <div class="topic-layout home-grid" id="topic-layout">
         ${bodyTabsRow({ showSearchTrends: true })}
-        <div class="home-cards">
-          <div class="home-search-hero" id="home-search-hero"></div>
-        </div>
-        <div class="home-sections">
-          <!-- revamp985: Today's News + Trending lead as the two columns; the
-               AI Briefing / Explore Topics / AI Research Tools trio follows
-               inside ONE tinted band so they stop reading as cards-in-cards. -->
+        <div class="home-sections home-v2">
+          <!-- revamp999: the hero and its grey band are gone (search lives in
+               the sidebar now). Column 1 is ALL news — one feed whose first tab
+               is Today's News. Column 2 stacks the briefing, trending, AI
+               Research Tools and Explore Topics. -->
           <div class="home-main">
             <section class="layout-section" id="section-newsfeed"></section>
           </div>
           <aside class="home-side">
-            <section class="home-trending" id="home-trending"></section>
-          </aside>
-          <div class="home-band">
-          <section class="home-featbriefs" data-home-featbriefs aria-label="Today's AI Briefing"></section>
-          <div class="home-featured" aria-label="Explore">
-            <section class="hf-card hf-card--topics hf-card--labelled" data-hf="topics">
-              <div class="hb-head hf-labelhead">
-                <h3 class="hb-title">Explore Topics</h3>
-                <a class="hb-all" href="#/topics">Browse 100+ topic pages${SUBPAGE_ARROW}</a>
-              </div>
-              <div class="hf-chips" data-hq-topics></div>
-              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>View all topics${HQ_ARROW}</button></div>
-            </section>
-            <section class="hf-card hf-card--prompts hf-card--labelled" data-hf="prompts">
+            <section class="home-featbriefs hs-block" data-home-featbriefs aria-label="Today's AI Briefing"></section>
+            <section class="home-trending hs-block" id="home-trending"></section>
+            <section class="hf-card hf-card--prompts hf-card--labelled hs-block" data-hf="prompts">
               <div class="hb-head hf-labelhead">
                 <h3 class="hb-title">AI Research Tools</h3>
-                <a class="hb-all" href="#/prompts">Access 2,500+ prompts${SUBPAGE_ARROW}</a>
+                <a class="hb-all" href="#/prompts">2,500+ prompts${SUBPAGE_ARROW}</a>
               </div>
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Browse all prompts${HQ_ARROW}</button></div>
             </section>
-          </div>
-          </div>
-          <section class="layout-section home-latest" id="section-latestnews"></section>
+            <section class="hf-card hf-card--topics hf-card--labelled hs-block" data-hf="topics">
+              <div class="hb-head hf-labelhead">
+                <h3 class="hb-title">Explore Topics</h3>
+                <a class="hb-all" href="#/topics">100+ pages${SUBPAGE_ARROW}</a>
+              </div>
+              <div class="hf-chips" data-hq-topics></div>
+              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>View all topics${HQ_ARROW}</button></div>
+            </section>
+          </aside>
         </div>
       </div>
     `;
-    homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
+    homeSearchPanelCtl = null;
     // Trending is now the only sidebar card, so it can run much longer.
     // revamp981: a shorter sidebar list — "View more trending" carries the rest
     // through to the trending page rather than the sidebar being the whole list.
@@ -4652,7 +4646,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // revamp949: the homepage leads with a Featured AI Briefings row built from
     // the same cards as the AI Briefings page.
     renderFeaturedBriefings(container.querySelector('[data-home-featbriefs]'), {
-      hero: true,
+      compact: true,
       title: "Today's AI Briefing",
       // A briefing page with a spark — reads at chip size, unlike the bare
       // sparkle, and sits with the grid/wand marks on the cards below.
@@ -4760,13 +4754,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
   // Web Search is no longer a standalone topic-page card — it's folded into the AI
   // Insights component as a tab. (renderWebSources is still used elsewhere.)
   if (feedSection) {
-    renderNewsFeed(feedSection, topic, isHome);
-    // revamp986: the bottom Latest News feed is a SECOND instance with topic
-    // tabs, defaulting to World. The top feed stays the cross-topic one.
-    if (isHome) {
-      const latest = container.querySelector('#section-latestnews');
-      if (latest) renderNewsFeed(latest, topic, true, 'world', 'latest');
-    }
+    // revamp999: home is ONE tabbed feed — Today's News first, topic tabs after
+    // (the old separate bottom Latest News is absorbed into it).
+    if (isHome) renderNewsFeed(feedSection, topic, true, '', 'homev2');
+    else renderNewsFeed(feedSection, topic, isHome);
   }
 
   // Wire mobile tab pills (no-op when the pills aren't rendered, e.g.
