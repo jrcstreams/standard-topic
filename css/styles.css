@@ -104,7 +104,7 @@
      64px, so the trim cascades correctly. */
   --nav-h: 56px;   /* revamp1004: one 56px chrome contract everywhere */
 }
-@media (max-width: 899.98px) { :root { --nav-h: 54px; } }
+@media (max-width: 899.98px) { :root { --nav-h: 56px; } }
 
 /* Form controls (button/input/select/textarea) do NOT inherit font-family from
    the document — the UA stylesheet forces a platform system font, so any control
@@ -368,7 +368,7 @@ body.custom-mode.sticky-always #content {
   .sticky-hero-inner .sticky-actions.navbtns { order: 1; margin-left: 1.75rem !important; margin-right: 0; }
   /* Compact bar, but the icon buttons get real vertical room so the active/open
      pill has breathing space above the icon + below the label (#img191). */
-  :root { --nav-h: 70px; }
+  :root { --nav-h: 56px; }   /* revamp1005b: the 56px contract */
   .sticky-hero-inner .sticky-title { font-size: 1.28rem; }
   .sticky-hero-inner .nav-hamburger { width: 20px; height: 15px; }
   .sticky-hero-inner .navbtn-ico svg { width: 18px; height: 18px; }
@@ -14785,7 +14785,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 
 /* ═══ Phase 1 (revamp390): bottom nav removed — main nav carries Home / Search /
    AI Insights / Trending / Topics as labeled buttons at EVERY width. ══════════ */
-@media (max-width: 899.98px) { :root { --nav-h: 62px; } }
+@media (max-width: 899.98px) { :root { --nav-h: 56px; } }   /* revamp1005b */
 
 #bottom-nav { display: none !important; }
 .nav-search-mobile { display: none !important; }
