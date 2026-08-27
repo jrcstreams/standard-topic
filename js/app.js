@@ -4221,37 +4221,22 @@ function renderStickyHeroBar(container, route) {
   }
   navPanel.innerHTML = `
     <div class="navmenu-head">
-      <button class="navmenu-close" id="navmenu-close" aria-label="Close menu">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="6" y1="6" x2="18" y2="18"/>
-          <line x1="18" y1="6" x2="6" y2="18"/>
-        </svg>
-      </button>
       <a href="#/" class="navmenu-brand" id="navmenu-brand-link">
         <span class="navmenu-title">Standard Topic</span>
       </a>
-      <button type="button" class="navmenu-info" id="navmenu-info" aria-label="About this site" aria-haspopup="true" aria-expanded="false">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+      <button class="navmenu-collapse" id="navmenu-collapse" aria-label="Collapse sidebar" title="Collapse sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/><polyline points="15 10 13 12 15 14"/>
         </svg>
       </button>
-      <div class="navmenu-info-pop" id="navmenu-info-pop">
-        <a href="#/about">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
-          About
-        </a>
-        <a href="#/terms">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-          Terms
-        </a>
-        <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
-        </a>
-      </div>
     </div>
     <!-- navmenu-title font-size is synced to the main nav's .sticky-title at runtime
          (see syncNavmenuTitleSize) so the two always match at every viewport width. -->
+    <form class="navmenu-searchrow" id="navmenu-searchform" role="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" class="navmenu-searchinput" id="navmenu-searchinput"
+             placeholder="Search any topic…" aria-label="Search any topic" autocomplete="off">
+    </form>
     <nav class="navmenu-quicklinks">
       <a href="#/" class="navmenu-quicklink navmenu-cta" id="navmenu-home-link">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -4264,17 +4249,6 @@ function renderStickyHeroBar(container, route) {
           <polyline points="13 6 19 12 13 18"/>
         </svg>
       </a>
-      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-search">
-        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="11" cy="11" r="7"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <span class="navmenu-cta-label">Search</span>
-        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
-      </button>
       <a href="#/intelligence" class="navmenu-quicklink navmenu-cta" id="navmenu-daily-link">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/>
@@ -4356,9 +4330,31 @@ function renderStickyHeroBar(container, route) {
 
   const closeMenu = () => {
     navPanel.classList.remove('is-open'); navOverlay.classList.remove('is-open'); document.body.style.overflow = '';
-    navPanel.querySelector('#navmenu-info-pop')?.classList.remove('is-open');
-    navPanel.querySelector('#navmenu-info')?.setAttribute('aria-expanded', 'false');
   };
+  // ── Docked sidebar (revamp998): on wide screens the panel is the site's
+  //    primary chrome — pinned open by default, content flowing beside it,
+  //    with the whole page usable while it shows. The overlay drawer remains
+  //    the sub-1200px behaviour. Preference persists across visits. ──
+  const DOCK_MQ = window.matchMedia('(min-width: 1200px)');
+  const dockWanted = () => { try { return localStorage.getItem('st:sidebar') !== 'closed'; } catch (_) { return true; } };
+  const setDockPref = (open) => { try { localStorage.setItem('st:sidebar', open ? 'open' : 'closed'); } catch (_) {} };
+  const applyDock = () => {
+    const docked = DOCK_MQ.matches && dockWanted();
+    document.body.classList.toggle('nav-docked', docked);
+    navPanel.classList.toggle('is-docked', docked);
+    if (docked) {
+      navPanel.classList.remove('is-open');
+      navOverlay.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+    // Layout under the panel changes width — let the fitters re-measure.
+    try { window.dispatchEvent(new Event('resize')); } catch (_) {}
+  };
+  window.__applyDock = applyDock;
+  if (!window.__dockMQBound) {
+    window.__dockMQBound = true;
+    DOCK_MQ.addEventListener('change', () => window.__applyDock && window.__applyDock());
+  }
   // Always open to the DEFAULT view: collapse any expanded topic accordion and
   // reset the scroll position so it never reopens where you left off (#img26).
   const resetMenu = () => {
@@ -4381,43 +4377,50 @@ function renderStickyHeroBar(container, route) {
 
   const openMenu = () => { resetMenu(); syncNavmenuTitleSize(); navPanel.classList.add('is-open'); navOverlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; requestAnimationFrame(updateScrollOverflow); };
 
-  container.querySelector('#nav-hamburger').addEventListener('click', openMenu);
+  // The hamburger: below 1200px it opens the overlay drawer; at desktop it
+  // re-docks the sidebar. One control, two spellings of "show the nav".
+  container.querySelector('#nav-hamburger').addEventListener('click', () => {
+    if (DOCK_MQ.matches) { setDockPref(true); applyDock(); }
+    else openMenu();
+  });
   navOverlay.addEventListener('click', closeMenu);
-  navPanel.querySelector('#navmenu-close').addEventListener('click', closeMenu);
+  // The collapse control in the sidebar head: undocks on desktop (state kept
+  // for next visit), plain close for the overlay drawer.
+  navPanel.querySelector('#navmenu-collapse').addEventListener('click', () => {
+    if (document.body.classList.contains('nav-docked')) { setDockPref(false); applyDock(); }
+    else closeMenu();
+  });
+  // Docked = the site is usable ALONGSIDE the nav, so navigating must not
+  // close it; the overlay drawer still dismisses on any link.
+  const closeUnlessDocked = () => { if (!document.body.classList.contains('nav-docked')) closeMenu(); };
   navPanel.querySelectorAll('a, #navmenu-all-topics').forEach(link => {
-    link.addEventListener('click', closeMenu);
+    link.addEventListener('click', closeUnlessDocked);
   });
   navPanel.querySelector('#navmenu-all-topics')?.addEventListener('click', (e) => {
     e.preventDefault();
-    closeMenu();
+    closeUnlessDocked();
     toggleTopicsNavDropdown();
   });
 
-  // Info popover (ⓘ next to the title): mini dropdown with About / Terms / GitHub.
-  const infoBtn = navPanel.querySelector('#navmenu-info');
-  const infoPop = navPanel.querySelector('#navmenu-info-pop');
-  const closeInfoPop = () => { infoPop?.classList.remove('is-open'); infoBtn?.setAttribute('aria-expanded', 'false'); };
-  infoBtn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const open = infoPop.classList.toggle('is-open');
-    infoBtn.setAttribute('aria-expanded', String(open));
-  });
-  navPanel.addEventListener('click', (e) => {
-    if (!e.target.closest('#navmenu-info') && !e.target.closest('#navmenu-info-pop')) closeInfoPop();
-  });
   navPanel.querySelector('#navmenu-trending')?.addEventListener('click', () => {
-    closeMenu();
+    closeUnlessDocked();
     toggleTrendingNavDropdown();
   });
   navPanel.querySelector('#navmenu-prompts')?.addEventListener('click', () => {
-    closeMenu();
+    closeUnlessDocked();
     // navigate (not a direct open) so the back-target stack records the move.
     navigate('#/prompts');
   });
-  navPanel.querySelector('#navmenu-search')?.addEventListener('click', () => {
-    closeMenu();
-    navigate('#/search');
+  // The sidebar search field routes through #/custom/<q>, the same shareable
+  // path the search page's own submits use.
+  navPanel.querySelector('#navmenu-searchform')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = (navPanel.querySelector('#navmenu-searchinput')?.value || '').trim();
+    closeUnlessDocked();
+    navigate(q ? '#/custom/' + encodeURIComponent(q) : '#/search');
   });
+
+  applyDock();
 
   // Mobile top-bar search icon (kept upper-right even though Search is also
   // in the bottom nav) — opens the search modal.

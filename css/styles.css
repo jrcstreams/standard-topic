@@ -25179,3 +25179,127 @@ body.home-search #section-newsfeed .news-list > .news-card:nth-child(2) {
 .tdi-card.is-open .tdi-art { opacity: 0; transition: opacity .25s ease; }
 .tdi-card .tdi-art { transition: opacity .25s ease; }
 .tdi-card.is-open .tdi-metarow { display: none !important; }
+
+/* ============================================================
+   revamp998 — DOCKED SIDEBAR LAYOUT + LIGHT CHROME
+   The expanded nav becomes the site's primary chrome: pinned open on
+   desktop with the page flowing beside it, and the dark navy top bar
+   goes light — the drawer's card language is the reference now.
+   ============================================================ */
+
+/* ── Geometry. --sbw is the docked sidebar's width; 0 whenever it isn't
+      docked, so every rule below collapses to a no-op in the overlay and
+      mobile worlds. ── */
+:root { --sbw: 0px; }
+body.nav-docked { --sbw: 320px; }
+
+body.nav-docked .navmenu-panel {
+  transform: none;
+  box-shadow: none;
+  border-right: 1px solid #e5e9f2;
+  width: 320px; max-width: 320px;
+  z-index: 492;
+}
+/* Everything fixed to the viewport's left edge moves over with the panel. */
+body.nav-docked #site-header.is-sticky-hero { left: var(--sbw); }
+body.nav-docked #sub-header.is-subnav { left: var(--sbw); }
+body.nav-docked #content { margin-left: var(--sbw); }
+body.nav-docked .aii-nav-dd { left: var(--sbw); }
+body.nav-docked .aii-nav-overlay { left: var(--sbw); }
+body.nav-docked .tsp-panelwrap { left: var(--sbw); }
+/* Docked = the brand and the reopen control live in the sidebar; the top bar
+   carries only the section nav + search. */
+body.nav-docked #site-header .sticky-brand,
+body.nav-docked #site-header .nav-hamburger { display: none !important; }
+body.nav-docked .sticky-hero-inner .sticky-actions.navbtns#nav-links { margin-left: 0 !important; }
+
+/* Every full-bleed band measures from the viewport, so in docked mode the
+   sidebar's width comes out of the arithmetic — otherwise the negative
+   margins overshoot and the page scrolls sideways. */
+body.nav-docked .custom-search-sticky,
+body.nav-docked .dih-hero,
+body.nav-docked .topic-bodyhead--hero,
+body.nav-docked #section-latestnews,
+body.nav-docked .home-latest {
+  --bleed: max(32px, calc((100vw - var(--sbw) - 1440px) / 2 + 32px)) !important;
+}
+
+/* ── Light chrome. The nav bar sheds the navy for a grey one step lighter
+      than the subnav band (#e7ecf3), and every element that assumed a dark
+      ground flips its ink. ── */
+#site-header.is-sticky-hero {
+  background: #f8f9fc;
+  border-bottom: 1px solid #e5e9f2;
+  box-shadow: 0 1px 3px rgba(15, 26, 46, 0.05);
+}
+#site-header .sticky-title { color: #14204a !important; }
+#site-header .nav-hamburger span { background: #33415e !important; }
+#site-header .sticky-page-text { color: #4a5872 !important; }
+#site-header .nav-search-mobile { color: #33415e !important; }
+#site-header .navbtn { color: #3c4a68; }
+@media (hover: hover) {
+  #site-header .navbtn:hover { background: rgba(47, 77, 158, 0.08); color: #14204a; }
+}
+#site-header .navbtn[aria-expanded="true"] { background: rgba(47, 77, 158, 0.12); color: #14204a; }
+@media (hover: hover) {
+  #site-header .navbtn[aria-expanded="true"]:hover { background: rgba(47, 77, 158, 0.16); color: #14204a; }
+}
+#site-header .navbtn:focus-visible { outline-color: rgba(30, 58, 138, 0.6); }
+#site-header .navbtn.is-active { background: rgba(47, 77, 158, 0.1); color: #14204a; }
+/* The navy Search pill already reads right on the light ground — keep it.
+   The wrap row's separator turns from glass-white to a real hairline, and
+   on phones it goes entirely (#img651). */
+.sticky-hero-inner.nav-wrap .sticky-actions.navbtns#nav-links { border-top-color: #e5e9f2; }
+@media (max-width: 899px) {
+  .sticky-hero-inner.nav-wrap .sticky-actions.navbtns#nav-links { border-top: 0 !important; }
+}
+/* Phone search glass button: dark-on-light now. */
+@media (max-width: 640px) {
+  .sticky-hero-inner #nav-search.navbtn { background: #1e3a8a; border-color: #1e3a8a; }
+}
+
+/* ── Sidebar surface + head. Brand left, collapse control right (the info
+      button is gone — About/Terms/GitHub live in the footer links). ── */
+.navmenu-panel { background: #f8f9fc; }
+.navmenu-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 0 14px 0 18px;
+  min-height: var(--nav-h);
+  border-bottom: 1px solid #e5e9f2;
+  flex: none;
+  position: sticky; top: 0; z-index: 3; background: #f8f9fc;
+}
+.navmenu-brand { display: inline-flex; align-items: center; text-decoration: none !important; }
+.navmenu-title { font-family: var(--font-display, var(--font-family)); font-weight: 800; font-size: 1.32rem; letter-spacing: -0.02em; color: #14204a; }
+.navmenu-collapse {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; flex: none;
+  border: 1px solid transparent; border-radius: 9px;
+  background: none; color: #4a5872; cursor: pointer;
+  transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+@media (hover: hover) {
+  .navmenu-collapse:hover { background: #eef1f7; color: #14204a; border-color: #dfe4ee; }
+}
+
+/* ── Sidebar search: a real input, above Home. ── */
+.navmenu-searchrow {
+  display: flex; align-items: center; gap: 9px;
+  margin: 14px 16px 2px;
+  padding: 9px 13px;
+  background: #fff; border: 1px solid #d9dfeb; border-radius: 12px;
+  color: #6b7a92;
+  transition: border-color .14s ease, box-shadow .14s ease;
+}
+.navmenu-searchrow:focus-within {
+  border-color: #2c4f9e;
+  box-shadow: 0 0 0 3px rgba(44, 79, 158, 0.1);
+}
+.navmenu-searchrow svg { flex: none; }
+.navmenu-searchinput {
+  flex: 1; min-width: 0; border: 0; background: none; outline: none;
+  font-family: var(--font-family); font-size: 0.92rem; color: #1c2a4a;
+}
+.navmenu-searchinput::placeholder { color: #8c99b0; }
+.navmenu-searchinput::-webkit-search-decoration,
+.navmenu-searchinput::-webkit-search-cancel-button { -webkit-appearance: none; }
