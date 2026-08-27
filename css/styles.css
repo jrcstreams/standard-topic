@@ -25767,3 +25767,63 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
 @media (max-width: 640px) {
   .topic-band .topic-viewtabs { margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; }
 }
+
+/* ============================================================
+   revamp1007 — tab views shed their inner chrome; warm-grey search
+   (#img705-711)
+   ============================================================ */
+
+@media (max-width: 1199.98px) {
+  /* The active tab IS the section label — the in-section heads go. */
+  .topic-band .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head { display: none !important; }
+  .topic-band .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .news-list { margin-top: 6px !important; }
+  .tview-tools .tpr-head { display: none !important; }
+  .tview-tools .tpr-card.is-open [data-pr-expand] { margin-top: 0 !important; }
+
+  /* The briefing reads full width in its tab. */
+  .tview-brief .topic-top,
+  .tview-brief .topic-top-main,
+  .tview-brief .tdi-card { width: 100% !important; max-width: none !important; }
+  .tview-brief .topic-top { margin-top: 0.8rem !important; }
+  .tview-tools .topic-top { margin-top: 0.8rem !important; }
+
+  /* No dismissal chrome in a tab — the tabs are how you leave. The X and the
+     bottom Close controls only mean something in the column/rail world. */
+  .tview-brief .tdi-headclose,
+  .tview-brief .tdi-closefoot { display: none !important; }
+  .tview-tools .tpr-headclose,
+  .tview-tools .tpr-closefoot,
+  .tview-tools .tdi-closefoot.tpr-closefoot { display: none !important; }
+}
+
+/* ── Search controls go warm grey: light ground, dark ink, gently squared.
+      One treatment for the sidebar input and the nav Search button. ── */
+.navmenu-searchrow {
+  background: #f1f0ed !important;
+  border: 1px solid #ddd9d0 !important;
+  border-radius: 10px !important;
+  color: #4a5570 !important;
+  box-shadow: none;
+}
+.navmenu-searchrow:focus-within {
+  border-color: #b9c2da !important;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.10) !important;
+}
+.navmenu-searchinput { color: #1c2a4a !important; }
+.navmenu-searchinput::placeholder { color: #78809a !important; }
+
+#nav-search.navbtn.nav-searchbar {
+  background: #f1f0ed !important;
+  border: 1px solid #ddd9d0 !important;
+  border-radius: 10px !important;
+}
+@media (hover: hover) {
+  #nav-search.navbtn.nav-searchbar:hover { background: #eae8e3 !important; border-color: #d0ccc2 !important; }
+}
+#nav-search.navbtn .navbtn-ico { color: #33415e !important; }
+#nav-search.navbtn .nav-searchbar-ph,
+#nav-search.navbtn .navbtn-label { color: #33415e !important; }
+@media (max-width: 640px) {
+  .sticky-hero-inner #nav-search.navbtn { background: #f1f0ed; border-color: #ddd9d0; border-radius: 10px; }
+  .sticky-hero-inner #nav-search .navbtn-ico { color: #33415e; }
+}
