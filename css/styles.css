@@ -25380,6 +25380,10 @@ body.home-search #content { background: #fff !important; }
 /* At rest the docked sidebar IS the nav, so the top bar hides until the page
    scrolls; content owns the top of the viewport. Only in the docked world —
    the overlay/mobile layouts keep the always-on bar. */
+/* `html body.home-search.app-mode...` wins at (0,1)+(1,4,1) with !important,
+   so this needs the html prefix too. */
+html body.nav-docked.home-search.app-mode #content,
+html body.nav-docked.home-search.app-mode.sticky-always.has-subnav #content,
 body.nav-docked.home-search #content { padding-top: 0 !important; }
 body.nav-docked.home-search:not(.home-scrolled) #site-header.is-sticky-hero {
   transform: translateY(-100%); opacity: 0; pointer-events: none;
@@ -25428,3 +25432,8 @@ body.home-search:not(.nav-docked) .home-pagehead { padding-top: 0.4rem; }
 }
 .home-v2 .home-side .hf-card.hs-block { box-shadow: 0 6px 18px -14px rgba(31, 49, 99, 0.18); }
 .home-v2 .home-trending .trending-topics { border: 0 !important; background: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
+/* #home-trending's own base styles zero the border — re-assert the card. */
+.home-v2 .home-side #home-trending.hs-block {
+  border: 1px solid #e4eaf3 !important; background: #fff !important;
+  border-radius: 16px !important; padding: 1.05rem 1.15rem 1rem !important;
+}
