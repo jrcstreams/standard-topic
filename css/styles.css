@@ -25488,3 +25488,11 @@ body.home-search .home-v2 #section-newsfeed .newsfeed-head {
   background: #f8f9fc !important;
   border-bottom: 1px solid #e5e9f2 !important;
 }
+
+/* revamp1003b — #e7ecf3 read blue (#img682). The sidebar goes to a neutral
+   light grey, and the white insets' borders drop their blue cast to match. */
+.navmenu-panel { background: #f1f2f5 !important; }
+.navmenu-head { background: #f1f2f5 !important; border-bottom-color: #e0e2e7; }
+.navmenu-footer-sticky { background: #f1f2f5 !important; border-top-color: #e0e2e7; }
+.navmenu-searchrow { border-color: #d9dce2 !important; }
+.navmenu-panel .navmenu-cta { border-color: #dcdfe5 !important; }
