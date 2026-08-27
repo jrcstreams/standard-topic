@@ -25592,3 +25592,13 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   body.nav-docked .navmenu-scroll { padding-left: 4px; padding-right: 4px; }
   body.nav-docked .navmenu-topic-name { font-size: 0.88rem; }
 }
+
+/* revamp1004b — narrow docked widths (1000-1200): the news column gets thin
+   enough that the side-by-side summary/actions row crushed the summary to one
+   word per line. The actions stack UNDER the text there instead. */
+@media (max-width: 1240px) {
+  body.nav-docked #section-newsfeed .news-card:not(:has(.news-act-ai[aria-expanded="true"])) .news-card-body {
+    flex-direction: column; align-items: flex-start; gap: 9px;
+  }
+  body.nav-docked #section-newsfeed .news-card-actions { display: flex; gap: 8px; }
+}
