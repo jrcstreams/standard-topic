@@ -25602,3 +25602,105 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   }
   body.nav-docked #section-newsfeed .news-card-actions { display: flex; gap: 8px; }
 }
+
+/* ============================================================
+   revamp1005 — topic pages: plain header, homepage-style columns,
+   tabbed below; the collapsed-view chrome gap closes
+   ============================================================ */
+
+/* ── The 14px gap under the collapsed-view nav: fitMainNav publishes the
+      MEASURED inner height to --nav-h, and .nav-wrap's padding rules beat
+      the plain-selector reset while the inner isn't border-box — so 56px
+      + padding published as 70 and every bar below slid down. Pin the box
+      model at nav-wrap specificity. ── */
+#site-header .sticky-hero-inner,
+#site-header .sticky-hero-inner.nav-wrap {
+  box-sizing: border-box !important;
+  height: 56px !important; min-height: 0 !important;
+  padding-top: 0 !important; padding-bottom: 0 !important;
+  row-gap: 0 !important;
+}
+
+/* ── Topic header, plain: icon chip + title + sentence. The art band is
+      retired — no bleed, no background, ordinary flow. ── */
+.topic-bodyhead { padding-top: 1.05rem; }
+.tbh-titlerow { display: flex; align-items: center; gap: 12px; }
+.tbh-titleic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; flex: none; border-radius: 11px;
+  background: color-mix(in srgb, #2f4d9e 8%, #fff);
+  color: #24408f;
+}
+.tbh-titleic svg { width: 22px; height: 22px; }
+.topic-bodyhead .tbh-title {
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.05rem) !important;
+  margin-bottom: 0 !important;
+}
+.tbh-titlerow + .tbh-desc { margin-top: 0.5rem; }
+
+/* ── Wide screens: homepage-style columns — news left, briefing + tools
+      stacked right. The .topic-top wrapper simply becomes the right rail. ── */
+@media (min-width: 1200px) {
+  .topic-band .topic-home {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 384px;
+    gap: 0 2rem; align-items: start;
+  }
+  .topic-band .topic-home > .aii-tabhead-spacer { grid-column: 1 / -1; grid-row: 1; }
+  .topic-band .topic-home > .topic-bodyhead { grid-column: 1 / -1; grid-row: 2; }
+  .topic-band .topic-home > .topic-viewtabs { display: none; }
+  .topic-band .topic-home > .topic-news-wrap { grid-column: 1; grid-row: 4; min-width: 0; }
+  .topic-band .topic-home > .topic-top {
+    grid-column: 2; grid-row: 4;
+    display: flex !important; grid-template-columns: none !important;
+    flex-direction: column; gap: 18px;
+    margin-top: 0 !important;
+  }
+  /* Cards expand IN the rail, pushing the sibling down — the open card no
+     longer takes the full row. */
+  .topic-band .topic-home .topic-top.is-di-open,
+  .topic-band .topic-home .topic-top.is-pr-open {
+    display: flex !important; grid-template-columns: none !important;
+  }
+  .topic-band .topic-home .topic-top.is-di-open .tpr-card,
+  .topic-band .topic-home .topic-top.is-pr-open .tdi-card { animation: none; }
+  /* The rail briefing card mirrors the homepage one: full-width copy, meta
+     row may wrap. */
+  .topic-band .topic-home .tdi-card--hero2 .tdi-briefcol { max-width: 100% !important; }
+  .topic-band .topic-home .tdi-metarow { flex-wrap: wrap !important; white-space: normal !important; }
+  .topic-band .topic-home #section-newsfeed .news-list { margin-top: 12px !important; }
+}
+
+/* ── Below 1200: TABBED. One section at a time — News Feed (default),
+      Today's Briefing, AI Prompts — picked from a pill row under the head. ── */
+.topic-viewtabs {
+  display: flex; align-items: center; gap: 6px;
+  margin: 0.9rem 0 0.2rem;
+  padding: 0 0 12px;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent);
+}
+.tvt {
+  border: 0; background: none; cursor: pointer;
+  padding: 8px 15px; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.92rem; font-weight: 600;
+  color: #5b6b8c; transition: background .14s ease, color .14s ease;
+}
+.tvt.is-active { background: #1e3a8a; color: #fff; }
+@media (hover: hover) {
+  .tvt:not(.is-active):hover { background: color-mix(in srgb, #2f4d9e 8%, #fff); color: #14204a; }
+}
+@media (max-width: 1199.98px) {
+  /* default view = news: the card rail hides entirely */
+  .topic-band .topic-home:not(.tview-brief):not(.tview-tools) > .topic-top { display: none !important; }
+  /* briefing view: only the briefing column */
+  .topic-band .topic-home.tview-brief > .topic-news-wrap { display: none !important; }
+  .topic-band .topic-home.tview-brief .topic-top-side { display: none !important; }
+  /* tools view: only the tools column */
+  .topic-band .topic-home.tview-tools > .topic-news-wrap { display: none !important; }
+  .topic-band .topic-home.tview-tools .topic-top-main { display: none !important; }
+  .topic-band .topic-home.tview-brief > .topic-top,
+  .topic-band .topic-home.tview-tools > .topic-top {
+    display: flex !important; grid-template-columns: none !important;
+    flex-direction: column; margin-top: 0.9rem !important;
+  }
+}

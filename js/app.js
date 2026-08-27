@@ -634,10 +634,12 @@ function topicBodyHeadHTML(topic) {
     `<a class="tbh-sub tbh-sub--overview is-active" href="#/topic/${escapeAttr(topic.slug)}" aria-current="page">Overview</a>`,
   ].concat(ordered.map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`)).join('');
   return `
-    <header class="topic-bodyhead topic-bodyhead--hero topic-subnav-picker" data-topic-picker
-            style="--tbh-art: url('${escapeAttr(topicHeroArt(topic))}')">
+    <header class="topic-bodyhead topic-subnav-picker" data-topic-picker>
       <a class="tbh-back" href="#/topics">${TBH_BACK_CHEV}<span>Topics</span></a>
-      <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
+      <div class="tbh-titlerow">
+        <span class="tbh-titleic" aria-hidden="true">${topicIconSVG(topic.icon || 'globe', '')}</span>
+        <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
+      </div>
       ${desc ? `<p class="tbh-desc">${escapeHTML(desc)}</p>` : ''}
       <div class="tbh-subswrap">
         <nav class="tbh-subs" aria-label="Subtopics">
@@ -2471,6 +2473,11 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     body.innerHTML = `<div class="topic-home">
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
+      <div class="topic-viewtabs" data-topic-viewtabs role="tablist" aria-label="Topic sections">
+        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-tview="news">News Feed</button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="brief">Today's Briefing</button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="tools">AI Prompts</button>
+      </div>
       <div class="topic-top">
         <section class="topic-top-main">
           <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, twice a day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
@@ -2520,6 +2527,22 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     wireSubnavPicker(body);
     wireSubtopicsMore(body);
     wireRailDots(body.querySelector('.topic-top-side .tpr-list'));
+    // Topic view tabs: container classes drive which section shows in the
+    // narrow tabbed layout; on wide screens the tabs row is display:none and
+    // the classes are inert (all sections show in the two-column grid).
+    {
+      const home = body.querySelector('.topic-home');
+      body.querySelectorAll('[data-tview]').forEach((b) => b.addEventListener('click', () => {
+        const v = b.dataset.tview;
+        home.classList.toggle('tview-brief', v === 'brief');
+        home.classList.toggle('tview-tools', v === 'tools');
+        body.querySelectorAll('[data-tview]').forEach((x) => {
+          const on = x === b;
+          x.classList.toggle('is-active', on);
+          x.setAttribute('aria-selected', String(on));
+        });
+      }));
+    }
     wireTopicHeroCondense();
     wireTopicLandingCards(body, topic, { descriptions, icons, shortcuts });
     renderNewsFeed(body.querySelector('#section-newsfeed'), topic, false);
