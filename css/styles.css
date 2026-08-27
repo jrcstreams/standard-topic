@@ -25474,3 +25474,17 @@ body.home-search .home-v2 #section-newsfeed .newsfeed-head {
   border-bottom: 0 !important; padding-bottom: 0 !important; margin-bottom: 0 !important;
 }
 .home-v2 .news-list { margin-top: 14px !important; }
+
+/* revamp1003 — surface swap (#img681): the sidebar takes the ident bar's
+   deeper grey (#e7ecf3) and the sticky Home bar takes the sidebar's lighter
+   one (#f8f9fc), so the persistent chrome reads as the stronger surface and
+   the transient bar as the lighter one. */
+.navmenu-panel { background: #e7ecf3 !important; }
+.navmenu-head { background: #e7ecf3 !important; border-bottom-color: #d8deea; }
+.navmenu-footer-sticky { background: #e7ecf3 !important; border-top-color: #d8deea; }
+/* White insets hold their contrast on the deeper grey. */
+.navmenu-searchrow { border-color: #cfd7e6; }
+#sub-header.is-home-ident {
+  background: #f8f9fc !important;
+  border-bottom: 1px solid #e5e9f2 !important;
+}
