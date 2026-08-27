@@ -25887,7 +25887,10 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   .tview-brief .tdi-card.is-open .tdi-bodygrid,
   .tview-brief .tdi-card.is-open .tdi-art { display: none !important; }
   .tview-brief .tdi-openhead > *:not(.tdi-openhead-meta) { display: none !important; }
-  .tview-brief .tdi-openhead { margin-bottom: 0 !important; }
+  .tview-brief .tdi-openhead { margin-bottom: 0 !important; border-bottom: 0 !important; }
+  .tview-brief .tdi-openhead-meta { border-bottom: 0 !important; }
+  .tview-brief .tdi-openhead-meta::after,
+  .tview-brief .tdi-openhead::after { display: none !important; }
   /* One type treatment for every part of the masthead, evenly piped. */
   .tview-brief .tdi-openhead-meta,
   .tview-brief .tdi-openhead-meta * {
