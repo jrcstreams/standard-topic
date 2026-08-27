@@ -25208,7 +25208,12 @@ body.nav-docked #sub-header.is-subnav { left: var(--sbw); }
    with left:0/right:0, a margin-left on a both-inset box shifts and shrinks
    it identically to moving the inset. !important because app-mode variants
    out-specify this selector. */
-body.nav-docked #content { margin-left: var(--sbw) !important; }
+body.nav-docked #content {
+  margin-left: var(--sbw) !important;
+  /* #content is width:100% — with the margin that's viewport + 320. Subtract
+     the sidebar so the box ends at the right edge instead of past it. */
+  width: calc(100% - var(--sbw)) !important;
+}
 body.nav-docked .aii-nav-dd { left: var(--sbw); }
 body.nav-docked .aii-nav-overlay { left: var(--sbw); }
 body.nav-docked .tsp-panelwrap { left: var(--sbw); }
