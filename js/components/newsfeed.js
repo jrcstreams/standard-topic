@@ -44,8 +44,10 @@ const NF_ARROW = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" st
 // file than renderNewsFeed, so declaring them beside it put the read inside
 // const's temporal dead zone — a ReferenceError the feed's try/catch swallowed
 // into "News feed temporarily unavailable".
-const HOME_OPEN_COUNT = 4;
-const HOME_REVEAL_STEP = 6;
+// revamp1001: the homepage feed is column 1's whole job now, so it opens at
+// twenty stories instead of four teasers-plus-a-button.
+const HOME_OPEN_COUNT = 20;
+const HOME_REVEAL_STEP = 10;
 
 function escapeHTML(str) {
   const div = document.createElement('div');
