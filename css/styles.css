@@ -25875,7 +25875,7 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   .topic-band .topic-home > .topic-news-wrap { margin-top: 10px !important; }
   .topic-band .topic-home #section-newsfeed .news-list { margin-top: 0 !important; }
   .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
-    border-top: 1px solid var(--color-surface-border, #e4eaf3) !important;
+    border-top: 1px solid #e8edf5 !important;   /* the exact sibling-card colour */
     padding-top: 12px !important;
   }
 
@@ -25909,6 +25909,8 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   .tview-brief .tdi-expand-inner { padding-left: 0 !important; padding-right: 0 !important; }
 
   /* ── Provenance: a quiet line under a hairline, not a boxed chip. ── */
+  .tview-brief .tdi-card .di-prov2,
+  .tview-brief [data-di-host] .di-prov2,
   .tview-brief .di-prov2 {
     background: none !important; border: 0 !important; border-radius: 0 !important;
     border-top: 1px solid #e5e9f2 !important;
