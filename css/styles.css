@@ -25450,7 +25450,7 @@ body.nav-docked .sticky-hero-inner {
   padding-top: 0 !important; padding-bottom: 0 !important;
   display: flex; align-items: center;
 }
-body.nav-docked.home-search .home-pagehead { padding-top: 0.45rem; }
+body.nav-docked.home-search .home-pagehead { padding-top: 0.8rem; }
 body.nav-docked.home-search .home-pagetitle { line-height: 1.1; }
 
 /* revamp1001 — the head's own 2px rule under the tab row read as a second,
