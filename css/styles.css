@@ -26789,8 +26789,14 @@ body.home-search.tt-on #content { overflow: visible !important; }
    ============================================================ */
 
 /* Heads take a deeper blue — the mid-navy read too bright next to the ink. */
+/* revamp1019's rule lives at `@media (min-width:1200px) body:not(.tt-on)
+   .topic-band .topic-home .trail-head` (0,5,1) — match that path or the deeper
+   blue never lands. */
+@media (min-width: 1200px) {
+  body:not(.tt-on) .topic-band .topic-home .trail-head { color: #1e3a8a !important; }
+}
 .trail-head, .home-v2 .home-side .hb-title { color: #1e3a8a !important; }
-.trail-head-ic { color: #1e3a8a !important; }
+.trail-head-ic, .trail-head .trail-head-ic { color: #1e3a8a !important; }
 
 /* Read Briefing is the card's main action: full width, taller. */
 .tdi-card--hero2 .tdi-go,
