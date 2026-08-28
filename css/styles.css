@@ -25916,10 +25916,13 @@ body.pagenav-mode #content {
       the same grey as every other page bar (#img743, #img754). ── */
 #sub-header.is-subnav,
 #sub-header.pagenav,
-#sub-header.is-home-ident { min-height: 56px !important; }
+#sub-header.is-home-ident {
+  box-sizing: border-box !important;
+  height: 56px !important; min-height: 56px !important;
+}
 #sub-header.is-subnav .topic-subnav-inner,
 #sub-header.pagenav .topic-subnav-inner {
-  min-height: 56px; padding-top: 0 !important; padding-bottom: 0 !important;
+  height: 55px; min-height: 0; padding-top: 0 !important; padding-bottom: 0 !important;
 }
 #sub-header.is-home-ident { background: #e7ecf3 !important; border-bottom: 1px solid #cdd2d9 !important; }
 /* The ident glyph sits on the label's centreline. */
@@ -25970,7 +25973,8 @@ body:not(.tt-on) .topic-band .topic-home .newsfeed-headrow { margin: 0 !importan
 
 /* ── 7. First story keeps its top border; the story AFTER an open panel keeps
       its border too (#img735, #img746). ── */
-body:not(.tt-on) .topic-band .topic-home .news-list > .news-card:first-child {
+/* The revamp1008 rule carries an id (1,5,0) and beats six classes — match it. */
+body:not(.tt-on) .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
   border-top: 1px solid #e8edf5 !important;
 }
 #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) + .news-card {
