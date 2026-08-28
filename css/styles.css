@@ -27376,3 +27376,14 @@ body.pagenav-mode .trending-toolbar { margin-top: 0 !important; padding-top: 0 !
 .tdi-card--hero2.is-open .di-page .di-mast,
 .tdi-card--hero2.is-open .di-page .di-prov2 { margin: 0 !important; }
 .tdi-card--hero2.is-open .di-page .di-big { margin-top: 6px !important; }
+
+/* revamp1037d — in a narrow column the masthead wraps, which put a separator
+   dot at the start of the second line. Below ~420px of CONTAINER width (the
+   topic page's briefing rail, phones) it stacks with no dots at all. */
+.di-body { container-type: inline-size; }
+@container (max-width: 420px) {
+  .di-mast { flex-direction: column; align-items: flex-start; gap: 4px !important; }
+  .di-mast-topic ~ .di-mast-date::before,
+  .di-mast-topic ~ .di-mast-time::before,
+  .di-mast-date ~ .di-mast-time::before { display: none !important; }
+}
