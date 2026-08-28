@@ -26666,3 +26666,11 @@ body:not(.tt-on) .home-v2 .hq-grouplabel { display: none; }
       (#img831). ── */
 body.tt-on .tview-brief .topic-top { margin-top: 1.35rem !important; }
 body.tt-on .tview-tools .topic-top { margin-top: 1.2rem !important; }
+
+/* revamp1023b — the home filter row measured correct but never painted:
+   #content carries `overflow-x: clip`, and unlike `hidden`, `clip` DOES clip
+   position:fixed descendants. Topic pages escape it only because their
+   #content is itself fixed. Home's is static, so its fixed tab rows were
+   clipped away. The bleed maths is already sidebar-aware (verified 0 h-overflow),
+   so home can drop the clip in tab mode. */
+body.home-search.tt-on #content { overflow: visible !important; }
