@@ -26046,3 +26046,138 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px) !important; }
 .search-page .search-panel-title { margin-bottom: 0.9rem !important; }
 .search-page .search-panel-hero-inner { padding-top: 0 !important; }
 .search-page { padding-top: 0.4rem; }
+
+/* ============================================================
+   revamp1011 — the tab rows are tab-width ONLY; page bodies run
+   full width; briefing cards become documents (#img757-785)
+   ============================================================ */
+
+/* ── 1. REGRESSION: the home/prompts tab rows inherited .topic-viewtabs but
+      not its wide-screen hide, so they showed at every width (#img761/774).
+      One rule governs all three. ── */
+body:not(.tt-on) .home-viewtabs,
+body:not(.tt-on) .ph-viewtabs { display: none !important; }
+
+/* ── 2. Page bodies run full width and full height — the layout's max-width
+      + auto margins were painting the body grey either side (#img758/759,
+      #img762/763). ── */
+body.pagenav-mode #content > *,
+body.app-mode .topic-layout,
+.prompts-home, .dih, .search-page {
+  max-width: none !important; width: 100% !important;
+  margin-left: 0 !important; margin-right: 0 !important;
+}
+body.pagenav-mode #content { background: #fff !important; min-height: 100dvh; }
+.prompts-home { padding-left: 2rem; padding-right: 2rem; }
+@media (max-width: 640px) { .prompts-home { padding-left: 1rem; padding-right: 1rem; } }
+
+/* ── 3. Prompts page in tab mode: one section at a time. ── */
+body.tt-on .ph-viewtabs { display: flex !important; margin-bottom: 1.1rem; }
+body.tt-on .prompts-home .ph-build { display: none !important; }
+body.tt-on .prompts-home:not(.pview-bytopic) .ph-lib { display: none !important; }
+body.tt-on .prompts-home.pview-bytopic .ph-featured { display: none !important; }
+body.tt-on .prompts-home .ph-cta { display: none !important; }
+body.tt-on .prompts-home .ph-featured .ph-sec-head { display: none !important; }
+body.tt-on .prompts-home .ph-lib .ph-sec-head { display: none !important; }
+body.tt-on .prompts-home .ph-featured { border: 0 !important; background: none !important; padding: 0 !important; }
+
+/* ── 4. Home: the two rail heads share ONE type style (#img771), and the
+      prompts rail matches the topic pages — no descriptions (#img772/773). ── */
+.home-v2 .home-side .hb-title,
+.home-v2 .home-side .hb-head .hb-title,
+.trail-head {
+  font-family: var(--font-display, var(--font-family)) !important;
+  font-size: 1.24rem !important; font-weight: 750 !important;
+  letter-spacing: -0.012em !important; color: #14204a !important;
+  text-transform: none !important;
+}
+.home-v2 .home-side .hq-row-desc { display: none !important; }
+.home-v2 .home-side .hq-row {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 0; border-bottom: 1px solid color-mix(in srgb, #2f4d9e 8%, transparent);
+  text-decoration: none;
+}
+.home-v2 .home-side .hq-row:last-of-type { border-bottom: 0; }
+.home-v2 .home-side .hq-row-ic {
+  flex: none; display: grid; place-items: center; width: 28px; height: 28px;
+  border-radius: 8px; background: color-mix(in srgb, #2f4d9e 7%, #fff); color: #4a5f8f;
+}
+.home-v2 .home-side .hq-row-ic svg { width: 15px; height: 15px; }
+.home-v2 .home-side .hq-row-name { font-size: 0.9rem; font-weight: 600; color: #172554; }
+
+/* ── 5. AI BRIEFING CARDS: a report, not a poster (#img784). No night/day
+      theme, no background art, faint grey ground, square corners. The edition
+      reads through its glyph in the meta line. ── */
+.tdi-card--hero2,
+.tdi-card--hero2.is-evening,
+.hb-hero .tdi-card,
+.hb-hero .tdi-card.is-evening {
+  background: #f4f6fa !important;
+  border: 1px solid #e2e7f0 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+.tdi-card--hero2 .tdi-art, .hb-hero .tdi-card .tdi-art { display: none !important; }
+.tdi-card--hero2 .tdi-today-title,
+.tdi-card--hero2.is-evening .tdi-today-title,
+.hb-hero .tdi-card .tdi-today-title { display: none !important; }
+.tdi-card--hero2 .tdi-summary,
+.tdi-card--hero2.is-evening .tdi-summary,
+.hb-hero .tdi-card .tdi-summary,
+.hb-hero .tdi-card.is-evening .tdi-summary { color: #33415e !important; }
+.tdi-card--hero2 .tdi-eyebrow,
+.tdi-card--hero2.is-evening .tdi-eyebrow { color: #5b6b8c !important; }
+.tdi-card--hero2 .tdi-topiclabel, .tdi-card--hero2 .tdi-date,
+.tdi-card--hero2 .tdi-stamp-val, .tdi-card--hero2 .tdi-stamp-ed,
+.tdi-card--hero2.is-evening .tdi-topiclabel, .tdi-card--hero2.is-evening .tdi-date,
+.tdi-card--hero2.is-evening .tdi-stamp-val, .tdi-card--hero2.is-evening .tdi-stamp-ed,
+.hb-hero .tdi-card.is-evening .tdi-topiclabel, .hb-hero .tdi-card.is-evening .tdi-date,
+.hb-hero .tdi-card.is-evening .tdi-stamp-val, .hb-hero .tdi-card.is-evening .tdi-stamp-ed {
+  color: #52618a !important;
+}
+/* The meta line is the masthead: TOPIC | DATE | EDITION, evenly piped. */
+.tdi-card--hero2 .tdi-metarow, .hb-hero .tdi-card .tdi-metarow {
+  display: flex; align-items: center; gap: 10px !important; flex-wrap: wrap;
+}
+.tdi-card--hero2 .tdi-go, .hb-hero .tdi-card .tdi-go {
+  background: #1e3a8a !important; border-radius: 4px !important;
+}
+body.tt-on .tview-brief .tdi-card { background: #fff !important; border: 0 !important; }
+
+/* ── 6. Topic head: icon centred in its chip, subtopics closer to the
+      description (#img780-783). ── */
+.tbh-titleic { line-height: 0; }
+.tbh-titleic svg { display: block; }
+#sub-header .subnav-ident-ico svg { display: block; }
+.topic-bodyhead .tbh-desc { margin-bottom: 0.75rem !important; }
+.topic-bodyhead .tbh-subswrap { padding-top: 0 !important; }
+
+/* ── 7. "More" matches the pills exactly, with a faint grey ground, and its
+      dropdown aligns to it (#img778/779). ── */
+.topic-bodyhead .tbh-more {
+  background: #f5f6f9 !important;
+  border: 1px solid color-mix(in srgb, #2f4d9e 16%, transparent) !important;
+  color: #33415e !important;
+  padding: 0.44rem 0.85rem !important;
+  gap: 7px !important;
+  font-weight: 600 !important;
+}
+@media (hover: hover) {
+  .topic-bodyhead .tbh-more:hover {
+    background: #eceff5 !important;
+    border-color: color-mix(in srgb, #2f4d9e 30%, transparent) !important;
+  }
+}
+.topic-bodyhead .tsp-panel {
+  border: 1px solid color-mix(in srgb, #2f4d9e 18%, transparent) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+.topic-bodyhead .tsp-actions {
+  background: #f5f6f9 !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
+}
+
+/* ── 8. Topic rail heads sit on the news head's baseline (#img776/777). ── */
+body:not(.tt-on) .topic-band .topic-home > .topic-top { padding-top: 0 !important; margin-top: 0 !important; }
+body:not(.tt-on) .topic-band .topic-home .trail-head:first-child { margin-top: 0 !important; }

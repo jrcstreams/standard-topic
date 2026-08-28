@@ -1157,6 +1157,11 @@ function wirePromptsDropdown(panel, initialView) {
     setHeadBtns(true);
     root.innerHTML = `
       <div class="prompts-home">
+        <div class="ph-viewtabs topic-viewtabs" data-ph-viewtabs role="tablist" aria-label="Prompt sections">
+          <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-pview="featured">Featured</button>
+          <button type="button" class="tvt" role="tab" aria-selected="false" data-pview="bytopic">By Topic</button>
+          <button type="button" class="tvt" role="tab" aria-selected="false" data-pview="build">Build a Prompt</button>
+        </div>
         <div class="ph-top">
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head ph-sec-head--card">
@@ -1202,6 +1207,22 @@ function wirePromptsDropdown(panel, initialView) {
     // revamp893: there are two build triggers now (the top card + the closing
     // CTA) — querySelector would only have wired the first.
     root.querySelectorAll('[data-cta-build]').forEach((b) => b.addEventListener('click', () => showBuild()));
+    // Prompts view tabs (tab widths only; the row is display:none on wide).
+    // "Build a Prompt" routes into the existing builder rather than duplicating
+    // it — same functionality, reached from the tab.
+    {
+      const home = root.querySelector('.prompts-home');
+      root.querySelectorAll('[data-pview]').forEach((b) => b.addEventListener('click', () => {
+        const v = b.dataset.pview;
+        if (v === 'build') { showBuild(); return; }
+        home.classList.toggle('pview-bytopic', v === 'bytopic');
+        root.querySelectorAll('[data-pview]').forEach((x) => {
+          const on = x === b;
+          x.classList.toggle('is-active', on);
+          x.setAttribute('aria-selected', String(on));
+        });
+      }));
+    }
     root.querySelector('[data-cta-search]')?.addEventListener('click', () => openSearchFromNav());
 
     // ── Featured rail ──────────────────────────────────────────────────────
@@ -3807,8 +3828,10 @@ const BACKBAR_CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none
 // The bar itself — a text link, not a button. `data-backbar` marks it so any
 // surface can drop this in.
 function backBarHTML() {
-  const t = backTarget();
-  return `<div class="page-backbar"><a href="${escapeAttr(t.hash)}" class="page-backbtn" data-backbar>${BACKBAR_CHEV}<span class="page-backbtn-tx">Back to ${escapeHTML(t.label)}</span></a></div>`;
+  // revamp1011: retired. Every page carries its identity in the grey bar, and
+  // the sidebar is always one click away, so the "Back to X" links were a
+  // third navigation voice saying nothing new.
+  return '';
 }
 
 // Scrolling a nav-dropdown page condenses its header: the "Back to …" bar and the
