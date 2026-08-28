@@ -25085,9 +25085,15 @@ body .topic-bodyhead--hero,
 .topic-band .topic-home #section-newsfeed .news-list,
 body.home-search #section-newsfeed .news-list { margin-top: 20px !important; }
 .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child,
-body.home-search #section-newsfeed .news-list > .news-card:first-child,
-body.home-search #section-newsfeed .news-list > .news-card:nth-child(2) {
+body.home-search #section-newsfeed .news-list > .news-card:first-child {
   padding-top: 14px !important; border-top: 0 !important;
+}
+/* revamp1039: the homepage news column is SINGLE column, so the second story is
+   row two and must keep its divider — the old rule stripped it (it assumed a
+   two-across top row). Only the true first card sits under the section rule. */
+body.home-search #section-newsfeed .news-list > .news-card:nth-child(2) {
+  padding-top: 14px !important;
+  border-top: 1px solid #e8edf5 !important;
 }
 
 /* ── 5. Phone tools: a 3×2 tile grid instead of the scroll rail. Six tools
@@ -27432,3 +27438,23 @@ body.pagenav-mode .trending-toolbar { margin-top: 0 !important; padding-top: 0 !
   font-size: inherit; color: #3559b0; text-decoration: none;
 }
 @media (hover: hover) { .trend-legend .di-howlink:hover { color: #1d4ed8; text-decoration: underline; text-underline-offset: 2px; } }
+
+/* ═══ revamp1039 — news-card dividers always visible + trending top trim ═════ */
+
+/* The "faded out" top border users saw on the first/second story was the hover
+   state zeroing the divider colour: a card under the cursor lost its separator.
+   Keep the divider on hover — the row tint reads fine with it. */
+@media (hover: hover) {
+  /* Keep the divider colour on hover. Cards that are borderless by design have
+     border-top-width:0, so setting only the colour is a no-op for them — the
+     top row stays clean while every other row keeps its separator. */
+  .topic-band #section-newsfeed .news-card:hover {
+    border-top-color: color-mix(in srgb, var(--color-surface-border) 55%, transparent) !important;
+  }
+}
+
+/* Trending landing: pull the first trend and its control row a touch closer to
+   the grey page-title bar above them (was reading as a floaty gap on wide
+   screens). Trending-scoped only — no other page's top spacing moves. */
+.aii-nav-dd-trending .aii-nav-dd-inner { padding-top: 2px !important; }
+.aii-nav-dd-trending .aii-nav-dd-scroll { padding-top: 4px !important; }
