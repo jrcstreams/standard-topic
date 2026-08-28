@@ -27169,3 +27169,73 @@ body.home-search.tt-on #content { overflow: visible !important; }
   body.home-search .home-v2 .home-side #home-trending { margin-top: 0 !important; }
   body.home-search .home-v2 .home-side .hb-hero { margin-bottom: 0 !important; }
 }
+
+/* ============================================================
+   revamp1036 — home feed head stacks; darker heads; first-item
+   gaps closed everywhere (#img876-881)
+   ============================================================ */
+
+/* ── The News Feed head is a COLUMN: title + rule, then the filters beneath.
+      It was a row, which put the topic filters beside the label. ── */
+body.home-search .home-v2 #section-newsfeed .newsfeed-head {
+  display: flex !important; flex-direction: column !important;
+  align-items: stretch !important; gap: 0 !important;
+}
+body.home-search .home-v2 #section-newsfeed .newsfeed-headrow {
+  display: flex !important; align-items: baseline; width: 100% !important;
+}
+
+/* ── Deeper blue on every section head. ── */
+.trail-head,
+.trail-head-ic,
+.home-v2 .home-side .hb-title,
+body.home-search .home-v2 .home-side .hb-title,
+body.home-search .home-v2 #home-trending .trending-topics-head h2,
+body.home-search .home-v2 #home-trending .trending-topics-head h3,
+body.home-search .home-v2 #home-trending .trending-topics-title { color: #16307a !important; }
+@media (min-width: 1200px) {
+  body:not(.tt-on) .topic-band .topic-home .trail-head { color: #16307a !important; }
+}
+
+/* ── The briefing preview card: the pill and the date share one baseline, and
+      the "Today's Briefing" eyebrow goes — the section head already says it. ── */
+.home-v2 .hb-hero .tdi-eyebrow { display: none !important; }
+.tdi-metarow { align-items: center !important; }
+.tdi-metarow .tdi-topiclabel--inline,
+.tdi-metarow .tdi-date,
+.tdi-metarow .tdi-stamp-val { display: inline-flex !important; align-items: center !important; line-height: 1.2 !important; }
+
+/* ── First item sits on its rule, everywhere it repeats. ── */
+/* Trending page, two columns. */
+.trending-topics .trend-card:first-of-type,
+.trending-topics-list > .trend-card:first-of-type { padding-top: 6px !important; }
+.trending-topics-head { margin-bottom: 8px !important; }
+/* Trending page toolbar under the subnav. */
+body.pagenav-mode .trending-topics-head,
+body.pagenav-mode .trending-toolbar { margin-top: 0 !important; padding-top: 0 !important; }
+/* Home side sections. */
+.home-v2 #home-trending .trend-card:first-of-type { padding-top: 4px !important; }
+.home-v2 [data-hq-prompts] .aii-fi-acclist > .aii-fi-acc:first-child > .aii-fi-accsum { padding-top: 6px !important; }
+.home-v2 .home-side .hf-chips { margin-top: 0 !important; padding-top: 0 !important; }
+
+/* ── "View all prompts" reads as a link, centred, matching View more trending. ── */
+.hf-cta--link {
+  display: inline-flex !important; align-items: center; gap: 7px;
+  width: auto !important; margin: 10px auto 0 !important;
+  background: none !important; border: 0 !important; padding: 6px 4px !important;
+  color: #2563eb !important; font-family: var(--font-family);
+  font-size: 0.92rem !important; font-weight: 650 !important;
+  cursor: pointer;
+}
+.home-v2 .home-side .hf-foot { display: flex; justify-content: center; }
+@media (hover: hover) { .hf-cta--link:hover { color: #1d4ed8 !important; text-decoration: underline; } }
+
+/* ── Tab-mode home: the filter row hugs its tabs, and the first story hugs
+      the filter row. ── */
+@media (max-width: 1199.98px) {
+  body.home-search.tt-on #sub-header .home-subfilters.is-on { border-top: 0 !important; }
+  body.home-search.tt-on .home-v2 .news-list { margin-top: 10px !important; }
+  body.home-search.tt-on .home-v2 .news-list > .news-card:first-child { padding-top: 0 !important; }
+  body.home-search.tt-on .home-v2 #home-trending .trend-card:first-of-type,
+  body.home-search.tt-on .home-v2 [data-hq-prompts] .aii-fi-acclist > .aii-fi-acc:first-child > .aii-fi-accsum { padding-top: 4px !important; }
+}

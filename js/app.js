@@ -4404,6 +4404,11 @@ function renderStickyHeroBar(container, route) {
   //    with the whole page usable while it shows. The overlay drawer remains
   //    the sub-1200px behaviour. Preference persists across visits. ──
   const DOCK_MQ = window.matchMedia('(min-width: 900px)');
+  // revamp1036: the sidebar IS the site's primary navigation, so a docked
+  // sidebar is the default at any width that can hold one. A manual collapse
+  // applies while you stay at that width; the moment the viewport crosses back
+  // up over the dock threshold it re-expands, rather than a single collapse
+  // months ago deciding the layout forever.
   const dockWanted = () => { try { return localStorage.getItem('st:sidebar') !== 'closed'; } catch (_) { return true; } };
   const setDockPref = (open) => { try { localStorage.setItem('st:sidebar', open ? 'open' : 'closed'); } catch (_) {} };
   const applyDock = () => {
@@ -4422,7 +4427,12 @@ function renderStickyHeroBar(container, route) {
   window.__applyDock = applyDock;
   if (!window.__dockMQBound) {
     window.__dockMQBound = true;
-    DOCK_MQ.addEventListener('change', () => window.__applyDock && window.__applyDock());
+    DOCK_MQ.addEventListener('change', (e) => {
+      // Crossing UP into dockable territory clears a previous collapse, so the
+      // sidebar comes back on its own as the window widens.
+      if (e.matches) { try { localStorage.removeItem('st:sidebar'); } catch (_) {} }
+      if (window.__applyDock) window.__applyDock();
+    });
   }
   // Always open to the DEFAULT view: collapse any expanded topic accordion and
   // reset the scroll position so it never reopens where you left off (#img26).
@@ -4719,7 +4729,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               </div>
               <div class="hq-grouplabel">Featured Prompts</div>
               <div class="hf-chips" data-hq-prompts></div>
-              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Browse all prompts${HQ_ARROW}</button></div>
+              <div class="hf-foot"><button type="button" class="hf-cta hf-cta--link" data-explore-prompts>View all prompts${HQ_ARROW}</button></div>
             </section>
           </aside>
         </div>
