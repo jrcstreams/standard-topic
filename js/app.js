@@ -1703,19 +1703,11 @@ function diHeroCardHTML(o) {
              what they were reading. Carry it into the open state, with an X to
              close in the top-right. [data-tdi-date] is filled by the same
              querySelectorAll that fills the collapsed stamp. -->
-        <div class="tdi-openhead">
-          <!-- revamp916: icon + title share the top row (with the close X);
-               the topic standfirst and edition stamp sit BELOW it, aligned to
-               the icon's left edge rather than indented under the title. -->
-          <div class="tdi-openhead-top">
-            <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-            <h3 class="tdi-openhead-title">AI Briefing</h3>
-            <button type="button" class="tdi-openx" data-di-toggle aria-label="Close briefing">${X_SVG}</button>
-          </div>
-          <div class="tdi-openhead-meta">
-            ${o.topicLabel ? `<span class="tdi-openhead-topic">${escapeHTML(o.topicLabel)}</span>` : ''}
-            <span class="tdi-date tdi-date--open" data-tdi-date></span>
-          </div>
+        <!-- revamp1037: only the close control survives here. The "AI Briefing"
+             title + sparkle restated the card you already opened, and the topic
+             and date are the briefing's own masthead line now. -->
+        <div class="tdi-openhead tdi-openhead--bare">
+          <button type="button" class="tdi-openx" data-di-toggle aria-label="Close briefing">${X_SVG}</button>
         </div>
         <div data-di-host></div>
         <div class="tdi-closefoot">
@@ -1970,24 +1962,11 @@ function renderFeaturedBriefings(host, opts) {
   host.querySelectorAll('[data-fb-item]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const name = btn.dataset.fbItem, slug = btn.dataset.fbSlug;
-      let tIcon = ''; try { const tt = getTopicBySlug(slug); tIcon = topicIconSVG((tt && tt.icon) || 'globe', ''); } catch (_) {}
-      briefTitle.innerHTML = `
-        <div class="tdi-openhead tdi-openhead--hub">
-          <div class="tdi-openhead-top">
-            <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-            <h3 class="tdi-openhead-title">AI Briefing</h3>
-          </div>
-          <div class="tdi-openhead-meta">
-            <span class="tdi-openhead-topic">${escapeHTML(name)}</span>
-            <span class="tdi-date tdi-date--open" data-fb-stamp></span>
-          </div>
-        </div>`;
+      // revamp1037: no separate open-head. The briefing's own masthead already
+      // carries topic + date + last-updated on one line, so this duplicated it.
+      briefTitle.innerHTML = '';
       briefHost.innerHTML = '';
       renderDailyIntelligence(briefHost, { topic: name, label: name, slug, inline: true });
-      fetchDailyBrief(name).then((d) => {
-        const slot = briefTitle.querySelector('[data-fb-stamp]');
-        if (slot && d && d.generatedAt) slot.innerHTML = diEditionStampHTML(d.generatedAt);
-      }).catch(() => {});
       list.hidden = true; brief.hidden = false;
       if (foot) foot.hidden = true;
       host.classList.add('is-brief');
@@ -2028,15 +2007,10 @@ function renderIntelligenceHub(container) {
 
   container.innerHTML = `
     <div class="dih">
-      <div class="dih-hero">
-        <div class="dih-hero-in">
-          ${backBarHTML()}
-          <header class="dih-head">
-            <h1 class="dih-title"><span class="dih-title-ic" aria-hidden="true">${DI_SPARK_TWO}</span>AI Briefings</h1>
-            <p class="dih-lede">An AI briefing on every topic, twice a day.</p>
-          </header>
-        </div>
-      </div>
+      <!-- revamp1037: the art hero is retired. #sub-header already renders the
+           grey page-title bar ("AI Briefings") on this route, so a second
+           full-bleed header with its own image duplicated the page title. -->
+      ${backBarHTML()}
 
       <!-- revamp947: the lone Cross-Topic card is replaced by a Featured
            Briefings row. It is a [data-dih-group] like every other section, so
@@ -2045,7 +2019,7 @@ function renderIntelligenceHub(container) {
            toggle. -->
       <section class="dih-group dih-group--featured is-open" data-dih-group>
         <div class="dih-featuredhead">
-          <h2 class="dih-bytopic-title">Featured Briefings</h2>
+          <h2 class="dih-bytopic-title">Featured AI Briefings</h2>
           <p class="dih-bytopic-sub">A few of today's briefings to start with.</p>
         </div>
         <div class="dih-groupbody">
@@ -2209,28 +2183,10 @@ function renderIntelligenceHub(container) {
         if (openGroup && openGroup !== group) showList(openGroup);
         const name = btn.dataset.dihItem;
         const slug = btn.dataset.dihSlug;
-        // revamp906: use the SAME Daily Read header as every other surface —
-        // "AI Briefing", the topic as an all-caps standfirst, then the
-        // date/edition pill — instead of an oversized topic title + icon.
-        if (title) {
-          title.innerHTML = `
-            <div class="tdi-openhead tdi-openhead--hub">
-              <div class="tdi-openhead-top">
-                <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-                <h3 class="tdi-openhead-title">AI Briefing</h3>
-              </div>
-              <div class="tdi-openhead-meta">
-                <span class="tdi-openhead-topic">${escapeHTML(name)}</span>
-                <span class="tdi-date tdi-date--open" data-dih-stamp></span>
-              </div>
-            </div>`;
-          // fetchDailyBrief is promise-cached, so this rides the same request
-          // renderDailyIntelligence is already making.
-          fetchDailyBrief(name).then((d) => {
-            const slot = title.querySelector('[data-dih-stamp]');
-            if (slot && d && d.generatedAt) slot.innerHTML = diEditionStampHTML(d.generatedAt);
-          }).catch(() => {});
-        }
+        // revamp1037: the open-head is gone — "AI Briefing" + sparkle repeated
+        // the section it sits in, and the topic/date it carried are now the
+        // briefing's own masthead line (topic pill · date · updated).
+        if (title) title.innerHTML = '';
         if (host) { host.innerHTML = ''; renderDailyIntelligence(host, { topic: name, label: name, slug, inline: true }); }
         if (brief) brief.hidden = false;
         group.classList.add('is-brief');

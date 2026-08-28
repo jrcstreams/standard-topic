@@ -27239,3 +27239,92 @@ body.pagenav-mode .trending-toolbar { margin-top: 0 !important; padding-top: 0 !
   body.home-search.tt-on .home-v2 #home-trending .trend-card:first-of-type,
   body.home-search.tt-on .home-v2 [data-hq-prompts] .aii-fi-acclist > .aii-fi-acc:first-child > .aii-fi-accsum { padding-top: 4px !important; }
 }
+
+/* ═══ revamp1037 — Briefings page + open-briefing header, Featured Prompts ═══
+
+   1. /intelligence loses its image hero: #sub-header already renders the grey
+      page-title bar on that route, so the art band was a second page title.
+   2. Inside a briefing, the topic and date were printed twice — once by an
+      "AI Briefing" open-head (sparkle + all-caps topic + stamp) and once by the
+      briefing's own masthead. The open-head is gone; the masthead now leads
+      with the topic as a pill, then date, then last-updated, dot-separated.
+   3. Featured Prompts is a plain list, not a card inside a card. */
+
+/* ── 1. Briefings hub: no art hero ── */
+.dih-hero { display: none !important; }
+.dih > .dih-group--featured:first-child,
+.dih > .page-backbar + .dih-group--featured { margin-top: 1.15rem !important; }
+@media (max-width: 720px) {
+  .dih > .dih-group--featured:first-child,
+  .dih > .page-backbar + .dih-group--featured { margin-top: 0.95rem !important; }
+}
+
+/* ── 2a. Open-briefing masthead: topic pill · date · updated ── */
+.di-mast {
+  gap: 9px !important;
+  margin: 0 0 7px !important;
+}
+.di-mast-topic {
+  display: inline-flex; align-items: center;
+  padding: 5px 11px; border-radius: 7px;
+  background: #dfe8fb; color: #1e3a8a;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase; line-height: 1.2;
+}
+/* The pill sits at the same optical height as the two text runs beside it. */
+.di-mast-date, .di-mast-time { line-height: 1.2; }
+
+/* ── 2b. Provenance + how-it-works read as ONE line ── */
+.di-prov2 {
+  gap: 8px !important;
+  margin: 0 0 2px !important;
+  color: #6b7a92 !important;
+  font-weight: 500 !important;
+}
+.di-prov2-dot {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: currentColor; opacity: .45; flex: none;
+}
+.di-howlink {
+  text-decoration: none !important;
+  font-size: inherit !important; font-weight: 600 !important;
+  color: #3559b0 !important;
+}
+@media (hover: hover) {
+  .di-howlink:hover { color: #1d4ed8 !important; text-decoration: underline !important; text-underline-offset: 3px; }
+}
+
+/* ── 2c. The Big Picture: heavier label, and a colour that isn't link-blue ── */
+.di-big { margin-top: 13px !important; }
+.di-big-label {
+  font-weight: 800 !important;
+  color: #16307a !important;
+  letter-spacing: 0.085em !important;
+}
+.di-things-label { font-weight: 800 !important; color: #16307a !important; }
+
+/* ── 2d. The open-head keeps only its close control ── */
+.tdi-openhead--bare {
+  display: flex !important; justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 0 !important; padding: 0 !important; margin: 0 0 2px !important;
+  border: 0 !important; background: none !important; min-height: 0 !important;
+}
+
+/* ── 3. Featured Prompts: a list on the page, not a card ── */
+.ph-featured .ph-sec-head--card {
+  border-bottom: 2px solid color-mix(in srgb, #2f4d9e 22%, transparent) !important;
+  padding-bottom: 0.6rem !important;
+  margin-bottom: 0.35rem !important;
+}
+.ph-featured .aii,
+.ph-featured .aii-flow {
+  border: 0 !important; border-radius: 0 !important;
+  background: transparent !important; box-shadow: none !important;
+}
+/* The component's own head restates "Featured Prompts" — the section head
+   above it is the only one this page needs. */
+.ph-featured .aii-head,
+.ph-featured .aii-topbar { display: none !important; }
+.ph-featured .aii-stage { padding: 0 !important; }
+.ph-featured .aii-fi-acclist { padding: 0 !important; }

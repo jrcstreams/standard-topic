@@ -2307,6 +2307,10 @@ export function renderDailyIntelligence(container, scope) {
   // the repeated summary lede are both dropped and the reader lands straight on
   // the content.
   const inline = !!scope.inline;
+  // revamp1037: the masthead leads with the topic as a pill. The site-wide
+  // briefing is labelled "Global Briefing" here to match the homepage card —
+  // its scope label is "Today", which reads as a date beside a date.
+  const mastLabel = (scope.slug === 'home' || scope.topic === 'home') ? 'Global Briefing' : name;
   container.innerHTML = `
     <section class="di-page${inline ? ' di-page--inline' : ''}">
       ${inline ? '' : `<header class="di-head">
@@ -2369,10 +2373,15 @@ export function renderDailyIntelligence(container, scope) {
 
     body.innerHTML = `
       <div class="di-mast">
+        ${mastLabel ? `<span class="di-mast-topic">${esc(mastLabel)}</span>` : ''}
+        ${mastLabel && dateLong ? '<span class="di-mast-dot" aria-hidden="true"></span>' : ''}
         ${dateLong ? `<span class="di-mast-date">${CAL_SVG}<span>${esc(dateLong)}</span></span>` : ''}
         ${timeET ? `<span class="di-mast-dot" aria-hidden="true"></span><span class="di-mast-time">${CLOCK_SVG}<span>Updated ${esc(timeET)} ET</span></span>` : ''}
       </div>
+      <!-- revamp1037: provenance + the how-it-works link read as ONE line
+           (dot-separated, no underline) rather than two stacked fragments. -->
       <div class="di-prov2">${LOGO}<span>AI-generated briefing</span>
+        <span class="di-prov2-dot" aria-hidden="true"></span>
         <button type="button" class="di-howlink" data-di-how>Learn how this works</button>
       </div>
       ${overview ? `<section class="di-big">
