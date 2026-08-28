@@ -26675,3 +26675,58 @@ body.tt-on .tview-tools .topic-top { margin-top: 1.2rem !important; }
    clipped away. The bleed maths is already sidebar-aware (verified 0 h-overflow),
    so home can drop the clip in tab mode. */
 body.home-search.tt-on #content { overflow: visible !important; }
+
+/* ============================================================
+   revamp1024 — the home subnav connects (#img835-837), and the
+   home prompts drop their card (#img838/839)
+   ============================================================ */
+
+@media (max-width: 1199.98px) {
+  /* ── The two rows read as ONE subnav under the Home bar: full-bleed, flush
+        against each other, no inherited container padding between them. ── */
+  body.home-search.tt-on .home-v2,
+  body.home-search.tt-on .home-v2 .home-main,
+  body.home-search.tt-on .home-v2 .newsfeed-card,
+  body.home-search.tt-on .home-v2 .newsfeed-head { padding: 0 !important; margin: 0 !important; border: 0 !important; }
+
+  body.home-search.tt-on .home-viewtabs,
+  body.home-search.tt-on .home-v2 .nf-tabs {
+    --bleed: max(32px, calc((100vw - var(--sbw) - 1440px) / 2 + 32px));
+    margin-left: calc(-1 * var(--bleed)) !important;
+    margin-right: calc(-1 * var(--bleed)) !important;
+    padding-left: var(--bleed) !important;
+    padding-right: var(--bleed) !important;
+    width: auto !important;
+  }
+  /* Row 2 sits directly on row 1 — one hairline between them, not two. */
+  body.home-search.tt-on .home-viewtabs { border-bottom: 1px solid #e5e9f2 !important; }
+  body.home-search.tt-on .home-v2 .nf-tabs {
+    border-top: 0 !important;
+    border-bottom: 1px solid #e5e9f2 !important;
+    background: #f8f9fc !important;
+  }
+  /* The filters are a sub-level: lighter and a touch smaller than the tabs
+     above them, so the hierarchy reads. */
+  body.home-search.tt-on .home-v2 .nf-tab {
+    font-size: 0.86rem !important; font-weight: 500 !important;
+  }
+  body.home-search.tt-on .home-v2 .nf-tab.is-active { font-weight: 650 !important; }
+  body.home-search.tt-on .home-v2 .nf-more--tabs { font-size: 0.86rem !important; }
+
+  /* The first story sits close under the filter row. */
+  body.home-search.tt-on .home-v2 .news-list { margin-top: 14px !important; }
+  body.home-search.tt-on .home-v2 .news-list > .news-card:first-child { border-top: 0 !important; padding-top: 0 !important; }
+}
+
+/* ── Home prompts use the topic-page accordion list, not a card. ── */
+.home-v2 .home-side [data-hf="prompts"],
+.home-v2 .home-side [data-hf="prompts"].hs-block {
+  background: none !important; border: 0 !important;
+  border-radius: 0 !important; box-shadow: none !important; padding: 0 !important;
+}
+.home-v2 .home-side [data-hf="prompts"] .hf-foot { margin-top: 10px; }
+.home-v2 .home-side [data-hq-prompts] .aii-ext-block,
+.home-v2 .home-side [data-hq-prompts] .aii,
+.home-v2 .home-side [data-hq-prompts] .aii-flow {
+  background: none !important; border: 0 !important; padding: 0 !important; margin: 0 !important;
+}

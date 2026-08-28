@@ -1558,7 +1558,7 @@ ${k}`),M.length?M.join(`
             <section class="home-trending hs-block" id="home-trending"></section>
             <section class="hf-card hf-card--prompts hf-card--labelled hs-block" data-hf="prompts">
               <div class="hb-head hf-labelhead">
-                <h3 class="hb-title">AI Research Tools</h3>
+                <h3 class="hb-title">AI Prompts</h3>
               </div>
               <div class="hq-grouplabel">Featured Prompts</div>
               <div class="hf-chips" data-hq-prompts></div>
