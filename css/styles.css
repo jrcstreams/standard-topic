@@ -26493,8 +26493,11 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
   .topic-band .topic-home > .topic-top { align-self: start; padding-top: 0 !important; margin-top: 0 !important; }
   .topic-band .topic-home .newsfeed-card { padding-top: 0 !important; margin-top: 0 !important; }
 
-  /* revamp1009 set these at `body:not(.tt-on) .topic-band .topic-home ...`
-     (0,5,1) with !important, so the shared box has to be written there too. */
+  /* `#topic-tab-body #section-newsfeed .newsfeed-title` carries TWO ids
+     (2,3,0) and beat every class-only attempt — the news head kept 1.24rem
+     while the rail head took 1.32. Match the ids and the two finally share
+     one box. */
+  #topic-tab-body #section-newsfeed .newsfeed-title,
   body:not(.tt-on) .topic-band .topic-home .newsfeed-title,
   body:not(.tt-on) .topic-band .topic-home .trail-head {
     font-family: var(--font-display, var(--font-family)) !important;
@@ -26508,6 +26511,7 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
   /* The rule belongs to the same box on both sides: the head wrapper on the
      news column, the heading itself in the rail. Identical pad + border + gap
      is what puts the two lines at the same y. */
+  #topic-tab-body #section-newsfeed .newsfeed-head,
   body:not(.tt-on) .topic-band .topic-home .newsfeed-head,
   body:not(.tt-on) .topic-band .topic-home .trail-head {
     border-bottom: 2px solid #e0e5ee !important;
@@ -26519,6 +26523,7 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
   body:not(.tt-on) .topic-band .topic-home .newsfeed-headrow {
     margin: 0 !important; padding: 0 !important; min-height: 0 !important;
   }
+  #topic-tab-body #section-newsfeed .newsfeed-title,
   body:not(.tt-on) .topic-band .topic-home .newsfeed-title { font-weight: 750 !important; color: #14204a !important; }
   body:not(.tt-on) .topic-band .topic-home .trail-head { font-weight: 650 !important; color: #2c4f9e !important; }
 
