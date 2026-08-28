@@ -26832,3 +26832,87 @@ body.home-search.tt-on #content { overflow: visible !important; }
 .aii-fi-acclist > .aii-fi-acc.is-open + .aii-fi-acc > .aii-fi-accsum {
   border-top: 0 !important;
 }
+
+/* ============================================================
+   revamp1030 — the home subnav grows to hold its rows; custom
+   scrollbars (#img861-864)
+   ============================================================ */
+
+/* The ident bar is pinned to 56px everywhere. On home in tab mode it now
+   CONTAINS the tab rows, so it has to stack and size to them instead. */
+@media (max-width: 1199.98px) {
+  body.home-search.tt-on #sub-header.is-home-ident,
+  body.nav-docked.home-search.tt-on #sub-header.is-home-ident {
+    height: auto !important; min-height: 0 !important;
+    display: block !important;
+    flex-direction: column;
+  }
+  body.home-search.tt-on #sub-header.is-home-ident .topic-banner { min-height: 56px; display: flex; align-items: center; }
+  body.home-search.tt-on #sub-header .home-viewtabs {
+    display: flex !important; height: 46px; align-items: center;
+    margin: 0 !important; padding: 0 2rem !important;
+    background: #f8f9fc; border-top: 1px solid #e5e9f2; border-bottom: 1px solid #e5e9f2;
+    width: 100%;
+  }
+  body.home-search.tt-on #sub-header .home-subfilters { display: none; }
+  body.home-search.tt-on #sub-header .home-subfilters.is-on {
+    display: block; background: #f8f9fc; border-bottom: 1px solid #e5e9f2;
+  }
+  body.home-search.tt-on #sub-header .home-subfilters .nf-tabs {
+    display: flex !important; height: 46px; align-items: center;
+    flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none;
+    gap: 8px; margin: 0 !important; padding: 0 2rem !important;
+    border: 0 !important; background: none !important; width: 100%;
+  }
+  body.home-search.tt-on #sub-header .home-subfilters .nf-tabs::-webkit-scrollbar { display: none; }
+  body.home-search.tt-on #sub-header .nf-tab { flex: 0 0 auto; font-size: 0.86rem !important; font-weight: 500 !important; }
+  body.home-search.tt-on #sub-header .nf-tab.is-active { font-weight: 650 !important; }
+
+  /* Content clears whatever the subnav actually measures. */
+  html body.home-search.tt-on.app-mode #content,
+  body.home-search.tt-on #content {
+    padding-top: calc(var(--nav-h) + var(--subnav-height, 148px) + 12px) !important;
+  }
+  body.home-search.tt-on .home-v2 { padding-top: 0 !important; }
+}
+@media (max-width: 640px) {
+  body.home-search.tt-on #sub-header .home-viewtabs,
+  body.home-search.tt-on #sub-header .home-subfilters .nf-tabs { padding: 0 1rem !important; }
+}
+
+/* ── Scrollbars: slim, self-coloured, and out of the way until needed. The
+      sidebar was showing the OS default, which reads as chrome from another
+      application sitting inside ours (#img861-864). ── */
+.navmenu-panel,
+.navmenu-scroll,
+.aii-nav-dd,
+.tsp-scroll,
+.newsfeed-scroll-wrap { scrollbar-width: thin; scrollbar-color: #c7cddb transparent; }
+
+.navmenu-panel::-webkit-scrollbar,
+.navmenu-scroll::-webkit-scrollbar,
+.aii-nav-dd::-webkit-scrollbar,
+.tsp-scroll::-webkit-scrollbar,
+.newsfeed-scroll-wrap::-webkit-scrollbar { width: 8px; height: 8px; }
+
+.navmenu-panel::-webkit-scrollbar-track,
+.navmenu-scroll::-webkit-scrollbar-track,
+.aii-nav-dd::-webkit-scrollbar-track,
+.tsp-scroll::-webkit-scrollbar-track,
+.newsfeed-scroll-wrap::-webkit-scrollbar-track { background: transparent; }
+
+.navmenu-panel::-webkit-scrollbar-thumb,
+.navmenu-scroll::-webkit-scrollbar-thumb,
+.aii-nav-dd::-webkit-scrollbar-thumb,
+.tsp-scroll::-webkit-scrollbar-thumb,
+.newsfeed-scroll-wrap::-webkit-scrollbar-thumb {
+  background: #ccd2df; border-radius: 999px;
+  border: 2px solid transparent; background-clip: content-box;
+}
+@media (hover: hover) {
+  .navmenu-panel::-webkit-scrollbar-thumb:hover,
+  .navmenu-scroll::-webkit-scrollbar-thumb:hover,
+  .aii-nav-dd::-webkit-scrollbar-thumb:hover,
+  .tsp-scroll::-webkit-scrollbar-thumb:hover,
+  .newsfeed-scroll-wrap::-webkit-scrollbar-thumb:hover { background: #aab3c6; background-clip: content-box; }
+}
