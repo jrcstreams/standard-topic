@@ -25907,3 +25907,138 @@ body.pagenav-mode #content {
   .sticky-hero-inner #nav-search.navbtn { background: #e9ebf0; border-color: #d8dbe3; border-radius: 10px; }
   .sticky-hero-inner #nav-search .navbtn-ico { color: #1e3a8a; }
 }
+
+/* ============================================================
+   revamp1010 — the punch list (#img734-756)
+   ============================================================ */
+
+/* ── 1. Chrome heights match the sidebar head exactly, and the home bar is
+      the same grey as every other page bar (#img743, #img754). ── */
+#sub-header.is-subnav,
+#sub-header.pagenav,
+#sub-header.is-home-ident { min-height: 56px !important; }
+#sub-header.is-subnav .topic-subnav-inner,
+#sub-header.pagenav .topic-subnav-inner {
+  min-height: 56px; padding-top: 0 !important; padding-bottom: 0 !important;
+}
+#sub-header.is-home-ident { background: #e7ecf3 !important; border-bottom: 1px solid #cdd2d9 !important; }
+/* The ident glyph sits on the label's centreline. */
+#sub-header .subnav-ident { display: inline-flex !important; align-items: center !important; gap: 10px; }
+#sub-header .subnav-ident-ico { display: inline-flex !important; align-items: center !important; line-height: 0; }
+#sub-header .subnav-ident-ico svg { display: block; }
+
+/* ── 2. Change Topic: the body-head dropdown is ABSOLUTE inside the header, so
+      the docked left-offset (meant for the fixed subnav panel) was shoving it
+      320px right and clipping it (#img737, #img744). ── */
+body.nav-docked .topic-bodyhead .tsp-panelwrap { left: 0 !important; right: 0 !important; }
+.topic-bodyhead .tsp-panel { border-right: 0 !important; border-left: 0 !important; }
+
+/* ── 3. "More" is a pill in the pill family: same height, same ink, chevron
+      locked to the label (#img734). ── */
+.topic-bodyhead .tbh-more {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-left: 2px; padding: 0.44rem 0.95rem;
+  border: 1px solid color-mix(in srgb, #2f4d9e 22%, transparent) !important;
+  border-radius: 999px; background: #fff !important;
+  font-size: 0.94rem !important; font-weight: 600 !important; line-height: 1.35;
+  color: #33415e !important;
+}
+.topic-bodyhead .tbh-more-chev { display: inline-flex; align-items: center; line-height: 0; }
+.topic-bodyhead .tbh-more-chev svg { width: 13px; height: 13px; display: block; }
+.topic-bodyhead .tbh-more::before { display: none !important; }
+
+/* ── 4. The subtopic row sits ABOVE its separator (#img736). ── */
+.topic-bodyhead .tbh-subswrap {
+  border-top: 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+  padding-bottom: 14px !important;
+  margin-bottom: 1.15rem !important;
+}
+
+/* ── 5. Every prompt shows. `.tpr-list` carries max-height:30em + overflow
+      hidden for the card's collapse animation — in the rail that clipped the
+      list at 8 of 29 rows (#img734). ── */
+.topic-band .topic-home .tpr-card:not(.is-open) .tpr-list {
+  max-height: none !important; overflow: visible !important;
+}
+
+/* ── 6. Section heads line up across the columns (#img736). ── */
+body:not(.tt-on) .topic-band .topic-home > .topic-news-wrap,
+body:not(.tt-on) .topic-band .topic-home > .topic-top { padding-top: 0 !important; }
+body:not(.tt-on) .topic-band .topic-home .newsfeed-head { padding-bottom: 12px !important; border-bottom: 2px solid #e0e5ee !important; margin-bottom: 12px !important; }
+body:not(.tt-on) .topic-band .topic-home .newsfeed-headrow { margin: 0 !important; }
+
+/* ── 7. First story keeps its top border; the story AFTER an open panel keeps
+      its border too (#img735, #img746). ── */
+body:not(.tt-on) .topic-band .topic-home .news-list > .news-card:first-child {
+  border-top: 1px solid #e8edf5 !important;
+}
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) + .news-card {
+  border-top-color: #e8edf5 !important;
+}
+
+/* ── 8. Story actions: real breathing room, and they stay right-aligned even
+      when the story has no summary (#img740). ── */
+.news-card-actions { gap: 12px !important; }
+.news-card-body > .news-card-actions:only-child { margin-left: auto; }
+
+/* ── 9. The AI-insights foot clears the sources row (#img745). ── */
+.ni-closefoot { margin-top: 18px !important; padding-top: 4px; }
+
+/* ── 10. View tabs: a true underline, not an accent bar; taller bar (#img739). ── */
+.topic-viewtabs { gap: 26px; padding-top: 4px !important; padding-bottom: 0 !important; }
+.tvt { padding: 13px 2px 15px; }
+.tvt::after { display: none !important; }
+.tvt.is-active {
+  background: none !important; color: #14204a !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 7px !important;
+  text-decoration-color: #1e3a8a !important;
+}
+
+/* ── 11. Tab-view stories run the content width with real side padding. ── */
+body.tt-on .topic-band.topic-layout { padding-left: 2rem !important; padding-right: 2rem !important; }
+@media (max-width: 640px) {
+  body.tt-on .topic-band.topic-layout { padding-left: 1rem !important; padding-right: 1rem !important; }
+}
+body.tt-on .topic-band .topic-home #section-newsfeed .news-list { grid-template-columns: 1fr !important; }
+
+/* ═══════════════ HOMEPAGE ═══════════════ */
+
+/* ── 12. Content rides higher. ── */
+html body.nav-docked.home-search.app-mode #content,
+html body.home-search.app-mode.sticky-always #content,
+body.home-search #content { padding-top: calc(var(--nav-h) + 56px) !important; }
+.home-v2 { padding-top: 1.1rem !important; }
+
+/* ── 13. The briefing and tools blocks are sections with heads, not cards
+      wrapping cards (#img747, #img752). Trending stays the one grey card. ── */
+.home-v2 .home-side .home-featbriefs.hs-block,
+.home-v2 .home-side .hf-card.hs-block {
+  background: none !important; border: 0 !important;
+  border-radius: 0 !important; box-shadow: none !important;
+  padding: 0 !important;
+}
+.home-v2 .home-side .hb-head.hf-labelhead {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding-bottom: 12px; border-bottom: 2px solid #e0e5ee; margin-bottom: 12px;
+}
+.home-v2 .home-side .hb-title {
+  font-family: var(--font-display, var(--font-family));
+  font-size: 1.24rem !important; font-weight: 750 !important;
+  letter-spacing: -0.012em; color: #14204a; margin: 0 !important;
+  text-transform: none !important;
+}
+.home-v2 .home-side .hb-all {
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 650;
+  color: #2c4f9e; text-decoration: none; white-space: nowrap;
+}
+.home-v2 .home-side .hf-chips { padding-top: 0 !important; }
+
+/* ═══════════════ SEARCH PAGE ═══════════════ */
+
+/* ── 14. The title and its input sit together, higher up (#img756). ── */
+.search-page .search-panel-title { margin-bottom: 0.9rem !important; }
+.search-page .search-panel-hero-inner { padding-top: 0 !important; }
+.search-page { padding-top: 0.4rem; }

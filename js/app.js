@@ -2486,7 +2486,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
           </div>
         </section>
         <section class="topic-top-side">
-          <h3 class="trail-head">AI Research Tools</h3>
+          <h3 class="trail-head">AI Prompts</h3>
           <div class="tpr-card" data-tpr>
             <div class="tpr-head">
               <h2 class="tsec-title tpr-card-title"><span class="tsec-ic tsec-ic--pr" aria-hidden="true">${DI_SPARK_TWO}</span>AI Research Tools</h2>
@@ -3916,8 +3916,9 @@ function renderPageNavBar(kind) {
   if (!name) return;
   document.body.classList.add('has-subnav', 'pagenav-mode');
   subHeader.className = 'is-subnav static-page pagenav';
+  // revamp1010: Search's bar carries no action — the input IS the control.
   const action = kind === 'search'
-    ? '<button type="button" class="pagenav-action" data-pagenav-newsearch>Start New Search</button>'
+    ? ''
     : kind === 'prompts'
     ? '<a href="#/prompts/build" class="pagenav-action">Build Prompt</a>'
     : (kind === 'topics'
@@ -4693,6 +4694,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     container.innerHTML = `
       <div class="topic-layout home-grid" id="topic-layout">
         ${bodyTabsRow({ showSearchTrends: true })}
+        <div class="home-viewtabs topic-viewtabs" data-home-viewtabs role="tablist" aria-label="Home sections">
+          <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">Today's News</button>
+          <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">AI Briefing</button>
+          <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">Trending</button>
+          <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="tools">AI Prompts</button>
+        </div>
         <div class="home-sections home-v2">
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
@@ -4707,7 +4714,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <section class="hf-card hf-card--prompts hf-card--labelled hs-block" data-hf="prompts">
               <div class="hb-head hf-labelhead">
                 <h3 class="hb-title">AI Research Tools</h3>
-                <a class="hb-all" href="#/prompts">2,500+ prompts${SUBPAGE_ARROW}</a>
               </div>
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Browse all prompts${HQ_ARROW}</button></div>
@@ -4721,11 +4727,25 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // revamp981: a shorter sidebar list — "View more trending" carries the rest
     // through to the trending page rather than the sidebar being the whole list.
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 5 });
+    {
+      const grid = container.querySelector('.home-v2');
+      container.querySelectorAll('[data-hview]').forEach((b) => b.addEventListener('click', () => {
+        const v = b.dataset.hview;
+        grid.classList.toggle('hview-brief', v === 'brief');
+        grid.classList.toggle('hview-trend', v === 'trend');
+        grid.classList.toggle('hview-tools', v === 'tools');
+        container.querySelectorAll('[data-hview]').forEach((x) => {
+          const on = x === b;
+          x.classList.toggle('is-active', on);
+          x.setAttribute('aria-selected', String(on));
+        });
+      }));
+    }
     // revamp949: the homepage leads with a Featured AI Briefings row built from
     // the same cards as the AI Briefings page.
     renderFeaturedBriefings(container.querySelector('[data-home-featbriefs]'), {
       compact: true,
-      title: "Today's AI Briefing",
+      title: 'AI Briefing',
       // A briefing page with a spark — reads at chip size, unlike the bare
       // sparkle, and sits with the grid/wand marks on the cards below.
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>',

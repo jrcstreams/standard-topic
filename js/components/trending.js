@@ -684,7 +684,13 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
       const c = it._cat || '';
       if (c && seen.has(c)) extra.push(it); else { seen.add(c); primary.push(it); }
     }
-    items = primary.concat(extra).slice(0, limit);
+    // revamp1010: the home card is a five-slot showcase, so prefer trends whose
+    // AI summary has already generated — a card with its one-liner is the point
+    // of the surface. Summary-less trends fill any remaining slots.
+    const ordered = primary.concat(extra);
+    const withSum = ordered.filter((t) => t.summary && String(t.summary).trim());
+    const noSum = ordered.filter((t) => !(t.summary && String(t.summary).trim()));
+    items = withSum.concat(noSum).slice(0, limit);
     if (!items.length) { grid.innerHTML = `<p class="trending-empty">No trends ${state.mode === 'over' ? 'in this window yet' : 'right now'}.</p>`; return; }
     grid.innerHTML = items.map((t, i) => trendCardHTML(t, i)).join('');
     // Homepage trends expand their brief inline (Phase 5), no modal.
