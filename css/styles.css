@@ -26284,28 +26284,79 @@ body:not(.tt-on) .topic-band .topic-home .newsfeed-headtext { margin: 0 !importa
   .ph-flist .aii-fi-acclist { grid-template-columns: 1fr !important; }
 }
 
-/* One accordion treatment everywhere it is embedded: a bordered card that
-   lights up and squares off its bottom edge when open, so the prompt panel
-   reads as the same object continuing rather than a second box. */
-[data-hq-prompts] .aii-fi-acc,
-.ph-flist .aii-fi-acc,
-.topic-band .topic-home .tpr-inline .aii-fi-acc {
-  border: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent);
-  border-radius: 10px;
-  background: #fff;
-  transition: border-color .14s ease, box-shadow .16s ease;
+
+/* ============================================================
+   revamp1015 — prompts are a LIST, not a wall of cards. Closed
+   rows read like the topic lists: icon, name, chevron, hairline.
+   The container appears only when a prompt is opened, which is
+   what makes "you opened this one" legible (#img794-798).
+   ============================================================ */
+
+/* ── Closed: a flat list row. No border, no card, no gap. ── */
+.aii-fi-acclist { gap: 0 !important; }
+.aii-fi-acc {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent) !important;
+}
+.aii-fi-acclist > .aii-fi-acc:last-child { border-bottom: 0 !important; }
+.aii-fi-accsum {
+  padding: 11px 4px 11px 2px !important;
+  border-radius: 0 !important;
+  background: none !important;
 }
 @media (hover: hover) {
-  [data-hq-prompts] .aii-fi-acc:not(.is-open):hover,
-  .ph-flist .aii-fi-acc:not(.is-open):hover,
-  .topic-band .topic-home .tpr-inline .aii-fi-acc:not(.is-open):hover {
-    border-color: color-mix(in srgb, #2f4d9e 32%, transparent);
-    box-shadow: 0 2px 10px -6px rgba(30, 58, 138, .28);
-  }
+  .aii-fi-acc:not(.is-open) .aii-fi-accsum:hover { background: none !important; }
+  .aii-fi-acc:not(.is-open) .aii-fi-accsum:hover .aii-fi-acc-name { color: #1d4ed8; }
+  .aii-fi-acc:not(.is-open) .aii-fi-accsum:hover .aii-fi-acc-ic { color: #1d4ed8; }
 }
-[data-hq-prompts] .aii-fi-acc.is-open,
-.ph-flist .aii-fi-acc.is-open,
-.topic-band .topic-home .tpr-inline .aii-fi-acc.is-open {
-  border-color: color-mix(in srgb, #2f4d9e 40%, transparent);
-  box-shadow: 0 6px 20px -12px rgba(30, 58, 138, .3);
+/* The icon sits in the same soft chip the topic + sidebar lists use. */
+.aii-fi-acc-ic {
+  width: 30px !important; height: 30px !important;
+  border-radius: 8px;
+  background: color-mix(in srgb, #2f4d9e 7%, #fff);
+  color: #4a5f8f !important;
+  transition: background .13s ease, color .13s ease;
+}
+.aii-fi-acc-ic svg { width: 16px !important; height: 16px !important; }
+.aii-fi-acc-chev { color: #8c99b0; }
+
+/* ── Open: NOW it becomes a container. The row and its prompt panel are one
+      bordered object, lifted off the list so the open state is unmistakable. ── */
+.aii-fi-acc.is-open {
+  border: 1px solid color-mix(in srgb, #2f4d9e 34%, transparent) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: 0 8px 24px -14px rgba(30, 58, 138, .34) !important;
+  margin: 10px 0 !important;
+  overflow: hidden;
+}
+.aii-fi-acclist > .aii-fi-acc.is-open:first-child { margin-top: 0 !important; }
+.aii-fi-acc.is-open .aii-fi-accsum {
+  background: #eef2fa !important;
+  border-radius: 12px 12px 0 0 !important;
+  padding: 13px 16px 13px 14px !important;
+}
+@media (hover: hover) {
+  .aii-fi-acc.is-open .aii-fi-accsum:hover { background: #eef2fa !important; border-radius: 12px 12px 0 0 !important; }
+}
+.aii-fi-acc.is-open .aii-fi-acc-ic { background: none; color: #1e3a8a !important; }
+.aii-fi-acc.is-open .aii-fi-acc-name { color: #14204a; }
+
+/* ── The lists themselves: multi-column where there's room, like Topics. ── */
+.ph-flist .aii-fi-acclist {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+  column-gap: 30px !important;
+}
+/* An open row spans the full width so its panel isn't squeezed into a column. */
+.ph-flist .aii-fi-acclist > .aii-fi-acc.is-open { grid-column: 1 / -1; }
+@media (max-width: 639px) {
+  .ph-flist .aii-fi-acclist { grid-template-columns: 1fr !important; }
+}
+/* Narrow rails stay single column. */
+.home-v2 .home-side [data-hq-prompts] .aii-fi-acclist,
+body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
+  grid-template-columns: 1fr !important;
 }
