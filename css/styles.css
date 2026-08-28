@@ -26998,9 +26998,17 @@ body.home-search.tt-on #content { overflow: visible !important; }
     letter-spacing: -0.012em !important; color: #14204a !important;
     margin: 0 !important; padding: 0 !important;
   }
-  /* The first story starts right under the rule rather than floating. */
+  /* The first story sits on the rule at the same rhythm the stories keep
+     between themselves — 36px read as a detached block. */
+  body.home-search .home-v2 #section-newsfeed .news-list,
   body.home-search .home-v2 .news-list { margin-top: 0 !important; }
+  body.home-search .home-v2 #section-newsfeed .newsfeed-scroll-wrap { margin-top: 0 !important; padding-top: 0 !important; }
+  body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child,
   body.home-search .home-v2 .news-list > .news-card:first-child {
-    border-top: 0 !important; padding-top: 4px !important;
+    border-top: 0 !important; padding-top: 2px !important; margin-top: 0 !important;
   }
+  /* Both column heads start on the same line. */
+  body.home-search .home-v2 .home-side > .hs-block:first-child { margin-top: 0 !important; }
+  body.home-search .home-v2 .home-main,
+  body.home-search .home-v2 .home-side { padding-top: 0 !important; margin-top: 0 !important; }
 }
