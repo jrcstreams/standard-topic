@@ -4726,10 +4726,21 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // revamp981: a shorter sidebar list — "View more trending" carries the rest
     // through to the trending page rather than the sidebar being the whole list.
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 5 });
-    // revamp1031: the feed is tall and the browser restores its own scroll
-    // position on a same-document render, which landed visitors mid-feed.
+    // revamp1031b: one rAF was not enough — the feed renders asynchronously and
+    // the browser re-anchors to its remembered offset once the page grows tall
+    // enough to allow it. Reset across the settle window instead, and stop as
+    // soon as the visitor scrolls themselves so we never fight them.
     try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (_) {}
-    requestAnimationFrame(() => window.scrollTo(0, 0));
+    {
+      let cancelled = false;
+      const stop = () => { cancelled = true; };
+      window.addEventListener('wheel', stop, { once: true, passive: true });
+      window.addEventListener('touchstart', stop, { once: true, passive: true });
+      window.addEventListener('keydown', stop, { once: true });
+      [0, 60, 200, 500, 900, 1500].forEach((d) => setTimeout(() => {
+        if (!cancelled && (window.scrollY || 0) > 0) window.scrollTo(0, 0);
+      }, d));
+    }
     {
       const grid = container.querySelector('.home-v2');
       // revamp1025: the tabs live in #sub-header, so query the document.
