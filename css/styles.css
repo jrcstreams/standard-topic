@@ -27491,3 +27491,13 @@ body.home-search.tt-on .home-v2 #home-trending .trending-topics-titlerow {
 /* The featured-briefs card and prompts card lose their header padding too, so
    the content starts at the top of the panel. */
 body.home-search.tt-on .home-v2 .hf-card--prompts { padding-top: 4px !important; }
+
+/* revamp1042 — home Trending head: left-align the legend row. The head is a
+   centered column; with the title row hidden in tab mode the lone AI-generated
+   legend sat dead-centre while the trend rows below it were left-aligned, which
+   read as "all over the place". Align the head's items to the start so the
+   legend lines up with everything else. */
+.home-v2 #home-trending .trending-topics-head { align-items: flex-start !important; }
+.home-v2 #home-trending .trend-legend-row {
+  align-self: stretch !important; justify-content: flex-start !important; width: 100% !important;
+}
