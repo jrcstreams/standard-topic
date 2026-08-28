@@ -26730,3 +26730,55 @@ body.home-search.tt-on #content { overflow: visible !important; }
 .home-v2 .home-side [data-hq-prompts] .aii-flow {
   background: none !important; border: 0 !important; padding: 0 !important; margin: 0 !important;
 }
+
+/* ============================================================
+   revamp1028 — HOTFIX: size the head sparkle; the night theme is
+   retired, so the card stays the light report
+   ============================================================ */
+
+/* The spark is an inline SVG with no intrinsic size — without an explicit box
+   it expanded to fill the column. */
+.trail-head { display: flex !important; align-items: center; gap: 9px; }
+.trail-head-ic {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  width: 19px !important; height: 19px !important; flex: none !important;
+  color: #2c4f9e;
+}
+.trail-head-ic svg {
+  width: 19px !important; height: 19px !important;
+  display: block; fill: currentColor;
+}
+
+/* Briefings publish at 7pm ET, so every card carries is-evening now. The
+   night/day theming was retired in revamp1016 — pin the light report
+   treatment regardless of the class. */
+.tdi-card--hero2.is-evening,
+.hb-hero .tdi-card.is-evening,
+.topic-home .tdi-card--hero2.is-evening {
+  background: #f4f6fa !important;
+  border: 1px solid #e2e7f0 !important;
+  --tdi-art-ground: #f4f6fa !important;
+}
+.tdi-card--hero2.is-evening .tdi-summary,
+.hb-hero .tdi-card.is-evening .tdi-summary,
+.topic-home .tdi-card--hero2.is-evening .tdi-summary { color: #33415e !important; }
+.tdi-card--hero2.is-evening .tdi-topiclabel,
+.tdi-card--hero2.is-evening .tdi-date,
+.tdi-card--hero2.is-evening .tdi-stamp-val,
+.tdi-card--hero2.is-evening .tdi-stamp-ed,
+.topic-home .tdi-card--hero2.is-evening .tdi-topiclabel,
+.topic-home .tdi-card--hero2.is-evening .tdi-date,
+.topic-home .tdi-card--hero2.is-evening .tdi-stamp-val,
+.hb-hero .tdi-card.is-evening .tdi-topiclabel,
+.hb-hero .tdi-card.is-evening .tdi-date,
+.hb-hero .tdi-card.is-evening .tdi-stamp-val { color: #52618a !important; }
+.tdi-card--hero2.is-evening .tdi-cardprov,
+.hb-hero .tdi-card.is-evening .tdi-cardprov { color: #6b7a92 !important; }
+
+/* Topic pill + calendar glyph in the masthead (mockup #img847). */
+.tdi-metarow .tdi-topiclabel--inline {
+  background: #e3eafc; color: #24408f !important;
+  padding: 4px 10px; border-radius: 999px;
+}
+.tdi-stamp-val { display: inline-flex; align-items: center; gap: 6px; }
+.tdi-stamp-cal { flex: none; opacity: .75; }
