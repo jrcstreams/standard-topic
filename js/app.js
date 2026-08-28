@@ -2510,39 +2510,8 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
           <h3 class="trail-head">AI Prompts</h3>
           <div class="tpr-card" data-tpr>
             <div class="tpr-head">
-              <h2 class="tsec-title tpr-card-title"><span class="tsec-ic tsec-ic--pr" aria-hidden="true">${DI_SPARK_TWO}</span>AI Research Tools</h2>
-              <button type="button" class="tpr-headclose" data-pr-toggle aria-label="Close prompts">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                <span>Close Prompts</span>
-              </button>
             </div>
-            <p class="tpr-sub">Ready-made tools to research this topic.</p>
-            ${featuredPrompts.length ? `<ul class="tpr-list">${(() => {
-              const row = (sc) => `
-              <li class="tpr-row"><button type="button" class="tpr-row-btn" data-tpr-open="${escapeAttr(sc.name || '')}">
-                <span class="tpr-row-ic" aria-hidden="true">${promptRowIconSVG(sc)}</span>
-                <span class="tpr-row-name">${escapeHTML(sc.name || '')}</span>
-                <span class="tpr-row-go" aria-hidden="true">${SUBPAGE_ARROW}</span>
-              </button></li>`;
-              const ts = featuredPrompts.filter((x) => !x.evergreen);
-              const ev = featuredPrompts.filter((x) => x.evergreen);
-              return (ts.length ? `<li class="tpr-grouplabel">Topic-Specific Prompts</li>` + ts.map(row).join('') : '')
-                   + (ev.length ? `<li class="tpr-grouplabel">Evergreen Prompts</li>` + ev.map(row).join('') : '');
-            })()}</ul>` : ''}
-            <button type="button" class="tpr-go" data-pr-toggle aria-expanded="false">
-              <span class="tpr-go-open">View all tools</span>
-              <span class="tpr-go-short">View all</span>
-              <span class="tpr-go-close">Hide tools</span>${SUBPAGE_ARROW}
-            </button>
-            <div class="tpr-expand" data-pr-expand><div class="tpr-expand-inner">
-              <div data-pr-host></div>
-              <div class="tdi-closefoot tpr-closefoot">
-                <button type="button" class="tdi-closefoot-btn" data-pr-toggle>
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  <span>Close Prompts</span>
-                </button>
-              </div>
-            </div></div>
+            <div class="tpr-inline" data-pr-host></div>
           </div>
         </section>
       </div>
@@ -2556,7 +2525,21 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // dead code since the tabbed layout went away.
     wireSubnavPicker(body);
     wireSubtopicsMore(body);
-    wireRailDots(body.querySelector('.topic-top-side .tpr-list'));
+    // revamp1012: the prompts component renders INLINE in the rail — the rows
+    // are the accordions, so a prompt opens in place with its Run/Copy/Model
+    // panel instead of swapping in a separate library view. Same component the
+    // tab view uses, so the behaviour is identical everywhere.
+    {
+      const host = body.querySelector('.topic-top-side [data-pr-host]');
+      if (host) {
+        renderAIIntelligence(host, {
+          inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+          topic: topic.name, label: topic.name,
+          descriptions, icons, shortcuts,
+          topicKey: topic.slug,
+        });
+      }
+    }
     // Topic view tabs: container classes drive which section shows in the
     // narrow tabbed layout; on wide screens the tabs row is display:none and
     // the classes are inert (all sections show in the two-column grid).
@@ -2588,9 +2571,6 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
             c.classList.remove('was-evening'); c.classList.add('is-evening');
           }
         });
-        if (v === 'tools' && top && !top.classList.contains('is-pr-open')) {
-          home.querySelector('[data-pr-toggle]')?.click();
-        }
       }));
     }
     wireTopicHeroCondense();
@@ -4718,7 +4698,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       <div class="topic-layout home-grid" id="topic-layout">
         ${bodyTabsRow({ showSearchTrends: true })}
         <div class="home-viewtabs topic-viewtabs" data-home-viewtabs role="tablist" aria-label="Home sections">
-          <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">Today's News</button>
+          <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">News Feed</button>
           <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">AI Briefing</button>
           <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">Trending</button>
           <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="tools">AI Prompts</button>

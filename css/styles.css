@@ -26181,3 +26181,69 @@ body.tt-on .tview-brief .tdi-card { background: #fff !important; border: 0 !impo
 /* ── 8. Topic rail heads sit on the news head's baseline (#img776/777). ── */
 body:not(.tt-on) .topic-band .topic-home > .topic-top { padding-top: 0 !important; margin-top: 0 !important; }
 body:not(.tt-on) .topic-band .topic-home .trail-head:first-child { margin-top: 0 !important; }
+
+/* ============================================================
+   revamp1012 — prompts render inline everywhere; news filters
+   become the News Feed tab's subnav
+   ============================================================ */
+
+/* ── 1. The rail's prompt component sits on the page, not in a card. ── */
+.topic-band .topic-home .tpr-card,
+.topic-band .topic-home .tpr-card.is-open {
+  border: 0 !important; background: none !important; box-shadow: none !important;
+  padding: 0 !important; border-radius: 0 !important;
+}
+.topic-band .topic-home .tpr-head { display: none !important; }
+.topic-band .topic-home .tpr-inline .aii-head,
+.topic-band .topic-home .tpr-inline .aii-builder-topbar,
+.topic-band .topic-home .tpr-inline .aii-nav-dd-head { display: none !important; }
+/* Group headings read as the rail's own labels. */
+.topic-band .topic-home .tpr-inline .aii-fi-sec-title {
+  font-family: var(--font-family) !important;
+  font-size: 0.78rem !important; font-weight: 700 !important;
+  letter-spacing: 0.07em !important; text-transform: uppercase !important;
+  color: #6b7a92 !important;
+}
+.topic-band .topic-home .tpr-inline .aii-fi-sec { margin-top: 16px !important; }
+.topic-band .topic-home .tpr-inline .aii-fi-sec:first-child { margin-top: 2px !important; }
+/* In the narrow rail the accordions stack one per row. */
+body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acc-grid,
+body:not(.tt-on) .topic-band .topic-home .tpr-inline [class*="aii-fi-grid"] {
+  grid-template-columns: 1fr !important;
+}
+
+/* ── 2. News topic filters are the News Feed tab's subnav in tab mode:
+      a scrollable chip row attached under the tabs, not a wrapped block. ── */
+body.tt-on .home-v2 .nf-tabs,
+body.tt-on .topic-band .nf-tabs {
+  display: flex !important; flex-wrap: nowrap !important;
+  overflow-x: auto; scrollbar-width: none;
+  gap: 8px; padding: 10px 0 12px !important;
+  border-top: 0 !important;
+}
+body.tt-on .home-v2 .nf-tabs::-webkit-scrollbar,
+body.tt-on .topic-band .nf-tabs::-webkit-scrollbar { display: none; }
+body.tt-on .home-v2 .nf-tab,
+body.tt-on .topic-band .nf-tab { flex: 0 0 auto; }
+body.tt-on .home-v2 .nf-more--tabs { flex: 0 0 auto; }
+
+/* ── 3. Home in tab mode: one section at a time. ── */
+body.tt-on .home-v2 { display: block !important; }
+body.tt-on .home-v2:not(.hview-brief):not(.hview-trend):not(.hview-tools) .home-side { display: none !important; }
+body.tt-on .home-v2.hview-brief .home-main,
+body.tt-on .home-v2.hview-trend .home-main,
+body.tt-on .home-v2.hview-tools .home-main { display: none !important; }
+body.tt-on .home-v2.hview-brief .home-trending,
+body.tt-on .home-v2.hview-brief [data-hf="prompts"],
+body.tt-on .home-v2.hview-trend .home-featbriefs,
+body.tt-on .home-v2.hview-trend [data-hf="prompts"],
+body.tt-on .home-v2.hview-tools .home-featbriefs,
+body.tt-on .home-v2.hview-tools .home-trending { display: none !important; }
+body.tt-on .home-v2 .home-side { display: block; }
+
+/* ── 4. The rail heads share the news head's exact baseline. ── */
+body:not(.tt-on) .topic-band .topic-home .trail-head,
+body:not(.tt-on) .topic-band .topic-home .newsfeed-title {
+  line-height: 1.25 !important; padding-top: 0 !important; margin-top: 0 !important;
+}
+body:not(.tt-on) .topic-band .topic-home .newsfeed-headtext { margin: 0 !important; padding: 0 !important; }
