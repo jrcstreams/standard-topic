@@ -27458,3 +27458,9 @@ body.pagenav-mode .trending-toolbar { margin-top: 0 !important; padding-top: 0 !
    screens). Trending-scoped only — no other page's top spacing moves. */
 .aii-nav-dd-trending .aii-nav-dd-inner { padding-top: 2px !important; }
 .aii-nav-dd-trending .aii-nav-dd-scroll { padding-top: 4px !important; }
+
+/* revamp1039c — the inline news-insight AI chip is a how-it-works trigger too. */
+.ni-aitag[data-how-it-works] { border: 0; cursor: pointer; font-family: var(--font-family); transition: background .13s ease, color .13s ease; }
+@media (hover: hover) {
+  .ni-aitag[data-how-it-works]:hover { background: #e7edfa; color: #1d4ed8; }
+}

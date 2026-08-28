@@ -769,7 +769,7 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
     if (renderer) return renderer;
     // Same head as the finished panel, so nothing appears or moves at handover.
     panel.innerHTML = '<div class="ni-inner ni-streaming">'
-      + '<div class="ni-aitag-row"><span class="ni-aitag">' + AI_SPARK_SVG + '<span>AI Generated Text</span></span></div>'
+      + '<div class="ni-aitag-row"><button type="button" class="ni-aitag" data-how-it-works>' + AI_SPARK_SVG + '<span>AI Generated Text</span></button></div>'
       + '<div class="ni-streambody"></div></div>';
     renderer = createStreamRenderer(panel.querySelector('.ni-streambody'), parseBrief);
     return renderer;
@@ -819,7 +819,7 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       const drawers = drawerLinkHTML('Search this story further', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
         + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC) : '');
       panel.innerHTML = `<div class="ni-inner ai-reveal">
-        <div class="ni-aitag-row"><span class="ni-aitag">${AI_SPARK_SVG}<span>AI Generated Text</span></span></div>
+        <div class="ni-aitag-row"><button type="button" class="ni-aitag" data-how-it-works>${AI_SPARK_SVG}<span>AI Generated Text</span></button></div>
         ${secHTML}
         <div class="trend-exp-drawers">${drawers}</div>
       </div>${niCloseFootHTML()}`;
