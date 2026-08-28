@@ -108,7 +108,7 @@ function wireXfReview(host, base) {
   const advOpts = () => {
     const r = REASONING_LEVELS.find((l) => l.id === ps.reasoning);
     const ot = xfSimpleOutputOptions().find((o) => o.value === ps.outputType);
-    return { reasoningHint: r && r.hint ? r.hint : '', outputClause: ot ? ot.clause : '', secondaryTopic: ps.secondaryTopic.trim(), secondaryClauseTpl: xfSecondaryClauseTpl(), customInstructions: ps.customInstructions.trim(), topicName: '' };
+    return { reasoningHint: r && r.hint ? r.hint : '', outputClause: ot ? ot.clause : '', outputLabel: ot ? ot.label : '', secondaryTopic: ps.secondaryTopic.trim(), secondaryClauseTpl: xfSecondaryClauseTpl(), customInstructions: ps.customInstructions.trim(), topicName: '' };
   };
   const assembled = () => assemblePrompt(base, advOpts());
   const regen = () => { edited = null; if (ta) ta.value = assembled(); if (resetBtn) resetBtn.hidden = true; };

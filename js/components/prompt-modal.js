@@ -156,7 +156,7 @@ function currentAdvancedOpts() {
   const ot = simpleOutputOptions().find(o => o.value === ps.outputType);
   return {
     reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '',
-    outputClause: ot ? ot.clause : '',
+    outputClause: ot ? ot.clause : '', outputLabel: ot ? ot.label : '',
     secondaryTopic: ps.secondaryTopic.trim(),
     secondaryClauseTpl: secondaryClauseTpl(),
     customInstructions: ps.customInstructions.trim(),

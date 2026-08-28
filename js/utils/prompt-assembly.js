@@ -8,7 +8,16 @@ export function assemblePrompt(base, opts) {
   const parts = [];
   if (opts.reasoningHint) parts.push(opts.reasoningHint);
   parts.push(base);
-  if (opts.outputClause) {
+  // The output-type clauses in prompt-generator.json are written as STANDALONE
+  // requests ("Provide a detailed research summary about {primary_topic}") —
+  // correct for the generator, where the clause IS the prompt. Layered onto an
+  // existing prompt they read as a second, competing request about the whole
+  // topic, which is exactly what a reader sees when they set an output type on
+  // a topic shortcut. With a base prompt present, express the choice as a
+  // format directive for THAT request instead.
+  if (base && opts.outputLabel) {
+    parts.push(`Format the response to the request above as a ${String(opts.outputLabel).toLowerCase()}.`);
+  } else if (opts.outputClause) {
     parts.push(opts.outputClause.replace(/\{primary_topic\}/g, opts.topicName || ''));
   }
   if (opts.secondaryTopic && opts.secondaryClauseTpl) {

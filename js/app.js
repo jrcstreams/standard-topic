@@ -465,8 +465,12 @@ function wireTopicHeroCondense() {
       __bodyHeadH = bh ? bh.offsetHeight : 0;
     }
     const bhH = __bodyHeadH;
-    const onThresh = Math.max(36, bhH - 24);
-    const offThresh = Math.max(12, bhH - 64);
+    // revamp1035: the bar used to arrive at (headHeight - 24), i.e. while ~24px
+    // of the header was still on screen — and since the bar is a full-width
+    // opaque band at top:0, that overlap is what read as a wash over the title
+    // and pills. Wait until the header has FULLY cleared before showing it.
+    const onThresh = Math.max(36, bhH + 6);
+    const offThresh = Math.max(12, bhH - 30);
     // Hysteresis so it doesn't flicker at the boundary.
     const condensed = document.body.classList.contains('topic-hero-condensed');
     const next = !condensed && st > onThresh ? true
