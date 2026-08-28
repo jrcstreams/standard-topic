@@ -26311,7 +26311,7 @@ body:not(.tt-on) .topic-band .topic-home .newsfeed-headtext { margin: 0 !importa
   border-radius: 0 !important;
   background: none !important;
   box-shadow: none !important;
-  margin-top: 0 !important;
+  margin: 0 !important;
   padding: 0 !important;
 }
 /* One line per row, from the button, at a single height. */
@@ -26616,3 +26616,53 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
 .aii-emenu-host, .aii-emenu-host.is-open,
 .aii-fi-acc.is-open .aii-emenu-host { max-height: none !important; overflow: visible !important; }
 .aii-pc-edit.is-editing { margin-top: 8px; }
+
+/* ============================================================
+   revamp1023 — home tab stack + prompt row centring (#img827-834)
+   ============================================================ */
+
+/* ── 1. The Home grey bar was being hidden below 900 by a blanket
+      `#sub-header.is-subnav:not(...)` rule it didn't match any exemption for —
+      while the tab stack still reserved its 56px. That empty band is the "way
+      far down" gap. Exempt it. ── */
+@media (max-width: 899.98px) {
+  #sub-header.is-subnav.is-home-ident { display: flex !important; }
+}
+
+/* ── 2. Prompt rows sit dead-centre between their separators. The row carried
+      an 8.8px margin-bottom, so content centred in its 52px box read low
+      against the 61px band the eye actually sees (#img832-834). ── */
+.aii-fi-acclist > .aii-fi-acc:nth-child(n) { margin-bottom: 0 !important; }
+
+/* ── 3. Home tab views: sections sit on the page, not in cards. ── */
+body.home-search.tt-on .home-v2 .home-side .hs-block {
+  background: none !important; border: 0 !important;
+  border-radius: 0 !important; box-shadow: none !important;
+  padding: 0 !important;
+}
+/* Trending reads as its expanded list, not a grey card. */
+body.home-search.tt-on .home-v2 #home-trending.hs-block {
+  background: none !important; border: 0 !important; padding: 0 !important;
+}
+body.home-search.tt-on .home-v2 #home-trending .trending-topics {
+  background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important;
+}
+/* Prompts read as the same flat list the topic pages use. */
+body.home-search.tt-on .home-v2 [data-hf="prompts"] .hf-chips,
+body.home-search.tt-on .home-v2 [data-hq-prompts] { background: none !important; border: 0 !important; padding: 0 !important; }
+body.home-search.tt-on .home-v2 [data-hq-prompts] .aii-ext-block { border: 0 !important; background: none !important; padding: 0 !important; }
+
+/* The rail's own group label, matching TOPIC-SPECIFIC / EVERGREEN. */
+.hq-grouplabel {
+  padding: 14px 0 8px;
+  font-family: var(--font-family); font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #6b7a92;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent);
+  margin-bottom: 2px;
+}
+body:not(.tt-on) .home-v2 .hq-grouplabel { display: none; }
+
+/* ── 4. The topic briefing clears the tab bar instead of butting into it
+      (#img831). ── */
+body.tt-on .tview-brief .topic-top { margin-top: 1.35rem !important; }
+body.tt-on .tview-tools .topic-top { margin-top: 1.2rem !important; }

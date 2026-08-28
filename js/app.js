@@ -1861,7 +1861,7 @@ function renderFeaturedBriefings(host, opts) {
       </div>
       <div class="hb-hero hb-hero--side" data-home-briefing>
         <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-          noHeader: true, hubLink: false, art: true, topicLabel: 'Standard Topic',
+          noHeader: true, hubLink: false, art: true, topicLabel: 'Global Briefing',
           sublabel: 'Your daily briefing across every topic we cover.',
         })}</div>
       </div>`;
@@ -1908,7 +1908,7 @@ function renderFeaturedBriefings(host, opts) {
       <div class="hb-grid">
         <div class="hb-hero" data-home-briefing>
           <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-            noHeader: true, hubLink: false, art: true, topicLabel: 'Standard Topic',
+            noHeader: true, hubLink: false, art: true, topicLabel: 'Global Briefing',
             sublabel: 'Your daily briefing across every topic we cover.',
           })}</div>
         </div>
@@ -4706,6 +4706,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hb-head hf-labelhead">
                 <h3 class="hb-title">AI Research Tools</h3>
               </div>
+              <div class="hq-grouplabel">Featured Prompts</div>
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Browse all prompts${HQ_ARROW}</button></div>
             </section>
@@ -4730,6 +4731,14 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           x.classList.toggle('is-active', on);
           x.setAttribute('aria-selected', String(on));
         });
+        // The tab IS the destination: AI Briefing lands with the brief open
+        // rather than a teaser you then have to click (matches topic pages).
+        if (v === 'brief') {
+          const card = container.querySelector('.home-featbriefs .tdi-card');
+          if (card && !card.classList.contains('is-open')) {
+            container.querySelector('.home-featbriefs [data-di-toggle]')?.click();
+          }
+        }
       }));
     }
     // revamp949: the homepage leads with a Featured AI Briefings row built from
