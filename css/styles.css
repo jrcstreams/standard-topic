@@ -27389,12 +27389,21 @@ body.pagenav-mode .trending-toolbar { margin-top: 0 !important; padding-top: 0 !
    — "topic above, date · time below" per the requested layout. */
 .di-body { container-type: inline-size; }
 @container (max-width: 420px) {
-  .di-mast { flex-wrap: wrap; align-items: center; row-gap: 6px !important; }
+  .di-mast {
+    flex-wrap: wrap; align-items: center;
+    row-gap: 6px !important; column-gap: 7px !important;
+    /* Date + updated-time run ~308px wide at the default size in a ~316px
+       column — a sub-pixel over and the time drops to a third line. Shave the
+       type a touch so the pair always shares one line. */
+    font-size: 0.79rem !important;
+  }
   /* Pill on its own line; the flex-basis forces date+time to wrap together. */
   .di-mast-topic { flex-basis: 100%; }
+  .di-mast-date, .di-mast-time { gap: 5px !important; }
   /* No leading dot before the date (it starts line two). Keep the dot BETWEEN
      date and time (`.di-mast-date ~ .di-mast-time::before` still applies). */
   .di-mast-topic ~ .di-mast-date::before { display: none !important; }
+  .di-mast-date ~ .di-mast-time::before { margin-right: 7px !important; }
 }
 
 /* ═══ revamp1038 — shared "How our AI works" modal + its triggers ═══════════ */
