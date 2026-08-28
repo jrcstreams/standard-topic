@@ -26198,6 +26198,7 @@ body:not(.tt-on) .topic-band .topic-home .trail-head:first-child { margin-top: 0
 .topic-band .topic-home .tpr-inline .aii-builder-topbar,
 .topic-band .topic-home .tpr-inline .aii-nav-dd-head { display: none !important; }
 /* Group headings read as the rail's own labels. */
+.topic-band .topic-home .tpr-inline .aii-fi-sectitle,
 .topic-band .topic-home .tpr-inline .aii-fi-sec-title {
   font-family: var(--font-family) !important;
   font-size: 0.78rem !important; font-weight: 700 !important;
@@ -26206,9 +26207,9 @@ body:not(.tt-on) .topic-band .topic-home .trail-head:first-child { margin-top: 0
 }
 .topic-band .topic-home .tpr-inline .aii-fi-sec { margin-top: 16px !important; }
 .topic-band .topic-home .tpr-inline .aii-fi-sec:first-child { margin-top: 2px !important; }
-/* In the narrow rail the accordions stack one per row. */
-body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acc-grid,
-body:not(.tt-on) .topic-band .topic-home .tpr-inline [class*="aii-fi-grid"] {
+/* In the narrow rail the accordions stack one per row; in the tab view they
+   keep the two-up grid the wider column can carry. */
+body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
   grid-template-columns: 1fr !important;
 }
 
