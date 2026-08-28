@@ -27328,3 +27328,14 @@ body.pagenav-mode .trending-toolbar { margin-top: 0 !important; padding-top: 0 !
 .ph-featured .aii-topbar { display: none !important; }
 .ph-featured .aii-stage { padding: 0 !important; }
 .ph-featured .aii-fi-acclist { padding: 0 !important; }
+
+/* revamp1037b — tighten the head of an open briefing. The masthead, the
+   provenance line and The Big Picture were each carrying their own margin ON
+   TOP of .di-body's flex gap, so three tight lines sat ~31px apart. The gap is
+   the only thing that spaces them now. (Written at .di-page depth so it beats
+   the .dih-brief / .tdi-card--hero2.is-open rules above.) */
+.di-page .di-body,
+.tdi-card--hero2.is-open .di-page .di-body { gap: 0.55rem !important; }
+.di-page .di-mast,
+.di-page .di-prov2 { margin: 0 !important; }
+.di-page .di-big { margin-top: 6px !important; }
