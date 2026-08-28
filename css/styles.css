@@ -26405,3 +26405,65 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
 
 /* Topic title rides higher. */
 .topic-bodyhead { padding-top: 0.35rem !important; }
+
+/* ============================================================
+   revamp1017 — the homepage tab stack joins the subnav (#img805-807)
+   ============================================================ */
+
+@media (max-width: 1199.98px) {
+  /* body.tt-on can't gate these: home is not .topic-band, and the stack has to
+     pin even when the sidebar is docked. The tab widths are what matter. */
+  body.home-search.tt-on .home-viewtabs,
+  body.home-search.tt-on .home-v2 .nf-tabs {
+    position: fixed; left: 0; right: 0; z-index: 60;
+    margin: 0 !important;
+    background: #f8f9fc;
+    border-bottom: 1px solid #e5e9f2;
+  }
+  body.nav-docked.home-search.tt-on .home-viewtabs,
+  body.nav-docked.home-search.tt-on .home-v2 .nf-tabs { left: var(--sbw); }
+
+  /* Row 2: the section tabs, directly under the grey Home bar. */
+  body.home-search.tt-on .home-viewtabs {
+    top: calc(var(--nav-h) + 56px);
+    height: 46px; padding: 0 2rem !important;
+    border-top: 0 !important;
+  }
+  /* Row 3: the topic filters, attached beneath — a subnav OF the tab row. */
+  body.home-search.tt-on .home-v2 .nf-tabs {
+    top: calc(var(--nav-h) + 56px + 46px);
+    height: 46px; padding: 0 2rem !important;
+    display: flex !important; align-items: center; flex-wrap: nowrap !important;
+    overflow-x: auto; scrollbar-width: none; gap: 8px;
+    border-top: 0 !important;
+  }
+  body.home-search.tt-on .home-v2 .nf-tabs::-webkit-scrollbar { display: none; }
+  body.home-search.tt-on .home-v2 .nf-tab { flex: 0 0 auto; }
+  /* "More +" pins to the end of the scroll rail and opens the topic list. */
+  body.home-search.tt-on .home-v2 .nf-more--tabs {
+    flex: 0 0 auto; margin-left: 4px; white-space: nowrap;
+    font-weight: 650; color: #2c4f9e; text-decoration: none;
+  }
+  /* The filters only belong to the news tab. */
+  body.home-search.tt-on .home-v2.hview-brief .nf-tabs,
+  body.home-search.tt-on .home-v2.hview-trend .nf-tabs,
+  body.home-search.tt-on .home-v2.hview-tools .nf-tabs { display: none !important; }
+
+  /* The tab IS the section label — the in-body "News Feed" head goes. */
+  body.home-search.tt-on .home-v2 .newsfeed-headrow { display: none !important; }
+  body.home-search.tt-on .home-v2 .newsfeed-head {
+    border: 0 !important; padding: 0 !important; margin: 0 !important;
+  }
+
+  /* Content clears all three bars; the news tab reserves one row more. */
+  html body.home-search.app-mode.sticky-always #content,
+  html body.home-search.app-mode #content,
+  body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 46px + 18px) !important; }
+  html body.home-search.tt-on.app-mode #content:has(.home-v2:not(.hview-brief):not(.hview-trend):not(.hview-tools)) {
+    padding-top: calc(var(--nav-h) + 56px + 46px + 46px + 14px) !important;
+  }
+}
+@media (max-width: 640px) {
+  body.home-search.tt-on .home-viewtabs,
+  body.home-search.tt-on .home-v2 .nf-tabs { padding: 0 1rem !important; }
+}

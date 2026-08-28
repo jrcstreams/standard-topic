@@ -1274,7 +1274,7 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '', variant
       ${tabbed ? `
       <div class="nf-tabs" role="tablist" aria-label="Filter news by topic">
         ${tabSet.map((t) => `<button type="button" class="nf-tab${t.slug === curTab ? ' is-active' : ''}" role="tab" aria-selected="${t.slug === curTab ? 'true' : 'false'}" data-nf-tab="${t.slug}">${t.label}</button>`).join('')}
-        <a class="nf-more nf-more--tabs" href="#/topics">More topics${NF_ARROW}</a>
+        <a class="nf-more nf-more--tabs" href="#/topics">More +</a>
       </div>` : ''}
     </div>`
     : `
