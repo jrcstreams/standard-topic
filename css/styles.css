@@ -26526,3 +26526,42 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
      heads step down a notch in weight and take the mid-navy, which separates
      them without making them a different size. */
 }
+
+/* ============================================================
+   revamp1020 — "More" is a pill, and it hides when nothing overflows
+   (#img815-817)
+   ============================================================ */
+
+/* wireSubtopicsMore sets `more.hidden = true` and only clears it when the
+   links actually wrap — but a `display: inline-flex` rule (mine, revamp1010)
+   overrode the hidden attribute, so it showed unconditionally. Same trap as
+   .sp-ql. The attribute wins now. */
+.topic-bodyhead .tbh-more[hidden],
+.topic-bodyhead .tbh-more[hidden="hidden"],
+.tbh-subs .tbh-more[hidden] { display: none !important; }
+
+/* It belongs to the pill family: same radius, height and metrics as the
+   subtopic pills, on a faint grey ground so it reads as the overflow control
+   rather than another topic. */
+.topic-bodyhead .tbh-more,
+.topic-bodyhead .tbh-more.tsp-btn {
+  border-radius: 999px !important;
+  background: #f4f5f8 !important;
+  border: 1px solid color-mix(in srgb, #2f4d9e 15%, transparent) !important;
+  color: #33415e !important;
+  padding: 0.5rem 0.95rem !important;
+  gap: 6px !important;
+  font-size: 0.94rem !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  min-height: 0 !important;
+  box-shadow: none !important;
+}
+@media (hover: hover) {
+  .topic-bodyhead .tbh-more:hover,
+  .topic-bodyhead .tbh-more.tsp-btn:hover {
+    background: #ebedf3 !important;
+    border-color: color-mix(in srgb, #2f4d9e 30%, transparent) !important;
+    color: #1b3d8f !important;
+  }
+}
