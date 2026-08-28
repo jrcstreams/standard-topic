@@ -26916,3 +26916,58 @@ body.home-search.tt-on #content { overflow: visible !important; }
   .tsp-scroll::-webkit-scrollbar-thumb:hover,
   .newsfeed-scroll-wrap::-webkit-scrollbar-thumb:hover { background: #aab3c6; background-clip: content-box; }
 }
+
+/* ============================================================
+   revamp1031 — right-size the briefing CTA; Trending becomes a
+   headed list, not a grey card (#img865-867)
+   ============================================================ */
+
+/* Full width made the CTA the loudest thing on the page. It stays prominent
+   but sized to its label. */
+.tdi-card--hero2 .tdi-go,
+.hb-hero .tdi-card .tdi-go {
+  display: inline-flex !important; width: auto !important;
+  align-self: flex-start;
+  padding: 0.62rem 1.1rem !important;
+  font-size: 0.9rem !important;
+  border-radius: 8px !important;
+}
+
+/* ── What's Trending gets the rail-head treatment and drops the card, so it
+      reads as a section beside AI Briefing rather than a panel. ── */
+.home-v2 .home-side #home-trending.hs-block {
+  background: none !important; border: 0 !important;
+  border-radius: 0 !important; box-shadow: none !important; padding: 0 !important;
+}
+.home-v2 #home-trending .trending-topics {
+  background: none !important; border: 0 !important;
+  box-shadow: none !important; padding: 0 !important; margin: 0 !important;
+}
+.home-v2 #home-trending .trending-topics-head {
+  display: flex !important; align-items: center; gap: 9px;
+  padding: 0 0 12px !important; margin: 0 0 6px !important;
+  border-bottom: 2px solid #e0e5ee !important;
+}
+.home-v2 #home-trending .trending-topics-head h2,
+.home-v2 #home-trending .trending-topics-head h3,
+.home-v2 #home-trending .trending-topics-title {
+  font-family: var(--font-display, var(--font-family)) !important;
+  font-size: 1.24rem !important; font-weight: 750 !important;
+  letter-spacing: -0.012em !important; color: #1e3a8a !important;
+  margin: 0 !important;
+}
+/* The AI-provenance line under the head is a sub-note, not a headline. */
+.home-v2 #home-trending .ai-prov,
+.home-v2 #home-trending .trending-prov { font-size: 0.78rem !important; margin: 8px 0 0 !important; }
+
+/* Trends as clean rows: hairline-separated, no card chrome, matching the
+   prompt list's rhythm. */
+.home-v2 #home-trending .trend-card {
+  background: none !important; border: 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent) !important;
+  border-radius: 0 !important; box-shadow: none !important;
+  padding: 0 !important; margin: 0 !important;
+}
+.home-v2 #home-trending .trend-card:last-of-type { border-bottom: 0 !important; }
+.home-v2 #home-trending .trend-card-trigger { padding: 12px 2px !important; }
+.home-v2 #home-trending .trend-card::after { display: none !important; }

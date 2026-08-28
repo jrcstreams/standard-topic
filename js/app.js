@@ -4726,6 +4726,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // revamp981: a shorter sidebar list — "View more trending" carries the rest
     // through to the trending page rather than the sidebar being the whole list.
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 5 });
+    // revamp1031: the feed is tall and the browser restores its own scroll
+    // position on a same-document render, which landed visitors mid-feed.
+    try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (_) {}
+    requestAnimationFrame(() => window.scrollTo(0, 0));
     {
       const grid = container.querySelector('.home-v2');
       // revamp1025: the tabs live in #sub-header, so query the document.
