@@ -27464,3 +27464,18 @@ body.pagenav-mode .trending-toolbar { margin-top: 0 !important; padding-top: 0 !
 @media (hover: hover) {
   .ni-aitag[data-how-it-works]:hover { background: #e7edfa; color: #1d4ed8; }
 }
+
+/* ═══ revamp1040 — home tab mode: drop the redundant per-section headers ═════
+   In tabular navigation the tab label already names the section, so the
+   section's own header (and its "View all" link + separator) just repeats it
+   and eats vertical space. Hidden only in tab mode (body.tt-on); the wide
+   dashboard, where all sections show together, keeps its headers. */
+body.home-search.tt-on .home-v2 #section-newsfeed .newsfeed-head,
+body.home-search.tt-on .home-v2 .home-featbriefs .hb-head,
+body.home-search.tt-on .home-v2 .hf-card--prompts .hb-head,
+body.home-search.tt-on .home-v2 #home-trending .trending-topics-titlerow {
+  display: none !important;
+}
+/* The featured-briefs card and prompts card lose their header padding too, so
+   the content starts at the top of the panel. */
+body.home-search.tt-on .home-v2 .hf-card--prompts { padding-top: 4px !important; }

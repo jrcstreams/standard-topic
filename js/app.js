@@ -4729,6 +4729,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         // The filter row belongs to the news tab only.
         const slot = document.querySelector('[data-home-subfilters]');
         if (slot) slot.classList.toggle('is-on', v === 'news');
+        // revamp1040: adding/removing the filter row changes the sub-header
+        // height, which drives #content's top padding via --subnav-height. The
+        // ResizeObserver was not catching the tab-switch, so leaving the news
+        // tab left ~50px of phantom reserved space above the section (the
+        // "empty band" on brief/trend/tools). Re-measure once the layout settles.
+        requestAnimationFrame(() => { try { setSubnavHeightVar(); } catch (_) {} });
         // The tab IS the destination: AI Briefing lands with the brief open
         // rather than a teaser you then have to click (matches topic pages).
         if (v === 'brief') {
