@@ -26248,3 +26248,64 @@ body:not(.tt-on) .topic-band .topic-home .newsfeed-title {
   line-height: 1.25 !important; padding-top: 0 !important; margin-top: 0 !important;
 }
 body:not(.tt-on) .topic-band .topic-home .newsfeed-headtext { margin: 0 !important; padding: 0 !important; }
+
+/* ============================================================
+   revamp1014 — ONE prompt surface. Every host embeds the same
+   accordion component; the hosts differ only in chrome.
+   ============================================================ */
+
+/* The embedded component drops its own page furniture — the host supplies the
+   heading, and the rows are the content. */
+[data-hq-prompts] .aii-head,
+[data-hq-prompts] .aii-builder-topbar,
+[data-hq-prompts] .aii-nav-dd-head,
+.ph-flist .aii-head,
+.ph-flist .aii-builder-topbar,
+.ph-flist .aii-nav-dd-head,
+.topic-band .topic-home .tpr-inline .aii-head,
+.topic-band .topic-home .tpr-inline .aii-builder-topbar,
+.topic-band .topic-home .tpr-inline .aii-nav-dd-head { display: none !important; }
+[data-hq-prompts] .aii-ext-block,
+.ph-flist .aii-ext-block { margin: 0 !important; padding: 0 !important; }
+
+/* Homepage rail: single column of bordered accordions. */
+.home-v2 .home-side [data-hq-prompts] { display: block !important; }
+.home-v2 .home-side [data-hq-prompts] .aii-fi-acclist { grid-template-columns: 1fr !important; }
+
+/* Prompts page featured: the section is the list — no inner card, no cap. */
+.ph-featured { border: 0 !important; background: none !important; padding: 0 !important; }
+.ph-flist { display: block !important; }
+.ph-flist .aii-fi-acclist {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  gap: 10px !important;
+}
+@media (max-width: 639px) {
+  .ph-flist .aii-fi-acclist { grid-template-columns: 1fr !important; }
+}
+
+/* One accordion treatment everywhere it is embedded: a bordered card that
+   lights up and squares off its bottom edge when open, so the prompt panel
+   reads as the same object continuing rather than a second box. */
+[data-hq-prompts] .aii-fi-acc,
+.ph-flist .aii-fi-acc,
+.topic-band .topic-home .tpr-inline .aii-fi-acc {
+  border: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent);
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color .14s ease, box-shadow .16s ease;
+}
+@media (hover: hover) {
+  [data-hq-prompts] .aii-fi-acc:not(.is-open):hover,
+  .ph-flist .aii-fi-acc:not(.is-open):hover,
+  .topic-band .topic-home .tpr-inline .aii-fi-acc:not(.is-open):hover {
+    border-color: color-mix(in srgb, #2f4d9e 32%, transparent);
+    box-shadow: 0 2px 10px -6px rgba(30, 58, 138, .28);
+  }
+}
+[data-hq-prompts] .aii-fi-acc.is-open,
+.ph-flist .aii-fi-acc.is-open,
+.topic-band .topic-home .tpr-inline .aii-fi-acc.is-open {
+  border-color: color-mix(in srgb, #2f4d9e 40%, transparent);
+  box-shadow: 0 6px 20px -12px rgba(30, 58, 138, .3);
+}

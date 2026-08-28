@@ -1242,20 +1242,21 @@ function wirePromptsDropdown(panel, initialView) {
           if (sh && sh.prompt) picks.push({ sh, topic: t });
         });
         if (!picks.length) return;
-        const railHTML = picks.map((pk, i) => `
-          <button type="button" class="ph-fitem" data-ph-feat="${i}">
-            <span class="ph-fitem-ic" aria-hidden="true">${promptRowIconSVG(pk.sh)}</span>
-            <span class="ph-fitem-name">${escapeHTML(pk.sh.name)}</span>
-            <span class="ph-fitem-go" aria-hidden="true">${PH_ARROW_R}</span>
-          </button>`).join('');
-        rail.innerHTML = railHTML;
+        // revamp1014: the featured list is the shared prompt component — every
+        // row is a bordered accordion that opens in place with Edit / Model /
+        // Copy / Settings / Run, instead of swapping the section into a
+        // single-prompt "focus" view. {topic} is resolved per pick because the
+        // featured set spans topics.
+        try {
+          dirCtls.push(renderAIIntelligence(rail, promptEmbedScope(picks.map((pk) => ({
+            ...pk.sh, evergreen: false,
+            prompt: resolveTopicPlaceholder(pk.sh.prompt, pk.topic.name),
+          })))));
+        } catch (_) {}
         sec.hidden = false;
-        const railNav = null;
-        // Collapsed on small screens: the list shows a few, then a clean
-        // "Show all" toggle reveals the rest (CSS caps the visible count).
         const moreBtn = sec.querySelector('[data-ph-more]');
         if (moreBtn) {
-          const CAP = 4;
+          const CAP = 6;
           if (picks.length > CAP) {
             moreBtn.hidden = false;
             const sync = () => { moreBtn.textContent = sec.classList.contains('is-expanded') ? 'Show less' : 'Show more'; };
@@ -1263,42 +1264,6 @@ function wirePromptsDropdown(panel, initialView) {
             moreBtn.addEventListener('click', () => { sec.classList.toggle('is-expanded'); sync(); });
           }
         }
-        // Focus a single featured prompt inside the section, animated.
-        const focusPrompt = (i) => {
-          const pk = picks[i]; if (!pk) return;
-          if (moreBtn) moreBtn.hidden = true;
-          sec.classList.add('is-focus');
-          rail.classList.add('is-focus');
-          rail.innerHTML = `<div class="ph-focus">
-            <button type="button" class="ph-focus-back">${BACKBAR_CHEV}<span>All featured prompts</span></button>
-            <h4 class="ph-focus-name">${escapeHTML(pk.sh.name)}</h4>
-            <div class="ph-focus-host prompts-topic-host"></div>
-          </div>`;
-          const host = rail.querySelector('.ph-focus-host');
-          const descriptions = {}; const icons = {};
-          descriptions[pk.sh.name] = pk.sh.description || ''; icons[pk.sh.name] = pk.sh.icon || '';
-          try {
-            dirCtls.push(renderAIIntelligence(host, {
-              inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
-              singlePrompt: true,
-              topic: pk.topic.name, label: pk.topic.name,
-              descriptions, icons, shortcuts: [pk.sh], topicKey: pk.topic.slug,
-            }));
-          } catch (_) {}
-          rail.querySelector('.ph-focus-back')?.addEventListener('click', () => {
-            rail.classList.remove('is-focus');
-            sec.classList.remove('is-focus');
-            if (moreBtn && picks.length > 4) moreBtn.hidden = false;
-            rail.innerHTML = railHTML;
-            wireRailCards();
-          });
-          requestAnimationFrame(updateNavDdFades);
-        };
-        const wireRailCards = () => {
-          rail.querySelectorAll('[data-ph-feat]').forEach((b) =>
-            b.addEventListener('click', () => focusPrompt(Number(b.dataset.phFeat))));
-        };
-        wireRailCards();
         requestAnimationFrame(updateNavDdFades);
       }).catch(() => {});
 
@@ -4651,6 +4616,21 @@ function cleanupTopicLayoutObservers() {
 }
 
 
+// revamp1014 — ONE prompt surface site-wide. Any host that shows prompts embeds
+// the AI Intelligence component in `promptsOnly` mode, which emits the bare
+// accordion list: bordered rows that expand in place into the prompt preview
+// with Edit / Model / Copy / Settings / Run. Hosts differ only in CSS.
+function resolveTopicPlaceholder(prompt, topicName) {
+  return String(prompt || '').replace(/\{topic\}/gi, topicName || 'this topic');
+}
+function promptEmbedScope(shortcuts, extra) {
+  return {
+    inModal: true, promptsOnly: 'specific', lockTopic: true,
+    topic: 'home', label: '', shortcuts,
+    ...(extra || {}),
+  };
+}
+
 function renderTopicLayout(container, { topic, route, isHome, isCustom = false, customTerm = '' }) {
   cleanupTopicLayoutObservers();
 
@@ -4784,12 +4764,15 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               picks.push({ s: sMatch, tn: t ? t.name : '', slug: f.topic });
             }
             if (!picks.length) return;
-            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="hq-row hq-row--prompt" data-hq-prompt="${i}"><span class="hq-row-ic" aria-hidden="true">${promptRowIconSVG(pk.s)}</span><span class="hq-row-tx"><span class="hq-row-name">${escapeHTML(pk.s.name)}</span>${pk.s.description ? `<span class="hq-row-desc">${escapeHTML(pk.s.description)}</span>` : ''}</span></button>`).join('');
-            pWrap.querySelectorAll('[data-hq-prompt]').forEach((b) => b.addEventListener('click', (e) => {
-              e.stopPropagation();
-              const pk = picks[Number(b.dataset.hqPrompt)]; if (!pk) return;
-              openPromptInLibrary(pk.slug, pk.tn, pk.s.name);
-            }));
+            // revamp1014: the SAME prompt component the topic rail and the tab
+            // view use, so a featured prompt opens in place with its Run / Copy
+            // / Model panel instead of navigating to the library. These picks
+            // span topics, so {topic} is resolved per pick before handing them
+            // over — the component's own substitution is single-scope.
+            renderAIIntelligence(pWrap, promptEmbedScope(picks.map((pk) => ({
+              ...pk.s, evergreen: false,
+              prompt: resolveTopicPlaceholder(pk.s.prompt, pk.tn),
+            }))));
           }).catch(() => {});
       }
     }
