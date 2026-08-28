@@ -26367,3 +26367,41 @@ body:not(.tt-on) .topic-band .topic-home .newsfeed-headtext { margin: 0 !importa
 body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
   grid-template-columns: 1fr !important;
 }
+
+/* ============================================================
+   revamp1016 — briefing card: no edition, a provenance line, and
+   only the button is clickable (#img799-804)
+   ============================================================ */
+
+/* The card is NOT a link target. Only "Read Briefing" opens it, so the card
+   drops the whole-surface hover that implied otherwise. */
+.tdi-card--hero2,
+.hb-hero .tdi-card { cursor: default !important; }
+@media (hover: hover) {
+  .tdi-card--hero2:hover,
+  .hb-hero .tdi-card:hover {
+    background: #f4f6fa !important;
+    border-color: #e2e7f0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  /* Nothing inside the card lights up on card hover either — only the button
+     responds, and only to its own hover. */
+  .tdi-card--hero2:hover .tdi-go:not(:hover),
+  .hb-hero .tdi-card:hover .tdi-go:not(:hover) {
+    background: #1e3a8a !important; box-shadow: none !important; transform: none !important;
+  }
+  .tdi-card--hero2 .tdi-go:hover,
+  .hb-hero .tdi-card .tdi-go:hover { background: #16307a !important; }
+}
+
+/* A quiet provenance line under the summary, above the action. */
+.tdi-cardprov {
+  display: flex; align-items: center; gap: 6px;
+  margin: 10px 0 0 !important;
+  font-family: var(--font-family); font-size: 0.76rem; color: #6b7a92;
+}
+.tdi-cardprov .tdi-cardprov-ic { width: 12px; height: 12px; flex: none; color: #2563eb; }
+
+/* Topic title rides higher. */
+.topic-bodyhead { padding-top: 0.35rem !important; }

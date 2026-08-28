@@ -1684,6 +1684,7 @@ function diHeroCardHTML(o) {
                used to live inside .tdi-todayhead alongside the title. -->
           <div class="tdi-stamprow"><span class="tdi-date" data-tdi-date></span></div>`}
           <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
+          <p class="tdi-cardprov">${DI_SPARK}<span>AI-generated content</span></p>
           <div class="tdi-actions">
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
               <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
@@ -1746,16 +1747,11 @@ function applyBriefArt(root, iso) {
 function diEditionStampHTML(iso) {
   const p = diEditionParts(iso);
   if (!p) return '';
-  const night = /night/i.test(p.edition);
-  // The sun/moon glyph belongs to the EDITION, not the date (#img254) — so the
-  // day sits first, then a separator, then the glyph + edition kept together in
-  // one wrap (which lets the pill stack date-over-edition on narrow screens).
-  // revamp954: the sun/moon glyph TRAILS its edition text, so the row reads
-  // "Aug 22 · Morning Edition ☀" rather than leading with the icon.
-  return `<span class="tdi-stamp-val">${escapeHTML(p.day)}</span>`
-    + `<span class="tdi-stamp-sep" aria-hidden="true"></span>`
-    + `<span class="tdi-stamp-edwrap"><span class="tdi-stamp-ed">${escapeHTML(p.edition)}</span><span class="tdi-stamp-ic tdi-stamp-ic--${night ? 'night' : 'morning'}" aria-hidden="true">${night ? DI_MOON : DI_SUN}</span></span>`;
+  // revamp1016: briefings publish ONCE a day now (7pm ET), so "Morning /
+  // Night Edition" no longer distinguishes anything — the date carries it.
+  return `<span class="tdi-stamp-val">${escapeHTML(p.day)}</span>`;
 }
+
 
 
 
@@ -2468,7 +2464,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       <div class="topic-top">
         <section class="topic-top-main">
           <h3 class="trail-head">AI Briefing</h3>
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, twice a day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
           </div>
         </section>
         <section class="topic-top-side">
@@ -4390,7 +4386,7 @@ function renderStickyHeroBar(container, route) {
   //    primary chrome — pinned open by default, content flowing beside it,
   //    with the whole page usable while it shows. The overlay drawer remains
   //    the sub-1200px behaviour. Preference persists across visits. ──
-  const DOCK_MQ = window.matchMedia('(min-width: 1000px)');
+  const DOCK_MQ = window.matchMedia('(min-width: 900px)');
   const dockWanted = () => { try { return localStorage.getItem('st:sidebar') !== 'closed'; } catch (_) { return true; } };
   const setDockPref = (open) => { try { localStorage.setItem('st:sidebar', open ? 'open' : 'closed'); } catch (_) {} };
   const applyDock = () => {
