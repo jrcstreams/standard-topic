@@ -26294,8 +26294,12 @@ body:not(.tt-on) .topic-band .topic-home .newsfeed-headtext { margin: 0 !importa
 
 /* ── Closed: a flat list row. No border, no card, no gap. ── */
 .aii-fi-acclist { gap: 0 !important; }
-.aii-fi-acc {
+/* Earlier rules target `.aii-fi-acclist > .aii-fi-acc` (0,2,0) with !important,
+   so the flat-row reset has to be written at that path or deeper. */
+.aii-fi-acclist > .aii-fi-acc,
+.aii-fi-acclist > .aii-fi-acc:first-child {
   border: 0 !important;
+  border-top: 0 !important;
   border-radius: 0 !important;
   background: none !important;
   box-shadow: none !important;
@@ -26325,8 +26329,11 @@ body:not(.tt-on) .topic-band .topic-home .newsfeed-headtext { margin: 0 !importa
 
 /* ── Open: NOW it becomes a container. The row and its prompt panel are one
       bordered object, lifted off the list so the open state is unmistakable. ── */
+.aii-fi-acclist > .aii-fi-acc.is-open,
+.aii-fi-acclist > .aii-fi-acc.is-open:first-child,
 .aii-fi-acc.is-open {
   border: 1px solid color-mix(in srgb, #2f4d9e 34%, transparent) !important;
+  border-top: 1px solid color-mix(in srgb, #2f4d9e 34%, transparent) !important;
   border-radius: 12px !important;
   background: #fff !important;
   box-shadow: 0 8px 24px -14px rgba(30, 58, 138, .34) !important;
