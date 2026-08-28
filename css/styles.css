@@ -26565,3 +26565,33 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
     color: #1b3d8f !important;
   }
 }
+
+/* ============================================================
+   revamp1021 — the edit box breathes (#img818)
+   ============================================================ */
+
+/* Editing turns the 3-line clamped preview into a full-height editable box.
+   It was inheriting the clamp's tight metrics, so the text ran into its own
+   border on every side and the card had no room to grow. */
+.aii-pc-preview[contenteditable="true"] {
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  overflow: visible !important;
+  white-space: pre-wrap !important;
+  height: auto !important; max-height: none !important;
+  min-height: 5.4em;
+  padding: 12px 14px !important;
+  margin: 2px 0 0 !important;
+  line-height: 1.62 !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, #2f4d9e 26%, transparent) !important;
+  outline: none;
+}
+.aii-pc-preview[contenteditable="true"]:focus {
+  box-shadow: 0 0 0 2px color-mix(in srgb, #2f4d9e 42%, transparent) !important;
+}
+/* The panel grows with it rather than clipping. */
+.aii-emenu-host, .aii-emenu-host.is-open,
+.aii-fi-acc.is-open .aii-emenu-host { max-height: none !important; overflow: visible !important; }
+.aii-pc-edit.is-editing { margin-top: 8px; }
