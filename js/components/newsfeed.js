@@ -1312,7 +1312,10 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '', variant
   // revamp1025: on the homepage the topic filters are a row OF the subnav, so
   // the rendered row is relocated into #sub-header's slot. It re-renders on
   // every tab switch, hence the move happens here rather than once at mount.
-  if (variant === 'homev2') {
+  // ONLY in tabbed mode. On desktop the filters belong under the News Feed
+  // head, in the column — relocating them into the subnav there put them in
+  // the top-right corner of the page chrome.
+  if (variant === 'homev2' && document.body.classList.contains('tt-on')) {
     const slot = document.querySelector('[data-home-subfilters]');
     const tabsRow = container.querySelector('.nf-tabs');
     if (slot && tabsRow) {

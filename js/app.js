@@ -1683,8 +1683,8 @@ function diHeroCardHTML(o) {
                above the summary — CSS order couldn't do this because the stamp
                used to live inside .tdi-todayhead alongside the title. -->
           <div class="tdi-stamprow"><span class="tdi-date" data-tdi-date></span></div>`}
-          <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
           <p class="tdi-cardprov">${DI_SPARK}<span>AI-generated content</span></p>
+          <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
           <div class="tdi-actions">
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
               <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}

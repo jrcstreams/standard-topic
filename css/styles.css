@@ -27012,3 +27012,152 @@ body.home-search.tt-on #content { overflow: visible !important; }
   body.home-search .home-v2 .home-main,
   body.home-search .home-v2 .home-side { padding-top: 0 !important; margin-top: 0 !important; }
 }
+
+/* ============================================================
+   revamp1033 — briefing card + open briefing to spec (#img869-871)
+   ============================================================ */
+
+/* ── Preview card: provenance leads, then the summary. The pill is a real
+      label — solid light-blue ground, blue text, proper radius. ── */
+.tdi-cardprov {
+  border-top: 0 !important; border-bottom: 0 !important;
+  padding: 0 !important; margin: 0 0 10px !important;
+  font-size: 0.78rem !important; color: #6b7a92 !important;
+}
+.tdi-metarow .tdi-topiclabel--inline {
+  background: #dfe8fb !important; color: #1e3a8a !important;
+  padding: 5px 11px !important; border-radius: 7px !important;
+  font-size: 0.72rem !important; letter-spacing: 0.07em !important;
+  line-height: 1.2 !important;
+}
+.tdi-metarow .tdi-meta-sep { opacity: .28 !important; }
+
+/* ── Open briefing masthead: date + last-updated time. ── */
+.di-mast {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  font-family: var(--font-family); font-size: 0.85rem; color: #52618a;
+  margin: 0 0 10px;
+}
+.di-mast-date, .di-mast-time { display: inline-flex; align-items: center; gap: 7px; }
+.di-mast-dot { width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: .45; }
+
+.di-prov2 { display: flex !important; align-items: center; gap: 9px; flex-wrap: wrap; }
+.di-howlink {
+  border: 0; background: none; padding: 0; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; color: #2563eb;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+@media (hover: hover) { .di-howlink:hover { color: #1d4ed8; } }
+
+/* ── The Big Picture: the summary, boxed as the lede. ── */
+.di-big {
+  border: 1px solid #e2e7f0; border-radius: 12px;
+  background: #fff; padding: 16px 18px; margin: 16px 0 0;
+}
+.di-big-label {
+  margin: 0 0 8px !important; font-family: var(--font-family);
+  font-size: 0.74rem; font-weight: 700; letter-spacing: 0.09em;
+  text-transform: uppercase; color: #2563eb;
+}
+.di-big-body { font-size: 0.98rem; line-height: 1.62; color: #23304d; }
+
+/* ── 3 Things to Know: numbered, tappable, each jumps to its item. ── */
+.di-things {
+  border: 1px solid #e2e7f0; border-radius: 12px;
+  background: #fff; padding: 14px 16px 6px; margin: 14px 0 0;
+}
+.di-things-label {
+  display: flex; align-items: center; gap: 8px; margin: 0 0 6px !important;
+  font-family: var(--font-family); font-size: 0.74rem; font-weight: 700;
+  letter-spacing: 0.09em; text-transform: uppercase; color: #2563eb;
+}
+.di-things-label svg { width: 14px; height: 14px; fill: currentColor; }
+.di-things-list { list-style: none; margin: 0; padding: 0; }
+.di-thing + .di-thing { border-top: 1px solid #eef1f7; }
+.di-thing-btn {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 12px 2px; border: 0; background: none; cursor: pointer;
+  text-align: left; font-family: var(--font-family);
+  transition: color .13s ease;
+}
+.di-thing-n {
+  flex: none; width: 22px; text-align: center;
+  font-size: 0.86rem; font-weight: 700; color: #2563eb;
+  border-right: 1px solid #e2e7f0; padding-right: 10px;
+}
+.di-thing-tx { flex: 1 1 auto; font-size: 0.94rem; font-weight: 600; color: #1c2a4a; line-height: 1.35; }
+.di-thing-go { flex: none; display: inline-flex; color: #98a3b8; }
+@media (hover: hover) {
+  .di-thing-btn:hover .di-thing-tx { color: #1d4ed8; }
+  .di-thing-btn:hover .di-thing-go { color: #1d4ed8; }
+}
+.dib.is-flash { animation: dibFlash 1.4s ease; }
+@keyframes dibFlash { 0%, 100% { background: transparent; } 25% { background: #eef3fc; } }
+
+/* ── How-it-works overlay ── */
+.di-how-ov {
+  position: fixed; inset: 0; z-index: 1200;
+  background: rgba(15, 23, 42, 0.5);
+  display: none; align-items: center; justify-content: center; padding: 24px;
+}
+.di-how-ov.is-open { display: flex; }
+.di-how-panel {
+  position: relative; background: #fff; border-radius: 16px;
+  max-width: 620px; width: 100%; max-height: 84vh; overflow-y: auto;
+  padding: 28px 30px 26px;
+  box-shadow: 0 30px 70px -20px rgba(15, 23, 42, .45);
+}
+.di-how-x {
+  position: absolute; top: 14px; right: 16px;
+  border: 0; background: none; font-size: 1.6rem; line-height: 1;
+  color: #8c99b0; cursor: pointer;
+}
+.di-how-title { margin: 0 0 8px; font-family: var(--font-display, var(--font-family)); font-size: 1.5rem; font-weight: 800; color: #14204a; }
+.di-how-lede { margin: 0 0 16px; color: #52618a; font-size: 0.95rem; line-height: 1.55; }
+.di-how-steps { margin: 0 0 16px; padding-left: 20px; display: flex; flex-direction: column; gap: 11px; }
+.di-how-steps li { font-size: 0.93rem; line-height: 1.58; color: #33415e; }
+.di-how-steps b { color: #14204a; }
+.di-how-foot {
+  margin: 0; padding-top: 14px; border-top: 1px solid #e5e9f2;
+  font-size: 0.86rem; color: #6b7a92; line-height: 1.55;
+}
+
+/* ============================================================
+   revamp1034 — desktop home: filters back in the column, heads
+   aligned + darker, side sections tightened (#img872)
+   ============================================================ */
+@media (min-width: 1200px) {
+  /* The filter row sits UNDER the News Feed rule, with its own rule below, so
+     the head / filters / stories read as one stack. */
+  body.home-search .home-v2 #section-newsfeed .nf-tabs {
+    position: static !important;
+    display: flex !important; flex-wrap: wrap; align-items: center; gap: 6px 14px;
+    margin: 0 0 12px !important;
+    padding: 10px 0 12px !important;
+    background: none !important;
+    border-top: 0 !important;
+    border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+    width: auto !important; overflow: visible !important;
+  }
+  body.home-search .home-v2 #section-newsfeed .nf-tab { flex: 0 0 auto; }
+
+  /* All three column heads share one rule position. */
+  body.home-search .home-v2 .home-side .hb-head.hf-labelhead,
+  body.home-search .home-v2 #home-trending .trending-topics-head {
+    padding: 0 0 12px !important;
+    margin: 0 0 14px !important;
+    border-bottom: 2px solid #e0e5ee !important;
+  }
+
+  /* Deeper blue on both side heads, matching the topic-page rail. */
+  body.home-search .home-v2 .home-side .hb-title,
+  body.home-search .home-v2 #home-trending .trending-topics-head h2,
+  body.home-search .home-v2 #home-trending .trending-topics-head h3,
+  body.home-search .home-v2 #home-trending .trending-topics-title { color: #1e3a8a !important; }
+
+  /* AI Briefing and What's Trending sit closer together. */
+  body.home-search .home-v2 .home-side { gap: 20px !important; }
+  body.home-search .home-v2 .home-side .home-featbriefs { margin-bottom: 0 !important; }
+  body.home-search .home-v2 .home-side #home-trending { margin-top: 0 !important; }
+  body.home-search .home-v2 .home-side .hb-hero { margin-bottom: 0 !important; }
+}

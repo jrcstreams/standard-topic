@@ -2276,6 +2276,27 @@ function diSrcLabel(x) {
   return String(x.title || '').slice(0, 24);
 }
 
+const CAL_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></svg>';
+const CLOCK_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>';
+const CHEV_R = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
+
+// Universal "how this works" explainer. One panel covers every AI surface —
+// briefings, news insights and trend summaries all run the same pipeline, so
+// three separate explanations would say the same thing three times.
+const HOW_IT_WORKS_HTML = `
+  <div class="di-how-panel" role="dialog" aria-modal="true" aria-label="How our AI works">
+    <button type="button" class="di-how-x" data-di-how-close aria-label="Close">&times;</button>
+    <h2 class="di-how-title">How our AI works</h2>
+    <p class="di-how-lede">Every AI surface on Standard Topic runs the same pipeline. Here is exactly what happens before you read a word of it.</p>
+    <ol class="di-how-steps">
+      <li><b>Real articles first.</b> We pull from our own news feed — roughly a hundred publisher sources, refreshed through the day. The model is given real, recent, dated headlines to work from, never a blank page.</li>
+      <li><b>Live search on top.</b> Generations run grounded: the model can query Google Search while it works, so it can verify a claim or catch something our feed has not indexed yet.</li>
+      <li><b>Sources are kept.</b> Whatever the model actually consulted is stored with the text and shown under each section. If a briefing cites nothing, it is because grounding returned nothing — not because we hid it.</li>
+      <li><b>Written once a day.</b> Topic briefings regenerate on a fixed schedule, 7pm ET, so everyone sees the same edition. News insights and trend summaries generate on demand and are cached.</li>
+    </ol>
+    <p class="di-how-foot">It is still a language model, and it can be wrong or out of date. Treat a briefing as a fast orientation, and follow the sources for anything that matters.</p>
+  </div>`;
+
 export function renderDailyIntelligence(container, scope) {
   const name = scope.label || scope.topic || '';
   // Header mirrors the topic-section lockup (kicker + icon-chip title), with the
@@ -2318,11 +2339,17 @@ export function renderDailyIntelligence(container, scope) {
     // Deep Dive / 101 Info) degrade gracefully: everything that isn't the
     // overview renders as briefing items.
     const parts = splitSections(data.content);
-    let overview = ''; const briefChunks = [];
+    let overview = ''; let things = ''; const briefChunks = [];
     for (const p of parts) {
       if (!overview && /overview|rundown/i.test(p.name)) overview = p.body;
+      else if (!things && /things to know/i.test(p.name)) things = p.body;
       else briefChunks.push(p.body);
     }
+    // "- " lines, capped at three — the model is asked for exactly three but a
+    // stray fourth must not reshape the card.
+    const thingsList = String(things || '').split('\n')
+      .map((l) => l.replace(/^\s*[-*\u2022]\s*/, '').trim())
+      .filter(Boolean).slice(0, 3);
     if (!parts.length) briefChunks.push(String(data.content || ''));
     const items = splitBriefItems(briefChunks.join('\n\n'));
 
@@ -2331,14 +2358,41 @@ export function renderDailyIntelligence(container, scope) {
     const pseudo = items.map((it) => ({ name: it.lede, body: it.text }));
     const { buckets, unmatched } = attributeItemsToSections(rows, pseudo);
 
+    // Masthead: the day plus when this version was actually written. Editions
+    // are gone — one briefing a day makes "Morning/Night" meaningless, and the
+    // timestamp is the thing a reader actually wants.
+    const stampD = data.generatedAt ? new Date(data.generatedAt) : null;
+    const dateLong = stampD ? new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York', month: 'long', day: 'numeric', year: 'numeric' }).format(stampD) : '';
+    const timeET = stampD ? new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' }).format(stampD) : '';
+
     body.innerHTML = `
-      <div class="di-prov2">${LOGO}<span>This briefing is AI-generated</span></div>
-      ${overview ? `<section class="di-ov">
-        <h3 class="di-sectitle">Overview</h3>
-        <div class="di-ov-body aii-sec-body">${renderBriefBody(overview, null)}</div>
+      <div class="di-mast">
+        ${dateLong ? `<span class="di-mast-date">${CAL_SVG}<span>${esc(dateLong)}</span></span>` : ''}
+        ${timeET ? `<span class="di-mast-dot" aria-hidden="true"></span><span class="di-mast-time">${CLOCK_SVG}<span>Updated ${esc(timeET)} ET</span></span>` : ''}
+      </div>
+      <div class="di-prov2">${LOGO}<span>AI-generated briefing</span>
+        <button type="button" class="di-howlink" data-di-how>Learn how this works</button>
+      </div>
+      ${overview ? `<section class="di-big">
+        <h3 class="di-big-label">The Big Picture</h3>
+        <div class="di-big-body aii-sec-body">${renderBriefBody(overview, null)}</div>
+      </section>` : ''}
+      ${thingsList.length ? `<section class="di-things">
+        <h3 class="di-things-label">${LOGO}<span>${thingsList.length} Things to Know</span></h3>
+        <ol class="di-things-list">
+          ${thingsList.map((t, i) => `<li class="di-thing">
+            <button type="button" class="di-thing-btn" data-di-jump="${i}">
+              <span class="di-thing-n">${i + 1}</span>
+              <span class="di-thing-tx">${esc(t)}</span>
+              <span class="di-thing-go" aria-hidden="true">${CHEV_R}</span>
+            </button>
+          </li>`).join('')}
+        </ol>
       </section>` : ''}
       ${items.length ? `<section class="di-briefs">
-        <h3 class="di-sectitle">Briefings</h3>
+        <h3 class="di-sectitle">What Matters Today</h3>
         ${items.map((it, i) => `<article class="dib">
           ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}</h4>` : ''}
           <div class="dib-body aii-sec-body">${renderBriefBody(it.hasLede ? it.rest : it.raw, null)}</div>
@@ -2347,6 +2401,40 @@ export function renderDailyIntelligence(container, scope) {
       </section>` : ''}
 `;
   };
+
+  // "How this works" — one shared overlay, created on first use.
+  container.addEventListener('click', (e) => {
+    if (e.target.closest('[data-di-how]')) {
+      e.preventDefault();
+      let ov = document.getElementById('di-how-ov');
+      if (!ov) {
+        ov = document.createElement('div');
+        ov.id = 'di-how-ov'; ov.className = 'di-how-ov';
+        ov.innerHTML = HOW_IT_WORKS_HTML;
+        document.body.appendChild(ov);
+        const close = () => { ov.classList.remove('is-open'); document.body.style.overflow = ''; };
+        ov.addEventListener('click', (ev) => {
+          if (ev.target === ov || ev.target.closest('[data-di-how-close]')) close();
+        });
+        document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') close(); });
+      }
+      ov.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+    // A "thing to know" scrolls to the matching briefing item.
+    const jump = e.target.closest('[data-di-jump]');
+    if (jump) {
+      const i = Number(jump.dataset.diJump);
+      const arts = container.querySelectorAll('.di-briefs .dib');
+      const target = arts[i] || arts[0];
+      if (target) {
+        target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        target.classList.add('is-flash');
+        setTimeout(() => target.classList.remove('is-flash'), 1400);
+      }
+    }
+  });
 
   fetchDailyBrief(scope.topic).then((data) => {
     if (!container.isConnected) return;
