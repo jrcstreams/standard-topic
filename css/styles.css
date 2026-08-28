@@ -26481,3 +26481,39 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
   body.home-search.tt-on .home-viewtabs,
   body.home-search.tt-on .home-v2 .nf-tabs { padding: 0 1rem !important; }
 }
+
+/* ============================================================
+   revamp1019 — the two column heads are ONE object (#img813/814)
+   ============================================================ */
+@media (min-width: 1200px) {
+  /* Identical box: same size, same padding, same rule weight, same margin, so
+     the heads and their separators land on the same two horizontal lines.
+     Both columns also start their content at the grid row's top edge. */
+  .topic-band .topic-home > .topic-news-wrap,
+  .topic-band .topic-home > .topic-top { align-self: start; padding-top: 0 !important; margin-top: 0 !important; }
+  .topic-band .topic-home .newsfeed-card { padding-top: 0 !important; margin-top: 0 !important; }
+
+  .topic-band .topic-home .newsfeed-title,
+  .topic-band .topic-home .trail-head {
+    font-family: var(--font-display, var(--font-family)) !important;
+    font-size: 1.32rem !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.012em !important;
+    margin: 0 !important;
+    padding: 0 0 12px !important;
+  }
+  .topic-band .topic-home .newsfeed-head,
+  .topic-band .topic-home .trail-head {
+    border-bottom: 2px solid #e0e5ee !important;
+    margin: 0 0 14px !important;
+    padding: 0 !important;
+  }
+  .topic-band .topic-home .newsfeed-headtext,
+  .topic-band .topic-home .newsfeed-headrow { margin: 0 !important; padding: 0 !important; }
+
+  /* News is the page's primary column, so it keeps the heavier ink. The rail
+     heads step down a notch in weight and take the mid-navy, which separates
+     them without making them a different size. */
+  .topic-band .topic-home .newsfeed-title { font-weight: 750 !important; color: #14204a !important; }
+  .topic-band .topic-home .trail-head { font-weight: 650 !important; color: #2c4f9e !important; }
+}

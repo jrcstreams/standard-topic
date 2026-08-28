@@ -190,7 +190,7 @@ ${d.body}`).join(`
     </div>`:`
     <div class="newsfeed-head section-card-head newsfeed-head--home newsfeed-head--topic">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Latest News</span></h3>
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
       </div>
     </div>`;e.innerHTML=`
     <div class="newsfeed-card">
