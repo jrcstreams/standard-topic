@@ -26296,14 +26296,29 @@ body:not(.tt-on) .topic-band .topic-home .newsfeed-headtext { margin: 0 !importa
 .aii-fi-acclist { gap: 0 !important; }
 /* Earlier rules target `.aii-fi-acclist > .aii-fi-acc` (0,2,0) with !important,
    so the flat-row reset has to be written at that path or deeper. */
+/* `:nth-child(...)` rules elsewhere sit at (0,3,0) and beat a plain
+   `.aii-fi-acclist > .aii-fi-acc` (0,2,0), so those rows kept a border-top ON
+   TOP of the button's border-bottom — the doubled lines, and 53px rows against
+   everyone else's 52, which is what broke the vertical rhythm. `:nth-child(n)`
+   matches every child at the same (0,3,0) and wins on source order. */
 .aii-fi-acclist > .aii-fi-acc,
-.aii-fi-acclist > .aii-fi-acc:first-child {
+.aii-fi-acclist > .aii-fi-acc:nth-child(n),
+.aii-fi-acclist > .aii-fi-acc:first-child,
+.aii-fi-acclist > .aii-fi-acc:last-child {
   border: 0 !important;
   border-top: 0 !important;
+  border-bottom: 0 !important;
   border-radius: 0 !important;
   background: none !important;
   box-shadow: none !important;
+  margin-top: 0 !important;
+  padding: 0 !important;
 }
+/* One line per row, from the button, at a single height. */
+.aii-fi-acclist > .aii-fi-acc:nth-child(n) > .aii-fi-accsum {
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent) !important;
+}
+.aii-fi-acclist > .aii-fi-acc:last-child > .aii-fi-accsum { border-bottom: 0 !important; }
 /* The hairline lives on the BUTTON, not the grid item. On the grid item it
    spanned the column gap and the two columns' lines landed at different
    heights — the stray verticals and staggered rules (#img808-812). Each cell
@@ -26341,6 +26356,7 @@ body:not(.tt-on) .topic-band .topic-home .newsfeed-headtext { margin: 0 !importa
 
 /* ── Open: NOW it becomes a container. The row and its prompt panel are one
       bordered object, lifted off the list so the open state is unmistakable. ── */
+.aii-fi-acclist > .aii-fi-acc.is-open:nth-child(n),
 .aii-fi-acclist > .aii-fi-acc.is-open,
 .aii-fi-acclist > .aii-fi-acc.is-open:first-child,
 .aii-fi-acc.is-open {
