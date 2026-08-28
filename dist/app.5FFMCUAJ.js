@@ -785,9 +785,8 @@ ${k}`),w.length?w.join(`
 `)),j=D=>Array.isArray(D)?D:Object.values(D||{}).flat(),S=nd(j(d.headlines),j(d.sources),20).filter(D=>D.title),T=b.map(D=>({name:D.lede,body:D.text})),{buckets:$,unmatched:B}=Xr(S,T),A=d.generatedAt?new Date(d.generatedAt):null,O=A?new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",month:"long",day:"numeric",year:"numeric"}).format(A):"",Q=A?new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",hour:"numeric",minute:"2-digit"}).format(A):"";i.innerHTML=`
       <div class="di-mast">
         ${s?`<span class="di-mast-topic">${_(s)}</span>`:""}
-        ${s&&O?'<span class="di-mast-dot" aria-hidden="true"></span>':""}
         ${O?`<span class="di-mast-date">${rd}<span>${_(O)}</span></span>`:""}
-        ${Q?`<span class="di-mast-dot" aria-hidden="true"></span><span class="di-mast-time">${od}<span>Updated ${_(Q)} ET</span></span>`:""}
+        ${Q?`<span class="di-mast-time">${od}<span>Updated ${_(Q)} ET</span></span>`:""}
       </div>
       <!-- revamp1037: provenance + the how-it-works link read as ONE line
            (dot-separated, no underline) rather than two stacked fragments. -->

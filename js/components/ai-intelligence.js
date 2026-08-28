@@ -2374,9 +2374,8 @@ export function renderDailyIntelligence(container, scope) {
     body.innerHTML = `
       <div class="di-mast">
         ${mastLabel ? `<span class="di-mast-topic">${esc(mastLabel)}</span>` : ''}
-        ${mastLabel && dateLong ? '<span class="di-mast-dot" aria-hidden="true"></span>' : ''}
         ${dateLong ? `<span class="di-mast-date">${CAL_SVG}<span>${esc(dateLong)}</span></span>` : ''}
-        ${timeET ? `<span class="di-mast-dot" aria-hidden="true"></span><span class="di-mast-time">${CLOCK_SVG}<span>Updated ${esc(timeET)} ET</span></span>` : ''}
+        ${timeET ? `<span class="di-mast-time">${CLOCK_SVG}<span>Updated ${esc(timeET)} ET</span></span>` : ''}
       </div>
       <!-- revamp1037: provenance + the how-it-works link read as ONE line
            (dot-separated, no underline) rather than two stacked fragments. -->

@@ -27339,3 +27339,40 @@ body.pagenav-mode .trending-toolbar { margin-top: 0 !important; padding-top: 0 !
 .di-page .di-mast,
 .di-page .di-prov2 { margin: 0 !important; }
 .di-page .di-big { margin-top: 6px !important; }
+
+/* revamp1037c — three fixes on the topic/home briefing card's open state.
+
+   The separator dots were their own flex children, so a wrapping masthead (the
+   narrow sidebar column always wraps) left a dot dangling at the end of the
+   first line. They're pseudo-elements on the run that FOLLOWS them now, so a
+   dot always wraps with its own text. */
+.di-mast-dot { display: none !important; }
+.di-mast-topic ~ .di-mast-date::before,
+.di-mast-topic ~ .di-mast-time::before,
+.di-mast-date ~ .di-mast-time::before {
+  content: ""; flex: none; margin-right: 9px;
+  width: 3px; height: 3px; border-radius: 50%;
+  background: currentColor; opacity: .45;
+}
+
+/* The collapsed card's "AI-generated content" caption stayed on screen while
+   open, directly above the briefing's own "AI-generated briefing" line. */
+.tdi-card--hero2.is-open .tdi-cardprov { display: none !important; }
+
+/* The bare open-head was holding a 30px row for one close button. Lift the X
+   out of flow so the briefing starts at the top of the card. */
+.tdi-openhead--bare {
+  position: relative !important; height: 0 !important;
+  min-height: 0 !important; overflow: visible !important;
+}
+.tdi-openhead--bare .tdi-openx {
+  position: absolute !important; top: 0 !important; right: 0 !important; z-index: 2;
+}
+/* …which means the masthead has to clear it. */
+.tdi-openhead--bare + [data-di-host] .di-mast { padding-right: 38px !important; }
+
+/* The .tdi-card--hero2.is-open path (0,3,0) was still winning on the provenance
+   margins, so the topic card kept the old 21px gaps. */
+.tdi-card--hero2.is-open .di-page .di-mast,
+.tdi-card--hero2.is-open .di-page .di-prov2 { margin: 0 !important; }
+.tdi-card--hero2.is-open .di-page .di-big { margin-top: 6px !important; }
