@@ -26982,14 +26982,22 @@ body.home-search.tt-on #content { overflow: visible !important; }
   /* An id-bearing rule (body.home-search #section-newsfeed ...) carries this at
      (1,3,1) with !important, so the id has to be in the path or the rule is
      silently zeroed. */
+  /* The 2px rule belongs to the TITLE row. The filter row lives inside
+     .newsfeed-head too, so putting the rule on the head drew it below the
+     filters instead of under "News Feed" — 65px out of line with AI Briefing. */
   body.home-search .home-v2 #section-newsfeed .newsfeed-head,
   body.home-search #section-newsfeed .home-v2 .newsfeed-head,
   body.home-search .home-v2 .newsfeed-head {
-    border-bottom: 2px solid #e0e5ee !important;
-    padding: 0 0 12px !important;
+    border-bottom: 0 !important;
+    padding: 0 !important;
     margin: 0 0 14px !important;
   }
-  body.home-search .home-v2 .newsfeed-headrow,
+  body.home-search .home-v2 #section-newsfeed .newsfeed-headrow,
+  body.home-search .home-v2 .newsfeed-headrow {
+    border-bottom: 2px solid #e0e5ee !important;
+    padding: 0 0 12px !important;
+    margin: 0 !important;
+  }
   body.home-search .home-v2 .newsfeed-headtext { margin: 0 !important; padding: 0 !important; }
   body.home-search .home-v2 #section-newsfeed .newsfeed-title,
   body.home-search .home-v2 .newsfeed-title {
