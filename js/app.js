@@ -1749,7 +1749,8 @@ function diEditionStampHTML(iso) {
   if (!p) return '';
   // revamp1016: briefings publish ONCE a day now (7pm ET), so "Morning /
   // Night Edition" no longer distinguishes anything — the date carries it.
-  return `<span class="tdi-stamp-val">${escapeHTML(p.day)}</span>`;
+  const CAL = '<svg class="tdi-stamp-cal" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></svg>';
+  return `<span class="tdi-stamp-val">${CAL}<span>${escapeHTML(p.day)}</span></span>`;
 }
 
 
@@ -2463,12 +2464,12 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       </div>
       <div class="topic-top">
         <section class="topic-top-main">
-          <h3 class="trail-head">AI Briefing</h3>
+          <h3 class="trail-head"><span class="trail-head-ic" aria-hidden="true">${DI_SPARK_TWO}</span>AI Briefing</h3>
           <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
           </div>
         </section>
         <section class="topic-top-side">
-          <h3 class="trail-head">AI Prompts</h3>
+          <h3 class="trail-head"><span class="trail-head-ic" aria-hidden="true">${DI_SPARK_TWO}</span>AI Prompts</h3>
           <div class="tpr-card" data-tpr>
             <div class="tpr-head">
             </div>
@@ -2778,7 +2779,19 @@ function renderLayout(route) {
           <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg></span>
           <span class="subnav-ident-name">Home</span>
         </div>
-      </div></div>`;
+      </div></div>
+      <!-- revamp1025: the tab rows live INSIDE the subnav, not in #content.
+           In #content they inherited four levels of padding, were clipped by
+           overflow-x: clip, and could never line up with the bar above them.
+           Here they are part of the same fixed, full-width, sidebar-offset
+           element by construction. -->
+      <div class="home-viewtabs topic-viewtabs" data-home-viewtabs role="tablist" aria-label="Home sections">
+        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">News Feed</button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">AI Briefing</button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">Trending</button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="tools">AI Prompts</button>
+      </div>
+      <div class="home-subfilters" data-home-subfilters></div>`;
     if (!window.__homeScrollWire) {
       window.__homeScrollWire = true;
       const onScroll = () => {
@@ -4685,12 +4698,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     container.innerHTML = `
       <div class="topic-layout home-grid" id="topic-layout">
         ${bodyTabsRow({ showSearchTrends: true })}
-        <div class="home-viewtabs topic-viewtabs" data-home-viewtabs role="tablist" aria-label="Home sections">
-          <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">News Feed</button>
-          <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">AI Briefing</button>
-          <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">Trending</button>
-          <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="tools">AI Prompts</button>
-        </div>
         <div class="home-sections home-v2">
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
@@ -4721,16 +4728,20 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 5 });
     {
       const grid = container.querySelector('.home-v2');
-      container.querySelectorAll('[data-hview]').forEach((b) => b.addEventListener('click', () => {
+      // revamp1025: the tabs live in #sub-header, so query the document.
+      document.querySelectorAll('[data-hview]').forEach((b) => b.addEventListener('click', () => {
         const v = b.dataset.hview;
         grid.classList.toggle('hview-brief', v === 'brief');
         grid.classList.toggle('hview-trend', v === 'trend');
         grid.classList.toggle('hview-tools', v === 'tools');
-        container.querySelectorAll('[data-hview]').forEach((x) => {
+        document.querySelectorAll('[data-hview]').forEach((x) => {
           const on = x === b;
           x.classList.toggle('is-active', on);
           x.setAttribute('aria-selected', String(on));
         });
+        // The filter row belongs to the news tab only.
+        const slot = document.querySelector('[data-home-subfilters]');
+        if (slot) slot.classList.toggle('is-on', v === 'news');
         // The tab IS the destination: AI Briefing lands with the brief open
         // rather than a teaser you then have to click (matches topic pages).
         if (v === 'brief') {
