@@ -4625,8 +4625,11 @@ function resolveTopicPlaceholder(prompt, topicName) {
 }
 function promptEmbedScope(shortcuts, extra) {
   return {
-    inModal: true, promptsOnly: 'specific', lockTopic: true,
-    topic: 'home', label: '', shortcuts,
+    // initialBuilder + initialGroup are what land the component on its prompt
+    // library view; without them it renders its default shell and no rows.
+    inModal: true, initialBuilder: true, initialGroup: 'external',
+    promptsOnly: 'specific', lockTopic: true,
+    topic: 'home', label: '', shortcuts, descriptions: {}, icons: {},
     ...(extra || {}),
   };
 }
