@@ -9,8 +9,8 @@
 //   - News: recent stories (48h, newest first) without a 'brief' — sub-budget
 //     NEWS_PER_RUN so news volume can't starve the rest.
 //   - Daily Intelligence: every topic × the combined 'daily' brief (stored
-//     under 'daily:b') — ~100 topics on two fixed waves a day (?type=daily,
-//     6am + 6pm ET), so exactly two generations per topic per day.
+//     under 'daily:b') — ~100 topics on ONE fixed wave a day (?type=daily,
+//     7pm ET), so exactly one generation per topic per day.
 //   Refresh (stalest first, via generateInsight refresh flag):
 //   - daily:b is refreshed ONLY by its waves — see dailyWaveStart. It is
 //     deliberately excluded from the age-window refresh below and from the
@@ -46,20 +46,19 @@ const NEWS_PER_RUN = 10;
 const HEAL_PER_RUN = 12;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// The two fixed daily-briefing waves, in AMERICA/NEW_YORK wall-clock hours:
-// 6am and 6pm ET, every day, year-round.
+// The daily-briefing wave, in AMERICA/NEW_YORK wall-clock hours: ONE run at
+// 7pm ET, every day, year-round (revamp1013). Two waves across 100 topics was
+// ~62% of the entire Gemini bill; halving the cadence halves that line.
 //
 // Vercel crons are UTC-only and have no DST awareness, so vercel.json registers
-// BOTH candidate UTC hours for each wave (10:00 + 11:00 for the morning, 22:00
-// + 23:00 for the evening). Exactly one of each pair is 6am/6pm in New York on
-// any given date; the other returns immediately as a no-op. That keeps the
-// waves pinned to the clock John reads without a DST table to maintain.
+// BOTH candidate UTC hours (23:00 for EDT, 00:00 for EST). Exactly one is 7pm
+// in New York on any given date; the other returns immediately as a no-op.
 //
 // dailyWaveStart() returns the instant the current wave began. Every daily run
 // refreshes each topic whose brief predates it — that single comparison is the
 // entire scheduling rule, so a topic is either in this wave or already done by
 // it, with nothing in between to guess at.
-const DAILY_WAVE_HOURS_ET = [6, 18];
+const DAILY_WAVE_HOURS_ET = [19];
 const ET_FMT = new Intl.DateTimeFormat('en-US', {
   timeZone: 'America/New_York', hour12: false,
   year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit',
@@ -130,6 +129,19 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
   }
   const sql = getSql();
   if (!sql || !process.env.GEMINI_API_KEY) return res.status(200).json({ ok: true, skipped: true });
+
+  // revamp1013: publicBudgetLeft() reads ai_usage_surface and FAILS OPEN when
+  // the table is absent — i.e. every visitor-triggered generation ran with no
+  // cap at all. The table was only ever created lazily by a hit on the admin
+  // usage endpoint, which may never have happened. Provision it here: this cron
+  // is authed, runs constantly, and IF NOT EXISTS makes it a no-op thereafter.
+  try {
+    await sql.query(`CREATE TABLE IF NOT EXISTS ai_usage_surface (
+      day DATE NOT NULL, surface TEXT NOT NULL,
+      calls INTEGER NOT NULL DEFAULT 0, grounded INTEGER NOT NULL DEFAULT 0,
+      searches INTEGER NOT NULL DEFAULT 0, in_tok BIGINT NOT NULL DEFAULT 0,
+      out_tok BIGINT NOT NULL DEFAULT 0, PRIMARY KEY (day, surface))`);
+  } catch (_) { /* insufficient privilege / already exists — non-fatal */ }
 
   const total = Math.min(Math.max(parseInt(req.query.n, 10) || 30, 1), 120);
   const which = (req.query.type || 'all').trim();
@@ -217,7 +229,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
   };
 
   // type=daily — the DAILY WAVES. Every topic's Daily Intelligence regenerates
-  // twice a day at 6am and 6pm ET, spread over six
+  // once a day at 7pm ET, spread over six
   // staggered cron runs per wave so all briefings "post" around the same two
   // times.
   //

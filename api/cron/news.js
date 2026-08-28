@@ -180,7 +180,12 @@ async function gradeJunk(sql, ids) {
 Reply with ONLY a JSON array of the numbers that are junk, e.g. [0,3,17]. If none: []
 ${listing}`;
       try {
-        const out = await generate(prompt, { maxTokens: 200, temperature: 0 });
+        // revamp1013: junk/not-junk is pure classification — no reasoning
+        // quality needed — so it runs on the cheap tier (~6x less per token).
+        const out = await generate(prompt, {
+          maxTokens: 200, temperature: 0,
+          model: process.env.GEMINI_JUNKGATE_MODEL || 'gemini-2.5-flash-lite',
+        });
         tokens += (out.inTok || 0) + (out.outTok || 0);
         const m = String(out.text || '').match(/\[[\d,\s]*\]/);
         if (!m) continue;
