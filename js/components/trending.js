@@ -8,6 +8,7 @@ import { fetchWithTimeout } from '../utils/data.js';
 import { renderTrendExpansionBody, wireTrendDrawers } from './trend-expansion.js?v=20260812-revamp732';
 import { wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
+import { howItWorksLinkHTML } from '../utils/how-it-works.js?v=20260828-revamp1038';
 import { streamInsight } from '../utils/insight-stream.js?v=20260822-revamp962';
 import { createStreamRenderer } from '../utils/stream-render.js?v=20260822-revamp968';
 
@@ -376,6 +377,8 @@ function trendLegendRow() {
   return `<div class="trend-legend-row">
     <div class="trend-legend trend-legend--solo">
       <span class="trend-legend-item">${aiSparkInline()}<span>Trend summaries are AI-generated.</span></span>
+      <span class="trend-legend-dot" aria-hidden="true"></span>
+      ${howItWorksLinkHTML()}
     </div>
   </div>`;
 }
@@ -494,6 +497,8 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     return `<div class="tlm-controlbar-inner">
       <div class="trend-legend trend-legend--solo">
         <span class="trend-legend-item">${aiSparkInline()}<span>Trend summaries are AI-generated.</span></span>
+        <span class="trend-legend-dot" aria-hidden="true"></span>
+        ${howItWorksLinkHTML()}
       </div>
       ${TREND_SPORTS_TOGGLE_HTML()}
     </div>`;

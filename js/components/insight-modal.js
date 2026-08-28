@@ -342,7 +342,9 @@ function secHeadHTML(key, name) {
   // Per-section "AI Generated Text" tag (own line, left-aligned) carries provenance
   // now that the single "AI Brief" label is gone (#183/#184) — consistent with the
   // AI Insights modal. Skipped on Sources + Related (not generated prose).
-  const tag = (key === 'sources' || key === 'related') ? '' : `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${SPARK}<span>AI Generated Text</span></span></div>`;
+  // revamp1038: the AI chip is the shared "how our AI works" trigger now — the
+  // same overlay opens from here, from trend summaries and from the briefings.
+  const tag = (key === 'sources' || key === 'related') ? '' : `<div class="im-sec-aitag-row"><button type="button" class="im-sec-aitag" data-how-it-works>${SPARK}<span>AI Generated Text</span></button></div>`;
   return `<div class="im-msec-head"><span class="im-msec-ic">${SEC_ICON[key] || SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>${tag}`;
 }
 

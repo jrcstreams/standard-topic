@@ -27387,3 +27387,48 @@ body.pagenav-mode .trending-toolbar { margin-top: 0 !important; padding-top: 0 !
   .di-mast-topic ~ .di-mast-time::before,
   .di-mast-date ~ .di-mast-time::before { display: none !important; }
 }
+
+/* ═══ revamp1038 — shared "How our AI works" modal + its triggers ═══════════ */
+
+/* Title now leads with the sparkle. */
+.di-how-title {
+  display: flex; align-items: center; gap: 9px;
+}
+.di-how-title svg { flex: none; color: #2f4d9e; width: 21px; height: 21px; }
+
+/* Per-surface sections: how each kind of AI text is generated. */
+.di-how-surfaces {
+  display: flex; flex-direction: column; gap: 12px;
+  margin: 0 0 18px; padding: 14px 0 2px; border-top: 1px solid #e5e9f2;
+}
+.di-how-surface { display: block; }
+.di-how-surfacetitle {
+  margin: 0 0 3px; display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0.02em; color: #16307a;
+}
+.di-how-surfacetitle::before {
+  content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%;
+  background: #2f4d9e;
+}
+.di-how-surface p {
+  margin: 0; padding-left: 13px;
+  font-size: 0.88rem; line-height: 1.55; color: #46536e;
+}
+
+/* The insight modal's AI chip is a trigger now — give it a pointer + hover. */
+.im-sec-aitag[data-how-it-works] { cursor: pointer; transition: background .13s ease, color .13s ease; }
+@media (hover: hover) {
+  .im-sec-aitag[data-how-it-works]:hover { background: #e7edfa; color: #1d4ed8; }
+}
+
+/* Trend legend: the AI note and the how-it-works link on one line. */
+.trend-legend-dot {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: currentColor; opacity: .4; flex: none;
+  align-self: center; margin: 0 2px;
+}
+.trend-legend .di-howlink {
+  font-size: inherit; color: #3559b0; text-decoration: none;
+}
+@media (hover: hover) { .trend-legend .di-howlink:hover { color: #1d4ed8; text-decoration: underline; text-underline-offset: 2px; } }

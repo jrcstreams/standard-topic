@@ -2283,20 +2283,6 @@ const CHEV_R = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stro
 // Universal "how this works" explainer. One panel covers every AI surface —
 // briefings, news insights and trend summaries all run the same pipeline, so
 // three separate explanations would say the same thing three times.
-const HOW_IT_WORKS_HTML = `
-  <div class="di-how-panel" role="dialog" aria-modal="true" aria-label="How our AI works">
-    <button type="button" class="di-how-x" data-di-how-close aria-label="Close">&times;</button>
-    <h2 class="di-how-title">How our AI works</h2>
-    <p class="di-how-lede">Every AI surface on Standard Topic runs the same pipeline. Here is exactly what happens before you read a word of it.</p>
-    <ol class="di-how-steps">
-      <li><b>Real articles first.</b> We pull from our own news feed — roughly a hundred publisher sources, refreshed through the day. The model is given real, recent, dated headlines to work from, never a blank page.</li>
-      <li><b>Live search on top.</b> Generations run grounded: the model can query Google Search while it works, so it can verify a claim or catch something our feed has not indexed yet.</li>
-      <li><b>Sources are kept.</b> Whatever the model actually consulted is stored with the text and shown under each section. If a briefing cites nothing, it is because grounding returned nothing — not because we hid it.</li>
-      <li><b>Written once a day.</b> Topic briefings regenerate on a fixed schedule, 7pm ET, so everyone sees the same edition. News insights and trend summaries generate on demand and are cached.</li>
-    </ol>
-    <p class="di-how-foot">It is still a language model, and it can be wrong or out of date. Treat a briefing as a fast orientation, and follow the sources for anything that matters.</p>
-  </div>`;
-
 export function renderDailyIntelligence(container, scope) {
   const name = scope.label || scope.topic || '';
   // Header mirrors the topic-section lockup (kicker + icon-chip title), with the
@@ -2410,26 +2396,9 @@ export function renderDailyIntelligence(container, scope) {
 `;
   };
 
-  // "How this works" — one shared overlay, created on first use.
+  // "How this works" now lives in a shared, site-wide overlay (revamp1038);
+  // a single global [data-how-it-works]/[data-di-how] listener opens it.
   container.addEventListener('click', (e) => {
-    if (e.target.closest('[data-di-how]')) {
-      e.preventDefault();
-      let ov = document.getElementById('di-how-ov');
-      if (!ov) {
-        ov = document.createElement('div');
-        ov.id = 'di-how-ov'; ov.className = 'di-how-ov';
-        ov.innerHTML = HOW_IT_WORKS_HTML;
-        document.body.appendChild(ov);
-        const close = () => { ov.classList.remove('is-open'); document.body.style.overflow = ''; };
-        ov.addEventListener('click', (ev) => {
-          if (ev.target === ov || ev.target.closest('[data-di-how-close]')) close();
-        });
-        document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') close(); });
-      }
-      ov.classList.add('is-open');
-      document.body.style.overflow = 'hidden';
-      return;
-    }
     // A "thing to know" scrolls to the matching briefing item.
     const jump = e.target.closest('[data-di-jump]');
     if (jump) {

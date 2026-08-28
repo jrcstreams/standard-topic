@@ -7,6 +7,7 @@ import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js?v=20260716-revamp588';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp574';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js?v=20260728-revamp668';
+import { installHowItWorks, howItWorksLinkHTML } from './utils/how-it-works.js?v=20260828-revamp1038';
 import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260817-revamp772';
 // prompt-generator (~127KB, Prompts flows only) is lazy-loaded via loadPromptGen() so it
 // splits out of the initial bundle — see B3.4. (prompt-builder-modal.js was a retired
@@ -84,6 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initScrollFades();
   initTrendingDetailModal();
   initInsightModal();
+  installHowItWorks();
   // Trending list modal retired (Phase-5 follow-up) — "View more trending" /
   // open-trending-list now open the Trending nav dropdown instead (see below).
   // All Topics modal retired — every "All Topics" entry (picker action, search)
