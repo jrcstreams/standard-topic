@@ -26782,3 +26782,47 @@ body.home-search.tt-on #content { overflow: visible !important; }
 }
 .tdi-stamp-val { display: inline-flex; align-items: center; gap: 6px; }
 .tdi-stamp-cal { flex: none; opacity: .75; }
+
+/* ============================================================
+   revamp1029 — briefing card to the mockup; prompt sections close
+   their gaps (#img847-853)
+   ============================================================ */
+
+/* Heads take a deeper blue — the mid-navy read too bright next to the ink. */
+.trail-head, .home-v2 .home-side .hb-title { color: #1e3a8a !important; }
+.trail-head-ic { color: #1e3a8a !important; }
+
+/* Read Briefing is the card's main action: full width, taller. */
+.tdi-card--hero2 .tdi-go,
+.hb-hero .tdi-card .tdi-go {
+  display: flex !important; width: 100% !important;
+  justify-content: center !important; align-items: center; gap: 10px;
+  padding: 0.82rem 1.2rem !important;
+  border-radius: 8px !important;
+  font-size: 0.95rem !important; font-weight: 700 !important;
+}
+
+/* A dashed rule sets the provenance line off from the summary. */
+.tdi-cardprov {
+  border-top: 1px dashed color-mix(in srgb, #2f4d9e 22%, transparent) !important;
+  padding-top: 11px !important;
+  margin: 12px 0 12px !important;
+}
+
+/* ── Prompt sections: no dead space under a section rule, and an OPEN
+      accordion swallows the line above it instead of floating below it. ── */
+.aii-fi-sechead { margin-bottom: 0 !important; padding-bottom: 8px !important; }
+.aii-fi-sec .aii-fi-acclist,
+.aii-fi-sechead + .aii-ext-block,
+.aii-fi-sechead + * { margin-top: 0 !important; }
+.aii-ext-block.aii-fi { margin-top: 0 !important; }
+
+/* The open row is pulled up by exactly its own border so its top edge lands ON
+   the separator above it — one line, not a line plus a gap plus a border. */
+.aii-fi-acclist > .aii-fi-acc.is-open:nth-child(n),
+.aii-fi-acclist > .aii-fi-acc.is-open {
+  margin: -1px 0 0 !important;
+}
+.aii-fi-acclist > .aii-fi-acc.is-open + .aii-fi-acc > .aii-fi-accsum {
+  border-top: 0 !important;
+}
