@@ -26493,27 +26493,36 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
   .topic-band .topic-home > .topic-top { align-self: start; padding-top: 0 !important; margin-top: 0 !important; }
   .topic-band .topic-home .newsfeed-card { padding-top: 0 !important; margin-top: 0 !important; }
 
-  .topic-band .topic-home .newsfeed-title,
-  .topic-band .topic-home .trail-head {
+  /* revamp1009 set these at `body:not(.tt-on) .topic-band .topic-home ...`
+     (0,5,1) with !important, so the shared box has to be written there too. */
+  body:not(.tt-on) .topic-band .topic-home .newsfeed-title,
+  body:not(.tt-on) .topic-band .topic-home .trail-head {
     font-family: var(--font-display, var(--font-family)) !important;
     font-size: 1.32rem !important;
-    line-height: 1.25 !important;
+    line-height: 1.3 !important;
     letter-spacing: -0.012em !important;
     margin: 0 !important;
-    padding: 0 0 12px !important;
-  }
-  .topic-band .topic-home .newsfeed-head,
-  .topic-band .topic-home .trail-head {
-    border-bottom: 2px solid #e0e5ee !important;
-    margin: 0 0 14px !important;
     padding: 0 !important;
+    display: block !important;
   }
-  .topic-band .topic-home .newsfeed-headtext,
-  .topic-band .topic-home .newsfeed-headrow { margin: 0 !important; padding: 0 !important; }
+  /* The rule belongs to the same box on both sides: the head wrapper on the
+     news column, the heading itself in the rail. Identical pad + border + gap
+     is what puts the two lines at the same y. */
+  body:not(.tt-on) .topic-band .topic-home .newsfeed-head,
+  body:not(.tt-on) .topic-band .topic-home .trail-head {
+    border-bottom: 2px solid #e0e5ee !important;
+    padding: 0 0 12px !important;
+    margin: 0 0 14px !important;
+    min-height: 0 !important;
+  }
+  body:not(.tt-on) .topic-band .topic-home .newsfeed-headtext,
+  body:not(.tt-on) .topic-band .topic-home .newsfeed-headrow {
+    margin: 0 !important; padding: 0 !important; min-height: 0 !important;
+  }
+  body:not(.tt-on) .topic-band .topic-home .newsfeed-title { font-weight: 750 !important; color: #14204a !important; }
+  body:not(.tt-on) .topic-band .topic-home .trail-head { font-weight: 650 !important; color: #2c4f9e !important; }
 
   /* News is the page's primary column, so it keeps the heavier ink. The rail
      heads step down a notch in weight and take the mid-navy, which separates
      them without making them a different size. */
-  .topic-band .topic-home .newsfeed-title { font-weight: 750 !important; color: #14204a !important; }
-  .topic-band .topic-home .trail-head { font-weight: 650 !important; color: #2c4f9e !important; }
 }
