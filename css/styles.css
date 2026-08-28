@@ -26443,25 +26443,25 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
 @media (max-width: 1199.98px) {
   /* body.tt-on can't gate these: home is not .topic-band, and the stack has to
      pin even when the sidebar is docked. The tab widths are what matter. */
+  /* NORMAL FLOW, not fixed. These rows live inside #content, which carries
+     `overflow-x: clip` — and clip (unlike hidden) clips fixed descendants, so
+     a fixed row measured perfectly and painted nothing. Topic pages escape it
+     only because their #content is itself fixed. In flow the rows sit flush
+     under the bars at rest, which is the attached look, and they scroll with
+     the page instead of fighting the clip. */
   body.home-search.tt-on .home-viewtabs,
   body.home-search.tt-on .home-v2 .nf-tabs {
-    position: fixed; left: 0; right: 0; z-index: 60;
+    position: static !important;
     margin: 0 !important;
     background: #f8f9fc;
     border-bottom: 1px solid #e5e9f2;
+    width: auto;
   }
-  body.nav-docked.home-search.tt-on .home-viewtabs,
-  body.nav-docked.home-search.tt-on .home-v2 .nf-tabs { left: var(--sbw); }
-
-  /* Row 2: the section tabs, directly under the grey Home bar. */
   body.home-search.tt-on .home-viewtabs {
-    top: calc(var(--nav-h) + 56px);
     height: 46px; padding: 0 2rem !important;
     border-top: 0 !important;
   }
-  /* Row 3: the topic filters, attached beneath — a subnav OF the tab row. */
   body.home-search.tt-on .home-v2 .nf-tabs {
-    top: calc(var(--nav-h) + 56px + 46px);
     height: 46px; padding: 0 2rem !important;
     display: flex !important; align-items: center; flex-wrap: nowrap !important;
     overflow-x: auto; scrollbar-width: none; gap: 8px;
@@ -26488,10 +26488,11 @@ body:not(.tt-on) .topic-band .topic-home .tpr-inline .aii-fi-acclist {
   /* Content clears all three bars; the news tab reserves one row more. */
   html body.home-search.app-mode.sticky-always #content,
   html body.home-search.app-mode #content,
-  body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 46px + 18px) !important; }
-  html body.home-search.tt-on.app-mode #content:has(.home-v2:not(.hview-brief):not(.hview-trend):not(.hview-tools)) {
-    padding-top: calc(var(--nav-h) + 56px + 46px + 46px + 14px) !important;
-  }
+  body.home-search #content { padding-top: calc(var(--nav-h) + 56px) !important; }
+  /* The tab rows are the first thing in the flow, so nothing else to reserve. */
+  body.home-search.tt-on .home-v2 { padding-top: 0 !important; }
+  body.home-search.tt-on .home-v2 .newsfeed-card { padding-top: 0 !important; }
+  body.home-search.tt-on .home-v2 .news-list { margin-top: 14px !important; }
 }
 @media (max-width: 640px) {
   body.home-search.tt-on .home-viewtabs,
