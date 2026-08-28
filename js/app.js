@@ -4624,12 +4624,21 @@ function resolveTopicPlaceholder(prompt, topicName) {
   return String(prompt || '').replace(/\{topic\}/gi, topicName || 'this topic');
 }
 function promptEmbedScope(shortcuts, extra) {
+  // sectionIcon() resolves per-row glyphs through scope.icons[name] and falls
+  // back to one generic mark for the whole group — so the map has to be built
+  // from the picks or every row wears the same wand.
+  const icons = {}; const descriptions = {};
+  (shortcuts || []).forEach((sc) => {
+    if (!sc || !sc.name) return;
+    if (sc.icon) icons[sc.name] = sc.icon;
+    if (sc.description) descriptions[sc.name] = sc.description;
+  });
   return {
     // initialBuilder + initialGroup are what land the component on its prompt
     // library view; without them it renders its default shell and no rows.
     inModal: true, initialBuilder: true, initialGroup: 'external',
     promptsOnly: 'specific', lockTopic: true,
-    topic: 'home', label: '', shortcuts, descriptions: {}, icons: {},
+    topic: 'home', label: '', shortcuts, descriptions, icons,
     ...(extra || {}),
   };
 }
