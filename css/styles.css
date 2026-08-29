@@ -28222,3 +28222,39 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
   left: -48px; right: -48px; top: -64px; bottom: -6px;
   background: linear-gradient(180deg, #eaf1fd 0%, #f2f6fd 60%, #ffffff 100%);
 }
+
+/* ═══ revamp1065 — full-width prompts, lighter AI-gen chip, tab-brief close ══ */
+
+/* AI Prompts on the homepage: rows run the full card width (the stage/list held
+   a ~16px inset that made the dividers stop short of the header rule). */
+.hf-card--prompts .aii-stage { padding-left: 0 !important; padding-right: 0 !important; }
+.hf-card--prompts .aii-fi-acclist { padding-left: 0 !important; padding-right: 0 !important; }
+.hf-card--prompts .aii-fi-accsum { padding-left: 2px !important; padding-right: 2px !important; }
+
+/* The shared AI-generated chip: lighter ground + a touch smaller (it read too
+   dark and too big on the briefing preview card). Applies everywhere for one
+   consistent label collapsed → expanded. */
+.how-aigen {
+  background: color-mix(in srgb, #1a2740 4%, transparent) !important;
+  font-size: 0.72rem !important; padding: 4px 9px !important;
+}
+
+/* Tab-mode briefing is a TAB, not a card — no close X, no bottom close foot. */
+body.tt-on .tview-brief .tdi-openx,
+body.tt-on .tview-brief .tdi-openhead--bare,
+body.tt-on .tview-brief .tdi-closefoot,
+body.tt-on.home-search .home-featbriefs .tdi-openx,
+body.tt-on.home-search .home-featbriefs .tdi-openhead--bare,
+body.tt-on.home-search .home-featbriefs .tdi-closefoot { display: none !important; }
+
+/* The navy top-bar Search: kill the odd text-highlight box behind the label. */
+#site-header.is-sticky-hero #nav-search,
+#site-header.is-sticky-hero #nav-search .nav-searchbar-ph,
+#site-header.is-sticky-hero #nav-search .navbtn-label {
+  -webkit-user-select: none; user-select: none;
+}
+#site-header.is-sticky-hero #nav-search .nav-searchbar-ph,
+#site-header.is-sticky-hero #nav-search .navbtn-label { background: none !important; }
+
+/* Sidebar Search: a slightly darker, bluer border. */
+.navmenu-searchbtn { border-color: #c3ccdc !important; }
