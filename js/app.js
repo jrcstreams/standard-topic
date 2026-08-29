@@ -5938,14 +5938,21 @@ try {
   if (el) el.textContent = `\u00a9 ${new Date().getFullYear()} Standard Topic. All rights reserved.`;
 } catch (_) {}
 
+// revamp1054: icons for the search top-zone filter tabs (keyed by builder group).
+const SEARCH_TAB_ICON = {
+  external: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H17a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6.5A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 8h7M8 12h7M8 16h4"/></svg>',
+  news: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1z"/><path d="M19 8h1a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2"/><path d="M8 8h7M8 12h7M8 16h4"/></svg>',
+  explore: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>',
+};
 function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const isModal = mode === 'modal';
   container.innerHTML = `
     <div class="search-panel search-panel--${mode}" data-state="collapsed">
-      ${isModal ? '<div class="search-panel-topfold">' : ''}
+      ${isModal ? '<div class="search-panel-topfold search-topzone">' : ''}
       <div class="search-panel-hero"><div class="search-panel-hero-inner">
         ${isModal
-          ? `<h2 class="search-panel-title">Search</h2>`
+          ? `<h2 class="search-panel-title">Search</h2>
+             <p class="search-panel-sublede">Find the insights and resources you need.</p>`
           : `<h2 class="search-panel-title">Search. Discover. Stay&nbsp;Informed.</h2>
              <p class="search-panel-tagline">Real news. AI insights. All in one place.</p>`}
       </div></div>
@@ -5958,6 +5965,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         </form>
         <div class="search-panel-suggest" role="listbox" hidden></div>
       </div>
+      ${isModal ? '<div class="search-topzone-tabs" data-search-tabs-slot></div>' : ''}
       ${isModal ? '</div>' : ''}
       ${!isModal ? `<div class="search-panel-starters" aria-label="Popular topics"></div>` : ''}
       <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
@@ -6131,6 +6139,25 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     aiHost.className = 'search-aii-host';
     resultsInner.appendChild(aiHost);
     aiiSearchCtl = renderAIIntelligence(aiHost, customAiiScope(t, opts));
+    // revamp1054: relocate the results-filter tabs into the search top-zone
+    // (centered under the bar, on the coloured band) as icon pills. The
+    // component's own flat-nav is hidden; these mirror + drive it.
+    requestAnimationFrame(() => syncSearchTabs(aiHost));
+  }
+  // Mirror the component's flat-nav as centered icon-pill tabs in the top zone.
+  function syncSearchTabs(aiHost) {
+    const slot = panelEl.querySelector('[data-search-tabs-slot]');
+    if (!slot || !aiHost.isConnected) return;
+    const flatnav = aiHost.querySelector('.aii-flatnav');
+    if (!flatnav) { slot.innerHTML = ''; return; }
+    const tabs = [...flatnav.querySelectorAll('.aii-ftab')].map((b) => ({
+      group: b.dataset.tabGroup, label: b.textContent.trim(), active: b.classList.contains('is-active'),
+    }));
+    slot.innerHTML = tabs.map((tb) => `<button type="button" class="stz-tab${tb.active ? ' is-active' : ''}" data-stz-group="${escapeAttr(tb.group)}">${SEARCH_TAB_ICON[tb.group] || ''}<span>${escapeHTML(tb.label)}</span></button>`).join('');
+    slot.querySelectorAll('[data-stz-group]').forEach((btn) => btn.addEventListener('click', () => {
+      aiHost.querySelector(`.aii-ftab[data-tab-group="${btn.dataset.stzGroup}"]`)?.click();
+      requestAnimationFrame(() => syncSearchTabs(aiHost));
+    }));
   }
   // (Re)render the results for a term. External Insights + Web Search are always
   // present; News + Trending tabs are added only when they have items, so we fetch

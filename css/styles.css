@@ -27975,3 +27975,41 @@ body.home-search .home-v2 #home-trending .trending-topics-title { color: #1a2c66
 body.home-search .home-v2 .home-side #home-trending .trending-topics-title,
 body.home-search .home-v2 #home-trending .trending-topics-head h3.trending-topics-title,
 .home-v2 #home-trending .trending-topics-head .trending-topics-title { color: #1a2c66 !important; }
+
+/* ═══ revamp1054 — search page redesign: coloured top zone + icon-pill tabs ═══ */
+
+/* The whole hero+bar+tabs sits on a soft faded-blue band. */
+.search-page .search-topzone {
+  background: linear-gradient(180deg, #eef3fd 0%, #f2f6fd 55%, #ffffff 100%) !important;
+  margin: 0 -100vw 0 -100vw; padding: 0 100vw; /* full-bleed band */
+  padding-top: 8px !important; padding-bottom: 20px !important;
+}
+.search-page .search-panel-sublede {
+  margin: 0.35rem 0 0; text-align: center; color: #5c6a86;
+  font-size: 0.95rem; font-weight: 500;
+}
+/* Centered filter tabs with icons, active = light-blue pill. */
+.search-topzone-tabs {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 6px;
+  margin: 14px auto 0; max-width: 1120px;
+}
+.stz-tab {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border: 0; border-radius: 10px; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.92rem; font-weight: 650; color: #46557a;
+  transition: background .13s ease, color .13s ease;
+}
+.stz-tab svg { flex: none; color: #7488ad; }
+.stz-tab.is-active { background: #dfe8fb; color: #1d3a8a; }
+.stz-tab.is-active svg { color: #1d3a8a; }
+@media (hover: hover) { .stz-tab:not(.is-active):hover { background: #e9eefa; color: #1d3a8a; } }
+/* The results component's own flat-nav is mirrored in the top zone — hide it. */
+.search-aii-host .aii-flatnav { display: none !important; }
+
+/* Results header: "Results for X" + a category pill instead of the sub-line. */
+.aii-builder-topic--resultsfor { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.aii-srpill {
+  display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 999px;
+  background: #eef2fb; color: #2f4d9e; font-family: var(--font-family);
+  font-size: 0.82rem; font-weight: 700; letter-spacing: 0.01em;
+}

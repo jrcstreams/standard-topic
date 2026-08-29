@@ -889,8 +889,8 @@ export function renderAIIntelligence(container, scope) {
     const topicEl = scope.lockTopic
       ? (scope.resultsFor
         ? `<div class="aii-builder-topic aii-builder-topic--locked aii-builder-topic--resultsfor">
-             <h2 class="aii-srhead">Search Results</h2>
-             <p class="aii-srsub">${esc(topicTitle)}</p>
+             <h2 class="aii-srhead">Results for “${esc(topicTitle)}”</h2>
+             <span class="aii-srpill">${esc(((builderTabs().find((x) => x.group === curGroup) || {}).tab) || ((builderTabs().find((x) => x.group === curGroup) || {}).label) || 'Results')}</span>
            </div>`
         : `<div class="aii-builder-topic aii-builder-topic--locked"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span></div>`)
       : `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
