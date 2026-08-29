@@ -27964,3 +27964,8 @@ body.home-search .home-v2 #home-trending .trending-topics-title { color: #1a2c66
 }
 .navmenu-searchbtn svg { color: #16265c !important; }
 @media (hover: hover) { .navmenu-searchbtn:hover { background: #e1e7f2 !important; } }
+
+/* revamp1052b — topic section head icons match the homepage: briefing sparkle a
+   lighter blue, AI Prompts a distinct wand in navy. */
+.trail-head-ic--brief svg { color: #4f7fe0 !important; fill: #4f7fe0 !important; }
+.trail-head-ic--prompts svg { color: #2c4f9e !important; stroke: #2c4f9e !important; }

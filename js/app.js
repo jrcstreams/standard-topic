@@ -2443,12 +2443,12 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       </div>
       <div class="topic-top">
         <section class="topic-top-main">
-          <h3 class="trail-head"><span class="trail-head-ic" aria-hidden="true">${DI_SPARK_TWO}</span>AI Briefing</h3>
+          <h3 class="trail-head"><span class="trail-head-ic trail-head-ic--brief" aria-hidden="true">${DI_SPARK_TWO}</span>AI Briefing</h3>
           <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
           </div>
         </section>
         <section class="topic-top-side">
-          <h3 class="trail-head"><span class="trail-head-ic" aria-hidden="true">${DI_SPARK_TWO}</span>AI Prompts</h3>
+          <h3 class="trail-head"><span class="trail-head-ic trail-head-ic--prompts" aria-hidden="true">${PROMPTS_HEAD_ICON}</span>AI Prompts</h3>
           <div class="tpr-card" data-tpr>
             <div class="tpr-head">
             </div>
