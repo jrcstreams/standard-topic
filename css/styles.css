@@ -27790,3 +27790,14 @@ body.home-search .home-v2 .home-featbriefs .hb-head {
 /* Topic landing: bring News Feed / AI Briefing a touch closer to the subnav. */
 .topic-home .topic-top { margin-top: 0.6rem !important; }
 @media (min-width: 1024px) { .topic-home .topic-top { margin-top: 0.75rem !important; } }
+
+/* ═══ revamp1048 — search page: contain results to the bar, sit closer to nav ══ */
+.search-page .search-panel-barrow,
+.search-page .search-panel-results {
+  max-width: 1120px !important; width: 100% !important; box-sizing: border-box;
+  margin-left: auto !important; margin-right: auto !important;
+}
+.search-page .search-panel-hero-inner { padding-top: 0.2rem !important; padding-bottom: 0.5rem !important; }
+.search-page .search-panel-title { font-size: 1.35rem !important; margin-bottom: 0.7rem !important; }
+.aii-nav-dd-search .aii-nav-dd-inner,
+.aii-nav-dd-search .aii-nav-dd-scroll { padding-top: 4px !important; }
