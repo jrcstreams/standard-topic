@@ -28373,3 +28373,20 @@ body.tt-on .topic-viewtabs .tvt.is-active { background: #e7edfb !important; }
    separator now, so the card's own top border is redundant. */
 body.tt-on #topic-tab-body .news-card:first-child,
 body.tt-on .topic-home #section-newsfeed .news-card:first-child { border-top: 0 !important; }
+
+/* ═══ revamp1073 — lighter site title; softer sidebar nav buttons ══════════ */
+
+/* Site title still read too heavy at 700 — step down to 600 (semibold). */
+.navmenu-title, body.nav-docked .navmenu-title,
+#site-header.is-sticky-hero .sticky-title, #site-header .sticky-title { font-weight: 600 !important; }
+
+/* Sidebar Home / AI Briefings / Trending / Prompts buttons: pure white popped
+   too hard off the grey panel — soften to an off-white tint that sits into the
+   chrome, with a lighter hairline so they read as one calm group. */
+.navmenu-quicklink.navmenu-cta {
+  background: #f4f6fb !important;
+  border: 1px solid #e2e6ef !important;
+}
+@media (hover: hover) {
+  .navmenu-quicklink.navmenu-cta:hover { background: #fff !important; border-color: #d3d9e6 !important; }
+}
