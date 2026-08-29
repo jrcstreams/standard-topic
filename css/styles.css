@@ -28050,13 +28050,16 @@ body.nav-docked #sub-header.is-subnav .tsp-panelwrap {
 /* ═══ revamp1057 — briefing masthead cleanup + homepage tab-brief no-card ════ */
 
 /* Info badge: a clean soft-blue filled badge (clearly clickable), not a dot. */
-.how-info-ic { color: #5b7fd4 !important; }
-/* The outlined circled-i must stroke, never fill — an old `.di-prov2 svg { fill }`
-   rule was filling the circle solid, so it read as a blue dot. */
-.how-info-ic svg, .how-aigen .how-info-ic svg {
+/* The info affordance's class sits on the <svg> itself in most surfaces and on a
+   wrapping <span> in the trend legend — cover both. It MUST stroke, never fill:
+   an old `.di-prov2 svg { fill:#2563eb }` rule was filling the outlined circle
+   into a solid blue dot. */
+svg.how-info-ic, .how-info-ic svg,
+.di-prov2 svg.how-info-ic, .ni-aitag svg.how-info-ic, .im-sec-aitag svg.how-info-ic {
   width: 17px !important; height: 17px !important;
-  fill: none !important; stroke: currentColor !important;
+  fill: none !important; stroke: currentColor !important; color: #5b7fd4 !important;
 }
+.how-info-ic { color: #5b7fd4 !important; }
 @media (hover: hover) { .how-aigen:hover .how-info-ic { color: #3559b0 !important; } }
 
 /* Masthead date · time — dot vertically centred, tighter spacing. */
