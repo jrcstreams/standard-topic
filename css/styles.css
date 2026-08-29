@@ -28153,3 +28153,25 @@ body.nav-docked .navmenu-title {
 @media (hover: hover) {
   #site-header.is-sticky-hero #nav-search:hover { background: rgba(255, 255, 255, 0.2) !important; }
 }
+
+/* ═══ revamp1059 — page tab-nav as blue-highlight pill buttons + icons ═══════ */
+.topic-viewtabs, .home-viewtabs {
+  gap: 6px !important; border-bottom: 0 !important;
+  margin: 0.5rem 0 0.2rem !important; padding: 0 !important;
+}
+.tvt {
+  display: inline-flex !important; align-items: center !important; gap: 8px !important;
+  padding: 8px 15px !important; border-radius: 10px !important; border: 0 !important; background: none !important;
+  font-family: var(--font-family) !important; font-size: 0.9rem !important; font-weight: 650 !important;
+  color: #46557a !important; cursor: pointer;
+  transition: background .13s ease, color .13s ease;
+}
+.tvt::after { display: none !important; content: none !important; }
+.tvt-ic { display: inline-flex; align-items: center; flex: none; color: #7488ad; }
+.tvt-ic svg { width: 15px; height: 15px; display: block; }
+.tvt.is-active { background: #dfe8fb !important; color: #1d3a8a !important; }
+.tvt.is-active .tvt-ic { color: #1d3a8a; }
+@media (hover: hover) {
+  .tvt:not(.is-active):hover { background: #e9eefa !important; color: #1d3a8a !important; }
+  .tvt:not(.is-active):hover .tvt-ic { color: #1d3a8a; }
+}

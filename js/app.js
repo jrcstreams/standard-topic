@@ -1732,6 +1732,15 @@ const DI_SPARK = '<svg class="tdi-cardprov-ic" viewBox="0 0 24 24" fill="current
 const DI_INFO_ICON = '<svg class="how-info-ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.3"/><line x1="12" y1="11.4" x2="12" y2="16.4"/><line x1="12" y1="7.6" x2="12.01" y2="7.6"/></svg>';
 // revamp1047: AI Prompts head icon — a wand, DISTINCT from the briefing sparkle.
 const PROMPTS_HEAD_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5"/></svg>';
+// revamp1059: icons for the page tab-nav (News Feed / AI Briefing / Trending /
+// AI Prompts) so the tabs read as pill buttons like the search-page filters.
+const PAGE_TAB_ICON = {
+  news: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1z"/><path d="M19 8h1a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2"/><path d="M8 8h7M8 12h7M8 16h4"/></svg>',
+  brief: DI_SPARK_TWO,
+  trend: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
+  tools: PROMPTS_HEAD_ICON,
+};
+const pageTabIcon = (k) => PAGE_TAB_ICON[k] ? `<span class="tvt-ic" aria-hidden="true">${PAGE_TAB_ICON[k]}</span>` : '';
 const DI_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6L17 17M7 7L5.4 5.4"/></svg>';
 const DI_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 14.4A8.6 8.6 0 0 1 9.6 3.8a8.6 8.6 0 1 0 10.6 10.6z"/></svg>';
 // Morning/evening briefing art (revamp980). The edition isn't known until the
@@ -2437,9 +2446,9 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
       <div class="topic-viewtabs" data-topic-viewtabs role="tablist" aria-label="Topic sections">
-        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-tview="news">News Feed</button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="brief">AI Briefing</button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="tools">AI Prompts</button>
+        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-tview="news">${pageTabIcon('news')}<span class="tvt-tx">News Feed</span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="brief">${pageTabIcon('brief')}<span class="tvt-tx">AI Briefing</span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="tools">${pageTabIcon('tools')}<span class="tvt-tx">AI Prompts</span></button>
       </div>
       <div class="topic-top">
         <section class="topic-top-main">
@@ -2765,10 +2774,10 @@ function renderLayout(route) {
            Here they are part of the same fixed, full-width, sidebar-offset
            element by construction. -->
       <div class="home-viewtabs topic-viewtabs" data-home-viewtabs role="tablist" aria-label="Home sections">
-        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">News Feed</button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">AI Briefing</button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">Trending</button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="tools">AI Prompts</button>
+        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">${pageTabIcon('news')}<span class="tvt-tx">News Feed</span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">${pageTabIcon('brief')}<span class="tvt-tx">AI Briefing</span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">${pageTabIcon('trend')}<span class="tvt-tx">Trending</span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="tools">${pageTabIcon('tools')}<span class="tvt-tx">AI Prompts</span></button>
       </div>
       <div class="home-subfilters" data-home-subfilters></div>`;
     if (!window.__homeScrollWire) {
