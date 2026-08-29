@@ -28210,3 +28210,15 @@ body.tt-on.home-search #home-trending .trending-topics-head { margin-bottom: 0 !
 /* revamp1063 — the last story in "What Matters Today" gets a closing separator
    like the others (the section ended flush before). */
 .di-briefs .dib:last-child { border-bottom: 1px solid #eef1f6 !important; padding-bottom: 16px !important; }
+
+/* ═══ revamp1064 — topic header zone: search-page faded-blue band ════════════
+   The title, subtext and subtopic pills sit on a soft faded-blue band so the
+   header breathes and differentiates (the grey Change-Topic bar still takes
+   over on scroll). Bounded left/right (clipped by #content's overflow-x) so it
+   never causes a sideways scroll. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead { position: relative; z-index: 0; }
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: -48px; right: -48px; top: -64px; bottom: -6px;
+  background: linear-gradient(180deg, #eaf1fd 0%, #f2f6fd 60%, #ffffff 100%);
+}
