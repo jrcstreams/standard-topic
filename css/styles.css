@@ -28258,3 +28258,31 @@ body.tt-on.home-search .home-featbriefs .tdi-closefoot { display: none !importan
 
 /* Sidebar Search: a slightly darker, bluer border. */
 .navmenu-searchbtn { border-color: #c3ccdc !important; }
+
+/* ═══ revamp1066 — tab nav sizing/labels; topic tab-brief chip label ═════════ */
+
+/* Smaller font, taller pill, responsive short labels on phones. */
+.tvt { font-size: 0.85rem !important; padding: 10px 14px !important; line-height: 1.15 !important; }
+.tvt-short { display: none; }
+.tvt-long { display: inline; }
+@media (max-width: 520px) {
+  .tvt-long { display: none; }
+  .tvt-short { display: inline; }
+  .tvt { padding: 10px 12px !important; gap: 6px !important; font-size: 0.82rem !important; }
+}
+/* The tab strip breathes: a bit taller, centred. */
+.topic-viewtabs, .home-viewtabs {
+  margin-top: 7px !important; margin-bottom: 3px !important;
+  min-height: 46px; align-items: center;
+}
+
+/* Topic tab-mode briefing: the AI-generated label is the CHIP (like desktop),
+   with NO separator line below it (overrides the earlier hairline treatment). */
+body.tt-on .tview-brief .di-prov2,
+body.tt-on .tview-brief [data-di-host] .di-prov2 {
+  border: 0 !important; border-top: 0 !important; border-bottom: 0 !important;
+  background: color-mix(in srgb, #1a2740 4%, transparent) !important;
+  border-radius: 8px !important; padding: 4px 9px !important;
+  margin: 6px 0 12px !important; align-self: flex-start;
+  color: #56647e !important; font-size: 0.72rem !important;
+}

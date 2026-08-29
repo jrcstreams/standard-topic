@@ -1730,8 +1730,9 @@ function diHeroCardHTML(o) {
 const DI_SPARK = '<svg class="tdi-cardprov-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 // revamp1043: circled-i affordance on the preview card's AI-generated label.
 const DI_INFO_ICON = '<svg class="how-info-ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.3"/><line x1="12" y1="11.4" x2="12" y2="16.4"/><line x1="12" y1="7.6" x2="12.01" y2="7.6"/></svg>';
-// revamp1047: AI Prompts head icon — a wand, DISTINCT from the briefing sparkle.
-const PROMPTS_HEAD_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5"/></svg>';
+// revamp1066: AI Prompts icon — prompt text lines with a sparkle (retired the
+// magic-wand). Distinct from the briefing sparkle, reads as "AI prompt".
+const PROMPTS_HEAD_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h9M4 11h6M4 16h9"/><path d="M18.2 3.5l.85 2.35 2.35.85-2.35.85-.85 2.35-.85-2.35L15 6.7l2.35-.85z"/></svg>';
 // revamp1059: icons for the page tab-nav (News Feed / AI Briefing / Trending /
 // AI Prompts) so the tabs read as pill buttons like the search-page filters.
 const PAGE_TAB_ICON = {
@@ -2446,9 +2447,9 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
       <div class="topic-viewtabs" data-topic-viewtabs role="tablist" aria-label="Topic sections">
-        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-tview="news">${pageTabIcon('news')}<span class="tvt-tx">News Feed</span></button>
+        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-tview="news">${pageTabIcon('news')}<span class="tvt-tx"><span class="tvt-long">News Feed</span><span class="tvt-short">News</span></span></button>
         <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="brief">${pageTabIcon('brief')}<span class="tvt-tx">AI Briefing</span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="tools">${pageTabIcon('tools')}<span class="tvt-tx">AI Prompts</span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="tools">${pageTabIcon('tools')}<span class="tvt-tx"><span class="tvt-long">AI Prompts</span><span class="tvt-short">Prompts</span></span></button>
       </div>
       <div class="topic-top">
         <section class="topic-top-main">
@@ -2774,10 +2775,10 @@ function renderLayout(route) {
            Here they are part of the same fixed, full-width, sidebar-offset
            element by construction. -->
       <div class="home-viewtabs topic-viewtabs" data-home-viewtabs role="tablist" aria-label="Home sections">
-        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">${pageTabIcon('news')}<span class="tvt-tx">News Feed</span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">${pageTabIcon('brief')}<span class="tvt-tx">AI Briefing</span></button>
+        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">${pageTabIcon('news')}<span class="tvt-tx"><span class="tvt-long">News Feed</span><span class="tvt-short">News</span></span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">${pageTabIcon('brief')}<span class="tvt-tx">AI Briefings</span></button>
         <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">${pageTabIcon('trend')}<span class="tvt-tx">Trending</span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="tools">${pageTabIcon('tools')}<span class="tvt-tx">AI Prompts</span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="tools">${pageTabIcon('tools')}<span class="tvt-tx"><span class="tvt-long">AI Prompts</span><span class="tvt-short">Prompts</span></span></button>
       </div>
       <div class="home-subfilters" data-home-subfilters></div>`;
     if (!window.__homeScrollWire) {
