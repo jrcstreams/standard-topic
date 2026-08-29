@@ -27854,18 +27854,6 @@ button.trend-legend.how-aigen { border: 0 !important; }
 button.trend-legend.how-aigen .trend-legend-item { display: inline-flex; align-items: center; gap: 6px; font-weight: 600 !important; color: inherit !important; }
 button.trend-legend.how-aigen .trend-legend-dot { display: none !important; }
 
-/* ── Today's News: title tight to its rule + rule aligned with AI Briefing ── */
-body.home-search .home-v2 #section-newsfeed .newsfeed-title-main { font-size: 1.24rem !important; }
-body.home-search .home-v2 #section-newsfeed .newsfeed-head {
-  display: block !important; min-height: 0 !important;
-  padding: 0 0 11px !important; margin: 0 0 14px !important;
-  border-bottom: 2px solid #e0e5ee !important;
-}
-body.home-search .home-v2 .home-featbriefs .hb-head {
-  min-height: 0 !important; align-items: baseline !important;
-  padding-bottom: 11px !important; margin-bottom: 14px !important;
-  border-bottom: 2px solid #e0e5ee !important;
-}
 
 /* ═══ revamp1051 — insight action row, briefing polish, home prompts, borders ═ */
 
@@ -28363,3 +28351,25 @@ body.home-search .home-v2 .home-featbriefs .hb-head { justify-content: flex-star
 /* Site title: ease the weight (800 read too aggressive). */
 .navmenu-title, body.nav-docked .navmenu-title,
 #site-header.is-sticky-hero .sticky-title, #site-header .sticky-title { font-weight: 700 !important; }
+
+/* ═══ revamp1071 — search hero flush to nav (mobile); topic tab-nav balance ══ */
+
+/* Search page (tab/mobile): the blue hero floated below the sub-header with a
+   white strip between. Pull it up so the gradient meets the grey sub-header. */
+body.tt-on .search-page .search-panel-topfold {
+  margin-top: -34px !important; padding-top: 34px !important;
+}
+
+/* Topic tabular nav (tab/mobile): off the left edge, a touch more room between
+   tabs, a lighter active fill, and a faint rule under the whole strip. */
+body.tt-on .topic-viewtabs {
+  padding: 4px 16px 10px !important; gap: 10px !important;
+  border-bottom: 1px solid #eceff4 !important;
+}
+body.tt-on .topic-viewtabs .tvt { padding: 8px 13px !important; }
+body.tt-on .topic-viewtabs .tvt.is-active { background: #e7edfb !important; }
+
+/* First story sits directly under the tab strip — the strip's faint rule is the
+   separator now, so the card's own top border is redundant. */
+body.tt-on #topic-tab-body .news-card:first-child,
+body.tt-on .topic-home #section-newsfeed .news-card:first-child { border-top: 0 !important; }
