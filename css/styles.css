@@ -27660,7 +27660,8 @@ body.home-search .home-v2 #section-newsfeed .newsfeed-title-main {
 
 /* ── revamp1044: docked sidebar brand a touch bigger + deeper blue; search text
    deeper blue too (button conversion handled separately). ── */
-body.nav-docked .navmenu-title { font-size: 1.3rem !important; color: #16307a !important; }
+/* revamp1047: keep the size bump, revert the colour to the original navy. */
+body.nav-docked .navmenu-title { font-size: 1.3rem !important; }
 body.nav-docked .navmenu-searchinput,
 body.nav-docked .navmenu-searchinput::placeholder { color: #2f4d9e !important; }
 
@@ -27711,3 +27712,32 @@ body.home-search .home-v2 .home-featbriefs .hb-head {
    the rounded edge. */
 .hf-card--prompts .aii-fi-acc,
 .aii-fi-acclist > .aii-fi-acc { overflow: hidden; }
+
+/* ═══ revamp1047 — sidebar Search button, drawer buttons, misc ══════════════ */
+
+/* Sidebar search is a button matching the quicklink CTAs, deeper-blue text. */
+.navmenu-searchbtn {
+  display: flex; align-items: center; gap: 0.6rem;
+  width: calc(100% - 32px); box-sizing: border-box;
+  margin: 14px 16px 4px; min-height: 44px; padding: 0.5rem 0.85rem;
+  background: #fff; border: 1.5px solid #dfe4ee; border-radius: 10px;
+  font-family: var(--font-family); font-size: 0.92rem; font-weight: 650;
+  color: #16307a; cursor: pointer; text-align: left;
+  transition: border-color .14s ease, background .14s ease;
+}
+.navmenu-searchbtn svg { flex: none; color: #2f4d9e; }
+.navmenu-searchbtn-label { flex: 1 1 auto; }
+@media (hover: hover) {
+  .navmenu-searchbtn:hover { border-color: #c7d1e4; background: #f7f9fd; }
+}
+/* Collapsed top-bar Search button: deeper blue text too. */
+.nav-searchbar, #nav-search { color: #16307a !important; }
+
+/* revamp1047 — home section-head icons: briefing sparkle (lighter blue) + a
+   distinct wand for AI Prompts; both lead their navy title. */
+.home-v2 .home-side .hb-title { display: inline-flex !important; align-items: center; gap: 8px; }
+.home-v2 .home-side .hb-head-ic { display: inline-flex; align-items: center; flex: none; }
+.home-v2 .home-side .hb-head-ic--brief svg { width: 18px; height: 18px; color: #4f7fe0 !important; }
+.home-v2 .home-side .hb-head-ic--prompts svg { width: 17px; height: 17px; color: #2c4f9e !important; }
+/* Keep the "View more" link arrow its own link-blue, not the sparkle colour. */
+.home-featbriefs .hb-all svg, .hf-card--prompts .hb-all svg { color: #2c4f9e !important; }

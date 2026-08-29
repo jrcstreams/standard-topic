@@ -1724,6 +1724,8 @@ function diHeroCardHTML(o) {
 const DI_SPARK = '<svg class="tdi-cardprov-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 // revamp1043: circled-i affordance on the preview card's AI-generated label.
 const DI_INFO_ICON = '<svg class="how-info-ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5"/><circle cx="12" cy="7.7" r="1.15" fill="currentColor" stroke="none"/></svg>';
+// revamp1047: AI Prompts head icon — a wand, DISTINCT from the briefing sparkle.
+const PROMPTS_HEAD_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5"/></svg>';
 const DI_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6L17 17M7 7L5.4 5.4"/></svg>';
 const DI_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 14.4A8.6 8.6 0 0 1 9.6 3.8a8.6 8.6 0 1 0 10.6 10.6z"/></svg>';
 // Morning/evening briefing art (revamp980). The edition isn't known until the
@@ -1864,7 +1866,7 @@ function renderFeaturedBriefings(host, opts) {
   if (o.compact) {
     host.innerHTML = `
       <div class="hb-head hf-labelhead">
-        <h3 class="hb-title">${escapeHTML(o.title || "Today's AI Briefing")}</h3>
+        <h3 class="hb-title"><span class="hb-head-ic hb-head-ic--brief" aria-hidden="true">${DI_SPARK_TWO}</span>${escapeHTML(o.title || "Today's AI Briefing")}</h3>
         <a class="hb-all" href="#/intelligence">View more briefings${SUBPAGE_ARROW}</a>
       </div>
       <div class="hb-hero hb-hero--side" data-home-briefing>
@@ -4267,11 +4269,13 @@ function renderStickyHeroBar(container, route) {
     </div>
     <!-- navmenu-title font-size is synced to the main nav's .sticky-title at runtime
          (see syncNavmenuTitleSize) so the two always match at every viewport width. -->
-    <form class="navmenu-searchrow" id="navmenu-searchform" role="search">
+    <!-- revamp1047: the sidebar search is a button (matching the collapsed-nav
+         Search button and the quicklink CTAs below), not an input — it opens the
+         search page/overlay. -->
+    <button type="button" class="navmenu-searchbtn" id="navmenu-searchbtn" aria-label="Search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="search" class="navmenu-searchinput" id="navmenu-searchinput"
-             placeholder="Search any topic…" aria-label="Search any topic" autocomplete="off">
-    </form>
+      <span class="navmenu-searchbtn-label">Search</span>
+    </button>
     <nav class="navmenu-quicklinks">
       <a href="#/" class="navmenu-quicklink navmenu-cta" id="navmenu-home-link">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -4457,13 +4461,11 @@ function renderStickyHeroBar(container, route) {
     // navigate (not a direct open) so the back-target stack records the move.
     navigate('#/prompts');
   });
-  // The sidebar search field routes through #/custom/<q>, the same shareable
-  // path the search page's own submits use.
-  navPanel.querySelector('#navmenu-searchform')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const q = (navPanel.querySelector('#navmenu-searchinput')?.value || '').trim();
+  // revamp1047: the sidebar Search button opens the search surface (same as the
+  // top-bar Search), rather than an inline input.
+  navPanel.querySelector('#navmenu-searchbtn')?.addEventListener('click', () => {
     closeUnlessDocked();
-    navigate(q ? '#/custom/' + encodeURIComponent(q) : '#/search');
+    openSearchFromNav();
   });
 
   applyDock();
@@ -4692,7 +4694,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <section class="home-trending hs-block" id="home-trending"></section>
             <section class="hf-card hf-card--prompts hf-card--labelled hs-block" data-hf="prompts">
               <div class="hb-head hf-labelhead">
-                <h3 class="hb-title">AI Prompts</h3>
+                <h3 class="hb-title"><span class="hb-head-ic hb-head-ic--prompts" aria-hidden="true">${PROMPTS_HEAD_ICON}</span>AI Prompts</h3>
                 <button type="button" class="hb-all hb-all--btn" data-explore-prompts>View more prompts${SUBPAGE_ARROW}</button>
               </div>
               <div class="hf-chips" data-hq-prompts></div>
@@ -4783,14 +4785,33 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           .then((r) => (r.ok ? r.json() : null))
           .then((cfg) => {
             if (!cfg || !Array.isArray(cfg.featured)) return;
+            // revamp1047: the homepage AI Prompts list now shows a fuller set
+            // (~18) — the featured picks first, then backfilled from featured
+            // topics' own prompt sets so the section reads as a real library.
+            const CAP = 18;
             const picks = [];
+            const seen = new Set();
+            const add = (s, topic, slug) => {
+              if (picks.length >= CAP) return;
+              if (!s || !s.prompt) return;
+              const key = (slug || '') + '::' + (s.name || '');
+              if (seen.has(key)) return; seen.add(key);
+              picks.push({ s, tn: topic ? topic.name : '', slug });
+            };
             for (const f of cfg.featured) {
-              if (picks.length >= 5) break;
+              if (picks.length >= CAP) break;
               let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { continue; }
               const sMatch = sc.find((x) => x && x.name === f.name);
-              if (!(sMatch && sMatch.prompt)) continue;
-              const t = getTopicBySlug(f.topic);
-              picks.push({ s: sMatch, tn: t ? t.name : '', slug: f.topic });
+              add(sMatch, getTopicBySlug(f.topic), f.topic);
+            }
+            // Backfill to CAP from featured topics' non-evergreen shortcuts.
+            if (picks.length < CAP) {
+              let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home'); } catch (_) {}
+              for (const t of feats) {
+                if (picks.length >= CAP) break;
+                let sc = []; try { sc = getShortcutsForTopic(t.slug) || []; } catch (_) { continue; }
+                for (const s of sc) { if (picks.length >= CAP) break; if (s && s.prompt && !s.evergreen) add(s, t, t.slug); }
+              }
             }
             if (!picks.length) return;
             // revamp1014: the SAME prompt component the topic rail and the tab
