@@ -27818,3 +27818,51 @@ body.home-search .home-v2 #section-newsfeed .newsfeed-headrow { border-bottom: 0
 }
 .di-prov2 .how-info-ic svg { width: 13px !important; height: 13px !important; }
 .di-prov2 svg:first-child { width: 13px !important; height: 13px !important; }
+
+/* ═══ revamp1050 — one consistent AI-generated chip + Today's News alignment ══ */
+
+/* Unified "AI-generated content included" chip — SAME look/size on every
+   surface (briefing preview + expanded, news insight, trend intro/expanded).
+   A subtle chip a shade darker than whatever it sits on, a blue sparkle, and a
+   clear info badge signalling it opens the how-it-works modal. */
+.how-aigen {
+  display: inline-flex !important; align-items: center !important; gap: 7px !important;
+  padding: 5px 10px !important; border-radius: 8px !important;
+  background: color-mix(in srgb, #1a2740 6%, transparent) !important;
+  border: 0 !important; cursor: pointer !important; width: auto !important; max-width: max-content;
+  font-family: var(--font-family) !important; font-size: 0.76rem !important; font-weight: 600 !important;
+  color: #56647e !important; line-height: 1.2 !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* Leading sparkle — blue, small. */
+.how-aigen .ai-spark-mark svg,
+.how-aigen .news-ai-spark,
+.how-aigen .tdi-cardprov-ic,
+.how-aigen > svg:not(.how-info-ic):first-child {
+  width: 13px !important; height: 13px !important; color: #4f7fe0 !important; fill: #4f7fe0 !important; flex: none !important;
+}
+/* Trailing info badge. */
+.how-aigen .how-info-ic,
+.how-aigen .how-info-ic svg,
+.how-aigen > svg.how-info-ic { width: 15px !important; height: 15px !important; color: #7a86a0 !important; flex: none !important; }
+.how-aigen .di-prov2-dot, .how-aigen .tdi-cardprov-sep { display: none !important; }
+@media (hover: hover) {
+  .how-aigen:hover { background: color-mix(in srgb, #1a2740 11%, transparent) !important; color: #34497a !important; }
+  .how-aigen:hover .how-info-ic, .how-aigen:hover .how-info-ic svg { color: #34497a !important; }
+}
+/* The trend legend already is a .how-aigen button — drop its old bordered-pill look. */
+button.trend-legend.how-aigen { border: 0 !important; }
+button.trend-legend.how-aigen .trend-legend-item { display: inline-flex; align-items: center; gap: 6px; font-weight: 600 !important; color: inherit !important; }
+button.trend-legend.how-aigen .trend-legend-dot { display: none !important; }
+
+/* ── Today's News: title tight to its rule + rule aligned with AI Briefing ── */
+body.home-search .home-v2 #section-newsfeed .newsfeed-title-main { font-size: 1.24rem !important; }
+body.home-search .home-v2 #section-newsfeed .newsfeed-head {
+  display: block !important; min-height: 0 !important;
+  padding: 0 0 11px !important; margin: 0 0 14px !important;
+  border-bottom: 2px solid #e0e5ee !important;
+}
+body.home-search .home-v2 .home-featbriefs .hb-head {
+  min-height: 0 !important; align-items: baseline !important;
+  padding-bottom: 11px !important; margin-bottom: 14px !important;
+  border-bottom: 2px solid #e0e5ee !important;
+}

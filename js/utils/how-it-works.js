@@ -16,7 +16,7 @@ const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColo
 // small circled-i info icon. The AI-generated label it sits beside is itself the
 // trigger now (whole label clickable, hover-highlighted), so the icon is just
 // the visible affordance.
-export const INFO_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5"/><circle cx="12" cy="7.7" r="1.15" fill="currentColor" stroke="none"/></svg>';
+export const INFO_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.4" fill="currentColor" opacity="0.16" stroke="none"/><path d="M12 11v4.7" stroke-width="1.9"/><circle cx="12" cy="7.6" r="1.05" fill="currentColor" stroke="none"/></svg>';
 
 // The info-icon affordance on its own (for labels that carry data-how-it-works
 // on their container).
