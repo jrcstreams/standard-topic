@@ -28051,7 +28051,12 @@ body.nav-docked #sub-header.is-subnav .tsp-panelwrap {
 
 /* Info badge: a clean soft-blue filled badge (clearly clickable), not a dot. */
 .how-info-ic { color: #5b7fd4 !important; }
-.how-info-ic svg, .how-aigen .how-info-ic svg { width: 17px !important; height: 17px !important; }
+/* The outlined circled-i must stroke, never fill — an old `.di-prov2 svg { fill }`
+   rule was filling the circle solid, so it read as a blue dot. */
+.how-info-ic svg, .how-aigen .how-info-ic svg {
+  width: 17px !important; height: 17px !important;
+  fill: none !important; stroke: currentColor !important;
+}
 @media (hover: hover) { .how-aigen:hover .how-info-ic { color: #3559b0 !important; } }
 
 /* Masthead date · time — dot vertically centred, tighter spacing. */
