@@ -1436,7 +1436,13 @@ function topicsTreeHTML() {
       <div class="aiidd-parent-body"><div class="aiidd-vlist">${links}</div></div>
     </section>`;
   };
-  return `<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
+  // revamp1047: a small page header over the tree — the grey subnav only names
+  // the page; this explains what the list does.
+  const head = `<header class="aiidd-pagehead">
+    <h2 class="aiidd-pagehead-title">Navigate Topics</h2>
+    <p class="aiidd-pagehead-sub">Expand a topic section to reach its parent topic and subtopic pages.</p>
+  </header>`;
+  return `${head}<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
 }
 function topicsNavDdCfg() {
   return {
@@ -3872,7 +3878,9 @@ function renderPageNavBar(kind) {
     : kind === 'prompts'
     ? '<a href="#/prompts/build" class="pagenav-action">Build Prompt</a>'
     : (kind === 'topics'
-      ? '<span class="pagenav-actions"><button type="button" class="pagenav-action is-on" data-pagenav-view="condensed">Condensed</button><button type="button" class="pagenav-action" data-pagenav-view="expanded">Expanded</button></span>'
+      // revamp1047: Condensed/Expanded is now a single toggle (like "Include
+      // Sports Trends") — off = condensed, on = every subtopic list expanded.
+      ? '<button type="button" class="trend-sports-toggle pagenav-toggle" data-topics-expand role="switch" aria-checked="false" title="Expand every topic\'s subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>'
       : '');
   subHeader.innerHTML = `
     <div class="topic-subnav-title">
@@ -3884,13 +3892,14 @@ function renderPageNavBar(kind) {
         ${action}
       </div>
     </div>`;
-  // The Topics bar drives the same view toggle its head carries.
-  subHeader.querySelectorAll('[data-pagenav-view]').forEach((b) => b.addEventListener('click', () => {
-    const want = b.dataset.pagenavView === 'expanded';
+  // The Topics bar's expand toggle drives the page's condensed/expanded views.
+  subHeader.querySelector('[data-topics-expand]')?.addEventListener('click', (e) => {
+    const btn = e.currentTarget;
+    const want = btn.getAttribute('aria-checked') !== 'true';
+    btn.setAttribute('aria-checked', String(want));
     const panel = document.querySelector('.aii-nav-dd-pagelike, .aii-nav-dd');
     panel?.querySelectorAll('[data-navdd-headbtn]')[want ? 1 : 0]?.click();
-    subHeader.querySelectorAll('[data-pagenav-view]').forEach((x) => x.classList.toggle('is-on', x === b));
-  }));
+  });
   // revamp914: "Start New Search" clears the field and returns to the empty
   // search page, scrolled back to the input.
   subHeader.querySelector('[data-pagenav-newsearch]')?.addEventListener('click', () => {

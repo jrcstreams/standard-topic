@@ -27741,3 +27741,18 @@ body.home-search .home-v2 .home-featbriefs .hb-head {
 .home-v2 .home-side .hb-head-ic--prompts svg { width: 17px; height: 17px; color: #2c4f9e !important; }
 /* Keep the "View more" link arrow its own link-blue, not the sparkle colour. */
 .home-featbriefs .hb-all svg, .hf-card--prompts .hb-all svg { color: #2c4f9e !important; }
+
+/* revamp1047 — Topics page: header + closer to the nav; subnav expand toggle. */
+.aiidd-pagehead { padding: 2px 2px 12px; margin: 0 0 14px; border-bottom: 1.5px solid #d9dfea; }
+.aiidd-pagehead-title {
+  margin: 0; font-family: var(--font-display, var(--font-family));
+  font-size: 1.24rem; font-weight: 800; letter-spacing: -0.014em; color: #16233f;
+}
+.aiidd-pagehead-sub { margin: 4px 0 0; font-size: 0.9rem; line-height: 1.45; color: #66748c; }
+/* Bring the topics tree up closer to the grey page-title bar. */
+.aii-nav-dd-topics .aii-nav-dd-inner,
+.aii-nav-dd-topics .aii-nav-dd-scroll { padding-top: 4px !important; }
+
+/* The subnav "Expand all" toggle rides beside the page name like Sports Trends. */
+.pagenav-actions, .pagenav-toggle { margin-left: auto; }
+.pagenav-toggle.trend-sports-toggle { align-self: center; }
