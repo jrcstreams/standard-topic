@@ -160,12 +160,14 @@ export function renderTrendExpansionBody(term, brief) {
   // as the query (the natural Explore Further). Sources follows as a quiet
   // drawer that blends into the expansion's tint (revamp772).
   const src = teSourcesHTML(b.headlines, b.sources);
-  const drawers = drawerLinkHTML('Search this trend', '#/custom/' + encodeURIComponent(term), DRAWER_SEARCH_IC, 'Explore more articles and perspectives')
-    + (src ? drawerHTML('Sources', src, DRAWER_SOURCES_IC, 'View all news sources and coverage') : '');
+  // revamp1051: same compact three-button row as the news insight — Search this,
+  // Sources, Close (differentiated), all left-aligned at the bottom of the card.
+  const drawers = drawerLinkHTML('Search this', '#/custom/' + encodeURIComponent(term), DRAWER_SEARCH_IC)
+    + (src ? drawerHTML('Sources', src, DRAWER_SOURCES_IC) : '')
+    + `<button type="button" class="te-drawer te-drawer--close trend-exp-close" data-trend-close><span class="te-drawer-sum">${TE_CLOSE_X}<span class="te-drawer-title">Close</span></span></button>`;
   return `<div class="trend-exp im-secs">
     <div class="trend-exp-summary">${summaryHTML}</div>
-    <div class="trend-exp-drawers">${drawers}</div>
-    <div class="trend-exp-footer"><button type="button" class="trend-exp-close" data-trend-close>${TE_CLOSE_X}<span>Close</span></button></div>
+    <div class="trend-exp-drawers ni-actions">${drawers}</div>
   </div>`;
 }
 const TE_CLOSE_X = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';

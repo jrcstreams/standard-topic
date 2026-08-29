@@ -822,9 +822,9 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       // left-aligned buttons — Search this story, Sources, Close Insight (the
       // last one differentiated). The big subtext cards were retired.
       const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url, d.title);
-      const drawers = drawerLinkHTML('Search this story', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
+      const drawers = drawerLinkHTML('Search this', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
         + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC) : '')
-        + `<button type="button" class="te-drawer te-drawer--close ni-close-btn" data-ni-close><span class="te-drawer-sum">${NI_X_SVG}<span class="te-drawer-title">Close Insight</span></span></button>`;
+        + `<button type="button" class="te-drawer te-drawer--close ni-close-btn" data-ni-close><span class="te-drawer-sum">${NI_X_SVG}<span class="te-drawer-title">Close</span></span></button>`;
       panel.innerHTML = `<div class="ni-inner ai-reveal">
         <div class="ni-aitag-row"><button type="button" class="ni-aitag how-aigen" data-how-it-works>${AI_SPARK_SVG}<span>AI-generated content included</span>${INFO_ICON_SVG}</button></div>
         ${secHTML}
