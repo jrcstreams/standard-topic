@@ -1603,6 +1603,7 @@ function diEditionParts(iso) {
     const hour = Number(et({ hour: 'numeric', hour12: false }));
     return {
       day: et({ month: 'short', day: 'numeric' }),
+      time: et({ hour: 'numeric', minute: '2-digit' }) + ' ET',
       edition: hour >= 4 && hour < 16 ? 'Morning Edition' : 'Night Edition',
     };
   } catch (_) { return null; }
@@ -1677,8 +1678,10 @@ function diHeroCardHTML(o) {
           <div class="tdi-todayhead">
             <h3 class="tdi-today-title">Your 5-minute AI briefing</h3>
           </div>
-          <div class="tdi-metarow">
-            ${o.topicLabel ? `<span class="tdi-topiclabel tdi-topiclabel--inline">${escapeHTML(o.topicLabel)}</span><span class="tdi-meta-sep" aria-hidden="true"></span>` : ''}
+          <!-- revamp1043: the topic pill sits on its own line; the date + publish
+               time run below it (weightier), no separator pill on the same row. -->
+          <div class="tdi-metarow tdi-metarow--stack">
+            ${o.topicLabel ? `<span class="tdi-topiclabel tdi-topiclabel--inline">${escapeHTML(o.topicLabel)}</span>` : ''}
             <span class="tdi-date" data-tdi-date></span>
           </div>` : `
           <div class="tdi-todayhead">
@@ -1689,7 +1692,7 @@ function diHeroCardHTML(o) {
                above the summary — CSS order couldn't do this because the stamp
                used to live inside .tdi-todayhead alongside the title. -->
           <div class="tdi-stamprow"><span class="tdi-date" data-tdi-date></span></div>`}
-          <p class="tdi-cardprov">${DI_SPARK}<span>AI-generated content</span></p>
+          <button type="button" class="tdi-cardprov how-aigen" data-how-it-works>${DI_SPARK}<span>AI-generated content</span><span class="tdi-cardprov-sep" aria-hidden="true">\u00b7</span><span>Source-grounded</span>${DI_INFO_ICON}</button>
           <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
           <div class="tdi-actions">
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
@@ -1719,6 +1722,8 @@ function diHeroCardHTML(o) {
     </div>`;
 }
 const DI_SPARK = '<svg class="tdi-cardprov-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
+// revamp1043: circled-i affordance on the preview card's AI-generated label.
+const DI_INFO_ICON = '<svg class="how-info-ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5"/><circle cx="12" cy="7.7" r="1.15" fill="currentColor" stroke="none"/></svg>';
 const DI_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6L17 17M7 7L5.4 5.4"/></svg>';
 const DI_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 14.4A8.6 8.6 0 0 1 9.6 3.8a8.6 8.6 0 1 0 10.6 10.6z"/></svg>';
 // Morning/evening briefing art (revamp980). The edition isn't known until the
@@ -1748,7 +1753,11 @@ function diEditionStampHTML(iso) {
   // revamp1016: briefings publish ONCE a day now (7pm ET), so "Morning /
   // Night Edition" no longer distinguishes anything — the date carries it.
   const CAL = '<svg class="tdi-stamp-cal" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></svg>';
-  return `<span class="tdi-stamp-val">${CAL}<span>${escapeHTML(p.day)}</span></span>`;
+  // revamp1043: the preview stamp carries the date AND the publish time (abbrev
+  // month, bare time + zone), matching the expanded masthead.
+  const CLK = '<svg class="tdi-stamp-clk" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>';
+  const timePart = p.time ? `<span class="tdi-stamp-sep" aria-hidden="true">·</span><span class="tdi-stamp-val tdi-stamp-time">${CLK}<span>${escapeHTML(p.time)}</span></span>` : '';
+  return `<span class="tdi-stamp-val">${CAL}<span>${escapeHTML(p.day)}</span></span>${timePart}`;
 }
 
 
@@ -1856,7 +1865,7 @@ function renderFeaturedBriefings(host, opts) {
     host.innerHTML = `
       <div class="hb-head hf-labelhead">
         <h3 class="hb-title">${escapeHTML(o.title || "Today's AI Briefing")}</h3>
-        <a class="hb-all" href="#/intelligence">View all${SUBPAGE_ARROW}</a>
+        <a class="hb-all" href="#/intelligence">View more briefings${SUBPAGE_ARROW}</a>
       </div>
       <div class="hb-hero hb-hero--side" data-home-briefing>
         <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
@@ -4684,10 +4693,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <section class="hf-card hf-card--prompts hf-card--labelled hs-block" data-hf="prompts">
               <div class="hb-head hf-labelhead">
                 <h3 class="hb-title">AI Prompts</h3>
+                <button type="button" class="hb-all hb-all--btn" data-explore-prompts>View more prompts${SUBPAGE_ARROW}</button>
               </div>
-              <div class="hq-grouplabel">Featured Prompts</div>
               <div class="hf-chips" data-hq-prompts></div>
-              <div class="hf-foot"><button type="button" class="hf-cta hf-cta--link" data-explore-prompts>View all prompts${HQ_ARROW}</button></div>
             </section>
           </aside>
         </div>

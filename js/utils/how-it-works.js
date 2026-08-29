@@ -12,9 +12,27 @@
 
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 
-// A small, reusable trigger. Surfaces drop this next to their provenance line.
-export function howItWorksLinkHTML(label = 'Learn how this works') {
-  return `<button type="button" class="di-howlink" data-how-it-works>${label}</button>`;
+// revamp1043: the text "Learn how this works" link is replaced everywhere by a
+// small circled-i info icon. The AI-generated label it sits beside is itself the
+// trigger now (whole label clickable, hover-highlighted), so the icon is just
+// the visible affordance.
+export const INFO_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5"/><circle cx="12" cy="7.7" r="1.15" fill="currentColor" stroke="none"/></svg>';
+
+// The info-icon affordance on its own (for labels that carry data-how-it-works
+// on their container).
+export function howInfoIconHTML() {
+  return `<span class="how-info-ic" aria-hidden="true">${INFO_ICON}</span>`;
+}
+
+// A standalone clickable info icon (used where there is no wrapping label).
+export function howItWorksIconHTML() {
+  return `<button type="button" class="how-info-btn" data-how-it-works aria-label="How our AI works" title="How our AI works">${INFO_ICON}</button>`;
+}
+
+// Back-compat: some call sites still ask for the old text link. Return the icon
+// button so nothing renders the old wording.
+export function howItWorksLinkHTML() {
+  return howItWorksIconHTML();
 }
 
 const HOW_IT_WORKS_HTML = `

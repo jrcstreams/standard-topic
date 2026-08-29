@@ -75,6 +75,8 @@ const SPARK_FILL = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="tr
 // reads unmarked without it).
 const AIGEN_TAG = `<div class="aigen-tag">${SPARK}<span>AI-generated</span></div>`;
 const ARROW = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
+// revamp1043: info-icon affordance appended to the AI-generated chip.
+const IM_INFO_ICON = '<svg class="how-info-ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5"/><circle cx="12" cy="7.7" r="1.15" fill="currentColor" stroke="none"/></svg>';
 const CHEV = '<svg class="im-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 // Brand mark — a clean, flat 4-point sparkle (the same spark used inline),
 // filled white on the navy tile. Simple and on-brand (no glossy facets).
@@ -344,7 +346,7 @@ function secHeadHTML(key, name) {
   // AI Insights modal. Skipped on Sources + Related (not generated prose).
   // revamp1038: the AI chip is the shared "how our AI works" trigger now — the
   // same overlay opens from here, from trend summaries and from the briefings.
-  const tag = (key === 'sources' || key === 'related') ? '' : `<div class="im-sec-aitag-row"><button type="button" class="im-sec-aitag" data-how-it-works>${SPARK}<span>AI Generated Text</span></button></div>`;
+  const tag = (key === 'sources' || key === 'related') ? '' : `<div class="im-sec-aitag-row"><button type="button" class="im-sec-aitag how-aigen" data-how-it-works>${SPARK}<span>AI Generated Text</span>${IM_INFO_ICON}</button></div>`;
   return `<div class="im-msec-head"><span class="im-msec-ic">${SEC_ICON[key] || SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>${tag}`;
 }
 

@@ -88,6 +88,9 @@ function poolForSection(pool, sections, curIdx) {
 // Brand mark — a clean, flat 4-point sparkle (the same spark used inline),
 // filled white on the navy tile. Simple and on-brand (no glossy facets).
 const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
+// revamp1043: circled-i info affordance shown at the end of the AI-generated
+// provenance label (the whole label opens the shared how-it-works modal).
+const DI_INFO_ICON = '<svg class="how-info-ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5"/><circle cx="12" cy="7.7" r="1.15" fill="currentColor" stroke="none"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 // Horizontal "go" arrow for the promo CTA (slides right on hover).
 const RIGHT_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
@@ -2352,38 +2355,32 @@ export function renderDailyIntelligence(container, scope) {
     // are gone — one briefing a day makes "Morning/Night" meaningless, and the
     // timestamp is the thing a reader actually wants.
     const stampD = data.generatedAt ? new Date(data.generatedAt) : null;
+    // revamp1043: abbreviated month ("Aug 29, 2026") and the bare time with its
+    // zone ("6:23 AM ET") — no "Updated" prefix.
     const dateLong = stampD ? new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/New_York', month: 'long', day: 'numeric', year: 'numeric' }).format(stampD) : '';
+      timeZone: 'America/New_York', month: 'short', day: 'numeric', year: 'numeric' }).format(stampD) : '';
     const timeET = stampD ? new Intl.DateTimeFormat('en-US', {
       timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' }).format(stampD) : '';
 
     body.innerHTML = `
       <div class="di-mast">
         ${mastLabel ? `<span class="di-mast-topic">${esc(mastLabel)}</span>` : ''}
-        ${dateLong ? `<span class="di-mast-date">${CAL_SVG}<span>${esc(dateLong)}</span></span>` : ''}
-        ${timeET ? `<span class="di-mast-time">${CLOCK_SVG}<span>Updated ${esc(timeET)} ET</span></span>` : ''}
+        <span class="di-mast-when">
+          ${dateLong ? `<span class="di-mast-date">${CAL_SVG}<span>${esc(dateLong)}</span></span>` : ''}
+          ${timeET ? `<span class="di-mast-time">${CLOCK_SVG}<span>${esc(timeET)} ET</span></span>` : ''}
+        </span>
       </div>
-      <!-- revamp1037: provenance + the how-it-works link read as ONE line
-           (dot-separated, no underline) rather than two stacked fragments. -->
-      <div class="di-prov2">${LOGO}<span>AI-generated briefing</span>
+      <!-- revamp1043: provenance is one clickable label — "AI-generated content ·
+           Source-grounded" with the info icon; opens the shared how-it-works modal. -->
+      <button type="button" class="di-prov2 how-aigen" data-how-it-works>${LOGO}<span>AI-generated content</span>
         <span class="di-prov2-dot" aria-hidden="true"></span>
-        <button type="button" class="di-howlink" data-di-how>Learn how this works</button>
-      </div>
-      ${overview ? `<section class="di-big">
-        <h3 class="di-big-label">The Big Picture</h3>
+        <span>Source-grounded</span>
+        ${DI_INFO_ICON}
+      </button>
+      ${overview ? `<section class="di-big di-big--plain">
+        <h3 class="di-sectitle">The Big Picture</h3>
+        ${thingsList.length ? `<ul class="di-big-lead">${thingsList.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
         <div class="di-big-body aii-sec-body">${renderBriefBody(overview, null)}</div>
-      </section>` : ''}
-      ${thingsList.length ? `<section class="di-things">
-        <h3 class="di-things-label">${LOGO}<span>${thingsList.length} Things to Know</span></h3>
-        <ol class="di-things-list">
-          ${thingsList.map((t, i) => `<li class="di-thing">
-            <button type="button" class="di-thing-btn" data-di-jump="${i}">
-              <span class="di-thing-n">${i + 1}</span>
-              <span class="di-thing-tx">${esc(t)}</span>
-              <span class="di-thing-go" aria-hidden="true">${CHEV_R}</span>
-            </button>
-          </li>`).join('')}
-        </ol>
       </section>` : ''}
       ${items.length ? `<section class="di-briefs">
         <h3 class="di-sectitle">What Matters Today</h3>

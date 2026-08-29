@@ -8,7 +8,7 @@ import { fetchWithTimeout } from '../utils/data.js';
 import { renderTrendExpansionBody, wireTrendDrawers } from './trend-expansion.js?v=20260812-revamp732';
 import { wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
-import { howItWorksLinkHTML } from '../utils/how-it-works.js?v=20260828-revamp1038';
+import { howItWorksLinkHTML, howInfoIconHTML } from '../utils/how-it-works.js?v=20260829-revamp1043';
 import { streamInsight } from '../utils/insight-stream.js?v=20260822-revamp962';
 import { createStreamRenderer } from '../utils/stream-render.js?v=20260822-revamp968';
 
@@ -115,6 +115,8 @@ function durationLabel(iso) {
 const TREND_UP_SVG = `<svg class="trending-topics-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
 // Small green up-trend mark shown next to each trend term.
 const TREND_CARD_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
+// revamp1043: arrow for the header "View more trending" link (matches AI Briefing).
+const TREND_HEAD_ARROW = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>`;
 // AI Insights spark — same mark/branding as the News Feed AI Insights label,
 // reused as the mini-header inside each trend's insight dropdown.
 const AI_SPARK_SVG = `<svg class="trend-ai-spark" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>`;
@@ -375,11 +377,10 @@ function trendLegendRow() {
   // Just the "✦ = AI-generated text" marker (the trend-icon "via Google Trends"
   // reference was noise) — sized between the card and the modal legend (#166).
   return `<div class="trend-legend-row">
-    <div class="trend-legend trend-legend--solo">
+    <button type="button" class="trend-legend trend-legend--solo how-aigen" data-how-it-works aria-label="Trend summaries are AI-generated — how our AI works">
       <span class="trend-legend-item">${aiSparkInline()}<span>Trend summaries are AI-generated.</span></span>
-      <span class="trend-legend-dot" aria-hidden="true"></span>
-      ${howItWorksLinkHTML()}
-    </div>
+      ${howInfoIconHTML()}
+    </button>
   </div>`;
 }
 
@@ -495,11 +496,10 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
   function controlsHTML() {
     // AI-generated legend + the sports include/exclude toggle (dropdown only).
     return `<div class="tlm-controlbar-inner">
-      <div class="trend-legend trend-legend--solo">
+      <button type="button" class="trend-legend trend-legend--solo how-aigen" data-how-it-works aria-label="Trend summaries are AI-generated — how our AI works">
         <span class="trend-legend-item">${aiSparkInline()}<span>Trend summaries are AI-generated.</span></span>
-        <span class="trend-legend-dot" aria-hidden="true"></span>
-        ${howItWorksLinkHTML()}
-      </div>
+        ${howInfoIconHTML()}
+      </button>
       ${TREND_SPORTS_TOGGLE_HTML()}
     </div>`;
   }
@@ -666,6 +666,7 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
           <h3 class="trending-topics-title"><span>What's Trending</span><span class="trending-topics-title-ic" aria-hidden="true">${TREND_CARD_ICON}</span></h3>
+          <button type="button" class="hb-all hb-all--btn" data-action="view-all-trending">View more trending${TREND_HEAD_ARROW}</button>
         </div>
         ${trendLegendRow()}
       </div>`;
@@ -708,9 +709,6 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
         ${headHTML()}
         ${controlsHTML()}
         <div class="trend-card-grid" id="trend-home-grid"></div>
-        <div class="trend-viewmore-row">
-          <button type="button" class="trend-viewmore" data-action="view-all-trending">View more trending</button>
-        </div>
       </div>`;
     container.querySelector('.trend-cat-select')?.addEventListener('change', (e) => {
       state.category = e.target.value; renderGrid();

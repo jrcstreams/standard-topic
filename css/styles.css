@@ -27501,3 +27501,105 @@ body.home-search.tt-on .home-v2 .hf-card--prompts { padding-top: 4px !important;
 .home-v2 #home-trending .trend-legend-row {
   align-self: stretch !important; justify-content: flex-start !important; width: 100% !important;
 }
+
+/* ═══ revamp1043 — info-icon AI labels, masthead, Big Picture, prompts ══════ */
+
+/* ── AI-generated labels: whole label clickable, info icon, hover ── */
+.how-aigen { cursor: pointer; border: 0; font-family: inherit; -webkit-appearance: none; appearance: none; }
+.how-info-ic { display: inline-flex; align-items: center; color: currentColor; opacity: .72; flex: none; }
+.how-info-ic svg { display: block; }
+.how-info-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; background: none; padding: 2px; cursor: pointer; color: #3559b0;
+  border-radius: 999px; line-height: 0;
+}
+@media (hover: hover) {
+  .how-aigen:hover .how-info-ic { opacity: 1; color: #1d4ed8; }
+  .how-aigen:hover { color: #1d4ed8; }
+  .how-info-btn:hover { color: #1d4ed8; background: #eaf0fb; }
+}
+
+/* ── Trend legend: tighter to the title above, desktop pill look ── */
+.home-v2 #home-trending .trending-topics-head .trend-legend-row,
+body.home-search #home-trending .trending-topics-head .trend-legend-row { margin-top: 2px !important; padding-top: 4px !important; }
+button.trend-legend.how-aigen {
+  display: inline-flex; align-items: center; gap: 8px; text-align: left;
+  background: color-mix(in srgb, var(--color-text) 5%, #fff);
+  border: 1px solid color-mix(in srgb, var(--color-surface-border) 90%, transparent);
+  border-radius: 8px; padding: 6px 11px;
+}
+button.trend-legend.how-aigen .trend-legend-item { font-weight: 500; color: #5b6b8a; }
+@media (hover: hover) { button.trend-legend.how-aigen:hover { background: #eef2fb; border-color: #cdd8ee; } }
+
+/* ── Expanded briefing masthead: pill on its own line, date · time below ── */
+.di-mast {
+  display: flex !important; flex-direction: column !important; align-items: flex-start !important;
+  flex-wrap: nowrap !important; gap: 7px !important; margin: 0 0 9px !important;
+}
+.di-mast-topic {
+  flex: 0 0 auto !important; align-self: flex-start !important; width: auto !important; max-width: max-content !important;
+  display: inline-flex; align-items: center;
+  padding: 5px 12px; border-radius: 7px; background: #dfe8fb; color: #1e3a8a;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase; line-height: 1.2;
+}
+.di-mast-when { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
+.di-mast-date, .di-mast-time {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 650; color: #33415e;
+}
+.di-mast-date svg, .di-mast-time svg { opacity: .75; }
+/* dot between date and time only */
+.di-mast-date + .di-mast-time::before {
+  content: ""; width: 3px; height: 3px; border-radius: 50%; background: currentColor;
+  opacity: .5; margin-right: 9px; flex: none;
+}
+/* kill the old dot pseudo-rules from 1037/1041 that no longer apply */
+.di-mast-topic ~ .di-mast-date::before,
+.di-mast-topic ~ .di-mast-time::before { content: none !important; }
+
+/* ── Provenance label as a clickable button ── */
+button.di-prov2 { border: 0; text-align: left; -webkit-appearance: none; appearance: none; }
+
+/* ── The Big Picture: plain header like "What Matters Today", bullet lead, no card ── */
+.di-big--plain {
+  border: 0 !important; background: none !important; border-radius: 0 !important;
+  padding: 0 !important; margin: 14px 0 0 !important;
+}
+.di-big--plain .di-sectitle {
+  margin: 0 0 9px !important; padding: 0 0 8px !important;
+  border-bottom: 1px solid #e2e7f0 !important;
+  font-family: var(--font-display, var(--font-family)); font-size: 1.06rem; font-weight: 800;
+  letter-spacing: -0.01em; color: #14204a;
+}
+.di-big--plain .di-big-lead {
+  margin: 0 0 12px !important; padding-left: 20px; list-style: disc;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.di-big--plain .di-big-lead li {
+  font-size: 0.95rem; line-height: 1.5; font-weight: 600; color: #1c2a4a;
+}
+.di-big--plain .di-big-body { font-size: 0.98rem; line-height: 1.62; color: #23304d; }
+
+/* ── News insight open state: attach to the divider above (no top gap) ── */
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) {
+  margin-top: 0 !important;
+}
+
+/* ── AI Prompts (homepage sidebar): full width, header link, edge separators ── */
+.hf-card--prompts { width: 100% !important; }
+.hf-card--prompts .hf-chips { width: 100%; }
+.hf-card--prompts .hb-head.hf-labelhead {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.hb-all--btn {
+  border: 0; background: none; padding: 0; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; color: #2f4d9e; white-space: nowrap;
+}
+.hb-all--btn svg { width: 14px; height: 14px; }
+@media (hover: hover) { .hb-all--btn:hover { color: #1d4ed8; } }
+/* The prompt rows sit flush under the header rule; first row uses that rule as
+   its top border, last row gets a bottom border so the list closes cleanly. */
+.hf-card--prompts .aii-fi-acclist > .aii-fi-acc:first-child { border-top: 0 !important; }
+.hf-card--prompts .aii-fi-acclist > .aii-fi-acc:last-child { border-bottom: 1px solid var(--color-surface-border) !important; }

@@ -103,6 +103,9 @@ function relativeTime(iso) {
 // one-tap insight prompts. Clicking one opens the shared prompt modal
 // (open-prompt-modal) pre-filled so the user can submit it to an AI model.
 const AI_SPARK_SVG = '<svg class="news-ai-spark" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
+// revamp1043: the info-icon affordance shown after the AI-generated label (the
+// whole label opens the shared How-it-works modal).
+const INFO_ICON_SVG = '<svg class="how-info-ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5"/><circle cx="12" cy="7.7" r="1.15" fill="currentColor" stroke="none"/></svg>';
 const AI_CHEV_SVG = '<svg class="news-ai-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 // The stronger FILLED blue sparkle (matches the AI Insights mark used elsewhere)
 // — the AI Insights action uses this instead of a fully-blue button.
@@ -520,7 +523,7 @@ const NI_X_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" st
 // A quiet "Close AI Insights" affordance at the very bottom of the brief — an X,
 // vertically centered in the gap below the last section (we also auto-close on scroll).
 function niCloseFootHTML() {
-  return `<div class="ni-closefoot"><button type="button" class="ni-close-btn" data-ni-close>${NI_X_SVG}<span>Close AI Insights</span></button></div>`;
+  return `<div class="ni-closefoot"><button type="button" class="ni-close-btn" data-ni-close>${NI_X_SVG}<span>Close Insight</span></button></div>`;
 }
 const NI_SEC_ICON = {
   summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>',
@@ -769,7 +772,7 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
     if (renderer) return renderer;
     // Same head as the finished panel, so nothing appears or moves at handover.
     panel.innerHTML = '<div class="ni-inner ni-streaming">'
-      + '<div class="ni-aitag-row"><button type="button" class="ni-aitag" data-how-it-works>' + AI_SPARK_SVG + '<span>AI Generated Text</span></button></div>'
+      + '<div class="ni-aitag-row"><button type="button" class="ni-aitag how-aigen" data-how-it-works>' + AI_SPARK_SVG + '<span>AI Generated Text</span>' + INFO_ICON_SVG + '</button></div>'
       + '<div class="ni-streambody"></div></div>';
     renderer = createStreamRenderer(panel.querySelector('.ni-streambody'), parseBrief);
     return renderer;
@@ -819,7 +822,7 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       const drawers = drawerLinkHTML('Search this story further', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
         + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC) : '');
       panel.innerHTML = `<div class="ni-inner ai-reveal">
-        <div class="ni-aitag-row"><button type="button" class="ni-aitag" data-how-it-works>${AI_SPARK_SVG}<span>AI Generated Text</span></button></div>
+        <div class="ni-aitag-row"><button type="button" class="ni-aitag how-aigen" data-how-it-works>${AI_SPARK_SVG}<span>AI Generated Text</span>${INFO_ICON_SVG}</button></div>
         ${secHTML}
         <div class="trend-exp-drawers">${drawers}</div>
       </div>${niCloseFootHTML()}`;
@@ -943,7 +946,7 @@ export function newsCardHTML(item) {
       <div class="news-card-body">
         ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
         <div class="news-card-actions">
-          <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false"><span class="news-act-ai-spark" aria-hidden="true">${AI_SPARK_BTN}</span><span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close AI Insights</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false"><span class="news-act-ai-spark" aria-hidden="true">${AI_SPARK_BTN}</span><span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close Insight</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
           ${url ? `<a class="news-act" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
         </div>
       </div>
@@ -1257,11 +1260,12 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '', variant
   // page (revamp763).
   // Plain text heads — the news icon chip is retired (revamp772); title size
   // and weight unify across homepage + topic pages in CSS.
-  const tabbed = variant === 'latest' || variant === 'homev2';
-  const tabSet = variant === 'homev2'
-    ? [{ slug: '', label: "Today's News" }].concat(HOME_TABS)
-    : HOME_TABS;
-  const feedTitle = variant === 'homev2' ? 'News Feed' : (variant === 'latest' ? 'Latest News' : "Today's News");
+  // revamp1043: the homepage feed drops its category subnav entirely — it is
+  // just "Today's News" (the cross-topic feed). Only the retired bottom "Latest
+  // News" variant still carries topic tabs.
+  const tabbed = variant === 'latest';
+  const tabSet = HOME_TABS;
+  const feedTitle = variant === 'homev2' ? "Today's News" : (variant === 'latest' ? 'Latest News' : "Today's News");
   const headHTML = isHome
     ? `
     <div class="newsfeed-head section-card-head newsfeed-head--home${tabbed ? ' newsfeed-head--latest' : ''}">
