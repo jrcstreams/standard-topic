@@ -636,9 +636,9 @@ function topicBodyHeadHTML(topic) {
   const parent = topic.parent ? getTopicBySlug(topic.parent) : null;
   const rest = related.filter((t) => t.slug !== topic.slug && (!parent || t.slug !== parent.slug));
   const ordered = parent ? [parent].concat(rest) : rest;
-  const pills = [
-    `<a class="tbh-sub tbh-sub--overview is-active" href="#/topic/${escapeAttr(topic.slug)}" aria-current="page">Overview</a>`,
-  ].concat(ordered.map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`)).join('');
+  // revamp1044: the "Overview" pill is retired — the page title already tells
+  // you where you are. The subtopic links stand on their own.
+  const pills = ordered.map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`).join('');
   return `
     <header class="topic-bodyhead topic-subnav-picker" data-topic-picker>
       <a class="tbh-back" href="#/topics">${TBH_BACK_CHEV}<span>Topics</span></a>

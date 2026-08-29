@@ -27603,3 +27603,63 @@ button.di-prov2 { border: 0; text-align: left; -webkit-appearance: none; appeara
    its top border, last row gets a bottom border so the list closes cleanly. */
 .hf-card--prompts .aii-fi-acclist > .aii-fi-acc:first-child { border-top: 0 !important; }
 .hf-card--prompts .aii-fi-acclist > .aii-fi-acc:last-child { border-bottom: 1px solid var(--color-surface-border) !important; }
+
+/* ═══ revamp1044 — briefing preview masthead stack, topic header, navy heads ══ */
+
+/* ── Preview card: topic pill on its own line, date · time weighted below ── */
+.tdi-metarow--stack {
+  display: flex !important; flex-direction: column !important;
+  align-items: flex-start !important; gap: 6px !important;
+}
+.tdi-metarow--stack .tdi-topiclabel--inline { align-self: flex-start; }
+.tdi-metarow--stack .tdi-date {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.85rem !important; font-weight: 650 !important; color: #33415e !important;
+  letter-spacing: 0 !important; text-transform: none !important;
+}
+.tdi-metarow--stack .tdi-stamp-val { font-weight: 650 !important; color: #33415e !important; letter-spacing: 0 !important; text-transform: none !important; }
+.tdi-metarow--stack .tdi-stamp-sep { color: #9aa6bd; }
+
+/* ── Topic subtopic pills: light grey, a touch smaller, "More" matches ── */
+.topic-bodyhead .tbh-sub,
+.topic-bodyhead .tbh-more {
+  height: 32px !important; padding: 0 13px !important;
+  font-size: 0.82rem !important; font-weight: 560 !important;
+  background: #f4f6fa !important;
+  border-color: color-mix(in srgb, #2f4d9e 10%, #e2e7f0) !important;
+}
+.topic-bodyhead .tbh-more { background: #eef1f7 !important; }
+@media (hover: hover) {
+  .topic-bodyhead .tbh-sub:not(.is-active):hover,
+  .topic-bodyhead .tbh-more:hover {
+    background: #e9eefa !important; border-color: color-mix(in srgb, #1d4ed8 30%, transparent) !important; color: #1d4ed8 !important;
+  }
+}
+
+/* ── Subtitle under the topic title: a little more weight ── */
+.tbh-desc { font-weight: 500 !important; color: #55617a !important; }
+
+/* ── Section heads: deeper navy; briefing sparkle a lighter blue to read ── */
+.tsec-title,
+.home-v2 .home-side .hb-title,
+body.home-search .home-v2 .home-side .hb-title,
+body.home-search .home-v2 #home-trending .trending-topics-title,
+.hf-card--prompts .hb-title,
+.home-featbriefs .hb-title { color: #0f1d40 !important; }
+/* The briefing/section sparkle marks sit a few shades lighter than the navy
+   title so they read as their own element. */
+.home-featbriefs .hb-head svg,
+.hf-card--prompts .hb-head svg,
+.tsec-ic--di svg { color: #4f7fe0 !important; }
+.tsec-ic--di { background: #e7eefb !important; }
+
+/* ── Homepage "Today's News" matches the topic-page "News Feed" head size ── */
+body.home-search .home-v2 #section-newsfeed .newsfeed-title-main {
+  font-size: 1.5rem !important;
+}
+
+/* ── revamp1044: docked sidebar brand a touch bigger + deeper blue; search text
+   deeper blue too (button conversion handled separately). ── */
+body.nav-docked .navmenu-title { font-size: 1.3rem !important; color: #16307a !important; }
+body.nav-docked .navmenu-searchinput,
+body.nav-docked .navmenu-searchinput::placeholder { color: #2f4d9e !important; }
