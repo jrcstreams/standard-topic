@@ -27663,3 +27663,20 @@ body.home-search .home-v2 #section-newsfeed .newsfeed-title-main {
 body.nav-docked .navmenu-title { font-size: 1.3rem !important; color: #16307a !important; }
 body.nav-docked .navmenu-searchinput,
 body.nav-docked .navmenu-searchinput::placeholder { color: #2f4d9e !important; }
+
+/* ═══ revamp1045 — homepage + topic section separators, aligned ═══════════════ */
+
+/* Homepage "Today's News" gets a rule under it, aligned with the AI Briefing
+   rule across the two columns (non-tabular). Both heads share one top edge, so
+   matching min-height + padding-bottom + border lands the rules on one line. */
+body.home-search .home-v2 #section-newsfeed .newsfeed-head {
+  display: flex !important; align-items: flex-end !important;
+  min-height: 34px !important;
+  padding: 0 0 12px !important; margin: 0 0 14px !important;
+  border-bottom: 2px solid #e0e5ee !important;
+}
+body.home-search .home-v2 #section-newsfeed .newsfeed-headrow { width: 100%; }
+body.home-search .home-v2 .home-featbriefs .hb-head {
+  min-height: 34px !important; align-items: flex-end !important;
+  padding-bottom: 12px !important; margin-bottom: 14px !important;
+}
