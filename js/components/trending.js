@@ -665,7 +665,7 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
     return `
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
-          <h3 class="trending-topics-title"><span>What's Trending</span><span class="trending-topics-title-ic" aria-hidden="true">${TREND_CARD_ICON}</span></h3>
+          <h3 class="trending-topics-title"><span>Trending</span><span class="trending-topics-title-ic" aria-hidden="true">${TREND_CARD_ICON}</span></h3>
           <button type="button" class="hb-all hb-all--btn" data-action="view-all-trending">View more trending${TREND_HEAD_ARROW}</button>
         </div>
         ${trendLegendRow()}

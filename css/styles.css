@@ -27929,3 +27929,38 @@ body.home-search .home-v2 .home-featbriefs .hb-head {
 
 /* ── Topic prompt sections: last row in EACH group gets a bottom border ── */
 .aii-fi-sec .aii-fi-acclist > .aii-fi-acc:last-child { border-bottom: 1px solid #e6eaf1 !important; }
+
+/* ═══ revamp1052 — pagelike hardening, navy heads, search colours, Trending ══ */
+
+/* HARDENING: a nav-dd PAGE (topics/trending/prompts/search) is ALWAYS a static,
+   full-width page — never the floating fixed overlay. This holds even if a
+   resize transiently drops body.pagenav-mode (the long-standing "grey box on
+   resize" bug), because it no longer depends on that class. */
+.aii-nav-dd-pagelike,
+.ndp.aii-nav-dd-pagelike {
+  position: static !important; top: auto !important; left: auto !important; right: auto !important;
+  z-index: auto !important; box-shadow: none !important; border-bottom: 0 !important;
+  transform: none !important; opacity: 1 !important; pointer-events: auto !important;
+  max-height: none !important; background: #fff !important;
+}
+.aii-nav-dd-pagelike .aii-nav-dd-head { display: none !important; }
+.aii-nav-dd-pagelike > .page-backbar,
+.aii-nav-dd-pagelike .aii-nav-dd-inner > .page-backbar { display: none !important; }
+
+/* Dark-navy section heads (not black, not the lighter blue). */
+.tsec-title,
+.home-v2 .home-side .hb-title,
+body.home-search .home-v2 .home-side .hb-title,
+.home-featbriefs .hb-title,
+.hf-card--prompts .hb-title,
+.home-v2 #home-trending .trending-topics-title,
+body.home-search .home-v2 #home-trending .trending-topics-title { color: #1a2c66 !important; }
+
+/* Search — deeper navy text everywhere; the sidebar Search button takes the
+   main-nav search's light-grey ground. */
+.nav-searchbar, #nav-search, #nav-search .nav-searchbar-ph { color: #16265c !important; }
+.navmenu-searchbtn {
+  color: #16265c !important; background: #eaeef6 !important; border-color: #dbe1ec !important;
+}
+.navmenu-searchbtn svg { color: #16265c !important; }
+@media (hover: hover) { .navmenu-searchbtn:hover { background: #e1e7f2 !important; } }

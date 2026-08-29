@@ -4477,6 +4477,11 @@ function renderStickyHeroBar(container, route) {
     openSearchFromNav();
   });
 
+  // revamp1052: a manual collapse only lasts the session — every fresh page
+  // load defaults the sidebar to expanded on any width that can hold it. So
+  // clear the stored 'closed' flag once at startup; a mid-session collapse
+  // still persists until the next refresh.
+  try { if (localStorage.getItem('st:sidebar') === 'closed') localStorage.removeItem('st:sidebar'); } catch (_) {}
   applyDock();
 
   // Mobile top-bar search icon (kept upper-right even though Search is also
