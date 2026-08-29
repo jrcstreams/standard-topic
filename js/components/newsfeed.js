@@ -818,14 +818,18 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       // web categories) / Sources.
       // "Search this story further" leads — submits the story TITLE to the
       // search page. Sources follows as a blended drawer (revamp772).
+      // revamp1051: the bottom of a news insight is a row of three compact,
+      // left-aligned buttons — Search this story, Sources, Close Insight (the
+      // last one differentiated). The big subtext cards were retired.
       const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url, d.title);
-      const drawers = drawerLinkHTML('Search this story further', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC, 'Explore more articles and perspectives')
-        + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC, 'View all news sources and coverage') : '');
+      const drawers = drawerLinkHTML('Search this story', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
+        + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC) : '')
+        + `<button type="button" class="te-drawer te-drawer--close ni-close-btn" data-ni-close><span class="te-drawer-sum">${NI_X_SVG}<span class="te-drawer-title">Close Insight</span></span></button>`;
       panel.innerHTML = `<div class="ni-inner ai-reveal">
         <div class="ni-aitag-row"><button type="button" class="ni-aitag how-aigen" data-how-it-works>${AI_SPARK_SVG}<span>AI-generated content included</span>${INFO_ICON_SVG}</button></div>
         ${secHTML}
-        <div class="trend-exp-drawers">${drawers}</div>
-      </div>${niCloseFootHTML()}`;
+        <div class="trend-exp-drawers ni-actions">${drawers}</div>
+      </div>`;
       wireExploreFurther(panel.querySelector('.ni-inner'));
       wireDrawers(panel.querySelector('.ni-inner'));
       wireScrollFades(panel.querySelector('.ni-inner'));

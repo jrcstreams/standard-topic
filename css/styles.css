@@ -27866,3 +27866,66 @@ body.home-search .home-v2 .home-featbriefs .hb-head {
   padding-bottom: 11px !important; margin-bottom: 14px !important;
   border-bottom: 2px solid #e0e5ee !important;
 }
+
+/* ═══ revamp1051 — insight action row, briefing polish, home prompts, borders ═ */
+
+/* ── News AI Insight bottom: three compact left-aligned pills (retire the big
+   subtext cards). Close Insight is differentiated. ── */
+.trend-exp-drawers.ni-actions,
+.trend-exp-drawers {
+  display: flex !important; flex-wrap: wrap !important; gap: 8px !important;
+  justify-content: flex-start !important; grid-template-columns: none !important;
+  margin-top: 14px !important; padding-top: 14px !important; border-top: 1px solid #e7ecf3 !important;
+}
+.trend-exp-drawers .te-drawer {
+  border: 1px solid #dfe4ee !important; border-radius: 999px !important; background: #fff !important;
+  overflow: visible !important; align-self: start !important;
+}
+.trend-exp-drawers .te-drawer > .te-drawer-sum {
+  display: inline-flex !important; align-items: center !important; gap: 7px !important;
+  padding: 8px 15px !important; font-size: 0.85rem !important; font-weight: 600 !important; color: #33455f !important;
+}
+.trend-exp-drawers .te-drawer-ic {
+  width: auto !important; height: auto !important; background: none !important; border-radius: 0 !important; color: #64748b !important;
+}
+.trend-exp-drawers .te-drawer-ic svg { width: 15px !important; height: 15px !important; }
+.trend-exp-drawers .te-drawer-tx { flex-direction: row !important; gap: 0 !important; }
+.trend-exp-drawers .te-drawer-sub { display: none !important; }
+.trend-exp-drawers .te-drawer-chev, .trend-exp-drawers .te-drawer-go { margin-left: 3px !important; color: #9aa6bd !important; }
+@media (hover: hover) { .trend-exp-drawers .te-drawer:hover { border-color: #c3cee2 !important; background: #f7f9fd !important; } }
+/* Sources drawer, when open, breaks to its own full-width line for the list. */
+.trend-exp-drawers .te-drawer[open] { width: 100% !important; border-radius: 12px !important; }
+/* Close Insight — a touch darker/differentiated. */
+.te-drawer--close { border: 0 !important; background: none !important; padding: 0 !important; cursor: pointer; }
+.te-drawer--close > .te-drawer-sum {
+  border: 1px solid #cbd5e6 !important; background: #eef1f7 !important; border-radius: 999px !important;
+  color: #475569 !important;
+}
+@media (hover: hover) { .te-drawer--close > .te-drawer-sum:hover { background: #e5e9f2 !important; } }
+
+/* ── Expanded briefing: date/time smaller + a shade lighter ── */
+.di-mast-date, .di-mast-time { font-size: 0.82rem !important; font-weight: 600 !important; color: #5c6a85 !important; }
+.di-mast-date svg, .di-mast-time svg { width: 13px !important; height: 13px !important; }
+
+/* ── Big Picture bullets: blend in — lighter weight/colour, smaller ── */
+.di-big--plain .di-big-lead li {
+  font-size: 0.9rem !important; font-weight: 500 !important; color: #3f4d67 !important; line-height: 1.5 !important;
+}
+
+/* ── Spacing: more air before "What Matters Today"; first story tight to rule ── */
+.di-briefs { margin-top: 22px !important; }
+.di-briefs .di-sectitle { margin-bottom: 8px !important; padding-bottom: 9px !important; }
+.di-briefs .dib:first-child { margin-top: 8px !important; padding-top: 0 !important; }
+
+/* ── Homepage AI Prompts: full width + tight to its header rule ── */
+.hf-card--prompts .hf-chips,
+.hf-card--prompts .aii,
+.hf-card--prompts .aii-stage,
+.hf-card--prompts .aii-fi-acclist { width: 100% !important; }
+.hf-card--prompts .aii-stage { padding-top: 0 !important; margin-top: 0 !important; }
+.hf-card--prompts .hf-chips { margin-top: 2px !important; padding-top: 0 !important; }
+.hf-card--prompts .aii-fi-acclist > .aii-fi-acc:first-child > .aii-fi-accsum { padding-top: 6px !important; }
+.hf-card--prompts .aii-fi-accsum { padding-left: 2px !important; padding-right: 2px !important; }
+
+/* ── Topic prompt sections: last row in EACH group gets a bottom border ── */
+.aii-fi-sec .aii-fi-acclist > .aii-fi-acc:last-child { border-bottom: 1px solid #e6eaf1 !important; }
