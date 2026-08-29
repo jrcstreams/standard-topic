@@ -28176,3 +28176,20 @@ body.nav-docked .navmenu-title {
   .tvt:not(.is-active):hover { background: #e9eefa !important; color: #1d3a8a !important; }
   .tvt:not(.is-active):hover .tvt-ic { color: #1d3a8a; }
 }
+
+/* ═══ revamp1061 — topic AI Briefing/Prompts head icons match the homepage ═══
+   Same grey-blue chip, size and colours as .hb-head-ic on the homepage. */
+.trail-head-ic, .trail-head-ic--brief, .trail-head-ic--prompts {
+  width: 26px !important; height: 26px !important; border-radius: 7px !important;
+  background: color-mix(in srgb, #2f4d9e 12%, #fff) !important;
+  display: inline-flex !important; align-items: center; justify-content: center; flex: none !important;
+  color: #2f4d9e;
+}
+.trail-head-ic--brief svg {
+  width: 18px !important; height: 18px !important;
+  color: #4f7fe0 !important; fill: #4f7fe0 !important; stroke: none !important;
+}
+.trail-head-ic--prompts svg {
+  width: 17px !important; height: 17px !important;
+  color: #2c4f9e !important; stroke: #2c4f9e !important; fill: none !important;
+}
