@@ -28166,7 +28166,7 @@ body.nav-docked .navmenu-title {
   color: #46557a !important; cursor: pointer;
   transition: background .13s ease, color .13s ease;
 }
-.tvt::after { display: none !important; content: none !important; }
+.tvt::after, .tvt.is-active::after, .tvt:hover::after { display: none !important; content: none !important; background: none !important; }
 .tvt-ic { display: inline-flex; align-items: center; flex: none; color: #7488ad; }
 .tvt-ic svg { width: 15px; height: 15px; display: block; }
 .tvt.is-active { background: #dfe8fb !important; color: #1d3a8a !important; }
