@@ -378,7 +378,7 @@ function trendLegendRow() {
   // reference was noise) — sized between the card and the modal legend (#166).
   return `<div class="trend-legend-row">
     <button type="button" class="trend-legend trend-legend--solo how-aigen" data-how-it-works aria-label="Trend summaries are AI-generated — how our AI works">
-      <span class="trend-legend-item">${aiSparkInline()}<span>Trend summaries are AI-generated.</span></span>
+      <span class="trend-legend-item">${aiSparkInline()}<span>AI-generated content included</span></span>
       ${howInfoIconHTML()}
     </button>
   </div>`;
@@ -497,7 +497,7 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     // AI-generated legend + the sports include/exclude toggle (dropdown only).
     return `<div class="tlm-controlbar-inner">
       <button type="button" class="trend-legend trend-legend--solo how-aigen" data-how-it-works aria-label="Trend summaries are AI-generated — how our AI works">
-        <span class="trend-legend-item">${aiSparkInline()}<span>Trend summaries are AI-generated.</span></span>
+        <span class="trend-legend-item">${aiSparkInline()}<span>AI-generated content included</span></span>
         ${howInfoIconHTML()}
       </button>
       ${TREND_SPORTS_TOGGLE_HTML()}

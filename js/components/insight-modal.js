@@ -346,7 +346,7 @@ function secHeadHTML(key, name) {
   // AI Insights modal. Skipped on Sources + Related (not generated prose).
   // revamp1038: the AI chip is the shared "how our AI works" trigger now — the
   // same overlay opens from here, from trend summaries and from the briefings.
-  const tag = (key === 'sources' || key === 'related') ? '' : `<div class="im-sec-aitag-row"><button type="button" class="im-sec-aitag how-aigen" data-how-it-works>${SPARK}<span>AI Generated Text</span>${IM_INFO_ICON}</button></div>`;
+  const tag = (key === 'sources' || key === 'related') ? '' : `<div class="im-sec-aitag-row"><button type="button" class="im-sec-aitag how-aigen" data-how-it-works>${SPARK}<span>AI-generated content included</span>${IM_INFO_ICON}</button></div>`;
   return `<div class="im-msec-head"><span class="im-msec-ic">${SEC_ICON[key] || SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>${tag}`;
 }
 

@@ -141,7 +141,7 @@ function aiiSecHead(key, name, updatedLbl, num) {
   // When a `num` is given, the icon slot shows a 2-digit index (01, 02…) so the
   // stacked briefings read with rhythm/structure instead of the same repeated icon.
   const upd = updatedLbl ? `<span class="im-sec-updated">${esc(updatedLbl)}</span>` : '';
-  const tag = key === 'sources' ? '' : `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div>`;
+  const tag = key === 'sources' ? '' : `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${LOGO}<span>AI-generated content included</span></span>${upd}</div>`;
   const mark = num ? `<span class="im-msec-num">${String(num).padStart(2, '0')}</span>` : (AII_SEC_ICON[key] || AII_SEC_ICON.summary);
   return `<div class="im-msec-head"><span class="im-msec-ic${num ? ' im-msec-ic--num' : ''}">${mark}</span><h3 class="im-msec-name">${esc(name)}</h3></div>${tag}`;
 }
@@ -996,7 +996,7 @@ export function renderAIIntelligence(container, scope) {
       // provenance row (AI tag + Updated), then the FULL text (no clamp / Show more),
       // then a compact "N sources ⌄" dropdown toggle at the bottom.
       const upd = updatedLbl ? `<span class="im-sec-updated">${esc(updatedLbl)}</span>` : '';
-      const provenance = `<div class="im-sec-aitag-row im-sec-aitag-row--inbody"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div>`;
+      const provenance = `<div class="im-sec-aitag-row im-sec-aitag-row--inbody"><span class="im-sec-aitag">${LOGO}<span>AI-generated content included</span></span>${upd}</div>`;
       // scope.previewSections (topic page's AI Brief, revamp762): each part is a
       // STORY row — headline + a two-line teaser of the text, expanding in place
       // to the full prose + sources. Provenance renders once per brief (.tai-prov)
@@ -2372,11 +2372,7 @@ export function renderDailyIntelligence(container, scope) {
       </div>
       <!-- revamp1043: provenance is one clickable label — "AI-generated content ·
            Source-grounded" with the info icon; opens the shared how-it-works modal. -->
-      <button type="button" class="di-prov2 how-aigen" data-how-it-works>${LOGO}<span>AI-generated content</span>
-        <span class="di-prov2-dot" aria-hidden="true"></span>
-        <span>Source-grounded</span>
-        ${DI_INFO_ICON}
-      </button>
+      <button type="button" class="di-prov2 how-aigen" data-how-it-works>${LOGO}<span>AI-generated content included</span>${DI_INFO_ICON}</button>
       ${overview ? `<section class="di-big di-big--plain">
         <h3 class="di-sectitle">The Big Picture</h3>
         ${thingsList.length ? `<ul class="di-big-lead">${thingsList.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}

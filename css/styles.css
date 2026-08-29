@@ -27801,3 +27801,20 @@ body.home-search .home-v2 .home-featbriefs .hb-head {
 .search-page .search-panel-title { font-size: 1.35rem !important; margin-bottom: 0.7rem !important; }
 .aii-nav-dd-search .aii-nav-dd-inner,
 .aii-nav-dd-search .aii-nav-dd-scroll { padding-top: 4px !important; }
+
+/* ═══ revamp1049 — kill the doubled Today's News rule; smaller AI-gen label ══ */
+
+/* The homepage news head already carries the 2px rule; the inner headrow had a
+   second one, drawing a double line. Only the head keeps the rule. */
+body.home-search .home-v2 #section-newsfeed .newsfeed-headrow { border-bottom: 0 !important; }
+
+/* The "AI-generated content included" label in an OPEN briefing was oversized —
+   bring the pill down to a caption size (and the info icon with it). */
+.tdi-card--hero2.is-open .di-prov2,
+.dih-brief .di-prov2,
+.di-page .di-prov2 {
+  font-size: 0.78rem !important; font-weight: 550 !important;
+  padding: 5px 11px !important; gap: 7px !important;
+}
+.di-prov2 .how-info-ic svg { width: 13px !important; height: 13px !important; }
+.di-prov2 svg:first-child { width: 13px !important; height: 13px !important; }

@@ -104,7 +104,7 @@ function teCleanContent(s) {
   return t || String(s || '');
 }
 function teSecHead(key, name, aiTag) {
-  const tag = aiTag ? `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${SPARK}<span>AI Generated Text</span></span></div>` : '';
+  const tag = aiTag ? `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${SPARK}<span>AI-generated content included</span></span></div>` : '';
   return `<div class="im-msec-head"><span class="im-msec-ic">${TE_SEC_ICON[key] || TE_SEC_ICON.summary}</span><h3 class="im-msec-name">${escapeHTML(name)}</h3></div>${tag}`;
 }
 function teSourcesHTML(headlines, sources) {
@@ -154,7 +154,7 @@ export function renderTrendExpansionBody(term, brief) {
   // hang off the bottom as quiet drawers so they read as a continuation of the
   // brief rather than three peer destinations. Close is the last thing on the card.
   const summaryBody = detail || why;
-  const AITAG = `<div class="trend-exp-aitag">${aiSparkInline()}<span>AI Generated Text</span></div>`;
+  const AITAG = `<div class="trend-exp-aitag">${aiSparkInline()}<span>AI-generated content included</span></div>`;
   const summaryHTML = summaryBody ? `${AITAG}${renderBriefBody(summaryBody, null)}` : '<p class="ins-empty">No summary yet.</p>';
   // "Search this trend" leads — a direct jump to the search page with the trend
   // as the query (the natural Explore Further). Sources follows as a quiet
