@@ -28390,3 +28390,28 @@ body.tt-on .topic-home #section-newsfeed .news-card:first-child { border-top: 0 
 @media (hover: hover) {
   .navmenu-quicklink.navmenu-cta:hover { background: #fff !important; border-color: #d3d9e6 !important; }
 }
+
+/* ═══ revamp1074 — topic tab-strip centering; AI Briefing full width; home
+      tabs never wrap ═══════════════════════════════════════════════════════ */
+
+/* Topic tab strip: symmetric padding so tabs sit vertically centered in the
+   strip (were pushed high by the old 4px-top / 10px-bottom split). */
+body.tt-on .topic-viewtabs { padding: 9px 16px !important; align-items: center !important; }
+
+/* Topic AI Briefing fills the tab panel like the news feed — drop the card's
+   inner side padding and the masthead's extra right padding in tab mode. */
+body.tt-on .topic-tabpanel .tdi-hero-body { padding-left: 0 !important; padding-right: 0 !important; }
+body.tt-on .topic-tabpanel .di-mast { padding-right: 0 !important; }
+
+/* Homepage view tabs must never break to two lines on a phone. Keep them on one
+   row, tighten, and as a last resort at the smallest widths drop the icons. */
+body.home-search .home-viewtabs { flex-wrap: nowrap !important; }
+body.home-search .home-viewtabs .tvt { white-space: nowrap !important; }
+@media (max-width: 560px) {
+  body.home-search .home-viewtabs { gap: 4px !important; }
+  body.home-search .home-viewtabs .tvt { padding: 8px 9px !important; font-size: 0.8rem !important; }
+}
+@media (max-width: 420px) {
+  body.home-search .home-viewtabs .tvt .tvt-ic { display: none !important; }
+  body.home-search .home-viewtabs .tvt { padding: 8px 7px !important; font-size: 0.77rem !important; }
+}
