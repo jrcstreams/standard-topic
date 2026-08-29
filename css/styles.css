@@ -28046,3 +28046,45 @@ body.nav-docked #sub-header.is-subnav .tsp-panelwrap {
   right: 0 !important;
   width: auto !important;
 }
+
+/* ═══ revamp1057 — briefing masthead cleanup + homepage tab-brief no-card ════ */
+
+/* Info badge: a clean soft-blue filled badge (clearly clickable), not a dot. */
+.how-info-ic { color: #5b7fd4 !important; }
+.how-info-ic svg, .how-aigen .how-info-ic svg { width: 15px !important; height: 15px !important; }
+@media (hover: hover) { .how-aigen:hover .how-info-ic { color: #3559b0 !important; } }
+
+/* Masthead date · time — dot vertically centred, tighter spacing. */
+.di-mast-when { gap: 7px !important; }
+.di-mast-date + .di-mast-time::before {
+  align-self: center !important; margin-right: 7px !important; opacity: .45 !important;
+}
+
+/* Big Picture bullets: a smidge smaller, a bit stronger. */
+.di-big--plain .di-big-lead li { font-size: 0.86rem !important; font-weight: 600 !important; color: #33425e !important; }
+
+/* Tab-view briefing (topic pages): hairline BELOW the AI-gen label, topic pill
+   dropped (the grey subnav already names the topic), tighter top. */
+body.tt-on .tview-brief .di-prov2,
+body.tt-on .tview-brief [data-di-host] .di-prov2 {
+  border-top: 0 !important; border-bottom: 1px solid #e5e9f2 !important;
+  padding: 0 0 12px !important; margin: 6px 0 12px !important;
+}
+body.tt-on .tview-brief .di-mast-topic { display: none !important; }
+body.tt-on .tview-brief .di-mast { margin-bottom: 6px !important; }
+
+/* Homepage AI Briefing in tab mode: no card — part of the page like the topic
+   briefings. Keep the "Global Briefing" pill; drop the "View more" foot. */
+body.tt-on.home-search .home-featbriefs .tdi-card,
+body.tt-on.home-search .home-featbriefs .tdi-card.is-open {
+  background: #fff !important; border: 0 !important; box-shadow: none !important;
+  border-radius: 0 !important; padding: 0 !important;
+}
+body.tt-on.home-search .home-featbriefs .tdi-expand-inner { padding-left: 0 !important; padding-right: 0 !important; }
+body.tt-on.home-search .home-featbriefs .hs-morefoot { display: none !important; }
+body.tt-on.home-search .home-featbriefs .di-prov2 {
+  background: none !important; border: 0 !important; border-top: 0 !important;
+  border-bottom: 1px solid #e5e9f2 !important; border-radius: 0 !important;
+  padding: 0 0 12px !important; margin: 6px 0 12px !important;
+  font-size: 0.8rem !important; color: #6b7a92 !important;
+}
