@@ -76,7 +76,7 @@ const SPARK_FILL = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="tr
 const AIGEN_TAG = `<div class="aigen-tag">${SPARK}<span>AI-generated</span></div>`;
 const ARROW = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 // revamp1043: info-icon affordance appended to the AI-generated chip.
-const IM_INFO_ICON = '<svg class="how-info-ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2" fill="currentColor" stroke="none"/><rect x="10.8" y="10.4" width="2.4" height="6" rx="1.2" fill="#fff" stroke="none"/><circle cx="12" cy="7.4" r="1.4" fill="#fff" stroke="none"/></svg>';
+const IM_INFO_ICON = '<svg class="how-info-ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.3"/><line x1="12" y1="11.4" x2="12" y2="16.4"/><line x1="12" y1="7.6" x2="12.01" y2="7.6"/></svg>';
 const CHEV = '<svg class="im-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 // Brand mark — a clean, flat 4-point sparkle (the same spark used inline),
 // filled white on the navy tile. Simple and on-brand (no glossy facets).
