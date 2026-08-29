@@ -4730,7 +4730,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Trending is now the only sidebar card, so it can run much longer.
     // revamp981: a shorter sidebar list — "View more trending" carries the rest
     // through to the trending page rather than the sidebar being the whole list.
-    renderTrendingHome(container.querySelector('#home-trending'), { limit: 5 });
+    renderTrendingHome(container.querySelector('#home-trending'), { limit: 12 });
     // revamp1031b: one rAF was not enough — the feed renders asynchronously and
     // the browser re-anchors to its remembered offset once the page grows tall
     // enough to allow it. Reset across the settle window instead, and stop as

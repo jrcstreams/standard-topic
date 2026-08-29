@@ -28193,3 +28193,16 @@ body.nav-docked .navmenu-title {
   width: 17px !important; height: 17px !important;
   color: #2c4f9e !important; stroke: #2c4f9e !important; fill: none !important;
 }
+
+/* ═══ revamp1062 — homepage Trending tab (tab mode): full list, no view-more ══
+   In tabular navigation the Trending tab is the whole surface, so show the full
+   set (the nth-child caps that trim the sidebar/mobile rail are lifted), drop
+   the "View more" foot, and sit the AI-generated legend tight under the subnav
+   with the first trend divided from it. */
+body.tt-on.home-search #home-trending .trend-card-grid .trend-card { display: block !important; }
+body.tt-on.home-search #home-trending .hs-morefoot { display: none !important; }
+body.tt-on.home-search #home-trending .trend-legend-row {
+  margin: 4px 0 0 !important; padding: 0 8px 11px !important;
+  border-top: 0 !important; border-bottom: 1px solid #eef1f6 !important;
+}
+body.tt-on.home-search #home-trending .trending-topics-head { margin-bottom: 0 !important; padding-bottom: 0 !important; border-bottom: 0 !important; }
