@@ -28032,3 +28032,17 @@ body.home-search #home-trending .trend-legend-row {
   border-bottom: 1px solid #eef1f6 !important;
 }
 body.home-search #home-trending .trend-card-grid .trend-card:first-child { padding-top: 12px !important; }
+
+/* ═══ revamp1056 — Change Topic dropdown: respect the sidebar, span correctly ═
+   The subnav picker panel was `position:fixed; left:0; width:100%`, and a
+   higher-specificity #sub-header rule forced left:0/width:100% even when the
+   sidebar was docked — so the panel spanned the whole viewport, overflowing the
+   right edge and sitting behind the sidebar (the "glitchy Change Topic" bug).
+   Anchor it from the sidebar edge to the right edge at every width. */
+#sub-header.is-subnav .tsp-panelwrap,
+body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-panelwrap,
+body.nav-docked #sub-header.is-subnav .tsp-panelwrap {
+  left: var(--sbw, 0) !important;
+  right: 0 !important;
+  width: auto !important;
+}
