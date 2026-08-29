@@ -28206,3 +28206,7 @@ body.tt-on.home-search #home-trending .trend-legend-row {
   border-top: 0 !important; border-bottom: 1px solid #eef1f6 !important;
 }
 body.tt-on.home-search #home-trending .trending-topics-head { margin-bottom: 0 !important; padding-bottom: 0 !important; border-bottom: 0 !important; }
+
+/* revamp1063 — the last story in "What Matters Today" gets a closing separator
+   like the others (the section ended flush before). */
+.di-briefs .dib:last-child { border-bottom: 1px solid #eef1f6 !important; padding-bottom: 16px !important; }

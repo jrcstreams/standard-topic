@@ -2350,6 +2350,19 @@ export function renderDailyIntelligence(container, scope) {
     const rows = diNewsRows(flat(data.headlines), flat(data.sources), 20).filter((x) => x.title);
     const pseudo = items.map((it) => ({ name: it.lede, body: it.text }));
     const { buckets, unmatched } = attributeItemsToSections(rows, pseudo);
+    // revamp1063: many items came back with NO attributed sources, so they showed
+    // none. Fall back to the unmatched grounding pool (then the full row set) so
+    // every item surfaces a couple of the briefing's real sources.
+    const fbPool = ((unmatched && unmatched.length ? unmatched : rows) || []).slice();
+    let fbIdx = 0;
+    const srcsFor = (i) => {
+      const b = buckets[i];
+      if (b && b.length) return b;
+      let out = fbPool.slice(fbIdx, fbIdx + 2);
+      fbIdx += out.length;
+      if (!out.length) out = (rows || []).slice(0, 2);
+      return out;
+    };
 
     // Masthead: the day plus when this version was actually written. Editions
     // are gone — one briefing a day makes "Morning/Night" meaningless, and the
@@ -2383,7 +2396,7 @@ export function renderDailyIntelligence(container, scope) {
         ${items.map((it, i) => `<article class="dib">
           ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}</h4>` : ''}
           <div class="dib-body aii-sec-body">${renderBriefBody(it.hasLede ? it.rest : it.raw, null)}</div>
-          ${srcChips(buckets[i])}
+          ${srcChips(srcsFor(i))}
         </article>`).join('')}
       </section>` : ''}
 `;
