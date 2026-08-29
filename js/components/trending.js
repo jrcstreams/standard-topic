@@ -659,17 +659,16 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
   }
 
   function headHTML() {
-    // Homepage header: "What's Trending" + the AI-provenance line, both ABOVE the
-    // rule so the header is one block and the first trend sits directly under the
-    // separator. The last-updated line is gone (the trends carry their own recency).
+    // revamp1055: the head is just the title + its rule. The AI-generated legend
+    // moves BELOW the rule (above the first trend), and "View more trending" is a
+    // centered link at the foot of the list rather than in the header row.
     return `
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
           <h3 class="trending-topics-title"><span>Trending</span><span class="trending-topics-title-ic" aria-hidden="true">${TREND_CARD_ICON}</span></h3>
-          <button type="button" class="hb-all hb-all--btn" data-action="view-all-trending">View more trending${TREND_HEAD_ARROW}</button>
         </div>
-        ${trendLegendRow()}
-      </div>`;
+      </div>
+      ${trendLegendRow()}`;
   }
 
   // Homepage trending has no controls now — category filtering lives in the
@@ -709,6 +708,7 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
         ${headHTML()}
         ${controlsHTML()}
         <div class="trend-card-grid" id="trend-home-grid"></div>
+        <div class="hs-morefoot"><button type="button" class="hs-morelink" data-action="view-all-trending">View more trending${TREND_HEAD_ARROW}</button></div>
       </div>`;
     container.querySelector('.trend-cat-select')?.addEventListener('change', (e) => {
       state.category = e.target.value; renderGrid();

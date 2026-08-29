@@ -1873,14 +1873,14 @@ function renderFeaturedBriefings(host, opts) {
     host.innerHTML = `
       <div class="hb-head hf-labelhead">
         <h3 class="hb-title"><span class="hb-head-ic hb-head-ic--brief" aria-hidden="true">${DI_SPARK_TWO}</span>${escapeHTML(o.title || "Today's AI Briefing")}</h3>
-        <a class="hb-all" href="#/intelligence">View more briefings${SUBPAGE_ARROW}</a>
       </div>
       <div class="hb-hero hb-hero--side" data-home-briefing>
         <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
           noHeader: true, hubLink: false, art: true, topicLabel: 'Global Briefing',
           sublabel: 'Your daily briefing across every topic we cover.',
         })}</div>
-      </div>`;
+      </div>
+      <div class="hs-morefoot"><a class="hs-morelink" href="#/intelligence">View more briefings${SUBPAGE_ARROW}</a></div>`;
     wireHomeDailyIntelligence(host);
     fetchDailyBrief('home', false, true).then((d) => {
       if (d && d.generatedAt && host.isConnected) applyBriefArt(host, d.generatedAt);
@@ -4709,9 +4709,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <section class="hf-card hf-card--prompts hf-card--labelled hs-block" data-hf="prompts">
               <div class="hb-head hf-labelhead">
                 <h3 class="hb-title"><span class="hb-head-ic hb-head-ic--prompts" aria-hidden="true">${PROMPTS_HEAD_ICON}</span>AI Prompts</h3>
-                <button type="button" class="hb-all hb-all--btn" data-explore-prompts>View more prompts${SUBPAGE_ARROW}</button>
               </div>
               <div class="hf-chips" data-hq-prompts></div>
+              <div class="hs-morefoot"><button type="button" class="hs-morelink" data-explore-prompts>View more prompts${SUBPAGE_ARROW}</button></div>
             </section>
           </aside>
         </div>
