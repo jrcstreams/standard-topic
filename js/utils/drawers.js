@@ -6,15 +6,17 @@ const DRAWER_CHEV = '<svg class="te-drawer-chev" viewBox="0 0 24 24" width="16" 
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 
-export function drawerHTML(label, bodyHTML, icon = '') {
-  return `<details class="te-drawer"><summary class="te-drawer-sum">${icon ? `<span class="te-drawer-ic" aria-hidden="true">${icon}</span>` : ''}<span class="te-drawer-title">${esc(label)}</span>${DRAWER_CHEV}</summary><div class="te-drawer-body">${bodyHTML}</div></details>`;
+// revamp1047: drawers/links carry an optional subline and render as squarer
+// cards (icon chip + title over subtext), laid out two-up where space allows.
+export function drawerHTML(label, bodyHTML, icon = '', sub = '') {
+  return `<details class="te-drawer"><summary class="te-drawer-sum">${icon ? `<span class="te-drawer-ic" aria-hidden="true">${icon}</span>` : ''}<span class="te-drawer-tx"><span class="te-drawer-title">${esc(label)}</span>${sub ? `<span class="te-drawer-sub">${esc(sub)}</span>` : ''}</span>${DRAWER_CHEV}</summary><div class="te-drawer-body">${bodyHTML}</div></details>`;
 }
 
 // Sibling row to a drawer that ISN'T a drawer: a plain link (e.g. "Search this
 // trend" → the search page), styled by the same .te-drawer-sum family.
-export function drawerLinkHTML(label, href, icon = '') {
+export function drawerLinkHTML(label, href, icon = '', sub = '') {
   const ARROW = '<svg class="te-drawer-chev te-drawer-go" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
-  return `<a class="te-drawer te-drawer--link" href="${String(href).replace(/"/g, '&quot;')}"><span class="te-drawer-sum">${icon ? `<span class="te-drawer-ic" aria-hidden="true">${icon}</span>` : ''}<span class="te-drawer-title">${esc(label)}</span>${ARROW}</span></a>`;
+  return `<a class="te-drawer te-drawer--link" href="${String(href).replace(/"/g, '&quot;')}"><span class="te-drawer-sum">${icon ? `<span class="te-drawer-ic" aria-hidden="true">${icon}</span>` : ''}<span class="te-drawer-tx"><span class="te-drawer-title">${esc(label)}</span>${sub ? `<span class="te-drawer-sub">${esc(sub)}</span>` : ''}</span>${ARROW}</span></a>`;
 }
 
 export const DRAWER_SEARCH_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>';

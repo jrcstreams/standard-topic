@@ -160,8 +160,8 @@ export function renderTrendExpansionBody(term, brief) {
   // as the query (the natural Explore Further). Sources follows as a quiet
   // drawer that blends into the expansion's tint (revamp772).
   const src = teSourcesHTML(b.headlines, b.sources);
-  const drawers = drawerLinkHTML('Search this trend', '#/custom/' + encodeURIComponent(term), DRAWER_SEARCH_IC)
-    + (src ? drawerHTML('Sources', src, DRAWER_SOURCES_IC) : '');
+  const drawers = drawerLinkHTML('Search this trend', '#/custom/' + encodeURIComponent(term), DRAWER_SEARCH_IC, 'Explore more articles and perspectives')
+    + (src ? drawerHTML('Sources', src, DRAWER_SOURCES_IC, 'View all news sources and coverage') : '');
   return `<div class="trend-exp im-secs">
     <div class="trend-exp-summary">${summaryHTML}</div>
     <div class="trend-exp-drawers">${drawers}</div>

@@ -819,8 +819,8 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       // "Search this story further" leads — submits the story TITLE to the
       // search page. Sources follows as a blended drawer (revamp772).
       const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url, d.title);
-      const drawers = drawerLinkHTML('Search this story further', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
-        + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC) : '');
+      const drawers = drawerLinkHTML('Search this story further', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC, 'Explore more articles and perspectives')
+        + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC, 'View all news sources and coverage') : '');
       panel.innerHTML = `<div class="ni-inner ai-reveal">
         <div class="ni-aitag-row"><button type="button" class="ni-aitag how-aigen" data-how-it-works>${AI_SPARK_SVG}<span>AI Generated Text</span>${INFO_ICON_SVG}</button></div>
         ${secHTML}

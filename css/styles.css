@@ -27756,3 +27756,37 @@ body.home-search .home-v2 .home-featbriefs .hb-head {
 /* The subnav "Expand all" toggle rides beside the page name like Sports Trends. */
 .pagenav-actions, .pagenav-toggle { margin-left: auto; }
 .pagenav-toggle.trend-sports-toggle { align-self: center; }
+
+/* ═══ revamp1047c — square 2-up drawer cards + topic sections closer ═════════ */
+
+/* "Search this trend/story" + "Sources" become squarer cards, two-up where
+   space allows, stacked otherwise — with a subline under each label. */
+.trend-exp-drawers {
+  display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+  margin-top: 14px !important; padding-top: 14px !important; border-top: 1px solid #e7ecf3 !important;
+}
+@media (max-width: 560px) { .trend-exp-drawers { grid-template-columns: 1fr !important; } }
+.te-drawer {
+  border: 1px solid #e3e8f1 !important; border-radius: 12px !important; background: #fff !important;
+  overflow: hidden; align-self: start;
+}
+.te-drawer > .te-drawer-sum {
+  display: flex !important; align-items: flex-start !important; gap: 12px !important;
+  padding: 13px 14px !important; font-size: 0.9rem !important;
+}
+.te-drawer-ic {
+  width: 34px !important; height: 34px !important; border-radius: 9px; flex: none;
+  background: #eef2f9; display: inline-flex; align-items: center; justify-content: center; color: #4a5b78 !important;
+}
+.te-drawer-ic svg { width: 16px !important; height: 16px !important; }
+.te-drawer-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.te-drawer-title { font-size: 0.9rem; font-weight: 700; color: #26375a; }
+.te-drawer-sub { font-size: 0.77rem; font-weight: 400; color: #7a869c; line-height: 1.35; }
+.te-drawer-chev, .te-drawer-go { align-self: center; }
+@media (hover: hover) { .te-drawer:hover { border-color: #cdd8ec !important; background: #fbfcff !important; } }
+/* Open Sources spans both columns so its source list gets full width. */
+.te-drawer[open] { grid-column: 1 / -1; }
+
+/* Topic landing: bring News Feed / AI Briefing a touch closer to the subnav. */
+.topic-home .topic-top { margin-top: 0.6rem !important; }
+@media (min-width: 1024px) { .topic-home .topic-top { margin-top: 0.75rem !important; } }
