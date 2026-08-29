@@ -28096,3 +28096,60 @@ body.tt-on.home-search .home-featbriefs .di-prov2 {
   padding: 0 0 12px !important; margin: 6px 0 12px !important;
   font-size: 0.8rem !important; color: #6b7a92 !important;
 }
+
+/* ═══ revamp1058 — dark-blue nav: sidebar head + collapsed/mobile top bar ════ */
+
+/* ── Expanded sidebar: navy title bar with a bigger white wordmark; the body
+      drops to a slightly deeper grey so the navy head reads as the crown. ── */
+.navmenu-head,
+body.nav-docked .navmenu-head {
+  background: #1e2d44 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+}
+.navmenu-title,
+body.nav-docked .navmenu-title {
+  color: #ffffff !important; font-size: 1.42rem !important; letter-spacing: -0.02em !important;
+}
+.navmenu-collapse { color: rgba(255, 255, 255, 0.74) !important; }
+@media (hover: hover) {
+  .navmenu-collapse:hover {
+    background: rgba(255, 255, 255, 0.12) !important; color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+  }
+}
+.navmenu-panel { background: #e8ebf1 !important; }
+.navmenu-footer-sticky { background: #e8ebf1 !important; border-top-color: #dbdfe8 !important; }
+
+/* ── Collapsed sidebar + mobile: the whole main nav goes navy with white ink,
+      white button links, and a translucent-white Search pill. ── */
+#site-header.is-sticky-hero {
+  background: #1e2d44 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.18) !important;
+}
+#site-header.is-sticky-hero .sticky-title { color: #ffffff !important; }
+#site-header.is-sticky-hero .nav-hamburger span { background: #ffffff !important; }
+#site-header.is-sticky-hero .sticky-page-text,
+#site-header.is-sticky-hero .sticky-page-name { color: rgba(255, 255, 255, 0.72) !important; }
+#site-header.is-sticky-hero .nav-search-mobile { color: #ffffff !important; }
+#site-header.is-sticky-hero .navbtn { color: rgba(255, 255, 255, 0.82) !important; }
+@media (hover: hover) {
+  #site-header.is-sticky-hero .navbtn:hover { background: rgba(255, 255, 255, 0.12) !important; color: #fff !important; }
+}
+#site-header.is-sticky-hero .navbtn.is-active,
+#site-header.is-sticky-hero .navbtn[aria-expanded="true"] { background: rgba(255, 255, 255, 0.16) !important; color: #fff !important; }
+@media (hover: hover) {
+  #site-header.is-sticky-hero .navbtn[aria-expanded="true"]:hover { background: rgba(255, 255, 255, 0.22) !important; color: #fff !important; }
+}
+/* Search pill on the navy bar. */
+#site-header.is-sticky-hero .nav-searchbar,
+#site-header.is-sticky-hero #nav-search,
+#site-header.is-sticky-hero #nav-search .nav-searchbar-ph {
+  color: #ffffff !important; background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+#site-header.is-sticky-hero #nav-search svg,
+#site-header.is-sticky-hero #nav-search .navbtn-ico { color: rgba(255, 255, 255, 0.9) !important; }
+@media (hover: hover) {
+  #site-header.is-sticky-hero #nav-search:hover { background: rgba(255, 255, 255, 0.2) !important; }
+}
