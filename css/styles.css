@@ -27678,8 +27678,8 @@ body.home-search .home-v2 #section-newsfeed .newsfeed-head {
 }
 body.home-search .home-v2 #section-newsfeed .newsfeed-headrow { width: 100%; }
 body.home-search .home-v2 .home-featbriefs .hb-head {
-  min-height: 34px !important; align-items: flex-end !important;
-  padding-bottom: 12px !important; margin-bottom: 14px !important;
+  min-height: 46px !important; align-items: flex-end !important;
+  padding-bottom: 11px !important; margin-bottom: 14px !important;
 }
 
 /* ═══ revamp1046 — prompt sections: labels, borders, flush rows ══════════════ */
@@ -28339,7 +28339,7 @@ body.home-search .home-v2 #section-newsfeed .newsfeed-title-main { font-size: 1.
 body.home-search .home-v2 #section-newsfeed .newsfeed-head,
 body.home-search .home-v2 .home-featbriefs .hb-head {
   display: flex !important; align-items: flex-end !important;
-  min-height: 44px !important;
+  min-height: 46px !important;
   padding: 0 0 11px !important; margin: 0 0 14px !important;
   border-bottom: 2px solid #e0e5ee !important;
 }
