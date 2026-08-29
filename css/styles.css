@@ -28286,3 +28286,27 @@ body.tt-on .tview-brief [data-di-host] .di-prov2 {
   margin: 6px 0 12px !important; align-self: flex-start;
   color: #56647e !important; font-size: 0.72rem !important;
 }
+
+/* ═══ revamp1067 — Change Topic z-index, sidebar spacing, trending, More btn ══ */
+
+/* Change Topic dropdown was z-index 60 — below cards/stacking contexts on
+   desktop, so it rendered behind the content. Lift it above everything and make
+   sure the panel is fully opaque. */
+#sub-header.is-subnav .tsp-panelwrap { z-index: 490 !important; }
+#sub-header.is-subnav .tsp-panel {
+  background: #fff !important;
+  box-shadow: 0 22px 46px -18px rgba(15, 23, 42, 0.32), 0 8px 18px -10px rgba(15, 23, 42, 0.14) !important;
+}
+
+/* Homepage AI Briefing / AI Prompts heads: more air between the chip icon and
+   the title. */
+.home-v2 .home-side .hb-title { gap: 12px !important; }
+
+/* Trending page: the AI-generated legend row sits closer to the grey nav. */
+.aii-nav-dd-trending .aii-nav-dd-inner,
+.aii-nav-dd-trending .aii-nav-dd-scroll { padding-top: 2px !important; }
+.aii-nav-dd-trending .tlm-controlbar { margin-top: 0.35rem !important; }
+
+/* Topic subnav "More" pill: vertically centred with the subtopic pills. */
+.topic-bodyhead .tbh-subs { align-items: center !important; }
+.topic-bodyhead .tbh-more { align-self: center !important; }
