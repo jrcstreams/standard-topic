@@ -28330,3 +28330,13 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
   body.tt-on #section-newsfeed .newsfeed-card { width: 100% !important; }
   body.tt-on #section-newsfeed .news-card { padding-left: 2px !important; padding-right: 2px !important; }
 }
+
+/* revamp1069 — homepage tab briefing AI-gen label matches the topic/desktop
+   chip (no hairline below it), for one consistent label everywhere. */
+body.tt-on.home-search .home-featbriefs .di-prov2 {
+  border: 0 !important; border-top: 0 !important; border-bottom: 0 !important;
+  background: color-mix(in srgb, #1a2740 4%, transparent) !important;
+  border-radius: 8px !important; padding: 4px 9px !important;
+  margin: 6px 0 12px !important; align-self: flex-start;
+  color: #56647e !important; font-size: 0.72rem !important;
+}
