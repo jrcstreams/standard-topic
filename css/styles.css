@@ -28310,3 +28310,23 @@ body.tt-on .tview-brief [data-di-host] .di-prov2 {
 /* Topic subnav "More" pill: vertically centred with the subtopic pills. */
 .topic-bodyhead .tbh-subs { align-items: center !important; }
 .topic-bodyhead .tbh-more { align-self: center !important; }
+
+/* ═══ revamp1068 — Prompts page full width, darker header band, mobile news ══ */
+
+/* The Prompts page runs full width (the shared 1280 cap left big side margins). */
+.ndp.aii-nav-dd-prompts { max-width: none !important; }
+.aii-nav-dd-prompts .prompts-home { max-width: none !important; width: 100% !important; }
+
+/* Topic header band: a bit darker so it actually reads, and its top no longer
+   extends far enough to peek out under the grey bar on scroll. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
+  top: -22px; bottom: -4px;
+  background: linear-gradient(180deg, #dfe8fa 0%, #edf2fd 58%, #ffffff 100%);
+}
+
+/* Mobile tab-mode news feed runs edge-to-edge within the content column. */
+@media (max-width: 640px) {
+  body.tt-on #section-newsfeed .news-list,
+  body.tt-on #section-newsfeed .newsfeed-card { width: 100% !important; }
+  body.tt-on #section-newsfeed .news-card { padding-left: 2px !important; padding-right: 2px !important; }
+}
