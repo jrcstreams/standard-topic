@@ -28611,3 +28611,21 @@ body.tt-on .home-v2 #section-newsfeed .news-list { margin-top: 6px !important; }
   .home-hero-ic { width: 34px; height: 34px; }
   .home-hero-sub { font-size: 0.9rem; margin: 7px 0 12px; }
 }
+
+/* ═══ revamp1086 — AI Briefing masthead: icon sizing + label alignment/consistency ══ */
+
+/* Date + time glyphs were 13px against ~13.6px text — nudge them up to match. */
+.di-mast-when svg, .di-mast .di-mast-when svg, .di-mast-datetime svg { width: 15px !important; height: 15px !important; }
+
+/* AI-generated label: everything (sparkle, text, "i") vertically centered — the
+   info icon was sitting on the baseline. Applies to the card AND the expanded
+   briefing so the two read identically. */
+.di-prov2, .how-aigen, .tdi-cardprov { align-items: center !important; }
+.di-prov2 .how-info-ic, .how-aigen .how-info-ic, .tdi-cardprov .how-info-ic,
+.di-prov2 .how-info-ic svg, .how-aigen .how-info-ic svg {
+  align-self: center !important; vertical-align: middle !important; display: inline-flex !important;
+}
+/* One consistent chip size/weight everywhere the AI-gen label appears. */
+.di-prov2, .tdi-card .di-prov2, .dih-brief .di-prov2, .di-page .di-prov2 {
+  font-size: 0.72rem !important; font-weight: 550 !important; padding: 4px 9px !important; gap: 7px !important;
+}
