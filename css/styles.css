@@ -28831,3 +28831,9 @@ body.tt-on .home-side .aii-fi-sechead { padding-left: 0 !important; padding-righ
 html body.tt-on.app-mode:not(.home-search) #content {
   padding-top: calc(var(--nav-h) + var(--subnav-height, 56px) + 52px) !important;
 }
+
+/* ═══ revamp1101 — expanded AI insight: faint dark-blue border, contained look ══ */
+.news-card--open {
+  border: 1px solid rgba(30, 58, 138, 0.22) !important;
+  box-shadow: 0 2px 10px rgba(30, 58, 138, 0.07) !important;
+}
