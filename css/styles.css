@@ -28691,3 +28691,7 @@ body:not(.tt-on).home-scrolled #sub-header.home-mode {
 }
 /* Extend the hero band up to fill the space the hidden subnav left. */
 body:not(.tt-on) .home-hero::before { top: -64px; }
+
+/* revamp1091 — homepage blue hero is desktop-only. In tab/mobile mode the grey
+   page nav (Home band + tabs) shows by default, so the hero intro isn't needed. */
+body.tt-on .home-hero { display: none !important; }
