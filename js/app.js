@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       lastBaseRouteKey = baseKey;
       requestAnimationFrame(() => {
         window.scrollTo(0, 0);
-        setSubnavHeightVar();
+        setSubnavHeightVar(true);
       });
     } else if (staySearch) {
       // Same search page, new term → drive the live panel.
@@ -218,7 +218,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // revamp890: was its own 90ms timer racing two other 90ms timers (the nav fit
   // and the bus), each landing in a different rAF — so --subnav-height could be
   // measured while --nav-h was mid-change. One bus = one settle pass, in order.
-  onResize('subnav-height', setSubnavHeightVar, 20);  // measures against --nav-h
+  // revamp1077: force each resize-settle write. The memo skip is right for the
+  // ResizeObserver's frame-by-frame writes, but on the resize BUS it let a value
+  // cached at a transitional height survive a real layout change — leaving
+  // #content over-padded (content "too far" from the subnav) and its calc()
+  // height too short (grey showing below on Trending) until the next navigation.
+  onResize('subnav-height', () => setSubnavHeightVar(true), 20);  // measures against --nav-h
 
   initRouter();
 
@@ -281,7 +286,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
           }, 250);
         }
-        requestAnimationFrame(setSubnavHeightVar);
+        requestAnimationFrame(() => setSubnavHeightVar(true));
       }
     }
   };

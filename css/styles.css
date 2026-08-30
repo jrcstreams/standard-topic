@@ -25790,14 +25790,16 @@ body.tt-on .topic-band .topic-viewtabs {
   }
 }
 
-/* News tab: the head goes (the tab is the label); first card keeps its border. */
+/* News tab: the head goes (the tab is the label). revamp1077: the first card no
+   longer keeps a top border — the tab strip's own faint bottom rule is the
+   divider above the first story, so a second line just doubled it. */
 body.tt-on #topic-tab-body .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head,
 body.tt-on .topic-band .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head { display: none !important; }
 body.tt-on .topic-band .topic-home > .topic-news-wrap { margin-top: 10px !important; }
 body.tt-on .topic-band .topic-home #section-newsfeed .news-list { margin-top: 0 !important; }
 body.tt-on .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
-  border-top: 1px solid #e8edf5 !important;
-  padding-top: 12px !important;
+  border-top: 0 !important;
+  padding-top: 14px !important;
 }
 
 /* Briefing tab: a document. One masthead line, no card chrome, no dismissal. */
@@ -28415,3 +28417,19 @@ body.home-search .home-viewtabs .tvt { white-space: nowrap !important; }
   body.home-search .home-viewtabs .tvt .tvt-ic { display: none !important; }
   body.home-search .home-viewtabs .tvt { padding: 8px 7px !important; font-size: 0.77rem !important; }
 }
+
+/* ═══ revamp1078 — prompt header darker + top air; AI Briefing date nudge ════ */
+
+/* Prompt section labels (TOPIC-SPECIFIC / EVERGREEN) a shade closer to black. */
+.aii-fi-sectitle { color: #3f4b63 !important; }
+
+/* A little more air above the first prompt section on tablet/phone so it isn't
+   crowding the subnav (both the topic Prompts tab and the home Prompts tab). */
+body.tt-on .aii-fi-sec:first-child { margin-top: 12px !important; }
+
+/* AI Briefing (tab): nudge the date/time + AI-gen label down off the subnav and
+   a touch closer to The Big Picture (net: Big Picture stays put, the stamp block
+   shifts down — more space to the subnav, less to the header). */
+body.tt-on .topic-tabpanel .di-mast { margin-top: 14px !important; }
+body.tt-on .topic-tabpanel .di-body .di-prov2 { margin-bottom: 4px !important; }
+body.tt-on .topic-tabpanel .di-big { margin-top: 2px !important; }
