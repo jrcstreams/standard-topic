@@ -28820,3 +28820,12 @@ body.tt-on .home-side .aii-fi-sechead { padding-left: 0 !important; padding-righ
 }
 @media (hover: hover) { .navmenu-quicklink.navmenu-cta:hover { background: #e5ebf6 !important; border-color: #cfd9ea !important; } }
 .navmenu-quicklink.navmenu-cta.is-active { background: #dfe8fb !important; border-color: #bcd0f2 !important; color: #1d3a8a !important; }
+
+/* ═══ revamp1100 — topic tab strip is a SEPARATE fixed element; reserve its height ══ */
+/* .topic-viewtabs is position:fixed (~52px) below the title band but lives in
+   .topic-home, so --subnav-height (title band only) never counts it — content
+   started behind it and the first story was cut off ("1-2 stories"). Reserve the
+   strip height so content clears it AND the first story connects to the strip. */
+html body.tt-on.app-mode:not(.home-search) #content {
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 56px) + 52px) !important;
+}
