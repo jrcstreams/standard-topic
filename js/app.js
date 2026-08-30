@@ -265,6 +265,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         // full re-render rebuilds the sub-header, which silently closed it (#img75).
         const pickerWasOpen = !!document.querySelector('#sub-header .topic-subnav-picker.is-open');
         renderLayout(base); renderPage(base);
+        // revamp1080: the ROUTER rebuilds the static-page sub-header via
+        // renderPageNavBar after renderLayout/renderPage — but this manual
+        // breakpoint-cross re-render skipped it, so crossing desktop↔mobile on
+        // Trending / Topics / Prompts / Search cleared the identity band and never
+        // restored it (subnav height → 0, #content geometry went out of whack).
+        if (base.type === 'topics') renderPageNavBar('topics');
+        else if (base.type === 'trending') renderPageNavBar('trending');
+        else if (base.type === 'prompts') renderPageNavBar('prompts');
+        else if (base.type === 'search' || base.type === 'custom') renderPageNavBar('search');
         if (pickerWasOpen) {
           requestAnimationFrame(() => document.querySelector('#sub-header .topic-subnav-picker .tsp-btn')?.click());
         }

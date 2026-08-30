@@ -28442,3 +28442,27 @@ body.tt-on .topic-tabpanel .di-big { margin-top: 2px !important; }
 .topic-band .topic-home .tpr-inline .aii-fi-sectitle,
 .topic-band .topic-home .tpr-inline .aii-fi-sec-title { color: #3f4b63 !important; }
 body.tt-on .topic-band .topic-home .tpr-inline .aii-fi-sec:first-child { margin-top: 14px !important; }
+
+/* ═══ revamp1080 — Today's News head gap; desktop trail-head icon; blue band ══ */
+
+/* #1086: "Today's News" sat ~28px above its rule (short title, top-aligned in a
+   46px head kept tall for rule-alignment). Trim the head and bottom-align its
+   row so the title sits just above the separator — BOTH home heads, so the two
+   rules still line up. (html prefix beats the revamp1072 tie cleanly.) */
+html body.home-search .home-v2 #section-newsfeed .newsfeed-head,
+html body.home-search .home-v2 .home-featbriefs .hb-head {
+  min-height: 38px !important; padding-bottom: 9px !important;
+}
+html body.home-search .home-v2 #section-newsfeed .newsfeed-head { justify-content: flex-end !important; }
+html body.home-search .home-v2 #section-newsfeed .newsfeed-headrow { align-items: flex-end !important; margin: 0 !important; }
+
+/* #1087: desktop topic AI Briefing / AI Prompts head is display:block, where the
+   12px `gap` is inert — force flex so the chip actually spaces off the title. */
+body:not(.tt-on) .topic-band .topic-home .trail-head {
+  display: flex !important; align-items: center !important; gap: 12px !important;
+}
+
+/* #1088: topic header blue band a touch deeper so it actually reads on scroll. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
+  background: linear-gradient(180deg, #c7dbf4 0%, #dbe7fa 55%, #ffffff 100%) !important;
+}
