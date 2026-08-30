@@ -28780,7 +28780,9 @@ body.tt-on.home-search.app-mode.has-subnav:has(.home-v2:not(.hview-brief):not(.h
   padding-top: calc(var(--nav-h) + var(--subnav-height, 80px)) !important;
 }
 body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home:not(.tview-brief):not(.tview-tools)) #content {
-  padding-top: calc(var(--nav-h) + var(--subnav-height, 66px)) !important;
+  /* +52px reserves the SEPARATE fixed .topic-viewtabs strip (not in --subnav-height),
+     so the first news story clears it and connects to the strip's bottom rule. */
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 66px) + 52px) !important;
 }
 /* Zero the news list's own top offset so nothing re-introduces the gap. */
 html body.tt-on #section-newsfeed .news-list { margin-top: 0 !important; }
