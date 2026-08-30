@@ -28562,3 +28562,24 @@ body.tt-on .home-v2 #section-newsfeed .news-list { margin-top: 6px !important; }
     border-top: 1px solid #e8edf5 !important; padding-top: 14px !important;
   }
 }
+
+/* ═══ revamp1084 — sidebar nav: clean flat rows (no boxes/borders/arrows) ═════ */
+
+/* Home / AI Briefings / Trending / Prompts become simple icon+label rows with a
+   soft hover/active highlight — the boxed dark-blue-bordered look is retired. */
+.navmenu-quicklink.navmenu-cta {
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+  border-radius: 9px !important; padding: 10px 12px !important;
+}
+/* Drop the trailing → arrow. */
+.navmenu-quicklink.navmenu-cta > svg:last-of-type { display: none !important; }
+@media (hover: hover) { .navmenu-quicklink.navmenu-cta:hover { background: #e7ecf5 !important; } }
+.navmenu-quicklink.navmenu-cta.is-active,
+.navmenu-quicklink.navmenu-cta[aria-current="page"] { background: #dfe8fb !important; color: #1d3a8a !important; }
+
+/* Search sits in the same rhythm and matches the buttons' width, with a calm
+   light border (not the heavy dark-blue one). */
+#navmenu-searchbtn, .navmenu-searchbtn {
+  border: 1px solid #cdd6e6 !important; border-radius: 9px !important;
+  width: 100% !important; box-sizing: border-box !important; padding: 10px 12px !important;
+}
