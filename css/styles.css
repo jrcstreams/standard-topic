@@ -28850,7 +28850,7 @@ body.tt-on .topic-layout.topic-band { padding-left: 16px !important; padding-rig
    hidden-until-scroll subnav, so the hero sat ~52px below the nav vs the topic's
    ~29px. On desktop the hero fills that area (like the topic), so drop the
    reservation and tighten the head padding. (Tab mode keeps its subnav space.) */
-html body:not(.tt-on).pagenav-mode #content { padding-top: calc(var(--nav-h) + 22px) !important; }
+html body:not(.tt-on).pagenav-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 22px) !important; }
 body:not(.tt-on) .ndp .aii-nav-dd-head,
 body:not(.tt-on) .page-hero { padding-top: 6px !important; }
 
