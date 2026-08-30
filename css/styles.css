@@ -28537,3 +28537,28 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
 @media (max-width: 560px)  { #content .prompts-home--v2 .ph-featured .aii-fi-acclist { grid-template-columns: 1fr !important; } }
 /* An open accordion spans all columns so its expanded body isn't cramped. */
 #content .prompts-home--v2 .ph-featured .aii-fi-acclist .aii-fi-acc.is-open { grid-column: 1 / -1 !important; }
+
+/* ═══ revamp1083 — home tab-view top gap; sidebar borders; card-view first border ══ */
+
+/* Home tab views (News / AI Briefs / Trends / Prompts) sit closer to the subnav
+   in tab mode — the ~59px gap read as "too far". */
+body.tt-on .home-v2 .home-side { padding-top: 4px !important; }
+body.tt-on .home-v2 .home-side > .hs-block:first-child,
+body.tt-on .home-v2 .home-featbriefs { margin-top: 0 !important; }
+body.tt-on .home-v2 .home-side .home-featbriefs > *:first-child { margin-top: 0 !important; }
+body.tt-on .home-v2 #section-newsfeed .news-list { margin-top: 6px !important; }
+
+/* Sidebar (expanded): search matches the nav buttons' width with a thicker
+   dark-blue border; the four nav buttons get a thin dark-blue border. */
+#navmenu-searchbtn, .navmenu-searchbtn { border: 2px solid #1e3a8a !important; }
+.navmenu-quicklink.navmenu-cta { border: 1px solid #1e3a8a !important; }
+@media (hover: hover) { .navmenu-quicklink.navmenu-cta:hover { border-color: #16307a !important; } }
+
+/* Card view (boxed story cards, tablet tab mode ≥880px): the first story DOES
+   need its top border back — the box looks broken open without it. The border
+   stays removed only in the narrow divider-list view (revamp1077). */
+@media (min-width: 880px) {
+  html body.tt-on .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
+    border-top: 1px solid #e8edf5 !important; padding-top: 14px !important;
+  }
+}
