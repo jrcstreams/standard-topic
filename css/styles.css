@@ -28785,3 +28785,36 @@ body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home:not(.tview-brie
 /* Zero the news list's own top offset so nothing re-introduces the gap. */
 body.tt-on #section-newsfeed .news-list { margin-top: 0 !important; }
 body.tt-on #section-newsfeed .newsfeed-scroll-wrap { padding-top: 0 !important; }
+
+/* ═══ revamp1099 — news gap (robust); prompts indent; sidebar buttons ══════════ */
+
+/* NEWS FEED connects flush to the subnav in tab mode. Content padding drops its
+   buffer so the first story's top edge sits on the subnav's bottom border.
+   (home rule isn't !important, so our !important wins; topic rule is, so we
+   out-specify it.) Non-news views get their breathing room back explicitly. */
+body.tt-on.home-search.app-mode #content { padding-top: calc(var(--nav-h) + var(--subnav-height, 80px)) !important; }
+body.tt-on.app-mode.sticky-always.has-subnav:not(.home-search) #content { padding-top: calc(var(--nav-h) + var(--subnav-height, 66px)) !important; }
+body.tt-on #section-newsfeed .news-list { margin-top: 0 !important; }
+body.tt-on #section-newsfeed .newsfeed-scroll-wrap { padding-top: 0 !important; }
+/* Non-news tab views keep a little air below the now-flush content top. */
+body.tt-on .home-v2.hview-brief .home-side,
+body.tt-on .home-v2.hview-trend .home-side,
+body.tt-on .home-v2.hview-tools .home-side { padding-top: 14px !important; }
+body.tt-on .topic-home.tview-brief .di-mast { margin-top: 16px !important; }
+body.tt-on .topic-home.tview-tools .aii-sub,
+body.tt-on .topic-home.tview-tools .aii-fi-sec:first-child { margin-top: 14px !important; }
+
+/* Homepage Prompts: the featured set has no section header, so the accordion's
+   own 14px left padding read as an indent vs the flush news feed. Pull the row
+   content to the container edge so it lines up full-width. */
+body.tt-on .home-side .aii-fi-accsum { padding-left: 0 !important; padding-right: 0 !important; }
+body.tt-on .home-side .aii-fi-sechead { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* Sidebar nav: buttons again (not bare text) but tasteful — soft blue-grey fill
+   + faint border so they sit into the panel instead of popping like stark white. */
+.navmenu-quicklink.navmenu-cta {
+  background: #eef2f9 !important; border: 1px solid #e0e6f1 !important;
+  border-radius: 11px !important; padding: 11px 13px !important;
+}
+@media (hover: hover) { .navmenu-quicklink.navmenu-cta:hover { background: #e5ebf6 !important; border-color: #cfd9ea !important; } }
+.navmenu-quicklink.navmenu-cta.is-active { background: #dfe8fb !important; border-color: #bcd0f2 !important; color: #1d3a8a !important; }
