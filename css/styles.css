@@ -28515,3 +28515,10 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
 .ph-buildzone.is-building .ph-buildpromo .ph-build-sub { display: none; }
 .ph-buildhost { margin-top: 0; }
 .ph-buildhost[hidden] { display: none !important; }
+
+/* revamp1082b: v2 is one continuous scroll — every section is always visible,
+   overriding the retired pview-tab gating (which hid By Topic unless its tab was
+   active). Id-scoped so it beats the tt-on :not(.pview-bytopic) rules. */
+#content .prompts-home--v2 .ph-featured,
+#content .prompts-home--v2 .ph-lib { display: block !important; }
+#content .prompts-home--v2 .ph-lib .ph-sec-head { display: block !important; }
