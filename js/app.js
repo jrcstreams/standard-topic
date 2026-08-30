@@ -2809,8 +2809,8 @@ function renderLayout(route) {
            element by construction. -->
       <div class="home-viewtabs topic-viewtabs" data-home-viewtabs role="tablist" aria-label="Home sections">
         <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">${pageTabIcon('news')}<span class="tvt-tx"><span class="tvt-long">News Feed</span><span class="tvt-short">News</span></span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">${pageTabIcon('brief')}<span class="tvt-tx">AI Briefings</span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">${pageTabIcon('trend')}<span class="tvt-tx">Trending</span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">${pageTabIcon('brief')}<span class="tvt-tx"><span class="tvt-long">AI Briefings</span><span class="tvt-short">AI Briefs</span></span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">${pageTabIcon('trend')}<span class="tvt-tx"><span class="tvt-long">Trending</span><span class="tvt-short">Trends</span></span></button>
         <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="tools">${pageTabIcon('tools')}<span class="tvt-tx"><span class="tvt-long">AI Prompts</span><span class="tvt-short">Prompts</span></span></button>
       </div>
       <div class="home-subfilters" data-home-subfilters></div>`;
