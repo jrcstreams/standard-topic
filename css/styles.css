@@ -28433,3 +28433,12 @@ body.tt-on .aii-fi-sec:first-child { margin-top: 12px !important; }
 body.tt-on .topic-tabpanel .di-mast { margin-top: 14px !important; }
 body.tt-on .topic-tabpanel .di-body .di-prov2 { margin-bottom: 4px !important; }
 body.tt-on .topic-tabpanel .di-big { margin-top: 2px !important; }
+
+/* ═══ revamp1079 — beat the .tpr-inline prompt rules (topic Prompts tab) ═════ */
+/* The topic Prompts tab renders prompts under .topic-band .topic-home .tpr-inline,
+   whose own rules (specificity 0,4,0) overrode revamp1078's bare selectors —
+   so the darker label + extra top air only landed on the home Prompts tab.
+   Match that context so the topic tab gets them too. */
+.topic-band .topic-home .tpr-inline .aii-fi-sectitle,
+.topic-band .topic-home .tpr-inline .aii-fi-sec-title { color: #3f4b63 !important; }
+body.tt-on .topic-band .topic-home .tpr-inline .aii-fi-sec:first-child { margin-top: 14px !important; }
