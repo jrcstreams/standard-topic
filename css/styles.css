@@ -28702,3 +28702,19 @@ body.tt-on .home-hero { display: none !important; }
 body.tt-on.home-search .topic-layout .home-sections .home-side { padding-top: 4px !important; }
 body.tt-on.home-search .topic-layout .home-sections .home-side > .hs-block:first-child,
 body.tt-on.home-search .topic-layout .home-sections .home-side .home-featbriefs { margin-top: 0 !important; }
+
+/* ═══ revamp1093 — AI Briefings (/intelligence) page hero, matching the others ══ */
+
+body:not(.tt-on) .page-hero { position: relative; padding: 24px 2px 22px; margin: 0 0 1.4rem; }
+body:not(.tt-on) .page-hero::before {
+  content: ''; position: absolute; left: -48px; right: -48px; top: -130px; bottom: 0;
+  background: linear-gradient(180deg, #c7dbf4 62%, #dbe7fa 84%, #ffffff 100%); z-index: 0; pointer-events: none;
+}
+body:not(.tt-on) .page-hero-inner { position: relative; z-index: 1; }
+body:not(.tt-on) .page-hero-headrow { display: flex; align-items: center; gap: 12px; }
+body:not(.tt-on) .page-hero-ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 11px; background: color-mix(in srgb, #2f4d9e 12%, #fff); color: #1e3a8a; flex: none; }
+body:not(.tt-on) .page-hero-ic svg { width: 22px; height: 22px; }
+body:not(.tt-on) .page-hero-title { margin: 0; font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: #14204a; letter-spacing: -0.02em; }
+body:not(.tt-on) .page-hero-sub { margin: 8px 0 0; font-size: 0.98rem; color: #48566f; max-width: 64ch; }
+/* Tab mode: hero hidden (grey page nav shows instead). */
+body.tt-on .page-hero { display: none !important; }

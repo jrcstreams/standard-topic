@@ -2064,12 +2064,22 @@ function renderIntelligenceHub(container) {
       <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
     </button>`;
 
+  // revamp1093: page hero (blue band, icon + title + subtext) matching the
+  // topic / Home / Trending / Prompts pages. Desktop-only; in tab mode the grey
+  // #sub-header title bar shows instead (CSS hides this).
+  const AIB_HERO_IC = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.2L19 10l-5.1 1.8L12 17l-1.9-5.2L5 10l5.1-1.8z"/></svg>';
   container.innerHTML = `
     <div class="dih">
-      <!-- revamp1037: the art hero is retired. #sub-header already renders the
-           grey page-title bar ("AI Briefings") on this route, so a second
-           full-bleed header with its own image duplicated the page title. -->
       ${backBarHTML()}
+      <section class="page-hero page-hero--dih">
+        <div class="page-hero-inner">
+          <div class="page-hero-headrow">
+            <span class="page-hero-ic" aria-hidden="true">${AIB_HERO_IC}</span>
+            <h1 class="page-hero-title">AI Briefings</h1>
+          </div>
+          <p class="page-hero-sub">Daily AI-built briefings for every topic — the big picture, what changed, and why it matters.</p>
+        </div>
+      </section>
 
       <!-- revamp947: the lone Cross-Topic card is replaced by a Featured
            Briefings row. It is a [data-dih-group] like every other section, so
