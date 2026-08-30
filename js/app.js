@@ -4752,8 +4752,25 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Prompts — living on the WHITE band with the rest of the content (revamp763):
     // each card = title, chip list, and a footer link out to the full directory.
     const HQ_ARROW = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
+    // revamp1085: a blue hero band at the top of Home, mirroring the topic-page
+    // header — title + subtext + a row of featured-topic chips to jump straight in.
+    let heroTopics = [];
+    try { heroTopics = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 10); } catch (_) {}
+    const HOME_HERO_IC = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>';
+    const homeHeroHTML = `
+      <section class="home-hero" data-home-hero>
+        <div class="home-hero-inner">
+          <div class="home-hero-headrow">
+            <span class="home-hero-ic" aria-hidden="true">${HOME_HERO_IC}</span>
+            <h1 class="home-hero-title">Standard Topic</h1>
+          </div>
+          <p class="home-hero-sub">Real news and AI-built insight on any topic — start with a featured one.</p>
+          ${heroTopics.length ? `<div class="home-hero-chips">${heroTopics.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="home-hero-chip">${escapeHTML(t.name)}</a>`).join('')}</div>` : ''}
+        </div>
+      </section>`;
     container.innerHTML = `
       <div class="topic-layout home-grid" id="topic-layout">
+        ${homeHeroHTML}
         ${bodyTabsRow({ showSearchTrends: true })}
         <div class="home-sections home-v2">
           <!-- revamp999: the hero and its grey band are gone (search lives in
