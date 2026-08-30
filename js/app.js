@@ -2544,6 +2544,9 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       const home = body.querySelector('.topic-home');
       body.querySelectorAll('[data-tview]').forEach((b) => b.addEventListener('click', () => {
         const v = b.dataset.tview;
+        // revamp1098: each tab is its own state — switching tabs always opens at
+        // the top, never carrying the previous tab's scroll position.
+        try { (document.scrollingElement || document.documentElement).scrollTop = 0; window.scrollTo(0, 0); } catch (_) {}
         home.classList.toggle('tview-brief', v === 'brief');
         home.classList.toggle('tview-tools', v === 'tools');
         body.querySelectorAll('[data-tview]').forEach((x) => {
@@ -4848,6 +4851,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       // revamp1025: the tabs live in #sub-header, so query the document.
       document.querySelectorAll('[data-hview]').forEach((b) => b.addEventListener('click', () => {
         const v = b.dataset.hview;
+        // revamp1098: each home tab is its own state — always opens at the top.
+        try { (document.scrollingElement || document.documentElement).scrollTop = 0; window.scrollTo(0, 0); } catch (_) {}
         grid.classList.toggle('hview-brief', v === 'brief');
         grid.classList.toggle('hview-trend', v === 'trend');
         grid.classList.toggle('hview-tools', v === 'tools');
