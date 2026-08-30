@@ -28793,16 +28793,17 @@ body.tt-on #section-newsfeed .newsfeed-scroll-wrap { padding-top: 0 !important; 
    (home rule isn't !important, so our !important wins; topic rule is, so we
    out-specify it.) Non-news views get their breathing room back explicitly. */
 body.tt-on.home-search.app-mode #content { padding-top: calc(var(--nav-h) + var(--subnav-height, 80px)) !important; }
-body.tt-on.app-mode.sticky-always.has-subnav:not(.home-search) #content { padding-top: calc(var(--nav-h) + var(--subnav-height, 66px)) !important; }
 body.tt-on #section-newsfeed .news-list { margin-top: 0 !important; }
 body.tt-on #section-newsfeed .newsfeed-scroll-wrap { padding-top: 0 !important; }
-/* Non-news tab views keep a little air below the now-flush content top. */
+/* Non-news HOME tab views keep a little air below the now-flush content top. */
 body.tt-on .home-v2.hview-brief .home-side,
 body.tt-on .home-v2.hview-trend .home-side,
 body.tt-on .home-v2.hview-tools .home-side { padding-top: 14px !important; }
-body.tt-on .topic-home.tview-brief .di-mast { margin-top: 16px !important; }
-body.tt-on .topic-home.tview-tools .aii-sub,
-body.tt-on .topic-home.tview-tools .aii-fi-sec:first-child { margin-top: 14px !important; }
+/* TOPIC pages: the tab strip is IN-FLOW below the fixed title band (not part of
+   #content padding), so don't touch content padding — just tighten the gap
+   between the tab strip and the first story so it connects to the strip's rule. */
+body.tt-on .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .news-list { margin-top: 0 !important; }
+body.tt-on .topic-home:not(.tview-brief):not(.tview-tools) .topic-viewtabs { margin-bottom: 0 !important; }
 
 /* Homepage Prompts: the featured set has no section header, so the accordion's
    own 14px left padding read as an indent vs the flush news feed. Pull the row
