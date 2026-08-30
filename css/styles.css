@@ -28743,3 +28743,23 @@ body.tt-on .home-viewtabs, body.tt-on .topic-viewtabs { padding-top: 10px !impor
 
 /* #6 — trend title was only 3px off its summary ("writing against it"). */
 .trend-card-summary { margin-top: 7px !important; }
+
+/* ═══ revamp1096 — footer off in tab mode; defensive no-clip; briefing spacing ══ */
+
+/* Site footer does not show in tab/mobile (tabular navigation) mode. */
+body.tt-on .st-footer { display: none !important; }
+
+/* Defensive guard: the topic/home news feed's inner containers must NEVER clip
+   in tab mode — this is the belt-and-suspenders fix for the "only 1-2 stories
+   then cut off" symptom (no container may cap height or hide overflow). */
+body.tt-on .newsfeed-scroll-wrap,
+body.tt-on .topic-tabpanel,
+body.tt-on #topic-tab-body,
+body.tt-on .topic-tab-body,
+body.tt-on #section-newsfeed .news-list {
+  max-height: none !important; overflow: visible !important;
+}
+
+/* Topic AI Briefing: a little more air from the subnav in tab mode. */
+body.tt-on .topic-home.tview-brief .topic-tabpanel .di-mast,
+body.tt-on .topic-home.tview-brief .di-page { margin-top: 12px !important; }
