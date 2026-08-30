@@ -1029,6 +1029,15 @@ function startFeed(ctx) {
     shown: HOME_OPEN_COUNT,
   };
 
+  // revamp1075: stale-guard. The topic page re-renders #section-newsfeed from
+  // several uncoordinated triggers (breakpoint cross, applyDock's synthetic
+  // resize, dock/hamburger clicks). Each re-render calls startFeed again, so a
+  // fetch from a PRIOR mount could resolve and paint a thin/partial list over
+  // the fresh one — the "only one story" symptom. Every startFeed claims the
+  // newest generation; older in-flight continuations bail instead of rendering.
+  const gen = (startFeed._gen = (startFeed._gen || 0) + 1);
+  const isStale = () => gen !== startFeed._gen || !scrollWrap.isConnected;
+
   function addStories(arr) {
     let added = 0;
     for (const s of arr || []) {
@@ -1106,6 +1115,7 @@ function startFeed(ctx) {
     state.loading = true; renderFoot();
     try {
       const { stories, nextBefore } = await fetchArchive(slug, { q: state.q, before: oldestBefore(), limit: 30 });
+      if (isStale()) return;
       addStories(stories);
       if (!nextBefore || stories.length === 0) state.exhausted = true;
       state.loading = false;
@@ -1122,6 +1132,7 @@ function startFeed(ctx) {
     scrollWrap.innerHTML = `<div class="news-loading"><p>Loading news…</p></div>`; foot.innerHTML = '';
     try {
       const r = await fetchLiveFeed(slug);
+      if (isStale()) return;                          // a newer mount owns the feed
       if (r.noFeed) { state.noFeed = true; renderList(); return; }
       state.liveCache = (r.items || []).slice();
       addStories(r.items);
@@ -1129,14 +1140,25 @@ function startFeed(ctx) {
       // FULL feed to scroll before the "Load older stories" button appears —
       // it shouldn't show after just a handful of stories on first load.
       if (state.stories.length < 12 && !state.exhausted) {
-        try {
-          const { stories, nextBefore } = await fetchArchive(slug, { before: oldestBefore(), limit: 30 });
-          addStories(stories);
-          if (!nextBefore || stories.length === 0) state.exhausted = true;
-        } catch (_) {}
+        // revamp1075: the top-up used to swallow every failure, so when live came
+        // back thin AND the archive call errored (DB cold start / 500) the feed
+        // was left showing just the handful — often one story — with no signal.
+        // Retry once; only then give up (renderFoot still offers "Load more").
+        for (let attempt = 0; attempt < 2 && state.stories.length < 12 && !state.exhausted; attempt++) {
+          try {
+            const { stories, nextBefore } = await fetchArchive(slug, { before: oldestBefore(), limit: 30 });
+            if (isStale()) return;
+            addStories(stories);
+            if (!nextBefore || stories.length === 0) state.exhausted = true;
+          } catch (_) {
+            if (isStale()) return;
+          }
+        }
       }
+      if (isStale()) return;
       refreshSources(); renderList();
     } catch (_) {
+      if (isStale()) return;
       scrollWrap.innerHTML = `<div class="news-error"><p>News feed temporarily unavailable. Refresh to try again.</p></div>`;
     }
   }

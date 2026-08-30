@@ -310,6 +310,7 @@ const __resizeSubs = new Map();
 const __scrollSubs = new Map();
 let __resizeTimer = null;
 let __resizeQueued = false;
+let __resizePending = false;
 
 function __runResizeSubs() {
   __resizeQueued = false;
@@ -318,6 +319,16 @@ function __runResizeSubs() {
   // `top`, so the subnav height must be measured only after the nav settles.
   const subs = [...__resizeSubs.entries()].sort((a, b) => a[1].__pri - b[1].__pri);
   subs.forEach(([, fn]) => { try { fn(); } catch (_) {} });
+  // revamp1075: if another resize arrived while this pass was queued — most
+  // importantly applyDock's own corrective synthetic resize — run ONE trailing
+  // pass rather than dropping it. Previously that event was silently swallowed
+  // (`if (__resizeQueued) return`), so the fitters never re-measured and the
+  // page could stay not-full-width until the next real resize/navigation.
+  if (__resizePending) {
+    __resizePending = false;
+    __resizeQueued = true;
+    requestAnimationFrame(__runResizeSubs);
+  }
 }
 
 // key: stable string id. fn: callback. Re-registering the same key replaces it.
@@ -342,7 +353,7 @@ let __scrollQueued = false;
 window.addEventListener('resize', () => {
   clearTimeout(__resizeTimer);
   __resizeTimer = setTimeout(() => {
-    if (__resizeQueued) return;
+    if (__resizeQueued) { __resizePending = true; return; }
     __resizeQueued = true;
     requestAnimationFrame(__runResizeSubs);
   }, 90);
@@ -380,7 +391,14 @@ function setupCustomStickyBar(stickyEl) {
   customStickyObs.observe(sentinel);
 }
 
-function setSubnavHeightVar() {
+// revamp1075: `force` bypasses the memo. The memoised skip (below) is right for
+// the ResizeObserver's frame-by-frame writes, but it also meant a value that got
+// cached at a transitional height (e.g. the tall EXPANDED bar measured mid tab-
+// switch → 105px for a resting 46px strip) stayed pinned forever, over-padding
+// #content and under-sizing its scroller (the "subnav offset / stuck" bug).
+// Discrete events (route change, tab switch, hero condense settle) pass force so
+// the var is always re-written from the current resting box.
+function setSubnavHeightVar(force) {
   const sub = document.getElementById('sub-header');
   if (!sub) return;
   const h = sub.offsetHeight;
@@ -389,7 +407,7 @@ function setSubnavHeightVar() {
   // Also: `h > 0` alone meant that when the subnav is emptied (search/custom
   // routes clear it), the PREVIOUS page's height stuck around and every
   // calc(--nav-h + --subnav-height) reserved phantom space. Clear it instead.
-  if (h !== setSubnavHeightVar._h) {
+  if (force || h !== setSubnavHeightVar._h) {
     setSubnavHeightVar._h = h;
     if (h > 0) document.documentElement.style.setProperty('--subnav-height', `${h}px`);
     else document.documentElement.style.removeProperty('--subnav-height');
@@ -399,7 +417,7 @@ function setSubnavHeightVar() {
   // to the whole subnav where there's no separate control bar (home).
   const title = sub.querySelector('.topic-subnav-title');
   const th = title ? title.offsetHeight : h;
-  if (th > 0 && th !== setSubnavHeightVar._th) {
+  if (th > 0 && (force || th !== setSubnavHeightVar._th)) {
     setSubnavHeightVar._th = th;
     document.documentElement.style.setProperty('--subnav-title-h', `${th}px`);
   }
@@ -486,6 +504,13 @@ function wireTopicHeroCondense() {
     requestAnimationFrame(() => {
       queued = false;
       document.body.classList.toggle('topic-hero-condensed', next);
+      // revamp1075: the condense changes the subnav's height; force a remeasure
+      // now and once more after the CSS transition settles so --subnav-height
+      // never lags behind the band (which left #content mis-padded and the bar
+      // reading as "stuck/offset").
+      setSubnavHeightVar(true);
+      clearTimeout(setSubnavHeightVar._settle);
+      setSubnavHeightVar._settle = setTimeout(() => setSubnavHeightVar(true), 320);
     });
   };
   // revamp890: was `true` (a bare capture flag), which also made this listener
@@ -2522,6 +2547,10 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
             c.classList.remove('was-evening'); c.classList.add('is-evening');
           }
         });
+        // revamp1075: switching tabs swaps the panel (and can toggle the brief
+        // open), changing the subnav/hero geometry — force --subnav-height to
+        // re-measure so #content padding tracks the new panel instead of lagging.
+        requestAnimationFrame(() => { try { setSubnavHeightVar(true); } catch (_) {} });
       }));
     }
     wireTopicHeroCondense();
@@ -2705,6 +2734,10 @@ function renderLayout(route) {
   siteHeader.className = 'is-sticky-hero';
   subHeader.className = '';
   subHeader.innerHTML = '';
+  // revamp1075: drop the memoised subnav-height so this route always re-measures
+  // and re-writes --subnav-height from scratch. Without this, a height cached on
+  // a previous page (or at a transitional size) could stick and mis-pad #content.
+  setSubnavHeightVar._h = setSubnavHeightVar._th = -1;
   const stayingInHomeDesktop = isHome && !isMobile && wasOnHomeDesktop;
   if (heroEl && !stayingInHomeDesktop) heroEl.innerHTML = '';
   document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode', 'custom-mode', 'home-search', 'home-subnav-on', 'pagenav-mode', 'pagenav-on');
@@ -4102,7 +4135,13 @@ function fitMainNav() {
 //   < 1160 content px → the news grid drops to one column (tnews-1col)
 //   <  900 content px → the whole page goes tabbed (tt-on)
 function updateTopicViewMode() {
-  const docked = document.body.classList.contains('nav-docked');
+  // revamp1075: derive `docked` from the LIVE dock decision, not the nav-docked
+  // class. The class is only re-toggled at the discrete 900px matchMedia
+  // crossing (or on navigation), while THIS runs on every resize-bus tick — so
+  // reading the class raced a stale value, computing content-width against the
+  // wrong sidebar offset and leaving the page not-full-width after a resize.
+  const docked = window.__dockState ? window.__dockState()
+    : document.body.classList.contains('nav-docked');
   const sbw = docked ? (window.innerWidth <= 1280 ? 264 : 320) : 0;
   const cw = window.innerWidth - sbw;
   document.body.classList.toggle('tt-on', cw < 900);
@@ -4415,6 +4454,10 @@ function renderStickyHeroBar(container, route) {
     try { window.dispatchEvent(new Event('resize')); } catch (_) {}
   };
   window.__applyDock = applyDock;
+  // revamp1075: the live dock decision, so updateTopicViewMode (which runs on
+  // every resize-bus tick) can compute the sidebar offset without depending on
+  // the nav-docked class having already been re-toggled this frame.
+  window.__dockState = () => DOCK_MQ.matches && dockWanted();
   if (!window.__dockMQBound) {
     window.__dockMQBound = true;
     DOCK_MQ.addEventListener('change', (e) => {
@@ -4768,7 +4811,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         // ResizeObserver was not catching the tab-switch, so leaving the news
         // tab left ~50px of phantom reserved space above the section (the
         // "empty band" on brief/trend/tools). Re-measure once the layout settles.
-        requestAnimationFrame(() => { try { setSubnavHeightVar(); } catch (_) {} });
+        requestAnimationFrame(() => { try { setSubnavHeightVar(true); } catch (_) {} });
         // The tab IS the destination: AI Briefing lands with the brief open
         // rather than a teaser you then have to click (matches topic pages).
         if (v === 'brief') {
