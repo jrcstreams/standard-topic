@@ -28858,3 +28858,28 @@ body:not(.tt-on) .page-hero { padding-top: 6px !important; }
 /* The full trend set now renders. On desktop the sidebar keeps a short list
    (12) + "View more trending"; in tab mode the Trends tab shows them all. */
 body:not(.tt-on) #home-trending .trend-card-grid > .trend-card:nth-child(n+13) { display: none !important; }
+
+/* ═══ revamp1105 — consistent section heads (icon + subtext + line) on Briefings ══ */
+/* Un-scope the Prompts icon-box head styling so the AI Briefings heads (Featured
+   + by Topic) and the Prompts "by Topic" head all get the icon + title + line. */
+.ph-sec-headrow { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ph-sec-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px;
+  background: color-mix(in srgb, #2f4d9e 12%, #fff); color: #2f4d9e;
+}
+.ph-sec-ic svg { width: 17px !important; height: 17px !important; display: block; }
+.ph-sec-head--card .ph-sec-title, .dih-featuredhead.ph-sec-head--card .dih-bytopic-title, .dih-bytopic-head.ph-sec-head--card .dih-bytopic-title {
+  font-family: var(--font-display) !important; font-size: 1.14rem !important; font-weight: 800 !important;
+  letter-spacing: -0.018em !important; color: #1a2740 !important; line-height: 1.25 !important; margin: 0 !important;
+}
+.ph-sec-head--card .ph-sec-sub, .dih-featuredhead.ph-sec-head--card .dih-bytopic-sub, .dih-bytopic-head.ph-sec-head--card .dih-bytopic-sub {
+  margin: 5px 0 0 !important; font-family: var(--font-family) !important; font-size: 0.85rem !important; color: #66748c !important;
+}
+/* Line separator under each of these heads (matching the Prompts page). */
+.ph-lib .ph-sec-head--card,
+.dih-featuredhead.ph-sec-head--card,
+.dih-bytopic-head.ph-sec-head--card {
+  display: block !important; border-bottom: 1.5px solid #d3d9e4 !important;
+  padding-bottom: 11px !important; margin-bottom: 16px !important;
+}

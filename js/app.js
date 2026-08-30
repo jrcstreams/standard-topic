@@ -1226,8 +1226,11 @@ function wirePromptsDropdown(panel, initialView) {
         </section>
 
         <section class="ph-lib">
-          <div class="ph-sec-head">
-            <h3 class="ph-sec-title">Prompts by Topic</h3>
+          <div class="ph-sec-head ph-sec-head--card">
+            <div class="ph-sec-headrow">
+              <span class="ph-sec-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+              <h3 class="ph-sec-title">Prompts by Topic</h3>
+            </div>
             <p class="ph-sec-sub">Explore by category. Open one to run any prompt right here.</p>
           </div>
           <div class="ph-body" data-ph-body></div>
@@ -2074,6 +2077,10 @@ function renderIntelligenceHub(container) {
   // topic / Home / Trending / Prompts pages. Desktop-only; in tab mode the grey
   // #sub-header title bar shows instead (CSS hides this).
   const AIB_HERO_IC = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.2L19 10l-5.1 1.8L12 17l-1.9-5.2L5 10l5.1-1.8z"/></svg>';
+  // Section-head icons (matching the Prompts page treatment): a sparkle for the
+  // "Featured" section, a grid for the "by Topic" directory.
+  const SEC_IC_FEATURED = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M19 14l.7 1.9L21.6 17l-1.9.7L19 20l-.7-1.9L16.4 17l1.9-.7z"/></svg>';
+  const SEC_IC_BYTOPIC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
   container.innerHTML = `
     <div class="dih">
       ${backBarHTML()}
@@ -2093,9 +2100,12 @@ function renderIntelligenceHub(container) {
            it just renders permanently open with a plain header instead of a
            toggle. -->
       <section class="dih-group dih-group--featured is-open" data-dih-group>
-        <div class="dih-featuredhead">
-          <h2 class="dih-bytopic-title">Featured AI Briefings</h2>
-          <p class="dih-bytopic-sub">A few of today's briefings to start with.</p>
+        <div class="dih-featuredhead ph-sec-head ph-sec-head--card">
+          <div class="ph-sec-headrow">
+            <span class="ph-sec-ic" aria-hidden="true">${SEC_IC_FEATURED}</span>
+            <h2 class="ph-sec-title dih-bytopic-title">Featured AI Briefings</h2>
+          </div>
+          <p class="ph-sec-sub dih-bytopic-sub">A few of today's briefings to start with.</p>
         </div>
         <div class="dih-groupbody">
           <div class="dih-items">${featuredBriefs.map(item).join('')}</div>
@@ -2112,9 +2122,12 @@ function renderIntelligenceHub(container) {
         </div>
       </section>
 
-      <div class="dih-bytopic-head">
-        <h2 class="dih-bytopic-title">AI Briefings by Topic</h2>
-        <p class="dih-bytopic-sub">Every topic gets its own briefing, in two editions a day — browse them all here.</p>
+      <div class="dih-bytopic-head ph-sec-head ph-sec-head--card">
+        <div class="ph-sec-headrow">
+          <span class="ph-sec-ic" aria-hidden="true">${SEC_IC_BYTOPIC}</span>
+          <h2 class="ph-sec-title dih-bytopic-title">AI Briefings by Topic</h2>
+        </div>
+        <p class="ph-sec-sub dih-bytopic-sub">Every topic gets its own briefing, in two editions a day — browse them all here.</p>
       </div>
 
 
