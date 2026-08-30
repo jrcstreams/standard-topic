@@ -28680,3 +28680,14 @@ body:not(.tt-on) .ndp .aii-nav-dd-sub { font-size: 0.98rem !important; color: #4
    hero (pagenav-on), exactly like the topic subnav. */
 body:not(.tt-on).pagenav-mode #sub-header.pagenav { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
 body:not(.tt-on).pagenav-on #sub-header.pagenav { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+
+/* ═══ revamp1090 — Home grey subnav hidden until scroll (desktop), like topics ══ */
+
+body:not(.tt-on):not(.home-scrolled) #sub-header.home-mode {
+  opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
+}
+body:not(.tt-on).home-scrolled #sub-header.home-mode {
+  opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;
+}
+/* Extend the hero band up to fill the space the hidden subnav left. */
+body:not(.tt-on) .home-hero::before { top: -64px; }
