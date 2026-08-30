@@ -28734,3 +28734,12 @@ body.tt-on .home-v2.hview-brief .tdi-expand-inner {
   padding-left: 0 !important; padding-right: 0 !important;
 }
 body.tt-on .home-v2.hview-brief .tdi-expand { border-top: 0 !important; }
+
+/* ═══ revamp1095 — tab-strip breathing room; trending title/summary spacing ══ */
+
+/* #4 — the active tab pill sat with only ~8px to the strip edges; give the strip
+   a touch more vertical room so it isn't crammed (home + topic, tab mode). */
+body.tt-on .home-viewtabs, body.tt-on .topic-viewtabs { padding-top: 10px !important; padding-bottom: 10px !important; }
+
+/* #6 — trend title was only 3px off its summary ("writing against it"). */
+.trend-card-summary { margin-top: 7px !important; }
