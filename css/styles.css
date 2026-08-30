@@ -28718,3 +28718,19 @@ body:not(.tt-on) .page-hero-title { margin: 0; font-family: var(--font-display);
 body:not(.tt-on) .page-hero-sub { margin: 8px 0 0; font-size: 0.98rem; color: #48566f; max-width: 64ch; }
 /* Tab mode: hero hidden (grey page nav shows instead). */
 body.tt-on .page-hero { display: none !important; }
+
+/* ═══ revamp1094 — homepage AI Briefs tab: flatten to full-width on the page ══ */
+/* The topic .tview-brief flatten was never mirrored to the homepage .hview-brief,
+   so the homepage AI Briefs tab stayed boxed (white card) + inset ~21px (from
+   .tdi-hero-body padding). Mirror it so the brief sits full-width on the page. */
+body.tt-on .home-v2.hview-brief .tdi-card,
+body.tt-on .home-v2.hview-brief .tdi-card.is-open {
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+  border-radius: 0 !important; width: 100% !important; max-width: none !important;
+}
+body.tt-on .home-v2.hview-brief .tdi-hero-body,
+body.tt-on .home-v2.hview-brief .tdi-hero-body--split,
+body.tt-on .home-v2.hview-brief .tdi-expand-inner {
+  padding-left: 0 !important; padding-right: 0 !important;
+}
+body.tt-on .home-v2.hview-brief .tdi-expand { border-top: 0 !important; }

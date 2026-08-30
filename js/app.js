@@ -190,6 +190,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderLayout(baseRoute);
       renderPage(baseRoute);
       lastBaseRouteKey = baseKey;
+      // revamp1094: write --subnav-height SYNCHRONOUSLY right after render (a
+      // forced measure), so #content's padding-top calc is correct on the FIRST
+      // paint. Previously it was only set in a rAF/ResizeObserver, so for a frame
+      // (up to the 320ms condense settle) the padding used a stale height — the
+      // subnav overlapped/mis-positioned the content until it "jumped" into place.
+      try { setSubnavHeightVar(true); } catch (_) {}
       requestAnimationFrame(() => {
         window.scrollTo(0, 0);
         setSubnavHeightVar(true);
