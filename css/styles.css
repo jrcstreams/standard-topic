@@ -28445,16 +28445,22 @@ body.tt-on .topic-band .topic-home .tpr-inline .aii-fi-sec:first-child { margin-
 
 /* ═══ revamp1080 — Today's News head gap; desktop trail-head icon; blue band ══ */
 
-/* #1086: "Today's News" sat ~28px above its rule (short title, top-aligned in a
-   46px head kept tall for rule-alignment). Trim the head and bottom-align its
-   row so the title sits just above the separator — BOTH home heads, so the two
-   rules still line up. (html prefix beats the revamp1072 tie cleanly.) */
-html body.home-search .home-v2 #section-newsfeed .newsfeed-head,
-html body.home-search .home-v2 .home-featbriefs .hb-head {
-  min-height: 38px !important; padding-bottom: 9px !important;
+/* #1086: "Today's News" sat ~28px above its rule — the 46px head (kept tall so
+   its rule lines up with the AI Briefing head) top-aligned a short title inside
+   an over-tall 30px headrow. Keep the 46px height for rule-alignment, but push
+   the row to the bottom of the head and make the row/title hug their own text so
+   the title lands just above the separator. */
+html body.home-search .home-v2 #section-newsfeed .newsfeed-head {
+  justify-content: flex-end !important; padding-bottom: 10px !important;
 }
-html body.home-search .home-v2 #section-newsfeed .newsfeed-head { justify-content: flex-end !important; }
-html body.home-search .home-v2 #section-newsfeed .newsfeed-headrow { align-items: flex-end !important; margin: 0 !important; }
+html body.home-search .home-v2 #section-newsfeed .newsfeed-headrow {
+  align-items: flex-end !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important;
+}
+html body.home-search .home-v2 #section-newsfeed .newsfeed-headtext { margin: 0 !important; padding: 0 !important; }
+html body.home-search .home-v2 #section-newsfeed .newsfeed-title {
+  line-height: 1 !important; margin: 0 !important; padding: 0 !important;
+}
+html body.home-search .home-v2 #section-newsfeed .newsfeed-title-main { line-height: 1 !important; }
 
 /* #1087: desktop topic AI Briefing / AI Prompts head is display:block, where the
    12px `gap` is inert — force flex so the chip actually spaces off the title. */
