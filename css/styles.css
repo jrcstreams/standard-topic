@@ -28648,3 +28648,35 @@ body.tt-on .home-v2 #section-newsfeed .news-list { margin-top: 6px !important; }
    card), which floated it over the Featured Prompts title. Flow it inside the
    bottom promo instead. */
 .ph-buildpromo .ph-build-ic { position: static !important; top: auto !important; left: auto !important; }
+
+/* ═══ revamp1089 — blue hero intro on standalone pages + reveal grey nav on scroll ══ */
+
+/* Desktop: the page's own head (.aii-nav-dd-head) becomes a blue hero band like
+   Home / topics — icon chip + big title + subtext, over a blue gradient that
+   fills up behind the (hidden-until-scroll) grey subnav. */
+body:not(.tt-on) .ndp .aii-nav-dd-head {
+  position: relative !important; display: flex !important; flex-direction: column !important;
+  align-items: flex-start !important; padding: 24px 2px 22px !important; margin: 0 0 1.4rem !important;
+  border-bottom: 0 !important;
+}
+body:not(.tt-on) .ndp .aii-nav-dd-head::before {
+  content: ''; position: absolute; left: -48px; right: -48px; top: -130px; bottom: 0;
+  background: linear-gradient(180deg, #c7dbf4 62%, #dbe7fa 84%, #ffffff 100%);
+  z-index: 0; pointer-events: none;
+}
+body:not(.tt-on) .ndp .aii-nav-dd-titles { position: relative !important; z-index: 1 !important; }
+body:not(.tt-on) .ndp .aii-nav-dd-title {
+  font-family: var(--font-display) !important; font-size: 2rem !important; font-weight: 800 !important;
+  color: #14204a !important; letter-spacing: -0.02em !important; display: flex !important; align-items: center !important; gap: 12px !important;
+}
+body:not(.tt-on) .ndp .navdd-headic {
+  display: grid !important; place-items: center !important; width: 40px !important; height: 40px !important;
+  border-radius: 11px !important; background: color-mix(in srgb, #2f4d9e 12%, #fff) !important; color: #1e3a8a !important; flex: none !important;
+}
+body:not(.tt-on) .ndp .navdd-headic svg { width: 22px !important; height: 22px !important; }
+body:not(.tt-on) .ndp .aii-nav-dd-sub { font-size: 0.98rem !important; color: #48566f !important; margin: 8px 0 0 !important; max-width: 64ch; }
+
+/* Desktop: grey subnav is hidden at the top and reveals once you scroll past the
+   hero (pagenav-on), exactly like the topic subnav. */
+body:not(.tt-on).pagenav-mode #sub-header.pagenav { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+body:not(.tt-on).pagenav-on #sub-header.pagenav { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
