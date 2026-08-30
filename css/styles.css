@@ -28844,3 +28844,12 @@ html body.tt-on.app-mode:not(.home-search) #content {
    padding and stay full-width, so the body looked narrower than the nav. Match
    the gutter to the strip (16px) so the topic title, news, and nav all line up. */
 body.tt-on .topic-layout.topic-band { padding-left: 16px !important; padding-right: 16px !important; }
+
+/* ═══ revamp1103 — standalone page heros: tighten top to match topic header ══ */
+/* Trending/Prompts/AI Briefings reserved +60px of phantom space for the
+   hidden-until-scroll subnav, so the hero sat ~52px below the nav vs the topic's
+   ~29px. On desktop the hero fills that area (like the topic), so drop the
+   reservation and tighten the head padding. (Tab mode keeps its subnav space.) */
+html body:not(.tt-on).pagenav-mode #content { padding-top: calc(var(--nav-h) + 22px) !important; }
+body:not(.tt-on) .ndp .aii-nav-dd-head,
+body:not(.tt-on) .page-hero { padding-top: 6px !important; }
