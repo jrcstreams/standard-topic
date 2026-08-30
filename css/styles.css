@@ -28853,3 +28853,8 @@ body.tt-on .topic-layout.topic-band { padding-left: 16px !important; padding-rig
 html body:not(.tt-on).pagenav-mode #content { padding-top: calc(var(--nav-h) + 22px) !important; }
 body:not(.tt-on) .ndp .aii-nav-dd-head,
 body:not(.tt-on) .page-hero { padding-top: 6px !important; }
+
+/* ═══ revamp1104 — home trending: full list in tab mode, capped on desktop ══════ */
+/* The full trend set now renders. On desktop the sidebar keeps a short list
+   (12) + "View more trending"; in tab mode the Trends tab shows them all. */
+body:not(.tt-on) #home-trending .trend-card-grid > .trend-card:nth-child(n+13) { display: none !important; }
