@@ -28695,3 +28695,10 @@ body:not(.tt-on) .home-hero::before { top: -64px; }
 /* revamp1091 — homepage blue hero is desktop-only. In tab/mobile mode the grey
    page nav (Home band + tabs) shows by default, so the hero intro isn't needed. */
 body.tt-on .home-hero { display: none !important; }
+
+/* revamp1092 — home tab views (AI Briefs/Trends/Prompts) closer to the subnav in
+   tab mode. The 1.2rem .home-side top padding (a higher-specificity home-search
+   rule) beat the earlier fix — match that path so the trim actually lands. */
+body.tt-on.home-search .topic-layout .home-sections .home-side { padding-top: 4px !important; }
+body.tt-on.home-search .topic-layout .home-sections .home-side > .hs-block:first-child,
+body.tt-on.home-search .topic-layout .home-sections .home-side .home-featbriefs { margin-top: 0 !important; }
