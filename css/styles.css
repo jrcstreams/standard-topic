@@ -28522,3 +28522,18 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
 #content .prompts-home--v2 .ph-featured,
 #content .prompts-home--v2 .ph-lib { display: block !important; }
 #content .prompts-home--v2 .ph-lib .ph-sec-head { display: block !important; }
+
+/* revamp1082c — Featured Prompts: show the section title + lay the prompts out
+   in real columns. The rail holds one shared prompt component (.aii-flow) whose
+   accordion list (.aii-fi-acclist) is the thing to columnize — not .ph-flist. */
+#content .prompts-home--v2 .ph-featured .ph-sec-head,
+#content .prompts-home--v2 .ph-featured .ph-sec-head--card { display: block !important; }
+#content .prompts-home--v2 .ph-featured .ph-flist { display: block !important; }
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist {
+  display: grid !important; gap: 10px !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important; align-items: start !important;
+}
+@media (min-width: 1100px) { #content .prompts-home--v2 .ph-featured .aii-fi-acclist { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+@media (max-width: 560px)  { #content .prompts-home--v2 .ph-featured .aii-fi-acclist { grid-template-columns: 1fr !important; } }
+/* An open accordion spans all columns so its expanded body isn't cramped. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist .aii-fi-acc.is-open { grid-column: 1 / -1 !important; }
