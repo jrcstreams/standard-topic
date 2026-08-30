@@ -28783,8 +28783,8 @@ body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home:not(.tview-brie
   padding-top: calc(var(--nav-h) + var(--subnav-height, 66px)) !important;
 }
 /* Zero the news list's own top offset so nothing re-introduces the gap. */
-body.tt-on #section-newsfeed .news-list { margin-top: 0 !important; }
-body.tt-on #section-newsfeed .newsfeed-scroll-wrap { padding-top: 0 !important; }
+html body.tt-on #section-newsfeed .news-list { margin-top: 0 !important; }
+html body.tt-on #section-newsfeed .newsfeed-scroll-wrap { padding-top: 0 !important; }
 
 /* ═══ revamp1099 — news gap (robust); prompts indent; sidebar buttons ══════════ */
 
@@ -28794,8 +28794,8 @@ body.tt-on #section-newsfeed .newsfeed-scroll-wrap { padding-top: 0 !important; 
    out-specify it.) Non-news views get their breathing room back explicitly. */
 html body.tt-on.home-search.app-mode #content,
 html body.home-search.tt-on.app-mode #content { padding-top: calc(var(--nav-h) + var(--subnav-height, 80px)) !important; }
-body.tt-on #section-newsfeed .news-list { margin-top: 0 !important; }
-body.tt-on #section-newsfeed .newsfeed-scroll-wrap { padding-top: 0 !important; }
+html body.tt-on #section-newsfeed .news-list { margin-top: 0 !important; }
+html body.tt-on #section-newsfeed .newsfeed-scroll-wrap { padding-top: 0 !important; }
 /* Non-news HOME tab views keep a little air below the now-flush content top. */
 body.tt-on .home-v2.hview-brief .home-side,
 body.tt-on .home-v2.hview-trend .home-side,
