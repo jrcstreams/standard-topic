@@ -28635,3 +28635,16 @@ body.tt-on .home-v2 #section-newsfeed .news-list { margin-top: 6px !important; }
    title during load). Our section head is the single title now. */
 #content .prompts-home--v2 .ph-featured .aii-head,
 #content .prompts-home--v2 .ph-featured .aii-topbar { display: none !important; }
+
+/* ═══ revamp1088 — sidebar search width; Build promo icon position ══════════ */
+
+/* Sidebar search was width:100% with side margins → overflowed the panel. Match
+   the nav rows: inset 20px each side. */
+#navmenu-searchbtn, .navmenu-searchbtn {
+  width: calc(100% - 40px) !important; margin-left: 20px !important; margin-right: 20px !important;
+  box-sizing: border-box !important;
+}
+/* The Build-a-Prompt icon's base rule is position:absolute (from the old sidebar
+   card), which floated it over the Featured Prompts title. Flow it inside the
+   bottom promo instead. */
+.ph-buildpromo .ph-build-ic { position: static !important; top: auto !important; left: auto !important; }
