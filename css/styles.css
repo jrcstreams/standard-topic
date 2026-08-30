@@ -28837,3 +28837,10 @@ html body.tt-on.app-mode:not(.home-search) #content {
   border: 1px solid rgba(30, 58, 138, 0.22) !important;
   box-shadow: 0 2px 10px rgba(30, 58, 138, 0.07) !important;
 }
+
+/* ═══ revamp1102 — topic content full-width alignment in tab mode (#1115) ══════ */
+/* .topic-layout.topic-band uses a 32px side gutter at tablet widths, insetting
+   the news feed — but the FIXED .topic-viewtabs strip + grey nav ignore that
+   padding and stay full-width, so the body looked narrower than the nav. Match
+   the gutter to the strip (16px) so the topic title, news, and nav all line up. */
+body.tt-on .topic-layout.topic-band { padding-left: 16px !important; padding-right: 16px !important; }
