@@ -28763,3 +28763,11 @@ body.tt-on #section-newsfeed .news-list {
 /* Topic AI Briefing: a little more air from the subnav in tab mode. */
 body.tt-on .topic-home.tview-brief .topic-tabpanel .di-mast,
 body.tt-on .topic-home.tview-brief .di-page { margin-top: 12px !important; }
+
+/* ═══ revamp1097 — restore topic pill in expanded AI Briefing (topic, tab mode) ══ */
+/* The topic pill (e.g. "BANKING") in the expanded briefing masthead was cut out
+   on topic pages in tab mode (line 28071 / 25806-07), while the homepage brief
+   keeps "GLOBAL BRIEFING" and the desktop preview card shows it. Bring it back so
+   it's consistent. */
+body.tt-on .tview-brief .di-mast-topic { display: inline-flex !important; }
+body.tt-on .tview-brief .di-mast-topic { margin-bottom: 8px !important; }
