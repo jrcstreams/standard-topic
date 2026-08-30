@@ -1200,14 +1200,13 @@ function wirePromptsDropdown(panel, initialView) {
     setHead('Prompts', 'Ready-made prompts for every topic — or build your own.');
     setBack(null);
     setHeadBtns(true);
+    // revamp1082: full rebuild of the Prompts landing — one full-width scroll,
+    // no sub-tabs, no narrow Build sidebar. Featured Prompts (multi-column) →
+    // Prompts by Topic → a full-width Build a Prompt promo at the very bottom
+    // that expands the builder inline in place (so it has the whole bottom of
+    // the page to grow into).
     root.innerHTML = `
-      <div class="prompts-home">
-        <div class="ph-viewtabs topic-viewtabs" data-ph-viewtabs role="tablist" aria-label="Prompt sections">
-          <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-pview="featured">Featured</button>
-          <button type="button" class="tvt" role="tab" aria-selected="false" data-pview="bytopic">By Topic</button>
-          <button type="button" class="tvt" role="tab" aria-selected="false" data-pview="build">Build a Prompt</button>
-        </div>
-        <div class="ph-top">
+      <div class="prompts-home prompts-home--v2">
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head ph-sec-head--card">
             <div class="ph-sec-headrow">
@@ -1219,16 +1218,7 @@ function wirePromptsDropdown(panel, initialView) {
           <div class="ph-flist" data-ph-rail></div>
           <button type="button" class="ph-flist-more" data-ph-more hidden></button>
         </section>
-        <!-- revamp893: Build sits AFTER Featured in the DOM so mobile stacks in
-             the requested order (Featured, then Build). On desktop the .ph-top
-             grid places it in the narrow right column. -->
-        <aside class="ph-build">
-          <span class="ph-build-ic" aria-hidden="true">${PROMPTS_BUILD_HEAD_IC}</span>
-          <h3 class="ph-build-title">Build a Prompt</h3>
-          <p class="ph-build-sub">Start from scratch and shape a prompt around any topic.</p>
-          <button type="button" class="ph-build-btn" data-cta-build>Start building${PH_ARROW_R}</button>
-        </aside>
-        </div>
+
         <section class="ph-lib">
           <div class="ph-sec-head">
             <h3 class="ph-sec-title">Prompts by Topic</h3>
@@ -1236,39 +1226,40 @@ function wirePromptsDropdown(panel, initialView) {
           </div>
           <div class="ph-body" data-ph-body></div>
         </section>
-        <section class="ph-cta">
-          <span class="ph-cta-ic" aria-hidden="true">${AI_SPARK_INLINE}</span>
-          <div class="ph-cta-tx">
-            <h4 class="ph-cta-title">Can't find what you're looking for?</h4>
-            <p class="ph-cta-sub">Build a prompt from scratch, or search any topic of your own.</p>
+
+        <section class="ph-buildzone" data-ph-buildzone>
+          <div class="ph-buildpromo" data-ph-buildpromo>
+            <span class="ph-build-ic" aria-hidden="true">${PROMPTS_BUILD_HEAD_IC}</span>
+            <div class="ph-buildpromo-tx">
+              <h3 class="ph-build-title">Build a Prompt</h3>
+              <p class="ph-build-sub">Start from scratch and shape a prompt around any topic — every option laid out in one place, no digging through menus.</p>
+            </div>
+            <button type="button" class="ph-build-btn" data-cta-build>Start building${PH_ARROW_R}</button>
           </div>
-          <div class="ph-cta-btns">
-            <button type="button" class="ph-cta-btn is-primary" data-cta-build>Build a Custom Prompt</button>
-            <button type="button" class="ph-cta-btn" data-cta-search>Search Custom Topic</button>
-          </div>
+          <div class="ph-buildhost" data-ph-build-host hidden></div>
         </section>
       </div>`;
 
-    // revamp893: there are two build triggers now (the top card + the closing
-    // CTA) — querySelector would only have wired the first.
-    root.querySelectorAll('[data-cta-build]').forEach((b) => b.addEventListener('click', () => showBuild()));
-    // Prompts view tabs (tab widths only; the row is display:none on wide).
-    // "Build a Prompt" routes into the existing builder rather than duplicating
-    // it — same functionality, reached from the tab.
+    // The Build promo expands the builder INLINE at the bottom of the page
+    // (rather than swapping to a separate view), so the whole prompt form shows
+    // in one vertical scroll. Loaded lazily on first open.
     {
-      const home = root.querySelector('.prompts-home');
-      root.querySelectorAll('[data-pview]').forEach((b) => b.addEventListener('click', () => {
-        const v = b.dataset.pview;
-        if (v === 'build') { showBuild(); return; }
-        home.classList.toggle('pview-bytopic', v === 'bytopic');
-        root.querySelectorAll('[data-pview]').forEach((x) => {
-          const on = x === b;
-          x.classList.toggle('is-active', on);
-          x.setAttribute('aria-selected', String(on));
-        });
+      const buildzone = root.querySelector('[data-ph-buildzone]');
+      const buildHost = root.querySelector('[data-ph-build-host]');
+      let buildLoaded = false;
+      root.querySelectorAll('[data-cta-build]').forEach((b) => b.addEventListener('click', () => {
+        buildzone.classList.add('is-building');
+        buildHost.hidden = false;
+        if (!buildLoaded) {
+          buildLoaded = true;
+          loadPromptGen()
+            .then((m) => m.renderPromptGenerator(buildHost, { inline: true }))
+            .catch(() => {});
+        }
+        requestAnimationFrame(() => buildzone.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+        syncViewHash('build');
       }));
     }
-    root.querySelector('[data-cta-search]')?.addEventListener('click', () => openSearchFromNav());
 
     // ── Featured rail ──────────────────────────────────────────────────────
     // A horizontally scrollable card row. Clicking a card turns THAT card into a
@@ -3933,7 +3924,9 @@ function renderPageNavBar(kind) {
   const action = kind === 'search'
     ? ''
     : kind === 'prompts'
-    ? '<a href="#/prompts/build" class="pagenav-action">Build Prompt</a>'
+    // revamp1082: Build lives inline at the bottom of the Prompts page now — the
+    // subnav no longer carries a Build Prompt action.
+    ? ''
     : (kind === 'topics'
       // revamp1047: Condensed/Expanded is now a single toggle (like "Include
       // Sports Trends") — off = condensed, on = every subtopic list expanded.

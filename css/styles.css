@@ -28472,3 +28472,46 @@ body:not(.tt-on) .topic-band .topic-home .trail-head {
 body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
   background: linear-gradient(180deg, #c7dbf4 0%, #dbe7fa 55%, #ffffff 100%) !important;
 }
+
+/* ═══ revamp1082 — Prompts page: single full-width scroll, Build promo bottom ══ */
+
+/* One full-width column — no sub-tabs, no narrow Build sidebar. */
+.prompts-home--v2 {
+  display: flex !important; flex-direction: column !important; gap: 2.2rem !important;
+  width: 100% !important; max-width: none !important; padding: 8px 0 44px !important;
+}
+.prompts-home--v2 > section { width: 100% !important; max-width: none !important; margin: 0 !important; }
+
+/* Featured prompts: a real multi-column grid everywhere it fits. */
+.prompts-home--v2 .ph-featured .ph-flist {
+  display: grid !important; gap: 12px !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+@media (min-width: 1100px) { .prompts-home--v2 .ph-featured .ph-flist { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+@media (max-width: 640px)  { .prompts-home--v2 .ph-featured .ph-flist { grid-template-columns: 1fr !important; } }
+
+/* Build a Prompt — a full-width promo banner at the bottom that expands the
+   builder inline (room to grow into the whole bottom of the page). */
+.ph-buildzone { width: 100%; }
+.ph-buildpromo {
+  display: flex; align-items: center; gap: 16px;
+  padding: 20px 22px; border-radius: 16px;
+  background: linear-gradient(135deg, #eef2fb 0%, #e6ecfa 100%);
+  border: 1px solid #dbe3f4;
+}
+.ph-buildpromo .ph-build-ic { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 12px; background: #fff; border: 1px solid #dbe3f4; }
+.ph-buildpromo .ph-build-ic svg { width: 22px; height: 22px; color: #2c4f9e; }
+.ph-buildpromo-tx { flex: 1; min-width: 0; }
+.ph-buildpromo .ph-build-title { margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; color: #14204a; letter-spacing: -0.01em; }
+.ph-buildpromo .ph-build-sub { margin: 4px 0 0; font-size: 0.9rem; line-height: 1.45; color: var(--color-text-muted); max-width: 64ch; }
+.ph-buildpromo .ph-build-btn { flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 12px 22px; border-radius: 12px; background: #26375a; color: #fff; border: 0; font-family: var(--font-family); font-weight: 700; font-size: 0.95rem; cursor: pointer; }
+@media (hover: hover) { .ph-buildpromo .ph-build-btn:hover { background: #1f2d4d; } }
+@media (max-width: 640px) {
+  .ph-buildpromo { flex-direction: column; align-items: flex-start; }
+  .ph-buildpromo .ph-build-btn { width: 100%; justify-content: center; }
+}
+/* While building, the promo becomes a slim header and the form drops in below. */
+.ph-buildzone.is-building .ph-buildpromo { border-radius: 16px 16px 0 0; border-bottom: 0; }
+.ph-buildzone.is-building .ph-buildpromo .ph-build-sub { display: none; }
+.ph-buildhost { margin-top: 0; }
+.ph-buildhost[hidden] { display: none !important; }
