@@ -28629,3 +28629,9 @@ body.tt-on .home-v2 #section-newsfeed .news-list { margin-top: 6px !important; }
 .di-prov2, .tdi-card .di-prov2, .dih-brief .di-prov2, .di-page .di-prov2 {
   font-size: 0.72rem !important; font-weight: 550 !important; padding: 4px 9px !important; gap: 7px !important;
 }
+
+/* revamp1087 — Prompts Featured: hide the embedded component's own header/toolbar
+   (it duplicated our "Featured Prompts" section head and its icon overlapped the
+   title during load). Our section head is the single title now. */
+#content .prompts-home--v2 .ph-featured .aii-head,
+#content .prompts-home--v2 .ph-featured .aii-topbar { display: none !important; }

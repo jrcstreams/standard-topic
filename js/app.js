@@ -4151,8 +4151,21 @@ function updateTopicViewMode() {
     : document.body.classList.contains('nav-docked');
   const sbw = docked ? (window.innerWidth <= 1280 ? 264 : 320) : 0;
   const cw = window.innerWidth - sbw;
-  document.body.classList.toggle('tt-on', cw < 900);
+  const wasTt = document.body.classList.contains('tt-on');
+  const isTt = cw < 900;
+  document.body.classList.toggle('tt-on', isTt);
   document.body.classList.toggle('tnews-1col', cw < 1160);
+  // revamp1087: leaving tab mode → desktop shows every section at once, so an
+  // in-page tab choice made in tab mode (an OPEN briefing, a selected sub-view)
+  // must not carry over — the crossing here doesn't hit the 640px breakpoint
+  // that would otherwise re-render, so reset the state explicitly.
+  if (wasTt && !isTt) {
+    document.querySelectorAll('.topic-home').forEach((h) => h.classList.remove('tview-brief', 'tview-tools'));
+    document.querySelectorAll('.topic-top.is-di-open').forEach((t) => t.classList.remove('is-di-open'));
+    document.querySelectorAll('[data-tview]').forEach((b) => { const on = b.dataset.tview === 'news'; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
+    document.querySelectorAll('.home-sections.home-v2').forEach((g) => g.classList.remove('hview-brief', 'hview-trend', 'hview-tools'));
+    document.querySelectorAll('[data-hview]').forEach((b) => { const on = b.dataset.hview === 'news'; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
+  }
 }
 
 function renderStickyHeroBar(container, route) {
