@@ -28937,3 +28937,19 @@ body.tt-on .aiidd-expandall { display: none !important; }
 /* revamp1109b — the preview-card label uses .tdi-topiclabel (not .di-mast-topic);
    darken it to the same deeper blue. */
 .tdi-topiclabel, .tdi-topiclabel--inline, .tdi-card .tdi-topiclabel { background: #bcd0f5 !important; }
+
+/* ═══ revamp1111 — Featured AI Briefings: no wrapping card box ═══════════════
+   The hub's Featured section led with a full card edge (border + shadow +
+   padding) around the whole head+row. It should be full-width and boxless, like
+   the "AI Briefings by Topic" head below it — just the icon'd head, its rule,
+   and the briefing columns. Out-specifies the revamp953b card rule (~23505) via
+   the .dih ancestor + is-open (4 classes). */
+.dih .dih-group.dih-group--featured,
+.dih .dih-group.dih-group--featured.is-open {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+}

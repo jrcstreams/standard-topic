@@ -2104,7 +2104,7 @@ function renderIntelligenceHub(container) {
       <section class="dih-group dih-group--featured is-open" data-dih-group>
         <div class="dih-featuredhead ph-sec-head ph-sec-head--card">
           <div class="ph-sec-headrow">
-            <span class="ph-sec-ic" aria-hidden="true">${SEC_IC_FEATURED}</span>
+            <span class="ph-sec-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
             <h2 class="ph-sec-title dih-bytopic-title">Featured AI Briefings</h2>
           </div>
           <p class="ph-sec-sub dih-bytopic-sub">A few of today's briefings to start with.</p>
