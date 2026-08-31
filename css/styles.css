@@ -29225,3 +29225,53 @@ body.tt-on .aiidd-pagehead-title {
 .sticky-hero-inner #nav-search.navbtn,
 .sticky-hero-inner #nav-topics.navbtn--topics-right { border-radius: 999px !important; }
 .sticky-hero-inner #nav-topics.navbtn--topics-right { margin-left: 5px !important; }
+
+/* ═══ revamp1125 — News + Trending expanded insights get a bordered container
+   like the topic dropdowns (#img1195-1198): blue border, tinted (darker)
+   header band, lighter body. ═══════════════════════════════════════════════ */
+
+/* News AI Insights */
+#section-newsfeed .news-card--open,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) {
+  border: 1.5px solid #b9c6e4 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px -16px rgba(30, 58, 138, 0.25) !important;
+  background: #f8fafc !important;
+  overflow: hidden;
+}
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-link,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-foot {
+  background: #eef2fa !important;
+}
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-foot {
+  border-bottom: 1px solid #cfdaee !important;
+}
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-body,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-panel {
+  background: #f8fafc !important;
+}
+
+/* Trending AI Insights (home sidebar / /trending page / nav dropdown) */
+.trend-card.is-expanded,
+#home-trending .trend-card.is-expanded,
+.aii-nav-dd-trending .trend-card.is-expanded {
+  border: 1.5px solid #b9c6e4 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px -16px rgba(30, 58, 138, 0.25) !important;
+  background: #f8fafc !important;
+  overflow: hidden;
+}
+.trend-card.is-expanded .trend-card-trigger,
+.trend-card.is-expanded .trend-card-actions,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-trigger,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-actions {
+  background: #eef2fa !important;
+}
+.trend-card.is-expanded .trend-card-actions,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-actions {
+  border-bottom: 1px solid #cfdaee !important;
+}
+.trend-card.is-expanded .trend-card-exp,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-exp {
+  background: #f8fafc !important;
+}
