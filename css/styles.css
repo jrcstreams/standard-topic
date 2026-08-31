@@ -29334,3 +29334,24 @@ body.tt-on .tfeat-head-ic { display: none !important; }
 .ph-sec-head--hastoggle .ph-sec-head-tx { min-width: 0; flex: 1 1 auto; }
 .ph-sec-head--hastoggle .pdir-expandall { flex: none; align-self: flex-end; margin-bottom: 3px; }
 body.tt-on .ph-sec-head--hastoggle .pdir-expandall { display: none !important; }
+
+/* ═══ revamp1129 — Topics page heads: icon in a row with the title (subtext
+   underneath), like Featured Prompts; All Topics gets an icon; Prompts-by-Topic
+   Expand-all right-aligns on the subtext line. ════════════════════════════════ */
+.aiidd-headrow { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.aiidd-head-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px;
+  background: color-mix(in srgb, #2f4d9e 12%, #fff); color: #2f4d9e;
+}
+.aiidd-head-ic svg { width: 17px; height: 17px; display: block; }
+body.tt-on .aiidd-head-ic { display: none !important; }
+/* Featured Topics head: left-aligned block (no toggle), icon now lives inside
+   the title row so the head no longer needs the old icon-outside layout. */
+.tfeat-head { justify-content: flex-start !important; gap: 0 !important; align-items: flex-start !important; }
+
+/* Fix: Prompts-by-Topic Expand-all sits on the subtext line, right-aligned
+   (out-specifies the .ph-lib .ph-sec-head display:block rule at ~28524). */
+#content .prompts-home--v2 .ph-lib .ph-sec-head--hastoggle {
+  display: flex !important; align-items: flex-end; justify-content: space-between; gap: 16px;
+}

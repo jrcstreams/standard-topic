@@ -1496,9 +1496,13 @@ function topicsTreeHTML() {
   };
   // revamp1047: a small page header over the tree — the grey subnav only names
   // the page; this explains what the list does.
+  const GRID_HEAD_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
   const head = `<header class="aiidd-pagehead">
     <div class="aiidd-pagehead-tx">
-      <h2 class="aiidd-pagehead-title">All Topics</h2>
+      <div class="aiidd-headrow">
+        <span class="aiidd-head-ic" aria-hidden="true">${GRID_HEAD_IC}</span>
+        <h2 class="aiidd-pagehead-title">All Topics</h2>
+      </div>
       <p class="aiidd-pagehead-sub">Expand a topic section to reach its parent topic and subtopic pages.</p>
     </div>
     <button type="button" class="trend-sports-toggle aiidd-expandall" data-topics-expandall role="switch" aria-checked="false" title="Expand every topic's subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
@@ -1522,9 +1526,11 @@ function topicsTreeHTML() {
   const FEAT_TOPICS_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.72 5.51 6.08.88-4.4 4.29 1.04 6.06L12 16.98l-5.44 2.86 1.04-6.06-4.4-4.29 6.08-.88z"/></svg>';
   const featuredSection = `<section class="tfeat-section">
     <header class="aiidd-pagehead tfeat-head">
-      <span class="tfeat-head-ic" aria-hidden="true">${FEAT_TOPICS_IC}</span>
       <div class="aiidd-pagehead-tx">
-        <h2 class="aiidd-pagehead-title">Featured Topics</h2>
+        <div class="aiidd-headrow">
+          <span class="aiidd-head-ic" aria-hidden="true">${FEAT_TOPICS_IC}</span>
+          <h2 class="aiidd-pagehead-title">Featured Topics</h2>
+        </div>
         <p class="aiidd-pagehead-sub">A handpicked mix of the most-followed areas — across parent topics and subtopics.</p>
       </div>
     </header>
