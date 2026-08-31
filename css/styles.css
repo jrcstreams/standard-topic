@@ -29416,3 +29416,11 @@ body:not(.tt-on) .ndp .navdd-headic { background: #1e3a8a !important; color: #ff
    stacked an extra gap onto the row's own spacing, #img1245/1246). */
 .aiidd-pagehead, .tfeat-head { margin-bottom: 0 !important; }
 .tfeat-grid, .aiidd-tree { margin-top: 0 !important; }
+
+/* ═══ revamp1136 — first news story connects tighter to the tab strip on topic
+   pages in tab mode. The gap was `.topic-news-wrap` margin (10px, rule 25798) +
+   padding (6px) + the first card LINK's 16px top padding (rule 18292) — the
+   real padding is on .news-card-link, which earlier fixes missed. ═══════════ */
+body.tt-on .topic-band .topic-home > .topic-news-wrap { margin-top: 0 !important; padding-top: 0 !important; }
+body.tt-on .topic-band .topic-home #section-newsfeed .news-list .news-card:first-child .news-card-link { padding-top: 4px !important; }
+body.tt-on .topic-band #section-newsfeed .news-list > .news-card:first-child { padding-top: 2px !important; }
