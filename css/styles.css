@@ -29572,3 +29572,8 @@ body.tt-on:not(.bview-topics) #content .dih .dih-bytopic-head,
 body.tt-on:not(.bview-topics) #content .dih .dih-groups { display: none !important; }
 body.tt-on #content .dih .dih-featuredhead,
 body.tt-on #content .dih .dih-bytopic-head { display: none !important; }
+
+/* revamp1149b — Featured Briefings cards stack (don't overflow) in tab mode. */
+body.tt-on #content .dih .dih-group--featured .dih-items {
+  display: grid !important; grid-template-columns: 1fr !important; gap: 0 !important;
+}
