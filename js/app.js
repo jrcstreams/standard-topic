@@ -1478,8 +1478,11 @@ function topicsTreeHTML() {
   // revamp1047: a small page header over the tree — the grey subnav only names
   // the page; this explains what the list does.
   const head = `<header class="aiidd-pagehead">
-    <h2 class="aiidd-pagehead-title">Navigate Topics</h2>
-    <p class="aiidd-pagehead-sub">Expand a topic section to reach its parent topic and subtopic pages.</p>
+    <div class="aiidd-pagehead-tx">
+      <h2 class="aiidd-pagehead-title">Navigate Topics</h2>
+      <p class="aiidd-pagehead-sub">Expand a topic section to reach its parent topic and subtopic pages.</p>
+    </div>
+    <button type="button" class="trend-sports-toggle aiidd-expandall" data-topics-expandall role="switch" aria-checked="false" title="Expand every topic's subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
   </header>`;
   return `${head}<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
 }
@@ -1496,28 +1499,27 @@ function topicsNavDdCfg() {
     // (parents closed, the default) or Expanded (every subtopic list open).
     // revamp937: a compact "List: Condensed | Expanded" control rather than two
     // large pills — it rides beside the subtitle on wide screens.
-    headButtonsLabel: 'List:',
-    headButtons: [
-      { label: 'Condensed', href: '#', primary: true },
-      { label: 'Expanded', href: '#' },
-    ],
     contentHTML: topicsTreeHTML(),
     onClose: userCloseNavDropdown,
     wire: (panel) => {
       wireNavDdAccordions(panel);
       panel.querySelectorAll('[data-aiidd-link]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
-      const btns = [...panel.querySelectorAll('[data-navdd-headbtn]')];
+      // revamp1108: one "Expand all" switch drives it — inline beside "Navigate
+      // Topics" on wide screens, in the grey subnav once it takes over. Both
+      // controls call the same setView, which keeps every switch in sync.
+      const inlineSw = panel.querySelector('[data-topics-expandall]');
       const setView = (expanded) => {
         panel.classList.toggle('is-topics-expanded', expanded);
-        // The accordions open on data-open, not a class (css ~15563).
         panel.querySelectorAll('.aiidd-parent').forEach((sec) => {
           sec.setAttribute('data-open', expanded ? 'true' : 'false');
           const head = sec.querySelector('.aiidd-parent-head');
           if (head) head.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         });
-        btns.forEach((b, i) => b.classList.toggle('is-primary', expanded ? i === 1 : i === 0));
+        if (inlineSw) inlineSw.setAttribute('aria-checked', String(expanded));
+        document.querySelector('#sub-header [data-topics-expand]')?.setAttribute('aria-checked', String(expanded));
       };
-      btns.forEach((b, i) => b.addEventListener('click', (e) => { e.preventDefault(); setView(i === 1); }));
+      window.__topicsSetView = setView;
+      inlineSw?.addEventListener('click', () => setView(inlineSw.getAttribute('aria-checked') !== 'true'));
       setView(false);
     },
   };
@@ -3979,8 +3981,9 @@ function renderPageNavBar(kind) {
     const btn = e.currentTarget;
     const want = btn.getAttribute('aria-checked') !== 'true';
     btn.setAttribute('aria-checked', String(want));
-    const panel = document.querySelector('.aii-nav-dd-pagelike, .aii-nav-dd');
-    panel?.querySelectorAll('[data-navdd-headbtn]')[want ? 1 : 0]?.click();
+    // revamp1108: both the grey-nav switch and the inline "Expand all" switch
+    // drive the same setView, kept in sync.
+    if (typeof window.__topicsSetView === 'function') window.__topicsSetView(want);
   });
   // revamp914: "Start New Search" clears the field and returns to the empty
   // search page, scrolled back to the input.

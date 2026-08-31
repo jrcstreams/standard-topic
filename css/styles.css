@@ -28907,3 +28907,15 @@ body:not(.tt-on) #home-trending .trend-card-grid > .trend-card:nth-child(n+13) {
 
 /* Homepage hero without the icon: title leads directly. */
 .home-hero--noic .home-hero-headrow { gap: 0 !important; }
+
+/* ═══ revamp1108 — Topics "Expand all" switch inline; footer retired ══════════ */
+/* The Condensed/Expanded pills in the blue header are gone — one "Expand all"
+   switch rides beside "Navigate Topics" (right-aligned) on wide screens, and
+   moves into the grey subnav once it takes over (tab mode). */
+.aiidd-pagehead { display: flex !important; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.aiidd-pagehead-tx { min-width: 0; flex: 1; }
+.aiidd-expandall { flex: none; }
+body.tt-on .aiidd-expandall { display: none !important; }
+
+/* Site footer retired in every scenario. */
+.st-footer { display: none !important; }
