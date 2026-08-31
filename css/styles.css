@@ -29373,3 +29373,15 @@ body.tt-on .aiidd-head-ic { display: none !important; }
 #content .prompts-home--v2 .ph-featured .aii-fi-acc-ic svg { width: 16px !important; height: 16px !important; }
 .tfeat-ic { width: 26px !important; height: 26px !important; border-radius: 9px !important; }
 .tfeat-ic svg { width: 16px !important; height: 16px !important; }
+
+/* ═══ revamp1132 — Featured Topics name matches Featured Prompts EXACTLY ═════
+   The real Featured Prompts name element (.aii-fi-acc-name) is 0.83rem / 600 /
+   #2d3748 — my Featured Topics name was 1rem / 400 / #16233f (bigger, lighter,
+   darker). Match it. */
+.tfeat-name {
+  font-family: var(--font-family) !important;
+  font-size: 0.83rem !important;
+  font-weight: 600 !important;
+  color: #2d3748 !important;
+  letter-spacing: 0 !important;
+}
