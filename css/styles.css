@@ -29496,3 +29496,7 @@ body.nav-docked.tt-on .topic-band .topic-viewtabs { margin-left: -16px !importan
    which is why prior margin tweaks never closed it. Pull Topics back so the pair
    is ~6px apart, consistently at every width. */
 .sticky-hero-inner #nav-topics.navbtn--topics-right { margin-left: -10px !important; }
+
+/* ═══ revamp1145 — Prompts by Topic: first card sits closer to its head
+   separator (was a 16px gap from the head's bottom margin). ═════════════════ */
+#content .prompts-home--v2 .ph-lib .ph-sec-head--card { margin-bottom: 4px !important; }
