@@ -28883,3 +28883,14 @@ body:not(.tt-on) #home-trending .trend-card-grid > .trend-card:nth-child(n+13) {
   display: block !important; border-bottom: 1.5px solid #d3d9e4 !important;
   padding-bottom: 11px !important; margin-bottom: 16px !important;
 }
+
+/* ═══ revamp1106 — Featured AI Briefings items: accordion-row look, preview kept ══ */
+.dih-group--featured .dih-items { gap: 0 !important; column-gap: 1.6rem !important; }
+.dih-group--featured .dih-item {
+  border: 0 !important; border-radius: 0 !important; background: transparent !important;
+  box-shadow: none !important; border-bottom: 1px solid #e6ebf3 !important;
+  padding: 13px 4px 15px !important;
+}
+@media (hover: hover) { .dih-group--featured .dih-item:hover { background: #f6f9fd !important; } }
+/* Title row a touch tighter to its preview, like the prompt rows. */
+.dih-group--featured .dih-item-head { margin-bottom: 4px; }
