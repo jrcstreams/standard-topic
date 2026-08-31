@@ -29164,3 +29164,43 @@ body.tt-on .newsfeed-scroll-wrap .news-card:first-child { padding-top: 5px !impo
 .aii-fi-acclist > .aii-fi-acc.is-open:last-child {
   border-bottom: 1px solid color-mix(in srgb, #2f4d9e 34%, transparent) !important;
 }
+
+/* ═══ revamp1122 — Featured Topics section (Topics page) + mobile condensed
+   section headers ══════════════════════════════════════════════════════════ */
+.tfeat-section { margin: 0 0 1.7rem; }
+.tfeat-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 1.6rem; margin-top: 0.85rem;
+}
+@media (max-width: 1100px) { .tfeat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px)  { .tfeat-grid { grid-template-columns: 1fr; } }
+.tfeat-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 6px; text-decoration: none; color: #16233f;
+  border-bottom: 1px solid #e6ebf3;
+}
+.tfeat-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 9px; background: #f0f2f8; color: #4a5f8f;
+}
+.tfeat-ic svg { width: 19px; height: 19px; display: block; }
+.tfeat-name { flex: 1 1 auto; min-width: 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; }
+.tfeat-arrow { flex: none; display: inline-flex; color: #94a3b8; }
+.tfeat-arrow svg { width: 15px; height: 15px; }
+@media (hover: hover) {
+  .tfeat-item:hover { background: #f6f9fd; }
+  .tfeat-item:hover .tfeat-name { color: #1d4ed8; }
+  .tfeat-item:hover .tfeat-arrow { color: #5f7196; }
+}
+
+/* Mobile / tab mode: keep the Topics page non-tabular but CONDENSE the section
+   headers to the small-caps label style (like TOPIC-SPECIFIC / EVERGREEN on the
+   prompt pages) and drop the subtext. Applies to Featured Topics + All Topics.
+   (The nav dropdown reuses .aiidd-pagehead but is hidden in tab mode.) */
+body.tt-on .aiidd-pagehead-sub { display: none !important; }
+body.tt-on .aiidd-pagehead { padding-bottom: 6px !important; margin-bottom: 8px !important; border-bottom: 1px solid #e6ebf3 !important; }
+body.tt-on .aiidd-pagehead-title {
+  font-family: var(--font-family) !important;
+  font-size: 0.76rem !important; font-weight: 700 !important;
+  text-transform: uppercase; letter-spacing: 0.07em; color: #64748b !important;
+}

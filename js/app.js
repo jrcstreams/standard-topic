@@ -1484,7 +1484,34 @@ function topicsTreeHTML() {
     </div>
     <button type="button" class="trend-sports-toggle aiidd-expandall" data-topics-expandall role="switch" aria-checked="false" title="Expand every topic's subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
   </header>`;
-  return `${head}<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
+  // revamp1122 — Featured Topics: a handpicked mix across parents AND subtopics
+  // (news-heavy, broad appeal), in a multi-column grid above All Topics.
+  const FEATURED_TOPIC_SLUGS = [
+    'artificial-intelligence', 'world', 'us-politics', 'markets', 'cryptocurrency',
+    'technology', 'nfl', 'health-wellness', 'astronomy-space', 'cybersecurity',
+    'economy', 'climate-environment', 'middle-east', 'entertainment', 'soccer',
+  ];
+  const featItems = FEATURED_TOPIC_SLUGS.map((slug) => {
+    const t = getTopicBySlug(slug);
+    if (!t) return '';
+    return `<a href="#/topic/${t.slug}" class="tfeat-item" data-aiidd-link>
+      <span class="tfeat-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
+      <span class="tfeat-name">${escapeHTML(t.name)}</span>
+      <span class="tfeat-arrow" aria-hidden="true">${AIIDD_CHEV_R}</span>
+    </a>`;
+  }).join('');
+  const featuredSection = `<section class="tfeat-section">
+    <header class="aiidd-pagehead tfeat-head">
+      <div class="aiidd-pagehead-tx">
+        <h2 class="aiidd-pagehead-title">Featured Topics</h2>
+        <p class="aiidd-pagehead-sub">A handpicked mix of the most-followed areas — across parent topics and subtopics.</p>
+      </div>
+    </header>
+    <div class="tfeat-grid">${featItems}</div>
+  </section>`;
+  // The "All Topics" head loses its subtext label in this context — the section
+  // header carries the meaning. Keep it for the accordion tree below.
+  return `${featuredSection}${head}<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
 }
 function topicsNavDdCfg() {
   return {
