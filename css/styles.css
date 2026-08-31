@@ -29446,3 +29446,13 @@ body.home-search.tt-on .home-v2 #section-newsfeed .news-list > .news-card:first-
    (like topic pages) so it reads apart from the content below (#img1230). ════ */
 body:not(.tt-on) .page-hero { border-bottom: 1px solid color-mix(in srgb, #2f4d9e 13%, transparent) !important; }
 body:not(.tt-on) .ndp .aii-nav-dd-head { border-bottom: 1px solid color-mix(in srgb, #2f4d9e 13%, transparent) !important; padding-bottom: 16px !important; }
+
+/* ═══ revamp1140 — hybrid (docked sidebar + tab mode): the tab strip is STICKY
+   (in-flow), not fixed, so #content must NOT reserve its 52px — that left a 52px
+   empty gap between the subnav and the strip. In docked mode reserve only the
+   subnav height, and align the strip's bleed to the content/subnav edge
+   (#img1234/1235). Non-docked tab mode keeps the +52 (there the strip IS fixed). */
+body.nav-docked.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home:not(.tview-brief):not(.tview-tools)) #content {
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 66px)) !important;
+}
+body.nav-docked.tt-on .topic-band .topic-viewtabs { margin-left: -16px !important; margin-right: -16px !important; }
