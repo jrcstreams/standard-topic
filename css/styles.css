@@ -29154,3 +29154,13 @@ body.home-search.tt-on .home-viewtabs {
 body.tt-on .newsfeed-scroll-wrap { padding-top: 0 !important; }
 body.tt-on .newsfeed-scroll-wrap .news-list { margin-top: 0 !important; }
 body.tt-on .newsfeed-scroll-wrap .news-card:first-child { padding-top: 5px !important; }
+
+/* ═══ revamp1121 — prompts accordion open-container edge cases ══════════════
+   (1) The FIRST row in a section pulled up -1px onto the section header, so its
+   open container doubled the line above it (#img1187). Don't pull up the first.
+   (2) The LAST row's open container kept a light-grey separator as its bottom
+   edge instead of its own blue container border (#img1188/1189). Force the blue. */
+.aii-fi-acclist > .aii-fi-acc.is-open:first-child { margin-top: 0 !important; }
+.aii-fi-acclist > .aii-fi-acc.is-open:last-child {
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 34%, transparent) !important;
+}
