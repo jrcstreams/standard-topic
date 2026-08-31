@@ -1210,7 +1210,7 @@ function wirePromptsDropdown(panel, initialView) {
 
   const showLanding = () => {
     destroyCtl();
-    setHead('Prompts', 'Ready-made prompts for every topic — or build your own.');
+    setHead('Prompts', 'Ready-made prompts for every topic, or build your own.');
     setBack(null);
     setHeadBtns(true);
     // revamp1082: full rebuild of the Prompts landing — one full-width scroll,
@@ -1412,7 +1412,7 @@ function promptsNavDdCfg(view) {
   return {
     key: 'prompts', triggerId: 'nav-prompts', className: 'aii-nav-dd-prompts',
     title: 'Prompts', ariaLabel: 'Prompts',
-    subtitle: 'Ready-made prompts for every topic — or build your own.',
+    subtitle: 'Ready-made prompts for every topic, or build your own.',
     icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
     // revamp893: "Build Prompt" is no longer a header action — it's a card at the
     // top of the body, beside Featured Prompts (see showLanding).
@@ -1538,7 +1538,7 @@ function topicsTreeHTML() {
           <span class="aiidd-head-ic" aria-hidden="true">${FEAT_TOPICS_IC}</span>
           <h2 class="aiidd-pagehead-title">Featured Topics</h2>
         </div>
-        <p class="aiidd-pagehead-sub">A handpicked mix of the most-followed areas — across parent topics and subtopics.</p>
+        <p class="aiidd-pagehead-sub">A handpicked mix of the most-followed areas, across parent topics and subtopics.</p>
       </div>
     </header>
     <div class="tfeat-grid">${featItems}</div>
@@ -1742,8 +1742,8 @@ function diHeroCardHTML(o) {
         <div class="tdi-hubcard-head">
           <h4 class="tdi-hubcard-title">View more AI Briefings</h4>
         </div>
-        <p class="tdi-hubcard-sub tdi-hubcard-sub--d">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
-        <p class="tdi-hubcard-sub tdi-hubcard-sub--m">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
+        <p class="tdi-hubcard-sub tdi-hubcard-sub--d">Briefings across 100+ topics, refreshed morning and night.</p>
+        <p class="tdi-hubcard-sub tdi-hubcard-sub--m">Briefings across 100+ topics, refreshed morning and night.</p>
         <div class="tdi-hubcard-feats">
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_AI}</span><span class="tdi-hubfeat-tx">AI-generated</span></div>
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_SUN}</span><span class="tdi-hubfeat-tx">Updates twice daily</span></div>
@@ -2154,7 +2154,7 @@ function renderIntelligenceHub(container) {
             <span class="page-hero-ic" aria-hidden="true">${AIB_HERO_IC}</span>
             <h1 class="page-hero-title">AI Briefings</h1>
           </div>
-          <p class="page-hero-sub">Daily AI-built briefings for every topic — the big picture, what changed, and why it matters.</p>
+          <p class="page-hero-sub">A daily briefing on every topic: the big picture, what changed, and why it matters.</p>
         </div>
       </section>
 
@@ -2191,7 +2191,7 @@ function renderIntelligenceHub(container) {
           <span class="ph-sec-ic" aria-hidden="true">${SEC_IC_BYTOPIC}</span>
           <h2 class="ph-sec-title dih-bytopic-title">AI Briefings by Topic</h2>
         </div>
-        <p class="ph-sec-sub dih-bytopic-sub">Every topic gets its own briefing, in two editions a day — browse them all here.</p>
+        <p class="ph-sec-sub dih-bytopic-sub">Every topic gets its own briefing, twice a day. Browse them all here.</p>
       </div>
 
 
@@ -2577,7 +2577,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       <div class="topic-top">
         <section class="topic-top-main">
           <h3 class="trail-head"><span class="trail-head-ic trail-head-ic--brief" aria-hidden="true">${DI_SPARK_TWO}</span>AI Briefing</h3>
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
           </div>
         </section>
         <section class="topic-top-side">
@@ -4901,7 +4901,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <div class="home-hero-headrow">
             <h1 class="home-hero-title">What's Happening</h1>
           </div>
-          <p class="home-hero-sub">Real news and AI-built insight across any topic.</p>
+          <p class="home-hero-sub">Real news and clear insight on any topic.</p>
           ${heroTopics.length ? `<div class="home-hero-chips">${heroTopics.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="home-hero-chip">${escapeHTML(t.name)}</a>`).join('')}</div>` : ''}
         </div>
       </section>`;

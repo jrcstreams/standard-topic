@@ -29479,3 +29479,14 @@ body.nav-docked.tt-on .topic-band .topic-viewtabs { margin-left: -16px !importan
    (#img1247). Zero both so rows sit flush/centered on their separators. */
 .dih-groups { row-gap: 0 !important; margin-top: 0 !important; }
 .dih-bytopic-head { margin-bottom: 0 !important; }
+
+/* ═══ revamp1143 — hover consistency + Featured AI Briefings item spacing ════ */
+/* Featured Prompts rows get the same visible grey hover as Featured Topics
+   (was a too-subtle #f8fafd), keeping the blue link on hover (#img1250/1251). */
+@media (hover: hover) {
+  #content .prompts-home--v2 .ph-featured .aii-fi-accsum:hover { background: #f6f9fd !important; }
+}
+/* Featured AI Briefings items: trim the top space and give the hover a rounded
+   inset block so it doesn't ride the left edge (#img1252/1254). */
+.dih-group--featured .dih-item { padding: 9px 11px 11px !important; border-radius: 9px; }
+@media (hover: hover) { .dih-group--featured .dih-item:hover { background: #f6f9fd !important; border-radius: 9px !important; } }
