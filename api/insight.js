@@ -139,17 +139,6 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(out);
   } catch (err) {
     console.error('[insight]', (err && err.message) || err);
-    // TEMP DIAG (revamp-diag): gated on ?diag=1 — surfaces the error CODE+message
-    // (a Postgres SQLSTATE + text, no secrets) so a prod-only failure can be
-    // identified without log access. Remove after diagnosis.
-    if (req.query && (req.query.diag === '1' || req.query.diag === 1)) {
-      return res.status(500).json({
-        error: 'Insight unavailable',
-        _code: (err && err.code) || null,
-        _msg: String((err && err.message) || err).slice(0, 400),
-        _where: String((err && err.stack) || '').split('\n').slice(0, 4).join(' | ').slice(0, 500),
-      });
-    }
     return res.status(500).json({ error: 'Insight unavailable' });
   }
 };
