@@ -29456,3 +29456,19 @@ body.nav-docked.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home:not(
   padding-top: calc(var(--nav-h) + var(--subnav-height, 66px)) !important;
 }
 body.nav-docked.tt-on .topic-band .topic-viewtabs { margin-left: -16px !important; margin-right: -16px !important; }
+
+/* ═══ revamp1141 — related-topics "More" dropdown: open it as a proper absolute
+   card below the More button at ALL widths. It was position:fixed >=1024px
+   (base .tsp-panelwrap), so the wiring's measured `top` dropped it over the page
+   top / behind content (#img1229). Anchor it inside the header (absolute), give
+   it a solid card bg + shadow, and float the open header above the news feed. */
+.topic-bodyhead.topic-subnav-picker { position: relative !important; }
+.topic-bodyhead.topic-subnav-picker.is-open { z-index: 400 !important; }
+.topic-bodyhead .tsp-panelwrap {
+  position: absolute !important; left: 0 !important; right: 0 !important; width: auto !important; z-index: 400 !important;
+}
+.topic-bodyhead .tsp-panelwrap .tsp-panel {
+  background: #fff !important; border: 1px solid #e2e8f2 !important; border-radius: 14px !important;
+  box-shadow: 0 16px 40px -14px rgba(15, 26, 46, 0.32) !important; overflow: hidden;
+}
+.topic-home:has(.topic-bodyhead.topic-subnav-picker.is-open) #section-newsfeed { position: relative; z-index: 1; }
