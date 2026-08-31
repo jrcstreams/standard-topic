@@ -29537,3 +29537,8 @@ body.tt-on .prompts-viewtabs {
 }
 body.tt-on #content .prompts-home--v2 .ph-featured .ph-sec-head--card,
 body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: none !important; }
+
+/* revamp1147b — close the gap between the tab strip and the section (the
+   .prompts-home--v2 flex has a 35px row-gap; tighten it in tab mode). */
+body.tt-on .prompts-home--v2 { row-gap: 14px !important; }
+body.tt-on .prompts-viewtabs { margin-bottom: 0 !important; }
