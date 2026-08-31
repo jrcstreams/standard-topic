@@ -29074,3 +29074,14 @@ body.home-search.tt-on .home-viewtabs {
   background: #eef2fa !important; border-radius: 12px 12px 0 0 !important;
   border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
 }
+
+/* ═══ revamp1117b — top-nav Topics button sits to the RIGHT of Search ═══════
+   The top nav lays out by flex `order` (nav-links order:1, #nav-search order:3),
+   so the Topics button's default order:0 dropped it to the far left. Give it
+   order:4 so it renders just after Search (which carries margin-left:auto, so
+   the pair packs at the right edge). */
+.sticky-hero-inner #nav-topics.navbtn--topics-right {
+  order: 4 !important;
+  align-self: center;
+  margin-left: 8px !important;
+}
