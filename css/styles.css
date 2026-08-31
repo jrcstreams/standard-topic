@@ -29385,3 +29385,17 @@ body.tt-on .aiidd-head-ic { display: none !important; }
   color: #2d3748 !important;
   letter-spacing: 0 !important;
 }
+
+/* ═══ revamp1133 — page-title icons darker bg + lighter glyph; section-header
+   icons a shade darker than their row chips (#img1219-1227). ════════════════ */
+/* (A) Page-title chips (page hero + topic head) → dark navy bg, white glyph. */
+body:not(.tt-on) .page-hero-ic,
+.page-hero .page-hero-ic { background: #1e3a8a !important; color: #fff !important; }
+body:not(.tt-on) .tbh-titleic,
+.topic-bodyhead .tbh-titleic { background: #1e3a8a !important; color: #fff !important; }
+/* (B) Section-header chips → deeper tint (was 12% blue) so they sit above the
+   row chips (grey #f0f2f8 / 7% blue). */
+.ph-sec-ic, .tfeat-head-ic, .aiidd-head-ic {
+  background: color-mix(in srgb, #2f4d9e 22%, #fff) !important;
+  color: #2f4d9e !important;
+}
