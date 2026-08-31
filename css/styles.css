@@ -29204,3 +29204,11 @@ body.tt-on .aiidd-pagehead-title {
   font-size: 0.76rem !important; font-weight: 700 !important;
   text-transform: uppercase; letter-spacing: 0.07em; color: #64748b !important;
 }
+
+/* ═══ revamp1123 — Featured Topics title weight + All Topics row alignment ═══
+   (1) Featured Topics titles were too heavy (#img1190). (2) The All Topics tree
+   had a 0.6rem grid ROW-gap that sat between each row's separator line and the
+   next row's content, reading as a gap above every row (#img1191). Zero the
+   row-gap so each row's content sits flush/centered against its separator. */
+.tfeat-name { font-weight: 600 !important; }
+.aiidd-tree { row-gap: 0 !important; }
