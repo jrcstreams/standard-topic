@@ -29490,3 +29490,9 @@ body.nav-docked.tt-on .topic-band .topic-viewtabs { margin-left: -16px !importan
    inset block so it doesn't ride the left edge (#img1252/1254). */
 .dih-group--featured .dih-item { padding: 9px 11px 11px !important; border-radius: 9px; }
 @media (hover: hover) { .dih-group--featured .dih-item:hover { background: #f6f9fd !important; border-radius: 9px !important; } }
+
+/* ═══ revamp1144 — Search + Topics sit tight together. The real gap was the
+   .sticky-hero-inner 16px flex column-gap between EVERY nav item (not a margin),
+   which is why prior margin tweaks never closed it. Pull Topics back so the pair
+   is ~6px apart, consistently at every width. */
+.sticky-hero-inner #nav-topics.navbtn--topics-right { margin-left: -10px !important; }
