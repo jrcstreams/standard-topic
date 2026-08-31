@@ -29424,3 +29424,8 @@ body:not(.tt-on) .ndp .navdd-headic { background: #1e3a8a !important; color: #ff
 body.tt-on .topic-band .topic-home > .topic-news-wrap { margin-top: 0 !important; padding-top: 0 !important; }
 body.tt-on .topic-band .topic-home #section-newsfeed .news-list .news-card:first-child .news-card-link { padding-top: 4px !important; }
 body.tt-on .topic-band #section-newsfeed .news-list > .news-card:first-child { padding-top: 2px !important; }
+
+/* ═══ revamp1137 — home first news story connects tight to the tab strip too
+   (the first card's 14px top padding was the gap; ~23px -> ~13px). ══════════ */
+body.home-search.tt-on .home-v2 #section-newsfeed .news-list > .news-card:first-child { padding-top: 4px !important; }
+body.home-search.tt-on .home-v2 #section-newsfeed .news-list > .news-card:first-child .news-card-link { padding-top: 2px !important; }
