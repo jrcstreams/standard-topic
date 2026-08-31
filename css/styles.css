@@ -28919,3 +28919,12 @@ body.tt-on .aiidd-expandall { display: none !important; }
 
 /* Site footer retired in every scenario. */
 .st-footer { display: none !important; }
+
+/* revamp1108b — Topics page directory (aiidd-parent) uses the same grey-separator
+   row layout as the Prompts directory / Featured Prompts (no card boxes). */
+.aiidd-tree .aiidd-parent {
+  border: 0 !important; background: transparent !important; border-radius: 0 !important;
+  box-shadow: none !important; border-bottom: 1px solid #e6ebf3 !important; margin: 0 !important;
+}
+.aiidd-tree .aiidd-parent-head { padding: 13px 6px !important; border-radius: 0 !important; }
+@media (hover: hover) { .aiidd-tree .aiidd-parent-head:hover { background: #f6f9fd !important; } }
