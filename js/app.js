@@ -2181,7 +2181,7 @@ function renderIntelligenceHub(container) {
         <div class="dih-featuredhead ph-sec-head ph-sec-head--card">
           <div class="ph-sec-headrow">
             <span class="ph-sec-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-            <h2 class="ph-sec-title dih-bytopic-title">Featured AI Briefings</h2>
+            <h2 class="ph-sec-title dih-bytopic-title">Featured Briefings</h2>
           </div>
           <p class="ph-sec-sub dih-bytopic-sub">A few of today's briefings to start with.</p>
         </div>
@@ -2203,7 +2203,7 @@ function renderIntelligenceHub(container) {
       <div class="dih-bytopic-head ph-sec-head ph-sec-head--card">
         <div class="ph-sec-headrow">
           <span class="ph-sec-ic" aria-hidden="true">${SEC_IC_BYTOPIC}</span>
-          <h2 class="ph-sec-title dih-bytopic-title">AI Briefings by Topic</h2>
+          <h2 class="ph-sec-title dih-bytopic-title">Briefings by Topic</h2>
         </div>
         <p class="ph-sec-sub dih-bytopic-sub">Every topic gets its own briefing, twice a day. Browse them all here.</p>
       </div>
@@ -3014,6 +3014,14 @@ function renderLayout(route) {
     // block scrolls away — and no back link inside it.
     document.body.classList.add('has-subnav', 'pagenav-mode');
     subHeader.className = 'is-subnav static-page pagenav';
+    // revamp1149 — section tabs in the sub-header band (tab mode): Featured
+    // Briefings / Briefings by Topic. Active state on body.bview-topics.
+    const bOnTopics = document.body.classList.contains('bview-topics');
+    const briefTabs = `
+      <div class="prompts-subnav-tabs" data-brief-subnav-tabs role="tablist" aria-label="Briefings sections">
+        <button type="button" class="pst-tab${bOnTopics ? '' : ' is-active'}" data-bview="featured"><span class="pst-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/></svg></span>Featured Briefings</button>
+        <button type="button" class="pst-tab${bOnTopics ? ' is-active' : ''}" data-bview="topics"><span class="pst-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>Briefings by Topic</button>
+      </div>`;
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
         <div class="topic-subnav-inner">
@@ -3022,7 +3030,13 @@ function renderLayout(route) {
             <span class="subnav-ident-name">AI Briefings</span>
           </div>
         </div>
-      </div>`;
+      </div>${briefTabs}`;
+    subHeader.querySelectorAll('[data-brief-subnav-tabs] [data-bview]').forEach((b) => b.addEventListener('click', () => {
+      const topics = b.dataset.bview === 'topics';
+      document.body.classList.toggle('bview-topics', topics);
+      subHeader.querySelectorAll('[data-brief-subnav-tabs] [data-bview]').forEach((x) => x.classList.toggle('is-active', x === b));
+      window.scrollTo(0, 0);
+    }));
     observeSubnavHeight();
     wirePageNavReveal();
     return;

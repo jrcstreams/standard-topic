@@ -29563,3 +29563,12 @@ body.tt-on.pview-topics #content .prompts-home--v2 .ph-featured { display: none 
 body.tt-on:not(.pview-topics) #content .prompts-home--v2 .ph-lib { display: none !important; }
 body.tt-on #content .prompts-home--v2 .ph-featured .ph-sec-head--card,
 body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: none !important; }
+
+/* ═══ revamp1149 — AI Briefings page: section tabs in the sub-header (tab mode)
+   — Featured Briefings / Briefings by Topic, switching the two sections. The
+   section headers/subtext/line hide in tab mode (the tabs label them). ══════ */
+body.tt-on.bview-topics #content .dih .dih-group--featured { display: none !important; }
+body.tt-on:not(.bview-topics) #content .dih .dih-bytopic-head,
+body.tt-on:not(.bview-topics) #content .dih .dih-groups { display: none !important; }
+body.tt-on #content .dih .dih-featuredhead,
+body.tt-on #content .dih .dih-bytopic-head { display: none !important; }
