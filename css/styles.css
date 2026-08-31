@@ -29085,3 +29085,20 @@ body.home-search.tt-on .home-viewtabs {
   align-self: center;
   margin-left: 8px !important;
 }
+
+/* ═══ revamp1118 — top-nav Topics becomes a pill button with its icon ═══════
+   Like the Search button beside it (#img1182/1183): rounded pill, subtle
+   border/tint on the dark bar, icon shown. */
+.sticky-hero-inner #nav-topics.navbtn--topics-right {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background .14s, border-color .14s, box-shadow .14s;
+}
+.sticky-hero-inner #nav-topics.navbtn--topics-right .navbtn-ico { display: inline-flex !important; flex: none; color: rgba(255, 255, 255, 0.72); }
+.sticky-hero-inner #nav-topics.navbtn--topics-right .navbtn-ico svg { width: 16px; height: 16px; }
+.sticky-hero-inner #nav-topics.navbtn--topics-right .navbtn-label { color: rgba(255, 255, 255, 0.9); font-weight: 500; }
+@media (hover: hover) {
+  .sticky-hero-inner #nav-topics.navbtn--topics-right:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.35); box-shadow: 0 2px 10px -4px rgba(0,0,0,0.3); }
+}

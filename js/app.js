@@ -1479,7 +1479,7 @@ function topicsTreeHTML() {
   // the page; this explains what the list does.
   const head = `<header class="aiidd-pagehead">
     <div class="aiidd-pagehead-tx">
-      <h2 class="aiidd-pagehead-title">Navigate Topics</h2>
+      <h2 class="aiidd-pagehead-title">All Topics</h2>
       <p class="aiidd-pagehead-sub">Expand a topic section to reach its parent topic and subtopic pages.</p>
     </div>
     <button type="button" class="trend-sports-toggle aiidd-expandall" data-topics-expandall role="switch" aria-checked="false" title="Expand every topic's subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
