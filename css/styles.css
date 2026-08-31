@@ -28953,3 +28953,22 @@ body.tt-on .aiidd-expandall { display: none !important; }
   padding: 0 !important;
   margin-top: 0 !important;
 }
+
+/* ═══ revamp1112 — prompts accordion separator + home hero spacing ══════════ */
+
+/* Prompts accordion (#img1161): an open row becomes a bordered container pulled
+   up onto the hairline above it, so its top edge poked past that line. The line
+   BELOW already clears (the open head zeroes its own border-bottom); clear the
+   line ABOVE too — drop the previous row's border-bottom when the next row is
+   open. Covers the live list (.aii-fi-acclist) and the flat pdir list. */
+.aii-fi-acclist > .aii-fi-acc:has(+ .aii-fi-acc.is-open) > .aii-fi-accsum { border-bottom: 0 !important; }
+.pdir .pdir-card:has(+ .pdir-card.is-open) { border-bottom: 0 !important; }
+
+/* Homepage "What's Happening" hero (#img1156): too much air above and below.
+   Was padding 26px/20px + 1.5rem bottom margin. */
+.home-hero { padding: 8px 0 6px !important; margin: 0 0 0.6rem !important; }
+.home-hero-sub { margin: 8px 0 12px !important; }
+
+/* Topics "Expand all" switch (#img1170): it centered against the whole head
+   (title+subtext). Drop it to the subtext line. */
+.aiidd-expandall { align-self: flex-end !important; margin-bottom: 3px; }
