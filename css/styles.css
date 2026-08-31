@@ -29441,3 +29441,8 @@ body.home-search.tt-on .home-v2 #section-newsfeed .news-list > .news-card:first-
 @media (hover: hover) {
   .tdi-card--home .tdi-go--all:hover, .tdi-card--v3 .tdi-go--all:hover { background: #eef2fb !important; border-color: #9fb3e0 !important; color: #1e3a8a !important; }
 }
+
+/* ═══ revamp1139 — standalone-page blue hero gets a faint bottom line separator
+   (like topic pages) so it reads apart from the content below (#img1230). ════ */
+body:not(.tt-on) .page-hero { border-bottom: 1px solid color-mix(in srgb, #2f4d9e 13%, transparent) !important; }
+body:not(.tt-on) .ndp .aii-nav-dd-head { border-bottom: 1px solid color-mix(in srgb, #2f4d9e 13%, transparent) !important; padding-bottom: 16px !important; }
