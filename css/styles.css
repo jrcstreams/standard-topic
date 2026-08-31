@@ -28933,3 +28933,7 @@ body.tt-on .aiidd-expandall { display: none !important; }
 /* The pill behind the topic name / "GLOBAL BRIEFING" on the AI Briefing preview +
    masthead (and other preview cards using it) reads darker now. */
 .di-mast-topic, .tdi-card .di-mast-topic, .hb-hero .di-mast-topic { background: #bcd0f5 !important; }
+
+/* revamp1109b — the preview-card label uses .tdi-topiclabel (not .di-mast-topic);
+   darken it to the same deeper blue. */
+.tdi-topiclabel, .tdi-topiclabel--inline, .tdi-card .tdi-topiclabel { background: #bcd0f5 !important; }
