@@ -4284,10 +4284,6 @@ function renderStickyHeroBar(container, route) {
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg></span>
           <span class="navbtn-label"><span class="nl-full">AI Briefings</span><span class="nl-short">Briefings</span></span>
         </a>
-        <button type="button" class="navbtn" id="nav-topics" aria-label="Topics" aria-haspopup="dialog">
-          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
-          <span class="navbtn-label">Topics</span>
-        </button>
         <button type="button" class="navbtn" id="nav-trending" aria-label="Trending">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
           <span class="navbtn-label">Trending</span>
@@ -4300,6 +4296,10 @@ function renderStickyHeroBar(container, route) {
       <button type="button" class="navbtn nav-searchbar" id="nav-search" aria-label="Search">
         <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <span class="navbtn-label nav-searchbar-ph">Search</span>
+      </button>
+      <button type="button" class="navbtn navbtn--topics-right" id="nav-topics" aria-label="Topics" aria-haspopup="dialog">
+        <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
+        <span class="navbtn-label">Topics</span>
       </button>
     </div>
 
