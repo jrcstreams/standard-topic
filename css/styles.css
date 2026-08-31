@@ -29275,3 +29275,10 @@ body.tt-on .aiidd-pagehead-title {
 .aii-nav-dd-trending .trend-card.is-expanded .trend-card-exp {
   background: #f8fafc !important;
 }
+
+/* ═══ revamp1126 — Featured Prompts head subtext gap + row alignment ═══════
+   (1) Subtext was ~2px under the title (#img1199). (2) The grid's 10px row-gap
+   sat above each row's separator, reading as a gap above every row (#img1200)
+   — zero the row-gap (keep the column gap) so rows sit centered on their line. */
+.ph-featured .ph-sec-head--card .ph-sec-sub { margin-top: 0.4rem !important; }
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist { row-gap: 0 !important; }
