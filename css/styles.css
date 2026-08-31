@@ -28928,3 +28928,8 @@ body.tt-on .aiidd-expandall { display: none !important; }
 }
 .aiidd-tree .aiidd-parent-head { padding: 13px 6px !important; border-radius: 0 !important; }
 @media (hover: hover) { .aiidd-tree .aiidd-parent-head:hover { background: #f6f9fd !important; } }
+
+/* ═══ revamp1109 — topic / GLOBAL BRIEFING pill label darker ══════════════════ */
+/* The pill behind the topic name / "GLOBAL BRIEFING" on the AI Briefing preview +
+   masthead (and other preview cards using it) reads darker now. */
+.di-mast-topic, .tdi-card .di-mast-topic, .hb-hero .di-mast-topic { background: #bcd0f5 !important; }
