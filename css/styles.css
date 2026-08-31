@@ -29212,3 +29212,16 @@ body.tt-on .aiidd-pagehead-title {
    row-gap so each row's content sits flush/centered against its separator. */
 .tfeat-name { font-weight: 600 !important; }
 .aiidd-tree { row-gap: 0 !important; }
+
+/* ═══ revamp1124 — Topics page first-row spacing + lighter titles; top-nav
+   Search/Topics same rounding + closer ═════════════════════════════════════ */
+/* First row sits closer to the section separator (grid top-margin was ~14px on
+   top of the row's own padding, #img1192/1193). */
+.tfeat-grid, .aiidd-tree { margin-top: 4px !important; }
+/* Lighter section-item titles. */
+.tfeat-name { font-weight: 550 !important; }
+.aiidd-tree .aiidd-parent-name { font-weight: 600 !important; }
+/* Search + Topics: identical pill rounding + tighter gap (#img1194). */
+.sticky-hero-inner #nav-search.navbtn,
+.sticky-hero-inner #nav-topics.navbtn--topics-right { border-radius: 999px !important; }
+.sticky-hero-inner #nav-topics.navbtn--topics-right { margin-left: 5px !important; }
