@@ -29399,3 +29399,9 @@ body:not(.tt-on) .tbh-titleic,
   background: color-mix(in srgb, #2f4d9e 22%, #fff) !important;
   color: #2f4d9e !important;
 }
+
+/* ═══ revamp1134 — top-nav Search + Topics: rounded-rect (not full pill),
+   closer together (#img1238). */
+.sticky-hero-inner #nav-search.navbtn,
+.sticky-hero-inner #nav-topics.navbtn--topics-right { border-radius: 10px !important; }
+.sticky-hero-inner #nav-topics.navbtn--topics-right { margin-left: 4px !important; }

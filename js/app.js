@@ -4375,6 +4375,10 @@ function renderStickyHeroBar(container, route) {
   if (!route || route.type === 'home' || routeHash() === '' || routeHash() === '#' || routeHash() === '#/') {
     document.getElementById('nav-home')?.classList.add('is-active');
   }
+  // revamp1134 — the standalone listing pages light their own nav button too.
+  if (route && route.type === 'intelligence') document.getElementById('nav-daily')?.classList.add('is-active');
+  if (route && route.type === 'trending') document.getElementById('nav-trending')?.classList.add('is-active');
+  if (route && route.type === 'prompts') document.getElementById('nav-prompts')?.classList.add('is-active');
 
   // Prompts — opens a dropdown with two paths: Build a Custom Prompt (the prompt
   // builder inline) and Prompt Library (pick a topic → its ready-made prompts).
