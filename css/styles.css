@@ -29500,3 +29500,23 @@ body.nav-docked.tt-on .topic-band .topic-viewtabs { margin-left: -16px !importan
 /* ═══ revamp1145 — Prompts by Topic: first card sits closer to its head
    separator (was a 16px gap from the head's bottom margin). ═════════════════ */
 #content .prompts-home--v2 .ph-lib .ph-sec-head--card { margin-bottom: 4px !important; }
+
+/* ═══ revamp1146 — Prompts page tab nav (tab mode only): Featured Prompts /
+   Prompts by Topic as two tabs that switch the sections (like other pages). ══ */
+.prompts-viewtabs { display: none; }
+body.tt-on .prompts-viewtabs {
+  display: flex; gap: 4px; align-items: center;
+  margin: 0 0 1.1rem; padding-bottom: 3px; border-bottom: 1px solid #e6ebf3;
+}
+body.tt-on .prompts-viewtabs .tvt {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 12px; background: none; border: 0; border-radius: 8px; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.95rem; font-weight: 600; color: #64748b;
+  white-space: nowrap;
+}
+body.tt-on .prompts-viewtabs .tvt.is-active { background: #e8eefb; color: #1e3a8a; }
+body.tt-on .prompts-viewtabs .tvt-ic { display: inline-flex; }
+@media (hover: hover) { body.tt-on .prompts-viewtabs .tvt:not(.is-active):hover { background: #f2f5fb; color: #334155; } }
+/* Switch the sections in tab mode. */
+body.tt-on .prompts-home--v2.pview-topics .ph-featured { display: none !important; }
+body.tt-on .prompts-home--v2:not(.pview-topics) .ph-lib { display: none !important; }

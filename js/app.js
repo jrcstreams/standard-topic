@@ -1219,7 +1219,11 @@ function wirePromptsDropdown(panel, initialView) {
     // that expands the builder inline in place (so it has the whole bottom of
     // the page to grow into).
     root.innerHTML = `
-      <div class="prompts-home prompts-home--v2">
+      <div class="prompts-home prompts-home--v2 pview-featured">
+        <nav class="prompts-viewtabs" data-prompts-viewtabs role="tablist" aria-label="Prompts sections">
+          <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-pview="featured"><span class="tvt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 21 3-1 12.5-12.5a2.1 2.1 0 0 0-3-3L3 17z"/><path d="m15 5 3 3"/><path d="M18 3.5 18.7 5l1.5.7-1.5.7L18 8l-.7-1.6L15.8 5.7 17.3 5z"/></svg></span><span class="tvt-tx">Featured Prompts</span></button>
+          <button type="button" class="tvt" role="tab" aria-selected="false" data-pview="topics"><span class="tvt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span><span class="tvt-tx">Prompts by Topic</span></button>
+        </nav>
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head ph-sec-head--card">
             <div class="ph-sec-headrow">
@@ -1341,6 +1345,20 @@ function wirePromptsDropdown(panel, initialView) {
           if (hd) hd.setAttribute('aria-expanded', String(on));
         });
       });
+    }
+    // revamp1146 — Prompts page tab nav (tab mode only): switch between the
+    // Featured Prompts and Prompts by Topic sections.
+    const pTabs = root.querySelector('[data-prompts-viewtabs]');
+    const pHome = root.querySelector('.prompts-home--v2');
+    if (pTabs && pHome && !pTabs.__wired) {
+      pTabs.__wired = true;
+      pTabs.querySelectorAll('[data-pview]').forEach((b) => b.addEventListener('click', () => {
+        const v = b.dataset.pview;
+        pHome.classList.toggle('pview-topics', v === 'topics');
+        pHome.classList.toggle('pview-featured', v === 'featured');
+        pTabs.querySelectorAll('[data-pview]').forEach((x) => { const on = x === b; x.classList.toggle('is-active', on); x.setAttribute('aria-selected', String(on)); });
+        window.scrollTo(0, 0);
+      }));
     }
     syncViewHash(null);
     requestAnimationFrame(updateNavDdFades);
