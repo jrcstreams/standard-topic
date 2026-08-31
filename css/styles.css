@@ -29145,3 +29145,12 @@ body.home-search.tt-on .home-viewtabs {
 .aiidd-parent-head .tsp-chev,
 .pdir-cardhead .pdir-chev,
 .dih .dih-grouphead .pdir-chev { align-self: center !important; }
+
+/* ═══ revamp1120 — first news story sits closer to the tab strip above it ════
+   In tab mode the news-list's top margin + the first card's top padding stacked
+   into a too-large gap below the subnav/tab strip, on the homepage and topic
+   pages (#img1184/1185). Tighten the lead spacing (subsequent cards keep their
+   normal rhythm). */
+body.tt-on .newsfeed-scroll-wrap { padding-top: 0 !important; }
+body.tt-on .newsfeed-scroll-wrap .news-list { margin-top: 0 !important; }
+body.tt-on .newsfeed-scroll-wrap .news-card:first-child { padding-top: 5px !important; }
