@@ -29355,3 +29355,13 @@ body.tt-on .aiidd-head-ic { display: none !important; }
 #content .prompts-home--v2 .ph-lib .ph-sec-head--hastoggle {
   display: flex !important; align-items: flex-end; justify-content: space-between; gap: 16px;
 }
+
+/* ═══ revamp1130 — Featured Topics rows match Featured Prompts exactly (size +
+   style): 20px icon chip, 16px Inter name, 52px row (#img1209 vs 1210). The
+   bigger sizing stays only on the All Topics / Prompts-by-Topic accordions. */
+.tfeat-grid { column-gap: 12px !important; }
+.tfeat-item { min-height: 52px !important; padding: 0 0.9rem !important; gap: 12px !important; align-items: center; }
+.tfeat-ic { width: 20px !important; height: 20px !important; border-radius: 8px !important; background: #f0f2f8 !important; color: #4a5f8f !important; }
+.tfeat-ic svg { width: 16px !important; height: 16px !important; }
+.tfeat-name { font-family: var(--font-family) !important; font-size: 1rem !important; font-weight: 400 !important; letter-spacing: 0 !important; }
+.tfeat-arrow svg { width: 14px !important; height: 14px !important; }
