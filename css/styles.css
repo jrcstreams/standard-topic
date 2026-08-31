@@ -29405,3 +29405,14 @@ body:not(.tt-on) .tbh-titleic,
 .sticky-hero-inner #nav-search.navbtn,
 .sticky-hero-inner #nav-topics.navbtn--topics-right { border-radius: 10px !important; }
 .sticky-hero-inner #nav-topics.navbtn--topics-right { margin-left: 4px !important; }
+
+/* ═══ revamp1135 — Prompts page-title icon (setHead now preserves it) + the
+   Topics/Trending/Prompts full-page title icons get the dark navy treatment;
+   Featured/All Topics first rows sit flush under their separator. ═══════════ */
+/* full-page title icon (.ndp .navdd-headic) → dark navy bg, white glyph. */
+body:not(.tt-on) .ndp .navdd-headic { background: #1e3a8a !important; color: #fff !important; }
+
+/* First row flush under the section separator (header margin + grid top-margin
+   stacked an extra gap onto the row's own spacing, #img1245/1246). */
+.aiidd-pagehead, .tfeat-head { margin-bottom: 0 !important; }
+.tfeat-grid, .aiidd-tree { margin-top: 0 !important; }

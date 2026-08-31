@@ -1170,7 +1170,14 @@ function wirePromptsDropdown(panel, initialView) {
   // The shell head IS the view header — update its title + subtitle per view so
   // there's no duplicate heading inside the body.
   const setHead = (title, sub) => {
-    const t = panel.querySelector('.aii-nav-dd-title'); if (t) t.textContent = title;
+    const t = panel.querySelector('.aii-nav-dd-title');
+    if (t) {
+      // revamp1135 — preserve the page-title icon (textContent would wipe it,
+      // which is why the Prompts page showed no icon).
+      const ic = t.querySelector('.navdd-headic');
+      t.textContent = title;
+      if (ic) t.insertBefore(ic, t.firstChild);
+    }
     const s = panel.querySelector('.aii-nav-dd-sub'); if (s) s.textContent = sub;
   };
   // The header action buttons only make sense on the landing view.
