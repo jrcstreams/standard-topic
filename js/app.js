@@ -1500,8 +1500,10 @@ function topicsTreeHTML() {
       <span class="tfeat-arrow" aria-hidden="true">${AIIDD_CHEV_R}</span>
     </a>`;
   }).join('');
+  const FEAT_TOPICS_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.72 5.51 6.08.88-4.4 4.29 1.04 6.06L12 16.98l-5.44 2.86 1.04-6.06-4.4-4.29 6.08-.88z"/></svg>';
   const featuredSection = `<section class="tfeat-section">
     <header class="aiidd-pagehead tfeat-head">
+      <span class="tfeat-head-ic" aria-hidden="true">${FEAT_TOPICS_IC}</span>
       <div class="aiidd-pagehead-tx">
         <h2 class="aiidd-pagehead-title">Featured Topics</h2>
         <p class="aiidd-pagehead-sub">A handpicked mix of the most-followed areas — across parent topics and subtopics.</p>

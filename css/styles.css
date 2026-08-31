@@ -29282,3 +29282,47 @@ body.tt-on .aiidd-pagehead-title {
    — zero the row-gap (keep the column gap) so rows sit centered on their line. */
 .ph-featured .ph-sec-head--card .ph-sec-sub { margin-top: 0.4rem !important; }
 #content .prompts-home--v2 .ph-featured .aii-fi-acclist { row-gap: 0 !important; }
+
+/* ═══ revamp1127 — Featured Topics head icon box + Prompts-by-Topic rows ═════ */
+
+/* (fix 4) Featured Topics head gets the icon chip like the Featured Prompts head. */
+.tfeat-head { justify-content: flex-start !important; gap: 11px; align-items: center; }
+.tfeat-head-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px;
+  background: color-mix(in srgb, #2f4d9e 12%, #fff); color: #2f4d9e;
+}
+.tfeat-head-ic svg { width: 17px; height: 17px; display: block; }
+body.tt-on .tfeat-head-ic { display: none !important; }
+
+/* (fix 3) Prompts by Topic: borderless separator rows (not cards), bigger icon
+   chips + font (like the All Topics section), bordered container when open. */
+.prompts-home .pdir .pdir-card,
+.ph-body .pdir .pdir-card {
+  border: 0 !important; border-radius: 0 !important; background: transparent !important;
+  box-shadow: none !important; border-bottom: 1px solid #e6ebf3 !important; overflow: visible !important;
+}
+.prompts-home .pdir .pdir-card-ic,
+.ph-body .pdir .pdir-card-ic {
+  width: 32px !important; height: 32px !important; border-radius: 9px;
+  background: #f0f2f8 !important; color: #4a5f8f !important;
+  align-items: center; justify-content: center;
+}
+.prompts-home .pdir .pdir-card-ic svg,
+.ph-body .pdir .pdir-card-ic svg { width: 19px !important; height: 19px !important; }
+.prompts-home .pdir .pdir-card-name,
+.ph-body .pdir .pdir-card-name { font-size: 1.06rem !important; font-weight: 600 !important; }
+.prompts-home .pdir .pdir-cardhead,
+.ph-body .pdir .pdir-cardhead { padding: 15px 10px !important; }
+/* Open: bordered container, tinted head. */
+.prompts-home .pdir .pdir-card.is-open,
+.ph-body .pdir .pdir-card.is-open {
+  border: 1.5px solid #b9c6e4 !important; border-radius: 12px !important;
+  background: #fff !important; box-shadow: 0 8px 24px -14px rgba(30, 58, 138, 0.30) !important;
+  margin: 9px 0 !important; overflow: hidden !important;
+}
+.prompts-home .pdir .pdir-card.is-open > .pdir-cardhead,
+.ph-body .pdir .pdir-card.is-open > .pdir-cardhead {
+  background: #eef2fa !important; border-radius: 12px 12px 0 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+}
