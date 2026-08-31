@@ -29102,3 +29102,46 @@ body.home-search.tt-on .home-viewtabs {
 @media (hover: hover) {
   .sticky-hero-inner #nav-topics.navbtn--topics-right:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.35); box-shadow: 0 2px 10px -4px rgba(0,0,0,0.3); }
 }
+
+/* ═══ revamp1119 — directory accordion titles adopt the prompt-row icon chip:
+   a pale rounded-square (bg #f0f2f8) with a darker-blue glyph (#4a5f8f),
+   scaled up for the Topics / Prompts / AI-Briefings directory pages. Plus
+   vertical alignment of icons + chevrons in every row. ══════════════════════ */
+
+/* Topics directory */
+.aiidd-tree .aiidd-parent-ic {
+  width: 32px !important; height: 32px !important;
+  border-radius: 9px; background: #f0f2f8; color: #4a5f8f !important;
+  align-items: center; justify-content: center;
+}
+.aiidd-tree .aiidd-parent-ic .tsp-ic-svg,
+.aiidd-tree .aiidd-parent-ic svg { width: 19px !important; height: 19px !important; }
+
+/* AI Briefings by Topic */
+.dih .dih-group:not(.dih-group--featured) .dih-group-ic {
+  width: 32px !important; height: 32px !important;
+  border-radius: 9px; background: #f0f2f8; color: #4a5f8f !important;
+  align-items: center; justify-content: center;
+}
+.dih .dih-group:not(.dih-group--featured) .dih-group-ic svg { width: 19px !important; height: 19px !important; }
+
+/* Prompts by Topic (directory / Prompts page context only — keep the sidebar
+   variant small). */
+.prompts-home .pdir-card-ic,
+.ph-body .pdir-card-ic,
+.pdir .pdir-card-ic {
+  width: 32px !important; height: 32px !important;
+  border-radius: 9px; background: #f0f2f8; color: #4a5f8f !important;
+  align-items: center; justify-content: center;
+}
+.prompts-home .pdir-card-ic svg,
+.ph-body .pdir-card-ic svg,
+.pdir .pdir-card-ic svg { width: 19px !important; height: 19px !important; }
+
+/* Vertical alignment: heads center their icon + name + chevron. */
+.aiidd-tree .aiidd-parent-head,
+.pdir-cardhead,
+.dih .dih-group .dih-grouphead { align-items: center !important; }
+.aiidd-parent-head .tsp-chev,
+.pdir-cardhead .pdir-chev,
+.dih .dih-grouphead .pdir-chev { align-self: center !important; }
