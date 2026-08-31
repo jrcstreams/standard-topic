@@ -1226,12 +1226,15 @@ function wirePromptsDropdown(panel, initialView) {
         </section>
 
         <section class="ph-lib">
-          <div class="ph-sec-head ph-sec-head--card">
-            <div class="ph-sec-headrow">
-              <span class="ph-sec-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
-              <h3 class="ph-sec-title">Prompts by Topic</h3>
+          <div class="ph-sec-head ph-sec-head--card ph-sec-head--hastoggle">
+            <div class="ph-sec-head-tx">
+              <div class="ph-sec-headrow">
+                <span class="ph-sec-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+                <h3 class="ph-sec-title">Prompts by Topic</h3>
+              </div>
+              <p class="ph-sec-sub">Explore by category. Open one to run any prompt right here.</p>
             </div>
-            <p class="ph-sec-sub">Explore by category. Open one to run any prompt right here.</p>
+            <button type="button" class="trend-sports-toggle pdir-expandall" data-pdir-expandall role="switch" aria-checked="false" title="Expand every category"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
           </div>
           <div class="ph-body" data-ph-body></div>
         </section>
@@ -1316,6 +1319,22 @@ function wirePromptsDropdown(panel, initialView) {
     const body = root.querySelector('[data-ph-body]');
     body.innerHTML = promptDirectoryHTML();
     wirePromptDirectory(body, dirCtls);
+    // revamp1128 — "Expand all" opens/closes every Prompts-by-Topic category.
+    const pdirSw = root.querySelector('[data-pdir-expandall]');
+    if (pdirSw && !pdirSw.__wired) {
+      pdirSw.__wired = true;
+      pdirSw.addEventListener('click', () => {
+        const on = pdirSw.getAttribute('aria-checked') !== 'true';
+        pdirSw.setAttribute('aria-checked', String(on));
+        body.querySelectorAll('.pdir-card').forEach((card) => {
+          const bEl = card.querySelector('.pdir-cardbody');
+          const hd = card.querySelector('.pdir-cardhead');
+          card.classList.toggle('is-open', on);
+          if (bEl) bEl.hidden = !on;
+          if (hd) hd.setAttribute('aria-expanded', String(on));
+        });
+      });
+    }
     syncViewHash(null);
     requestAnimationFrame(updateNavDdFades);
   };

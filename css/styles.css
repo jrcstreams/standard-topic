@@ -29326,3 +29326,11 @@ body.tt-on .tfeat-head-ic { display: none !important; }
   background: #eef2fa !important; border-radius: 12px 12px 0 0 !important;
   border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
 }
+
+/* ═══ revamp1128 — Expand all toggle on the Prompts by Topic head ═══════════
+   Right-aligned with the subtext line, like the All Topics toggle; hidden on
+   mobile / tab mode. */
+.ph-sec-head--hastoggle { display: flex !important; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.ph-sec-head--hastoggle .ph-sec-head-tx { min-width: 0; flex: 1 1 auto; }
+.ph-sec-head--hastoggle .pdir-expandall { flex: none; align-self: flex-end; margin-bottom: 3px; }
+body.tt-on .ph-sec-head--hastoggle .pdir-expandall { display: none !important; }
