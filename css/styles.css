@@ -29007,3 +29007,21 @@ body.tt-on .aiidd-expandall { display: none !important; }
   margin-left: 16px !important; margin-right: 16px !important;
   border: 2px solid #1e3a8a !important;
 }
+
+/* ═══ revamp1114 — home tab strip left-aligns like the topic pages ═════════
+   The home tab strip (News Feed / AI Briefings / Trending / AI Prompts) used a
+   2rem side inset, reading as centered/indented vs the topic pages' tighter
+   ~1rem alignment (#img1152/1153). Match them so the home tabs sit as far left
+   as the topic tabs. */
+body.home-search.tt-on #sub-header .home-viewtabs,
+body.home-search.tt-on .home-viewtabs {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+@media (max-width: 640px) {
+  body.home-search.tt-on #sub-header .home-viewtabs,
+  body.home-search.tt-on .home-viewtabs {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+}

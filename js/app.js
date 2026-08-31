@@ -3005,7 +3005,18 @@ function initScrollFades() {
   let subBottom = 0;
   let lastTopOn = null, lastBotOn = null;
   const measure = () => {
-    subBottom = sub ? Math.max(0, Math.round(sub.getBoundingClientRect().bottom)) : 0;
+    let b = sub ? Math.max(0, Math.round(sub.getBoundingClientRect().bottom)) : 0;
+    // revamp1114: the topic/home tab strip is a SEPARATE fixed element BELOW the
+    // subnav, so the sub-header's bottom left the fade washing over the tab strip
+    // (#img1159/1160). #content's padding-top already reserves the full fixed
+    // chrome height (nav + subnav + tab strip), and it's scroll-independent —
+    // start the fade there so it always sits below all the top chrome.
+    const content = document.getElementById('content');
+    if (content) {
+      const pt = Math.round(parseFloat(getComputedStyle(content).paddingTop) || 0);
+      if (pt > b) b = pt;
+    }
+    subBottom = b;
     top.style.top = subBottom + 'px';
   };
   const update = () => {
