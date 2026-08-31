@@ -1806,6 +1806,7 @@ function diHeroCardHTML(o) {
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
               <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
             </button>
+            ${o.allBriefingsCta ? `<a class="tdi-go tdi-go--all" href="#/intelligence">All Briefings${SUBPAGE_ARROW}</a>` : ''}
           </div>
         </div>
         ${hubCard}
@@ -1990,9 +1991,9 @@ function renderFeaturedBriefings(host, opts) {
         <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
           noHeader: true, hubLink: false, art: true, topicLabel: 'Global Briefing',
           sublabel: 'Your daily briefing across every topic we cover.',
+          allBriefingsCta: true,
         })}</div>
-      </div>
-      <div class="hs-morefoot"><a class="hs-morelink" href="#/intelligence">View more briefings${SUBPAGE_ARROW}</a></div>`;
+      </div>`;
     wireHomeDailyIntelligence(host);
     fetchDailyBrief('home', false, true).then((d) => {
       if (d && d.generatedAt && host.isConnected) applyBriefArt(host, d.generatedAt);

@@ -29429,3 +29429,15 @@ body.tt-on .topic-band #section-newsfeed .news-list > .news-card:first-child { p
    (the first card's 14px top padding was the gap; ~23px -> ~13px). ══════════ */
 body.home-search.tt-on .home-v2 #section-newsfeed .news-list > .news-card:first-child { padding-top: 4px !important; }
 body.home-search.tt-on .home-v2 #section-newsfeed .news-list > .news-card:first-child .news-card-link { padding-top: 2px !important; }
+
+/* ═══ revamp1138 — AI Briefing "Read Briefing" button smaller (topic sidebar +
+   homepage); homepage card gets a second outline "All Briefings" button. ════ */
+.tdi-card--v3 .tdi-go, .tdi-card--home .tdi-go { padding: 0.42rem 0.85rem !important; font-size: 0.84rem !important; margin-top: 0.8rem !important; }
+.tdi-card--v3 .tdi-go svg, .tdi-card--home .tdi-go svg { width: 13px !important; height: 13px !important; }
+.tdi-card--home .tdi-go--all, .tdi-card--v3 .tdi-go--all {
+  background: #fff !important; color: #1e3a8a !important;
+  border: 1.5px solid #c3cfe6 !important; text-decoration: none; box-shadow: none !important;
+}
+@media (hover: hover) {
+  .tdi-card--home .tdi-go--all:hover, .tdi-card--v3 .tdi-go--all:hover { background: #eef2fb !important; border-color: #9fb3e0 !important; color: #1e3a8a !important; }
+}
