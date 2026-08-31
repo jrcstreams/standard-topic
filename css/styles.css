@@ -29542,3 +29542,24 @@ body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: none
    .prompts-home--v2 flex has a 35px row-gap; tighten it in tab mode). */
 body.tt-on .prompts-home--v2 { row-gap: 14px !important; }
 body.tt-on .prompts-viewtabs { margin-bottom: 0 !important; }
+
+/* ═══ revamp1148 — Prompts section tabs live INSIDE the sub-header band (like
+   the other pages), not floating in the content. Shown in tab mode; the
+   sub-header auto-grows so content clears it (no gap). ══════════════════════ */
+.prompts-subnav-tabs { display: none; }
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
+  display: flex; gap: 4px; align-items: center; padding: 2px 1rem 9px;
+}
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-tab {
+  display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px;
+  background: none; border: 0; border-radius: 8px; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: #55627a; white-space: nowrap;
+}
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-tab.is-active { background: #dbe4f7; color: #1e3a8a; }
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-ic { display: inline-flex; }
+@media (hover: hover) { body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-tab:not(.is-active):hover { background: #e3e9f4; } }
+/* Section switching (driven by the body class) + hide the redundant headers. */
+body.tt-on.pview-topics #content .prompts-home--v2 .ph-featured { display: none !important; }
+body.tt-on:not(.pview-topics) #content .prompts-home--v2 .ph-lib { display: none !important; }
+body.tt-on #content .prompts-home--v2 .ph-featured .ph-sec-head--card,
+body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: none !important; }

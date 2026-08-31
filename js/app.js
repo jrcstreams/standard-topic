@@ -1219,11 +1219,7 @@ function wirePromptsDropdown(panel, initialView) {
     // that expands the builder inline in place (so it has the whole bottom of
     // the page to grow into).
     root.innerHTML = `
-      <div class="prompts-home prompts-home--v2 pview-featured">
-        <nav class="prompts-viewtabs" data-prompts-viewtabs role="tablist" aria-label="Prompts sections">
-          <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-pview="featured"><span class="tvt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 21 3-1 12.5-12.5a2.1 2.1 0 0 0-3-3L3 17z"/><path d="m15 5 3 3"/><path d="M18 3.5 18.7 5l1.5.7-1.5.7L18 8l-.7-1.6L15.8 5.7 17.3 5z"/></svg></span><span class="tvt-tx">Featured Prompts</span></button>
-          <button type="button" class="tvt" role="tab" aria-selected="false" data-pview="topics"><span class="tvt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span><span class="tvt-tx">Prompts by Topic</span></button>
-        </nav>
+      <div class="prompts-home prompts-home--v2">
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head ph-sec-head--card">
             <div class="ph-sec-headrow">
@@ -4057,6 +4053,16 @@ function renderPageNavBar(kind) {
       // Sports Trends") — off = condensed, on = every subtopic list expanded.
       ? '<button type="button" class="trend-sports-toggle pagenav-toggle" data-topics-expand role="switch" aria-checked="false" title="Expand every topic\'s subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>'
       : '');
+  // revamp1148 — the Prompts page carries its section tabs INSIDE the sub-header
+  // band (like the other pages), not floating in the content. Active state is
+  // held on the body (body.pview-topics) so it survives sub-header re-renders.
+  const pOnTopics = document.body.classList.contains('pview-topics');
+  const PV_IC = { featured: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 21 3-1 12.5-12.5a2.1 2.1 0 0 0-3-3L3 17z"/><path d="m15 5 3 3"/></svg>', topics: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>' };
+  const promptsTabs = kind === 'prompts' ? `
+    <div class="prompts-subnav-tabs" data-prompts-subnav-tabs role="tablist" aria-label="Prompts sections">
+      <button type="button" class="pst-tab${pOnTopics ? '' : ' is-active'}" data-pview="featured"><span class="pst-ic" aria-hidden="true">${PV_IC.featured}</span>Featured Prompts</button>
+      <button type="button" class="pst-tab${pOnTopics ? ' is-active' : ''}" data-pview="topics"><span class="pst-ic" aria-hidden="true">${PV_IC.topics}</span>Prompts by Topic</button>
+    </div>` : '';
   subHeader.innerHTML = `
     <div class="topic-subnav-title">
       <div class="topic-subnav-inner">
@@ -4066,7 +4072,13 @@ function renderPageNavBar(kind) {
         </div>
         ${action}
       </div>
-    </div>`;
+    </div>${promptsTabs}`;
+  subHeader.querySelectorAll('[data-prompts-subnav-tabs] [data-pview]').forEach((b) => b.addEventListener('click', () => {
+    const topics = b.dataset.pview === 'topics';
+    document.body.classList.toggle('pview-topics', topics);
+    subHeader.querySelectorAll('[data-prompts-subnav-tabs] [data-pview]').forEach((x) => x.classList.toggle('is-active', x === b));
+    window.scrollTo(0, 0);
+  }));
   // The Topics bar's expand toggle drives the page's condensed/expanded views.
   subHeader.querySelector('[data-topics-expand]')?.addEventListener('click', (e) => {
     const btn = e.currentTarget;
