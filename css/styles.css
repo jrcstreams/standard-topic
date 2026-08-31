@@ -29525,3 +29525,15 @@ body.tt-on .prompts-home--v2:not(.pview-topics) .ph-lib { display: none !importa
    base '#content .prompts-home--v2 .ph-* { display }' specificity. */
 body.tt-on #content .prompts-home--v2:not(.pview-topics) .ph-lib { display: none !important; }
 body.tt-on #content .prompts-home--v2.pview-topics .ph-featured { display: none !important; }
+
+/* ═══ revamp1147 — Prompts tab strip sticks just below the sub-header, and the
+   now-redundant section headers hide in tab mode (the tab labels the section,
+   #img1258/1259/1260). ══════════════════════════════════════════════════════ */
+body.tt-on .prompts-viewtabs {
+  position: sticky; top: calc(var(--nav-h, 0px) + var(--subnav-height, 56px));
+  z-index: 40; background: #fff;
+  margin: 0 -1rem 0.5rem !important; padding: 9px 1rem 8px !important;
+  border-bottom: 1px solid #e6ebf3;
+}
+body.tt-on #content .prompts-home--v2 .ph-featured .ph-sec-head--card,
+body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: none !important; }
