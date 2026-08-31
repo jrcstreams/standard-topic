@@ -29365,3 +29365,11 @@ body.tt-on .aiidd-head-ic { display: none !important; }
 .tfeat-ic svg { width: 16px !important; height: 16px !important; }
 .tfeat-name { font-family: var(--font-family) !important; font-size: 1rem !important; font-weight: 400 !important; letter-spacing: 0 !important; }
 .tfeat-arrow svg { width: 14px !important; height: 14px !important; }
+
+/* ═══ revamp1131 — Featured Prompts + Featured Topics: bigger icon chip so the
+   glyph has breathing room (was riding against the grey background edges,
+   #img1213/1214). Chip 20px -> 26px, glyph stays 16px. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acc-ic { width: 26px !important; height: 26px !important; border-radius: 9px !important; }
+#content .prompts-home--v2 .ph-featured .aii-fi-acc-ic svg { width: 16px !important; height: 16px !important; }
+.tfeat-ic { width: 26px !important; height: 26px !important; border-radius: 9px !important; }
+.tfeat-ic svg { width: 16px !important; height: 16px !important; }
