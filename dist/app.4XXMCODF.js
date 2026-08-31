@@ -1562,14 +1562,13 @@ ${k}`),M.length?M.join(`
         </div>
         <section class="layout-section" id="section-shortcuts"></section>
       </div>
-    `;let p=e.querySelector('[data-role="custom-search-bar"]');p&&$p(p,i),Vd(e.querySelector(".custom-search-sticky"))}else if(n){let p='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>',h=[];try{h=(pt()||[]).filter(f=>f&&f.slug&&f.slug!=="home").slice(0,10)}catch{}let m=`
-      <section class="home-hero" data-home-hero>
+    `;let p=e.querySelector('[data-role="custom-search-bar"]');p&&$p(p,i),Vd(e.querySelector(".custom-search-sticky"))}else if(n){let p='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>',h=[];try{h=(pt()||[]).filter(f=>f&&f.slug&&f.slug!=="home").slice(0,10)}catch{}let d='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>',m=`
+      <section class="home-hero home-hero--noic" data-home-hero>
         <div class="home-hero-inner">
           <div class="home-hero-headrow">
-            <span class="home-hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></span>
-            <h1 class="home-hero-title">Standard Topic</h1>
+            <h1 class="home-hero-title">What's Happening</h1>
           </div>
-          <p class="home-hero-sub">Real news and AI-built insight on any topic \u2014 start with a featured one.</p>
+          <p class="home-hero-sub">Real news and AI-built insight across any topic.</p>
           ${h.length?`<div class="home-hero-chips">${h.map(f=>`<a href="#/topic/${X(f.slug)}" class="home-hero-chip">${P(f.name)}</a>`).join("")}</div>`:""}
         </div>
       </section>`;e.innerHTML=`

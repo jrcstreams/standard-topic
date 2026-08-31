@@ -4803,13 +4803,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     try { heroTopics = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 10); } catch (_) {}
     const HOME_HERO_IC = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>';
     const homeHeroHTML = `
-      <section class="home-hero" data-home-hero>
+      <section class="home-hero home-hero--noic" data-home-hero>
         <div class="home-hero-inner">
           <div class="home-hero-headrow">
-            <span class="home-hero-ic" aria-hidden="true">${HOME_HERO_IC}</span>
-            <h1 class="home-hero-title">Standard Topic</h1>
+            <h1 class="home-hero-title">What's Happening</h1>
           </div>
-          <p class="home-hero-sub">Real news and AI-built insight on any topic — start with a featured one.</p>
+          <p class="home-hero-sub">Real news and AI-built insight across any topic.</p>
           ${heroTopics.length ? `<div class="home-hero-chips">${heroTopics.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="home-hero-chip">${escapeHTML(t.name)}</a>`).join('')}</div>` : ''}
         </div>
       </section>`;

@@ -28894,3 +28894,16 @@ body:not(.tt-on) #home-trending .trend-card-grid > .trend-card:nth-child(n+13) {
 @media (hover: hover) { .dih-group--featured .dih-item:hover { background: #f6f9fd !important; } }
 /* Title row a touch tighter to its preview, like the prompt rows. */
 .dih-group--featured .dih-item-head { margin-bottom: 4px; }
+
+/* ═══ revamp1107 — Prompts-by-Topic + Topics directory: Featured-Prompts row look ══ */
+/* Retire the bordered card boxes for the grey-separator row layout used by
+   Featured Prompts (and elsewhere). */
+.pdir-card {
+  border: 0 !important; background: transparent !important; border-radius: 0 !important;
+  box-shadow: none !important; border-bottom: 1px solid #e6ebf3 !important; padding: 0 !important;
+}
+.pdir-cardhead { padding: 13px 6px !important; border-radius: 0 !important; }
+@media (hover: hover) { .pdir-cardhead:hover { background: #f6f9fd !important; } }
+
+/* Homepage hero without the icon: title leads directly. */
+.home-hero--noic .home-hero-headrow { gap: 0 !important; }
