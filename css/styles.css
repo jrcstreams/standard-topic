@@ -29577,3 +29577,16 @@ body.tt-on #content .dih .dih-bytopic-head { display: none !important; }
 body.tt-on #content .dih .dih-group--featured .dih-items {
   display: grid !important; grid-template-columns: 1fr !important; gap: 0 !important;
 }
+
+/* ═══ revamp1150 — section tabs (Prompts + AI Briefings) sit in their OWN row
+   BELOW the identity band, like home/topic pages — not inline-right with the
+   title. Stack the sub-header; the tab row is full-width, left-aligned, white. */
+body.tt-on #sub-header.pagenav {
+  flex-direction: column !important; align-items: stretch !important; height: auto !important;
+}
+body.tt-on #sub-header.pagenav .topic-subnav-title { width: 100% !important; }
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
+  width: 100% !important; justify-content: flex-start !important;
+  padding: 6px 1rem 8px !important; margin: 0 !important;
+  background: #fff !important; border-top: 1px solid #dfe4ee !important;
+}
