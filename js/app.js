@@ -4401,6 +4401,19 @@ function renderStickyHeroBar(container, route) {
           <polyline points="13 6 19 12 13 18"/>
         </svg>
       </a>
+      <a href="#/topics" class="navmenu-quicklink navmenu-cta" id="navmenu-topics-link">
+        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1.4"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.4"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.4"/>
+          <rect x="14" y="14" width="7" height="7" rx="1.4"/>
+        </svg>
+        <span class="navmenu-cta-label">Topic Pages</span>
+        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </a>
       <a href="#/intelligence" class="navmenu-quicklink navmenu-cta" id="navmenu-daily-link">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/>

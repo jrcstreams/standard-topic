@@ -28972,3 +28972,38 @@ body.tt-on .aiidd-expandall { display: none !important; }
 /* Topics "Expand all" switch (#img1170): it centered against the whole head
    (title+subtext). Drop it to the subtext line. */
 .aiidd-expandall { align-self: flex-end !important; margin-bottom: 3px; }
+
+/* ═══ revamp1113 — sidebar nav buttons distinct + bordered + arrows ═════════
+   The quicklinks (Home / Topic Pages / AI Briefings / Trending / Prompts) had
+   gone borderless + transparent with the arrow affordance hidden, so they
+   didn't read as clickable (#img1149). Give them a soft border + a visible
+   right arrow; keep the soft-blue active fill. Search bar matches their width
+   with a STRONGER border so it sits above them. */
+.navmenu-quicklink.navmenu-cta {
+  background: #fff !important;
+  border: 1.5px solid #d3dae8 !important;
+  box-shadow: 0 1px 2px rgba(20, 40, 90, 0.05) !important;
+}
+.navmenu-quicklink.navmenu-cta > svg:last-of-type,
+.navmenu-quicklink.navmenu-cta .navmenu-cta-arrow {
+  display: inline-flex !important;
+  margin-left: auto !important;
+  color: #9aa6bd !important;
+  flex: none;
+}
+@media (hover: hover) {
+  .navmenu-quicklink.navmenu-cta:hover { border-color: #b3c1dc !important; background: #f7f9fd !important; }
+  .navmenu-quicklink.navmenu-cta:hover .navmenu-cta-arrow { color: #5f7196 !important; }
+}
+.navmenu-quicklink.navmenu-cta.is-active,
+.navmenu-quicklink.navmenu-cta[aria-current="page"] {
+  background: #dfe8fb !important; border-color: #9fb3e0 !important; color: #1d3a8a !important;
+}
+
+/* Search bar: same 16px side gap as the buttons + a stronger 2px border. */
+.navmenu-quicklinks { padding-left: 16px !important; padding-right: 16px !important; }
+#navmenu-searchbtn, .navmenu-searchbtn {
+  width: calc(100% - 32px) !important;
+  margin-left: 16px !important; margin-right: 16px !important;
+  border: 2px solid #1e3a8a !important;
+}
