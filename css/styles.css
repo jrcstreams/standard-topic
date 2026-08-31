@@ -29052,3 +29052,25 @@ body.home-search.tt-on .home-viewtabs {
   border-radius: 12px 12px 0 0 !important;
   border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
 }
+
+/* ═══ revamp1116 — "AI Briefings by Topic" rows match the Topics directory:
+   clean separator rows when closed (not always-on cards), a bordered container
+   when open, scaled-up head icon/title. Featured section excluded. ═════════ */
+.dih .dih-group:not(.dih-group--featured) {
+  border: 0 !important; border-radius: 0 !important; background: transparent !important;
+  box-shadow: none !important; border-bottom: 1px solid #e6ebf3 !important;
+  margin: 0 !important;
+}
+.dih .dih-group:not(.dih-group--featured) .dih-group-ic { width: 30px !important; height: 30px !important; }
+.dih .dih-group:not(.dih-group--featured) .dih-group-ic svg { width: 22px !important; height: 22px !important; }
+.dih .dih-group:not(.dih-group--featured) .dih-grouphead { padding: 15px 10px !important; }
+.dih .dih-group:not(.dih-group--featured).is-open {
+  border: 1.5px solid #b9c6e4 !important;
+  border-radius: 12px !important; background: #fff !important;
+  box-shadow: 0 8px 24px -14px rgba(30, 58, 138, 0.30) !important;
+  margin: 9px 0 !important; overflow: hidden;
+}
+.dih .dih-group:not(.dih-group--featured).is-open > .dih-grouphead {
+  background: #eef2fa !important; border-radius: 12px 12px 0 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+}
