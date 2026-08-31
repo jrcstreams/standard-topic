@@ -29472,3 +29472,10 @@ body.nav-docked.tt-on .topic-band .topic-viewtabs { margin-left: -16px !importan
   box-shadow: 0 16px 40px -14px rgba(15, 26, 46, 0.32) !important; overflow: hidden;
 }
 .topic-home:has(.topic-bodyhead.topic-subnav-picker.is-open) #section-newsfeed { position: relative; z-index: 1; }
+
+/* ═══ revamp1142 — AI Briefings by Topic: same first-row/inter-row gap fix as
+   the Topics + Featured grids. The grid's 0.6rem ROW-gap sat above each row's
+   separator, and the head's 1rem bottom margin pushed the first row down
+   (#img1247). Zero both so rows sit flush/centered on their separators. */
+.dih-groups { row-gap: 0 !important; margin-top: 0 !important; }
+.dih-bytopic-head { margin-bottom: 0 !important; }
