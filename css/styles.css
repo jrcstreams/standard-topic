@@ -29025,3 +29025,30 @@ body.home-search.tt-on .home-viewtabs {
     padding-right: 0.75rem !important;
   }
 }
+
+/* ═══ revamp1115 — Topics directory rows: separator when closed, a bordered
+   CONTAINER when open (#img1147 target, was borderless #img1148), parent head
+   scaled up (icon + name) like the Prompts sections but larger. ═══════════ */
+
+/* Closed rows stay clean separators (revamp1108b) — just scale the parent. */
+.aiidd-tree .aiidd-parent-ic { width: 30px !important; height: 30px !important; }
+.aiidd-tree .aiidd-parent-ic .tsp-ic-svg { width: 23px !important; height: 23px !important; }
+.aiidd-tree .aiidd-parent-name { font-size: 1.06rem !important; font-weight: 750 !important; letter-spacing: -0.01em; }
+.aiidd-tree .aiidd-parent-head { padding: 15px 10px !important; }
+
+/* Open: a real bordered container (out-specifies the borderless 1108b via the
+   [data-open] attribute). The open parent already spans both grid columns. */
+.aiidd-tree .aiidd-parent[data-open="true"] {
+  border: 1.5px solid #b9c6e4 !important;
+  border-bottom: 1.5px solid #b9c6e4 !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: 0 8px 24px -14px rgba(30, 58, 138, 0.30) !important;
+  margin: 9px 0 !important;
+  overflow: hidden;
+}
+.aiidd-tree .aiidd-parent[data-open="true"] > .aiidd-parent-head {
+  background: #eef2fa !important;
+  border-radius: 12px 12px 0 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+}
