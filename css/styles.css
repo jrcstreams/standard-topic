@@ -29590,3 +29590,23 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
   padding: 6px 1rem 8px !important; margin: 0 !important;
   background: #fff !important; border-top: 1px solid #dfe4ee !important;
 }
+
+/* ═══ revamp1151 — home section-head icon chips deepened to match the topic
+   listings heads; home AI Prompts row icon chips enlarged. ══════════════════ */
+.hb-head-ic--brief, .hb-head-ic--prompts { background: color-mix(in srgb, #2f4d9e 22%, #fff) !important; }
+.home-v2 .home-side [data-hq-prompts] .aii-fi-acc-ic { width: 26px !important; height: 26px !important; border-radius: 9px !important; }
+.home-v2 .home-side [data-hq-prompts] .aii-fi-acc-ic svg { width: 16px !important; height: 16px !important; }
+
+/* revamp1151b — the homepage "All Briefings" button was rendering solid navy
+   with invisible (navy) text. Make it a distinct, legible light-blue pill,
+   clearly different from the solid-navy "Read Briefing" (#img1272/1273). */
+#content .tdi-card .tdi-go--all,
+.tdi-card--home .tdi-go--all,
+.tdi-card--v3 .tdi-go--all {
+  background: #dbe4f7 !important; color: #1e3a8a !important;
+  border: 0 !important; box-shadow: none !important;
+}
+@media (hover: hover) {
+  #content .tdi-card .tdi-go--all:hover,
+  .tdi-card--home .tdi-go--all:hover { background: #c9d6ef !important; color: #16307a !important; }
+}
