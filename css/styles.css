@@ -29614,3 +29614,34 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
 /* revamp1152 — Featured Briefings preview cards don't need the line separator
    under them (they're preview cards, not list rows). */
 .dih-group--featured .dih-item { border-bottom: 0 !important; }
+
+/* ═══ revamp1153 — expanded prompt card rebuild (#img1276→1279): PROMPT label
+   pill, blue Edit link, brighter active icon, fainter separator, concise
+   buttons, clean flat-blue Run Prompt, stacked buttons on mobile. ═══════════ */
+.aii-fi-acc.is-open .aii-fi-acc-ic { color: #2563eb !important; }
+.aii-pc-lbl {
+  display: inline-block !important; background: #dbe4f7 !important; color: #1e40af !important;
+  padding: 3px 9px !important; border-radius: 6px !important; font-weight: 700 !important;
+  letter-spacing: 0.09em !important; font-size: 0.72rem !important; text-transform: uppercase;
+}
+.aii-pc-edit, .aii-pc-edit span { color: #2563eb !important; }
+.aii-pc-edit svg { color: #2563eb !important; }
+.aii-pc-foot { border-top-color: #eef1f7 !important; }
+.aii-pc-btn {
+  padding: 6px 11px !important; font-size: 0.85rem !important; font-weight: 600 !important;
+  color: #1e3a5f !important; border: 1px solid #dbe0ea !important; background: #fff !important;
+}
+.aii-pc-btn svg { color: #2f4d9e !important; }
+.aii-pc-submit {
+  background: #1e40af !important; background-image: none !important;
+  box-shadow: 0 1px 2px rgba(15,26,46,0.14) !important; padding: 8px 18px !important;
+}
+@media (hover: hover) { .aii-pc-submit:hover { background: #16307a !important; } }
+/* Mobile: stack the actions full-width (#img1280). */
+@media (max-width: 640px) {
+  .aii-pc-foot { flex-direction: column !important; align-items: stretch !important; gap: 8px !important; }
+  .aii-pc-foot > .aii-pc-modelwrap, .aii-pc-foot > .aii-pc-btn, .aii-pc-foot > .aii-pc-submit,
+  .aii-pc-modelwrap > .aii-pc-modelbtn { width: 100% !important; }
+  .aii-pc-foot > .aii-pc-btn, .aii-pc-modelwrap > .aii-pc-modelbtn { justify-content: flex-start !important; }
+  .aii-pc-submit { justify-content: center !important; }
+}
