@@ -29678,3 +29678,8 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
   .aii-pc .aii-pc-foot > [data-pc-settings] { order: 3 !important; }
   .aii-pc .aii-pc-foot > [data-pc-copy] { order: 4 !important; }
 }
+
+/* revamp1156 — prompt card spacing: less above the PROMPT label; more above the
+   Edit link (it was riding the bottom of the paragraph, #img1286). */
+.aii-pc-prevwrap { padding-top: 4px !important; }
+.aii-pc-edit { margin-top: 12px !important; }
