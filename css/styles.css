@@ -29645,3 +29645,26 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
   .aii-pc-foot > .aii-pc-btn, .aii-pc-modelwrap > .aii-pc-modelbtn { justify-content: flex-start !important; }
   .aii-pc-submit { justify-content: center !important; }
 }
+
+/* ═══ revamp1154 — prompt card polish: Run Prompt is a clean rounded rect (not
+   a giant pill, #img1281); tighter prompt section top/bottom (#img1283); robust
+   full-width mobile button stacking. ════════════════════════════════════════ */
+.aii-pc-submit { border-radius: 10px !important; }
+.aii-pc-prevwrap { padding-top: 9px !important; padding-bottom: 7px !important; }
+.aii-pc-lbl { margin-bottom: 6px !important; }
+.aii-pc-edit { margin-top: 3px !important; }
+@media (max-width: 640px) {
+  .aii-pc .aii-pc-foot {
+    display: flex !important; flex-direction: column !important;
+    align-items: stretch !important; flex-wrap: nowrap !important; gap: 8px !important;
+  }
+  .aii-pc .aii-pc-foot > .aii-pc-modelwrap,
+  .aii-pc .aii-pc-foot > .aii-pc-btn,
+  .aii-pc .aii-pc-foot > .aii-pc-submit,
+  .aii-pc .aii-pc-foot .aii-pc-modelbtn {
+    width: 100% !important; max-width: 100% !important; min-width: 0 !important; flex: 0 0 auto !important;
+  }
+  .aii-pc .aii-pc-foot > .aii-pc-btn,
+  .aii-pc .aii-pc-foot .aii-pc-modelbtn { justify-content: flex-start !important; }
+  .aii-pc .aii-pc-foot > .aii-pc-submit { justify-content: center !important; border-radius: 10px !important; }
+}
