@@ -29610,3 +29610,7 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
   #content .tdi-card .tdi-go--all:hover,
   .tdi-card--home .tdi-go--all:hover { background: #c9d6ef !important; color: #16307a !important; }
 }
+
+/* revamp1152 — Featured Briefings preview cards don't need the line separator
+   under them (they're preview cards, not list rows). */
+.dih-group--featured .dih-item { border-bottom: 0 !important; }
