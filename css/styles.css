@@ -29668,3 +29668,13 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
   .aii-pc .aii-pc-foot .aii-pc-modelbtn { justify-content: flex-start !important; }
   .aii-pc .aii-pc-foot > .aii-pc-submit { justify-content: center !important; border-radius: 10px !important; }
 }
+
+/* ═══ revamp1155 — Run Prompt matches the other buttons' height (#img1284);
+   stacked/grid button order = Run Prompt, Model, Settings, Copy (#img1285). ══ */
+.aii-pc-submit { padding: 6px 18px !important; border: 1px solid #1e40af !important; box-sizing: border-box; }
+@media (max-width: 640px) {
+  .aii-pc .aii-pc-foot > .aii-pc-submit { order: 1 !important; }
+  .aii-pc .aii-pc-foot > .aii-pc-modelwrap { order: 2 !important; }
+  .aii-pc .aii-pc-foot > [data-pc-settings] { order: 3 !important; }
+  .aii-pc .aii-pc-foot > [data-pc-copy] { order: 4 !important; }
+}
