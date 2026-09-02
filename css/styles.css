@@ -31108,7 +31108,12 @@ body.tt-on.tview-all #content .ndp .aiidd-pagehead:not(.tfeat-head)[class][class
   border-bottom: 1px solid #e4e8f0 !important;
 }
 body.tt-on #content .ndp .aiidd-pagehead .aiidd-pagehead-tx { display: none !important; }
-body.tt-on #content .ndp .aiidd-pagehead .aiidd-expandall { margin-left: 0 !important; }
+/* …and the switch itself is hidden in tab mode by an older rule
+   (`body.tt-on .aiidd-expandall`), from when the band copy was the only one. */
+body.tt-on #content .ndp .aiidd-pagehead .aiidd-expandall[class] {
+  display: inline-flex !important;
+  margin-left: 0 !important;
+}
 body.tt-on #sub-header.pagenav [data-topics-expand] { display: none !important; }
 
 /* ═══ revamp1179 — AI Briefings: a briefing REPLACES its preview card ════════
