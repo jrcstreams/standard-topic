@@ -31164,3 +31164,83 @@ body:not(.tt-on).home-search .home-v2 .newsfeed-head,
 body:not(.tt-on).home-search .home-v2 .home-featbriefs .hb-head {
   height: 44px !important;
 }
+
+/* ═══ revamp1180 — six follow-ups ════════════════════════════════════════════ */
+
+/* (1) The docked gutter reaches the identity band. revamp1178 made the gutter
+   16 / 32-when-docked and revamp1179 carried it to the shell pages' content and
+   tab strip — but the pagenav band's own inner keeps a flat 16, so docked, the
+   page title alone sat 16px in while its tab strip and list sat at 32 (#img1328
+   /1329). That mismatch is what still reads as "not full width": the content
+   looks inset against a title that isn't. */
+body.tt-on.nav-docked #sub-header.pagenav .topic-subnav-inner[class] {
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+
+/* (2) The Prompts page starts at the bar like every other tab-mode page. Its
+   shell adds four separate top paddings between the tab strip and the first row
+   — 8 on .aii-nav-dd-inner, 2 on .aii-nav-dd-scroll, 4 on .prompts-dd, 8 on
+   .prompts-home--v2 — which put the first accordion ~40px of ink below the
+   strip where Topics' first row sits at ~18 (#img1330/1331). */
+body.tt-on #content .ndp .aii-nav-dd-inner,
+body.tt-on #content .ndp .aii-nav-dd-scroll,
+body.tt-on #content .ndp .prompts-dd,
+body.tt-on #content .ndp .prompts-home--v2 {
+  padding-top: 0 !important;
+}
+
+/* (3) A story with no summary keeps its buttons on the left. `:only-child →
+   margin-left: auto` (revamp740) right-aligned them so the row wouldn't look
+   empty, but it makes those two cards break the column's left edge that every
+   other card holds (#img1332/1333). */
+#section-newsfeed .news-card-body > .news-card-actions:only-child,
+.news-card-body > .news-card-actions:only-child {
+  margin-left: 0 !important;
+  justify-content: flex-start !important;
+}
+
+/* (4) In tab mode the sub-header's own bottom rule IS the first story's top
+   edge, so the first card must not draw one of its own — revamp1179 restored
+   that border for the wide layout, where the cards are bordered boxes and the
+   first one read as an open box, and it followed into tab mode where the cards
+   are full-bleed rows (#img1334/1335). */
+body.tt-on.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child,
+body.tt-on.home-search .home-v2 .news-list > .news-card:first-child,
+body.tt-on .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
+  border-top: 0 !important;
+}
+
+/* (5) The tab strip carries a little more height on every page. The tabs stay
+   vertically centred in it, and nothing below moves of its own accord: every
+   #content reserve is computed from --subnav-height, which is measured from the
+   real sub-header, so the extra height pushes the page down rather than sliding
+   under it. */
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs[class],
+body.tt-on[class][class] #sub-header .home-viewtabs,
+body.tt-on[class][class] #sub-header .topic-viewtabs,
+body.tt-on[class][class] .home-viewtabs,
+body.tt-on[class][class] .topic-viewtabs {
+  min-height: 56px !important;
+  align-items: center !important;
+}
+
+/* (6) Search and Topics were almost touching in the mobile header. */
+#site-header .nav-searchbar + .navbtn--topics-right,
+.sticky-hero-inner .nav-searchbar + .navbtn--topics-right {
+  margin-left: 10px !important;
+}
+
+/* ═══ revamp1180 — Topics is a nav LINK first, a button second ═══════════════
+
+   Topics sat beside Search as a permanent action while Home / AI Briefings /
+   Trending / Prompts were links — so the site's second-most-used destination
+   was the one thing not in the row of destinations. It is now the second link,
+   after Home, and the button beside Search is what it degrades into when the
+   row runs out of width (fitMainNav sheds it first, before Home). Exactly one
+   of the two is ever on screen; below the mobile breakpoint the links row is
+   hidden entirely and the button is the only way in, which is why the inline
+   copy is opt-IN (.nav-topics-inline) rather than opt-out. */
+.navbtn--topics-inline { display: none !important; }
+.sticky-hero-inner.nav-topics-inline .navbtn--topics-inline { display: inline-flex !important; }
+.sticky-hero-inner.nav-topics-inline .navbtn--topics-right { display: none !important; }

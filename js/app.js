@@ -893,7 +893,7 @@ function closeNavDropdown() {
 // The nav dropdown triggers whose lit "active" pill must be mutually exclusive —
 // exactly one (the open dropdown) lit at a time. Reset them ALL, not just the last
 // tracked one, so no switch path can leave two pills lit (#img206/#img207).
-const NAV_TRIGGER_IDS = ['nav-search', 'nav-topics', 'nav-trending', 'nav-prompts', 'sticky-nav-more'];
+const NAV_TRIGGER_IDS = ['nav-search', 'nav-topics', 'nav-topics-link', 'nav-trending', 'nav-prompts', 'sticky-nav-more'];
 function resetNavTriggers() {
   NAV_TRIGGER_IDS.forEach((id) => document.getElementById(id)?.setAttribute('aria-expanded', 'false'));
 }
@@ -4407,7 +4407,7 @@ function fitMainNav() {
   // class list ~9 times per resize. Now the whole ladder is resolved against a
   // detached snapshot of the class list and committed ONCE, only if it differs
   // from what's already applied.
-  const STAGE_CLASSES = ['nav-wrap', 'nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-tiny-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title', 'nav-micro-text'];
+  const STAGE_CLASSES = ['nav-wrap', 'nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-tiny-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title', 'nav-micro-text', 'nav-topics-inline'];
   const before = STAGE_CLASSES.filter((c) => inner.classList.contains(c)).join(' ');
   inner.classList.remove(...STAGE_CLASSES);
   // NOTE: --nav-h is deliberately NOT cleared here. It used to be removed
@@ -4439,11 +4439,21 @@ function fitMainNav() {
   // 1) drop Home, 2) collapse Search to just its icon, 3) shrink the labels.
   // Only when all three still don't fit do we wrap to a second row (re-adding
   // Home there, dropping it again if that row itself wraps).
+  // revamp1180 — Topics is a first-class nav LINK, second after Home, whenever
+  // the row has room for it; the standalone button beside Search is what it
+  // degrades INTO, not its permanent home. It is the first thing shed, before
+  // Home — losing it costs nothing, since dropping it puts the button back.
+  // Only ever inline while the links row is actually on screen: below the
+  // mobile breakpoint that row is display:none and the button beside Search is
+  // the only way into Topics at all.
+  const linksRow = inner.querySelector('#nav-links');
+  if (linksRow && getComputedStyle(linksRow).display !== 'none') inner.classList.add('nav-topics-inline');
+  if (!fits()) inner.classList.remove('nav-topics-inline');
   if (!fits()) inner.classList.add('nav-drop-home');
   if (!fits()) inner.classList.add('nav-icon-search');
   if (!fits()) inner.classList.add('nav-small-text');
   if (!fits()) {
-    inner.classList.remove('nav-drop-home', 'nav-icon-search', 'nav-small-text');
+    inner.classList.remove('nav-topics-inline', 'nav-drop-home', 'nav-icon-search', 'nav-small-text');
     inner.classList.add('nav-wrap');
     // The two-row nav is taller than the single-row --nav-h, and the header is
     // position:fixed — so publish its REAL height, or the second row would sit
@@ -4581,6 +4591,10 @@ function renderStickyHeroBar(container, route) {
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
           <span class="navbtn-label">Home</span>
         </a>
+        <button type="button" class="navbtn navbtn--topics-inline" id="nav-topics-link" aria-label="Topics" aria-haspopup="dialog" aria-expanded="false">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
+          <span class="navbtn-label">Topics</span>
+        </button>
         <a href="#/intelligence" class="navbtn" id="nav-daily" aria-label="AI Briefings">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg></span>
           <span class="navbtn-label"><span class="nl-full">AI Briefings</span><span class="nl-short">Briefings</span></span>
@@ -4612,6 +4626,11 @@ function renderStickyHeroBar(container, route) {
     e.stopPropagation(); toggleTopicsNavDropdown();
   });
   document.getElementById('nav-topics')?.addEventListener('click', (e) => {
+    e.stopPropagation(); toggleTopicsNavDropdown();
+  });
+  // revamp1180 — the inline Topics link (second in the row, after Home) opens the
+  // same dropdown. Only one of the two is ever on screen: see fitMainNav.
+  document.getElementById('nav-topics-link')?.addEventListener('click', (e) => {
     e.stopPropagation(); toggleTopicsNavDropdown();
   });
   // Highlight the active top-level topic in the nav.
