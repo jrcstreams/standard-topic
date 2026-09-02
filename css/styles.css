@@ -31313,7 +31313,10 @@ body.tt-on #content .ndp .prompts-dd {
      right for a row — the strip's bottom rule reads as the row's top edge — but
      a bordered card glued to the strip reads as caught under it (#img1340).
      Rows (below 880) keep the flush seam. */
-  html body.tt-on #section-newsfeed .news-list[class] { margin-top: 12px !important; }
+  /* Specificity, not preference: the rule this replaces is
+     `body.tt-on .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed
+     .news-list` — five classes, because each :not() counts as one. */
+  html body.tt-on[class][class] #section-newsfeed .news-list[class][class] { margin-top: 12px !important; }
 }
 
 /* (4) The homepage hero: the title starts higher, and the topic chips get real
@@ -31340,9 +31343,9 @@ body.home-search .home-hero {
    and skipped Home only because the hero paints blue behind the padding, which
    hides the gap without closing it. 16px: enough that the title isn't jammed
    under the sidebar's own header, ~40px less than it was. */
-html body.nav-docked.home-search.app-mode[class][class] #content,
-html body.nav-docked.home-search.app-mode.sticky-always[class][class] #content,
-html body.nav-docked.home-search.app-mode.sticky-always.has-subnav[class][class] #content {
+html body.nav-docked.home-search.app-mode:not(.tt-on)[class][class] #content,
+html body.nav-docked.home-search.app-mode.sticky-always:not(.tt-on)[class][class] #content,
+html body.nav-docked.home-search.app-mode.sticky-always.has-subnav:not(.tt-on)[class][class] #content {
   padding-top: 16px !important;
 }
 
