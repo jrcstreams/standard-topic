@@ -31244,3 +31244,23 @@ body.tt-on[class][class] .topic-viewtabs {
 .navbtn--topics-inline { display: none !important; }
 .sticky-hero-inner.nav-topics-inline .navbtn--topics-inline { display: inline-flex !important; }
 .sticky-hero-inner.nav-topics-inline .navbtn--topics-right { display: none !important; }
+
+/* ═══ revamp1180b — the topic strip's reserve follows its new height ═════════
+
+   On topic pages the tab strip is a SEPARATE fixed element that --subnav-height
+   (the identity band alone) does not measure, so its height is hard-coded into
+   two #content reserves as "+52px". Growing the strip to 56 without moving
+   those left the first story 4px behind it. One variable now, so the next
+   change to the strip's height only has to be made in one place. */
+:root { --tt-tabstrip-h: 56px; }
+html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home:not(.tview-brief):not(.tview-tools)) #content,
+html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content {
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 66px) + var(--tt-tabstrip-h)) !important;
+}
+
+/* The Prompts shell keeps a 2px inline padding of its own on .prompts-dd, which
+   put its rows 2px inside the gutter its own band and tab strip run on. */
+body.tt-on #content .ndp .prompts-dd {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
