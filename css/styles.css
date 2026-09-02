@@ -30536,11 +30536,12 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child:
   padding-top: 0 !important;
 }
 
-/* (3) With the first story open, the section head's own 2px rule became a second
-   line stacked right above the open card's border. The open card supplies its
-   own edge — drop the rule for as long as it's open. */
-body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child.news-card--open) .newsfeed-head,
-body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child:has(.news-act-ai[aria-expanded="true"])) .newsfeed-head {
+/* (3) With the first story open, the "Today's News" rule became a second line
+   stacked right above the open card's own border. The open card supplies its own
+   edge — drop the rule for as long as it's open. (The rule lives on
+   .newsfeed-headrow, not on .newsfeed-head.) */
+body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child.news-card--open) .newsfeed-headrow,
+body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child:has(.news-act-ai[aria-expanded="true"])) .newsfeed-headrow {
   border-bottom-color: transparent !important;
 }
 
@@ -30622,3 +30623,37 @@ body:not(.tt-on).home-search .home-v2 .home-featbriefs .hb-head {
    can sit up against it. */
 body.home-search .home-hero { padding-bottom: 10px !important; margin-bottom: 0 !important; }
 body.home-search.app-mode .topic-layout.home-grid > .home-sections { margin-top: -0.7rem !important; }
+
+/* ═══ revamp1174 — Home: the two column heads land on ONE line, and the feed
+   starts closer to its rule ═════════════════════════════════════════════════
+
+   The heads were aligned by giving both a 46px min-height and bottom-aligning
+   their contents (revamp1052), so each rule landed wherever its own content +
+   padding happened to fall — a 25px title with 17px under it on the left, a
+   30px icon chip with 16px on the right. The moment either padding moved, the
+   two rules parted (#img1314). Pin the BOX instead: both heads are a 48px
+   border-box with the rule ON that box's bottom edge, so the rules sit at
+   exactly 48px from the top of each column no matter what's inside them. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-head,
+body:not(.tt-on).home-search .home-v2 .newsfeed-head {
+  min-height: 0 !important; padding: 0 !important; margin: 0 0 10px !important;
+  border-bottom: 0 !important; align-items: flex-end !important;
+}
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-headrow,
+body:not(.tt-on).home-search .home-v2 .newsfeed-headrow,
+body:not(.tt-on).home-search .home-v2 .home-featbriefs .hb-head {
+  display: flex !important; align-items: flex-end !important;
+  box-sizing: border-box !important;
+  height: 48px !important; min-height: 48px !important;
+  padding: 0 0 14px !important;
+  border-bottom: 2px solid #e0e5ee !important;
+}
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-headrow,
+body:not(.tt-on).home-search .home-v2 .newsfeed-headrow { margin: 0 !important; width: 100% !important; }
+body:not(.tt-on).home-search .home-v2 .home-featbriefs .hb-head { margin: 0 0 14px !important; }
+
+/* The first story sat ~64px below the rule: the head's margin, the list's own
+   margin AND its padding, then the card's padding. Trim the two that are pure
+   air and let the card's own padding be the space. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-list,
+body:not(.tt-on).home-search .home-v2 .news-list { margin-top: 2px !important; }
