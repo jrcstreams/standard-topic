@@ -5,8 +5,8 @@
 // the newest ~50 and forgets the rest). This is the WRITE path.
 //
 // Topics are processed in rotating batches so one run never fans out to all
-// 100 rss.app feeds at once: with BATCH_SIZE=25 and a 6h schedule, all topics
-// are covered every 24h. Dedup is ON CONFLICT (topic_id, external_id) DO
+// 100 rss.app feeds at once: with BATCH_SIZE=25 and the 3h schedule, all topics
+// are covered every 12h. Dedup is ON CONFLICT (topic_id, external_id) DO
 // NOTHING, so only genuinely new articles are stored. After each topic we
 // prune to KEEP_PER_TOPIC newest rows to bound growth.
 //
@@ -25,7 +25,15 @@ const RSSAPP_BASE = 'https://api.rss.app/v1/feeds';
 const BATCH_SIZE = 25;          // feeds fetched per run
 const FETCH_LIMIT = 100;        // articles pulled per feed (rss.app ceiling)
 const KEEP_PER_TOPIC = 1000;    // retained history per topic
-const ROTATE_MS = 6 * 60 * 60 * 1000; // matches the 6h cron cadence
+// Must match the cron cadence in vercel.json, or batches repeat instead of
+// advancing. revamp1110 moved the schedule to `0 */3` and left this at 6h, which
+// made floor(now/6h) return the SAME batch for the 00:00 and 03:00 runs, the
+// same one again at 06:00 and 09:00, and so on: every topic was fetched twice
+// inside a 3h burst and then left alone for 21 hours. Same rss.app spend, half
+// the coverage — and a 21h-stale news_stories is what the daily briefing was
+// being built from (#revamp1157). At 3h each run advances one batch, so all
+// four are covered every 12h for exactly the same number of fetches.
+const ROTATE_MS = 3 * 60 * 60 * 1000;
 
 // `raw` (verbatim rss.app item) is NOT stored — no read path used it and it was
 // dead weight on a ~100k-row table (#storage-trim 2026-07-22).

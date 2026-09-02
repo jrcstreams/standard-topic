@@ -29749,3 +29749,20 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
 html body.nav-docked:not(.tt-on):not(.home-search)[class][class] #content {
   padding-top: 0 !important;
 }
+
+/* ═══ revamp1159 — search page: the gap above "Search" (#img1290) ═════════════
+   Three top paddings stack above the title and none of them is the band's own.
+   .search-topzone asks for 8px, but revamp812b's collapsed-state rule
+   (.search-page .search-panel--modal[data-state="collapsed"] .search-panel-topfold)
+   is four classes + an attribute, so its 1.5rem wins on the same element; on top
+   of that revamp812's .search-panel-hero adds 1.1rem and revamp1048's
+   hero-inner another 0.2rem. ~45px of dead band before the heading, well past
+   the ~10px every other page top sits at.
+
+   Both of those older rules were written for the search MODAL, where the fold
+   really is centred in the viewport and needs the offset — so this narrows them
+   to the page, and leaves the nav dropdown alone. */
+.search-page .search-panel--modal[data-state="collapsed"] .search-panel-topfold {
+  padding-top: 10px !important;
+}
+.search-page .search-panel-hero { padding-top: 0 !important; }
