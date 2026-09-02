@@ -31384,3 +31384,44 @@ body.tt-on.home-search #topic-layout,
 body.tt-on.home-search .topic-layout.home-grid {
   row-gap: 0 !important;
 }
+
+/* ═══ revamp1181g — "Today's News" IS the topic pages' "News Feed" title ═════
+
+   Every previous pass at this styled `.newsfeed-title`, but the element that
+   actually renders is the `.newsfeed-title-main` span inside it — the topic CSS
+   says so in as many words at line ~18484 ("sizing only the outer
+   .newsfeed-title leaves it at its own size"). So Home kept a 19.84px/750 span
+   inside a title I had set to 800, against the topic page's 24.8px/800: five
+   pixels smaller and a weight lighter, which is exactly what the two
+   screenshots show (#img1343/1344).
+
+   This is the topic page's own declaration block (styles.css ~14375, plus the
+   800 from .newsfeed-head--topic), restated for Home against the same span —
+   same family, same rem sizes, same tracking, same colour, so the two heads
+   scale together from here on instead of drifting apart again. */
+body.home-search .home-v2 #section-newsfeed .newsfeed-title[class],
+body.home-search .home-v2 #section-newsfeed .newsfeed-title-main[class],
+body.home-search .home-v2 .newsfeed-title[class],
+body.home-search .home-v2 .newsfeed-title-main[class] {
+  font-family: var(--font-display) !important;
+  font-size: 1.55rem !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.022em !important;
+  color: #14213d !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  background: none !important;
+  transform: none !important;
+}
+/* …including the step the topic head takes below 900px. */
+@media (max-width: 899.98px) {
+  body.home-search .home-v2 #section-newsfeed .newsfeed-title[class],
+  body.home-search .home-v2 #section-newsfeed .newsfeed-title-main[class],
+  body.home-search .home-v2 .newsfeed-title[class],
+  body.home-search .home-v2 .newsfeed-title-main[class] {
+    font-size: 1.44rem !important;
+  }
+}
