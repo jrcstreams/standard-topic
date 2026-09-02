@@ -30739,3 +30739,13 @@ body:not(.tt-on) .topic-band .topic-home .newsfeed-headrow { width: 100% !import
 body.tt-on #content .dih .dih-group--featured .dih-items {
   padding-top: 14px !important;
 }
+
+/* ═══ revamp1170 — homepage Trending tab: the AI-gen caption is centred in its
+   own band (#img1264) ═══════════════════════════════════════════════════════
+   revamp1062 sat the caption "tight under the subnav" at margin-top 4px while
+   keeping 11px between it and its bottom rule — so in tab mode, where content
+   starts flush at the tab strip, the chip was pinned to the strip with all its
+   air below it. Match the two: 11px above, 11px below. */
+body.tt-on.home-search #home-trending .trend-legend-row {
+  margin-top: 11px !important;
+}
