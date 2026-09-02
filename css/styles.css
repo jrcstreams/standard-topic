@@ -31328,3 +31328,18 @@ body.home-search .home-hero {
    line-height so the element type stops deciding the row height (#img1341). */
 .navmenu-quicklink .navmenu-cta-label,
 .navmenu-cta .navmenu-cta-label { line-height: 1.2 !important; }
+
+/* ═══ revamp1181b — the homepage title starts where the page does (docked) ═══
+
+   With the sidebar docked, #site-header is translated off-screen (measured at
+   top: -56, opacity 0) — but Home still reserves a full var(--nav-h) of
+   padding above its hero, so the title sat ~70px down a band with nothing in
+   it. revamp1158 already zeroes that reserve for every OTHER page when docked
+   and skipped Home only because the hero paints blue behind the padding, which
+   hides the gap without closing it. 16px: enough that the title isn't jammed
+   under the sidebar's own header, ~40px less than it was. */
+html body.nav-docked.home-search.app-mode[class][class] #content,
+html body.nav-docked.home-search.app-mode.sticky-always[class][class] #content,
+html body.nav-docked.home-search.app-mode.sticky-always.has-subnav[class][class] #content {
+  padding-top: 16px !important;
+}
