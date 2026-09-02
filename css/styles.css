@@ -31512,7 +31512,11 @@ html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).sticky-always.
 /* (3) The AI-generated label is a pill wherever it appears — the shape the
    collapsed sidebar card already gives it — so its hover has something to
    round. A touch darker than the card it sits on, and darker again on hover. */
-.di-prov2[class] {
+/* [class][class][class]: the tab-mode surface states this at
+   `body.tt-on .tview-brief .di-prov2` (three classes) with a translucent ground
+   and no border, and .how-aigen states a fourth. This has to outrank both or
+   the label keeps a different shape on the one surface where it is largest. */
+.di-prov2[class][class][class] {
   align-self: flex-start;
   padding: 5px 11px !important;
   border-radius: 999px !important;
@@ -31520,7 +31524,7 @@ html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).sticky-always.
   border: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent) !important;
 }
 @media (hover: hover) {
-  .di-prov2[class]:hover { background: #dfe6f3 !important; border-color: color-mix(in srgb, #2f4d9e 18%, transparent) !important; }
+  .di-prov2[class][class][class]:hover { background: #dfe6f3 !important; border-color: color-mix(in srgb, #2f4d9e 18%, transparent) !important; }
 }
 
 /* (4) The section rules carry the weight of the type above them. */
