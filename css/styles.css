@@ -29719,3 +29719,16 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
 /* Tighten the head-room above the nav group so search and the rows read as one
    rhythm (the 1.1rem base left an odd gap under the field). */
 .navmenu-quicklinks { padding-top: 0.85rem !important; }
+
+/* ═══ revamp1157 — Prompts page heading sizes: Featured Prompts row titles now
+   match Prompts by Topic, and both step DOWN from the old 1.06rem (#img1247).
+   Featured rows were 0.83rem (.aii-fi-acclist .aii-fi-acc-name), the topic
+   cards 1.06rem — the two lists read as different components. One size, 0.97rem
+   / 600, for both. Featured is scoped to the Prompts landing so topic pages and
+   the search host keep their own smaller rows. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist .aii-fi-acc-name {
+  font-size: 0.97rem !important;
+  font-weight: 600 !important;
+}
+.prompts-home .pdir .pdir-card-name,
+.ph-body .pdir .pdir-card-name { font-size: 0.97rem !important; }
