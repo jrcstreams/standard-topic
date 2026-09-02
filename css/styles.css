@@ -30200,3 +30200,61 @@ body:not(.tt-on) .page-hero-sub {
 .ndp .aiidd-pagehead {
   border-bottom: 2px solid color-mix(in srgb, #2f4d9e 22%, transparent) !important;
 }
+
+/* ═══ revamp1168 — Trending page header: one separator, caption inside the hero ══
+   The hero carried a faint blue rule, then the caption bar carried a 2px grey one
+   ~40px below it — two separators for a single boundary (#img1305-1307). The
+   "AI-generated content included" caption and the sports toggle belong to the
+   header, not to a bar of their own: on the wide layout they move ABOVE the
+   hero's rule and sit in the tail of its gradient, and the 2px rule goes. In tab
+   mode the hero isn't rendered at all (.aii-nav-dd-pagelike .aii-nav-dd-head is
+   display:none there), so the toggle moves into the sticky grey page-title band —
+   which keeps it reachable down the whole list — and the caption sits between
+   that band and the first trend's rule. */
+
+/* Both layouts: the caption stops being a bar of its own. */
+.ndp.aii-nav-dd-trending .aii-nav-dd-subbar,
+.ndp.aii-nav-dd-trending .tlm-controlbar,
+.ndp.aii-nav-dd-trending.is-condensed .aii-nav-dd-subbar {
+  border-bottom: 0 !important;
+  background: transparent !important;
+  margin-bottom: 0 !important;
+}
+
+/* ── Wide: the caption row rides in the hero ── */
+/* The hero's own rule moves down to the caption row, so the header ends in ONE
+   line, directly above the first trend. */
+body:not(.tt-on) .ndp.aii-nav-dd-trending .aii-nav-dd-head {
+  border-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 12px !important;
+}
+/* The gradient (the head's ::before) ends in pure white at the head's bottom
+   edge. Carry it 44px further down so the white lands under the caption row and
+   the row sits in the fade rather than on flat white below it. The head holds
+   z-index 6, so the row has to out-stack the bleeding pseudo-element to stay
+   legible — hence relative + 7. */
+body:not(.tt-on) .ndp.aii-nav-dd-trending .aii-nav-dd-head::before {
+  bottom: -44px !important;
+}
+body:not(.tt-on) .ndp.aii-nav-dd-trending .aii-nav-dd-subbar {
+  position: relative !important;
+  z-index: 7 !important;
+  padding: 0 2px 13px !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 13%, transparent) !important;
+}
+
+/* ── Tab mode: caption under the grey band, toggle inside it ── */
+body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-subbar {
+  position: static !important;
+  padding: 11px 2px 11px !important;
+  border-bottom: 1px solid #e4e8f0 !important;
+}
+/* One toggle, not two — in tab mode it lives in the band. */
+body.tt-on .ndp.aii-nav-dd-trending .trend-sports-toggle { display: none !important; }
+
+/* The band's own toggle: "Include" is the droppable word on a small phone, where
+   the band also carries the icon + page name. */
+@media (max-width: 400px) {
+  #sub-header [data-trend-sports-nav] .tst-lead { display: none !important; }
+}

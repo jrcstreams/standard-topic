@@ -4103,6 +4103,13 @@ function renderPageNavBar(kind) {
       // revamp1047: Condensed/Expanded is now a single toggle (like "Include
       // Sports Trends") — off = condensed, on = every subtopic list expanded.
       ? '<button type="button" class="trend-sports-toggle pagenav-toggle" data-topics-expand role="switch" aria-checked="false" title="Expand every topic\'s subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>'
+      // revamp1168: Trending's sports toggle rides in this band too. In tab mode
+      // the page's blue hero is hidden, so the band IS the page title — and it's
+      // sticky, which keeps the control reachable down the whole list. On the
+      // wide layout the toggle also sits in the hero; the two are never on screen
+      // together (the band only reveals once the hero has scrolled away).
+      : kind === 'trending'
+      ? `<button type="button" class="trend-sports-toggle pagenav-toggle" data-trend-sports-nav role="switch" aria-checked="${window.__trendSports && window.__trendSports.included() === false ? 'false' : 'true'}" title="Show or hide sports trends"><span class="trend-sports-toggle-label"><span class="tst-lead">Include </span>Sports Trends</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>`
       : '');
   // revamp1148 — the Prompts page carries its section tabs INSIDE the sub-header
   // band (like the other pages), not floating in the content. Active state is
@@ -4124,6 +4131,11 @@ function renderPageNavBar(kind) {
         ${action}
       </div>
     </div>${promptsTabs}`;
+  // revamp1168: drive the SAME state the in-page control drives — the trending
+  // component owns it and re-renders both the list and its own toggle.
+  subHeader.querySelector('[data-trend-sports-nav]')?.addEventListener('click', () => {
+    window.__trendSports?.toggle();
+  });
   subHeader.querySelectorAll('[data-prompts-subnav-tabs] [data-pview]').forEach((b) => b.addEventListener('click', () => {
     const topics = b.dataset.pview === 'topics';
     document.body.classList.toggle('pview-topics', topics);

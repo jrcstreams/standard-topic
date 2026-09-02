@@ -548,17 +548,35 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
       }
     }
   }
+  // revamp1168: the sports toggle also rides in the grey page-title band, which
+  // the ROUTER renders (renderPageNavBar) outside this component — and rebuilds
+  // on navigation and at every breakpoint crossing. So publish the state instead
+  // of wiring across: the band's toggle calls in here, and every re-render pushes
+  // the switch position back out to it.
+  const syncNavToggle = () => {
+    document.querySelector('#sub-header [data-trend-sports-nav]')
+      ?.setAttribute('aria-checked', isExcludeSports() ? 'false' : 'true');
+  };
+  const applySportsToggle = () => {
+    setExcludeSports(!isExcludeSports());
+    state.expanded = false;
+    renderControls();
+    renderGrid();
+  };
+  window.__trendSports = {
+    included: () => !isExcludeSports(),
+    // A closed modal leaves its mount points detached — don't let a stale
+    // registration render into nothing.
+    toggle: () => { if (controlsEl.isConnected) applySportsToggle(); },
+  };
+
   function renderControls() {
     controlsEl.innerHTML = controlsHTML();
+    syncNavToggle();
     controlsEl.querySelector('.trend-cat-select')?.addEventListener('change', (e) => { state.category = e.target.value; state.expanded = false; renderGrid(); });
     // Sports include/exclude toggle — filters the live + Earlier lists and backfills
     // the shown set with non-sports trends; the reveal count resets so it re-fills.
-    controlsEl.querySelector('[data-trend-sports-toggle]')?.addEventListener('click', () => {
-      setExcludeSports(!isExcludeSports());
-      state.expanded = false;
-      renderControls();
-      renderGrid();
-    });
+    controlsEl.querySelector('[data-trend-sports-toggle]')?.addEventListener('click', applySportsToggle);
   }
   // Pull the last 3 days of stored trends, drop anything still live (matched by
   // query), and present the rest as "Earlier". Cross-checks against state.all so
