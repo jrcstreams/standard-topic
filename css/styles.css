@@ -30059,3 +30059,17 @@ body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-head { padding-bottom: 0.3rem !i
   margin-top: 0 !important; border-top: none !important;
   padding: 4px 15px 14px !important;
 }
+
+/* ═══ revamp1162 — Topics page: one row size across Featured Topics and All
+   Topics, the way revamp1157 settled Featured Prompts vs Prompts by Topic
+   (#img1296/1297) ════════════════════════════════════════════════════════════
+
+   Featured Topics rows were 0.83rem in a 52px row; the All Topics accordion was
+   1.06rem in a ~62px row — two different components stacked on one page. Meet
+   in the middle at the Prompts page's 0.97rem / 600 and a 58px row: Featured
+   steps up, All Topics steps down. Chip sizes stay as they are (26px featured /
+   32px accordion), which is exactly how the Prompts page reads. */
+.tfeat-grid .tfeat-name { font-size: 0.97rem !important; font-weight: 600 !important; }
+.tfeat-grid .tfeat-item { min-height: 58px !important; }
+.aiidd-tree .aiidd-parent-name { font-size: 0.97rem !important; font-weight: 600 !important; }
+.aiidd-tree .aiidd-parent-head { padding: 13px 10px !important; }
