@@ -30140,3 +30140,16 @@ body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-head { padding-bottom: 0.3rem !i
     height: 33px !important; padding: 0 10px 0 13px !important; font-size: 0.83rem !important;
   }
 }
+
+/* ═══ revamp1166 — topic AI Briefing (tab mode): the brief runs flush to the
+   page edge (#img1298) ══════════════════════════════════════════════════════
+   revamp1102 pulled the tab-mode gutter down to 16px so the body lines up with
+   the fixed tab strip, and the briefing card is deliberately flattened here
+   (no border, tdi-expand-inner zeroed) — so the brief's text starts at a bare
+   16px while the tab LABELS above it sit at ~28px (16px strip padding + the
+   pill's own). The copy reads jammed against the edge and out of line with
+   everything above it. A small inset on the briefing column only: the news feed
+   and prompts tabs keep the alignment revamp1102 set. */
+body.tt-on .topic-home.tview-brief .topic-top-main {
+  padding-left: 8px !important; padding-right: 8px !important;
+}
