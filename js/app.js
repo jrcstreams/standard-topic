@@ -2446,9 +2446,23 @@ function renderIntelligenceHub(container) {
     const brief = group.querySelector('[data-dih-brief]');
     if (!items || !brief || !btn) return;
     const row = [...items.children].filter((el) => el !== brief && Math.abs(el.offsetTop - btn.offsetTop) < 4);
-    const anchor = row.length ? row[row.length - 1] : btn;
-    if (brief.previousElementSibling !== anchor || brief.parentElement !== items) {
-      items.insertBefore(brief, anchor.nextSibling);
+    // revamp1183: in Featured the briefing opens ABOVE the rest of its row —
+    // the row's other cards get pushed below it, so the one you picked stays
+    // where your eye already is instead of the panel appearing past two cards
+    // you didn't click. The by-topic accordions keep opening under their row:
+    // those lists are long and the row you clicked is the anchor you scroll
+    // back to.
+    const featured = group.classList.contains('dih-group--featured');
+    if (featured) {
+      const first = row.length ? row[0] : btn;
+      if (brief.nextElementSibling !== first || brief.parentElement !== items) {
+        items.insertBefore(brief, first);
+      }
+    } else {
+      const anchor = row.length ? row[row.length - 1] : btn;
+      if (brief.previousElementSibling !== anchor || brief.parentElement !== items) {
+        items.insertBefore(brief, anchor.nextSibling);
+      }
     }
     brief.classList.add('dih-brief--inline');
   };

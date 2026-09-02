@@ -31436,3 +31436,36 @@ body.home-search .home-v2 .newsfeed-title-main[class] {
     font-size: 1.44rem !important;
   }
 }
+
+/* ═══ revamp1183 — the open briefing's close control joins its masthead ══════
+
+   The panel opened with a "Close Briefing" link, a ✕ and a rule of their own
+   above the briefing's topic pill / date line — a header bar for a panel that
+   already has a header. The homepage briefing card does this properly: one ✕,
+   top-right, on the pill's line (#img1345/1346). Same here. The ✕ is the whole
+   control now; the foot's "Close Briefing" button (revamp1164) still closes it
+   from the bottom of a long read. */
+#content .dih .dih-brief--inline { position: relative !important; }
+#content .dih .dih-brief--inline .dih-brief-bar {
+  position: absolute !important;
+  top: 0.95rem !important;
+  right: 1rem !important;
+  z-index: 4 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+#content .dih .dih-brief--inline .dih-brief-bar .dih-brief-back,
+#content .dih .dih-brief--inline .dih-brief-bar .fb-closelink { display: none !important; }
+/* The rule that sat under that bar belonged to it. */
+#content .dih .dih-brief--inline .dih-brief-title {
+  display: none !important;
+}
+
+/* In one column the card above an open briefing was still drawing its bottom
+   hairline, so a line poked out over the panel's rounded top edge. Featured
+   only — the by-topic lists open their briefing under a row that should keep
+   its separator. */
+#content .dih .dih-group--featured .dih-items > .dih-item:has(+ .dih-brief--inline) {
+  border-bottom-color: transparent !important;
+}
