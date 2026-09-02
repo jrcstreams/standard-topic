@@ -31226,12 +31226,14 @@ body.tt-on[class][class] .topic-viewtabs {
   align-items: center !important;
 }
 
-/* (6) Search and Topics in the mobile header. The row's own 16px flex gap read
-   as almost touching between two pills; 10px on top of it (revamp1180) was an
-   over-correction the other way. 4px — a 20px gap — is the middle (#img1336). */
+/* (6) Search and Topics in the mobile header. The row carries a 16px flex gap
+   of its own, which is what reads as too much between two adjacent pills —
+   adding to it (revamp1180: +10, then +4) only ever made it worse. Pull it
+   back instead: 8px between the two, half what the row gives everything else,
+   because they are one control group rather than two separate items. */
 #site-header .nav-searchbar + .navbtn--topics-right,
 .sticky-hero-inner .nav-searchbar + .navbtn--topics-right {
-  margin-left: 4px !important;
+  margin-left: -8px !important;
 }
 
 /* ═══ revamp1180 — Topics is a nav LINK first, a button second ═══════════════
@@ -31342,4 +31344,22 @@ html body.nav-docked.home-search.app-mode[class][class] #content,
 html body.nav-docked.home-search.app-mode.sticky-always[class][class] #content,
 html body.nav-docked.home-search.app-mode.sticky-always.has-subnav[class][class] #content {
   padding-top: 16px !important;
+}
+
+/* ═══ revamp1181c — "Today's News" sits on its rule the way "News Feed" does ══
+
+   Both heads are a 44px box with 12px of padding under the content, but the two
+   titles measure differently: the topic page's .newsfeed-title is a 27.3px line
+   box, Home's is 14.2 (its flex child collapses to the glyph box). Centred, that
+   difference lands entirely under the title — 12px of padding plus ~15px of
+   leftover box, so the rule sits ~30px below the text instead of 12 (#img1342).
+
+   Bottom-align the content instead of centring it: the gap to the rule is then
+   the padding and nothing else, whatever the title's box happens to measure.
+   Both Home heads keep the same 44px box, so their two rules still land on one
+   line — the constraint revamp1174 exists to protect. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-head,
+body:not(.tt-on).home-search .home-v2 .newsfeed-head,
+body:not(.tt-on).home-search .home-v2 .home-featbriefs .hb-head {
+  align-items: flex-end !important;
 }
