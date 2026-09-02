@@ -29996,3 +29996,66 @@ body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-head { padding-bottom: 0.3rem !i
 #content .prompts-home--v2 .ph-featured .aii-fi-acclist > .aii-fi-acc.is-aboveopen > .aii-fi-accsum {
   border-bottom-color: transparent !important;
 }
+
+/* ═══ revamp1163 — drawer pill scale, Sources header band, news insight head ══
+   Three related fixes on the expanded-insight surfaces (#img1254-1259). */
+
+/* (1) The Search this / Sources / Close row read as primary controls: 36px tall
+   at 0.85rem, sitting under a brief they only annotate. Down to ~31px / 0.8rem
+   so they're clearly secondary to the content above them. */
+.trend-exp-drawers .te-drawer:not([open]) > .te-drawer-sum {
+  padding: 6px 13px !important; font-size: 0.8rem !important; gap: 6px !important;
+}
+.trend-exp-drawers .te-drawer:not([open]) .te-drawer-ic svg,
+.trend-exp-drawers .te-drawer:not([open]) .te-drawer-chev,
+.trend-exp-drawers .te-drawer:not([open]) .te-drawer-go,
+.trend-exp-drawers .te-drawer--close:not([open]) > .te-drawer-sum > svg {
+  width: 14px !important; height: 14px !important;
+}
+
+/* (2) …but the moment Sources OPENS, its summary stops being a pill and starts
+   being the HEADER of a dropdown — so it takes the header proportions used on
+   the topic/prompt accordions: a taller tinted band with a rule under it and a
+   white body beneath. Going the other way on the same element is the point:
+   small as a button, substantial as a header. */
+.trend-exp-drawers .te-drawer[open] {
+  background: #fff !important; border-color: #cfdaee !important;
+}
+.trend-exp-drawers .te-drawer[open] > .te-drawer-sum {
+  padding: 11px 15px !important;
+  font-size: 0.855rem !important; font-weight: 650 !important; color: #26375a !important;
+  background: #eef2fa !important;
+  border-bottom: 1px solid #cfdaee !important;
+  border-radius: 11px 11px 0 0 !important;
+}
+.trend-exp-drawers .te-drawer[open] > .te-drawer-body { padding: 10px 15px 12px !important; }
+
+/* (3) Open news story: the actions row joins the header band. Site, title, time
+   and share were tinted but "Close Insight / View Story" sat on the body fill,
+   which split the head in two and made the buttons look like part of the brief.
+   Everything that isn't the brief is the header now — same header-band / lighter
+   -body split the topic and prompt dropdowns use. */
+#section-newsfeed .news-card--open .news-card-foot,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-foot {
+  border-bottom: none !important; padding-bottom: 10px !important;
+}
+#section-newsfeed .news-card--open .news-card-body,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-body {
+  background: #eef2fa !important;
+  margin-top: 0 !important; padding: 0 15px 12px !important;
+  border-bottom: 1px solid #cfdaee !important;
+}
+/* Stories with no summary let the actions float right (:only-child rule) — in
+   the header band they line up with the meta above them regardless. */
+#section-newsfeed .news-card--open .news-card-body > .news-card-actions,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-body > .news-card-actions {
+  margin-left: 0 !important;
+}
+/* The brief is the body: lighter fill, no second rule (the header supplies it).
+   4px + .ni-inner's own 9px = the 13px the panel had. */
+#section-newsfeed .news-card--open .news-panel,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-panel {
+  background: #f8fafc !important;
+  margin-top: 0 !important; border-top: none !important;
+  padding: 4px 15px 14px !important;
+}
