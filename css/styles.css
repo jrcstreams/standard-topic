@@ -31612,3 +31612,13 @@ body #section-newsfeed .news-card[class][class]:has(.news-act-ai[aria-expanded="
 .di-mast-topic ~ .di-mast-time::before,
 .di-mast-date ~ .di-mast-time::before { margin-right: 9px !important; }
 .tdi-date .tdi-stamp-sep { margin-left: 3px !important; }
+
+/* ═══ revamp1187d — one "Change Page" trigger, not one per page ══════════════
+   The markup is shared, but its chevron rendered at its 18px attribute size on
+   the pagenav bands and at 14 on Home, where `.tsp-btn-browse .tsp-chev` sizes
+   it — so the same control looked different from page to page on a phone. One
+   size, stated at the control. */
+.tsp-btn-browse .tsp-chev[class] {
+  width: 14px !important;
+  height: 14px !important;
+}
