@@ -4623,10 +4623,13 @@ function renderStickyHeroBar(container, route) {
   //    the sub-1200px behaviour. Preference persists across visits. ──
   const DOCK_MQ = window.matchMedia('(min-width: 900px)');
   // revamp1036: the sidebar IS the site's primary navigation, so a docked
-  // sidebar is the default at any width that can hold one. A manual collapse
-  // applies while you stay at that width; the moment the viewport crosses back
-  // up over the dock threshold it re-expands, rather than a single collapse
-  // months ago deciding the layout forever.
+  // sidebar is the default at any width that can hold one.
+  // revamp1157: a manual collapse holds for the REST OF THE SESSION — resizing
+  // across the dock threshold no longer undoes it. Closing the sidebar is a
+  // deliberate choice; the layout shouldn't second-guess it every time the
+  // window changes size. Leaving it open keeps the old behaviour: it re-docks
+  // on its own at any width that can hold it. The choice is session-scoped —
+  // a fresh page load starts expanded again (see the startup clear below).
   const dockWanted = () => { try { return localStorage.getItem('st:sidebar') !== 'closed'; } catch (_) { return true; } };
   const setDockPref = (open) => { try { localStorage.setItem('st:sidebar', open ? 'open' : 'closed'); } catch (_) {} };
   const applyDock = () => {
@@ -4649,10 +4652,10 @@ function renderStickyHeroBar(container, route) {
   window.__dockState = () => DOCK_MQ.matches && dockWanted();
   if (!window.__dockMQBound) {
     window.__dockMQBound = true;
-    DOCK_MQ.addEventListener('change', (e) => {
-      // Crossing UP into dockable territory clears a previous collapse, so the
-      // sidebar comes back on its own as the window widens.
-      if (e.matches) { try { localStorage.removeItem('st:sidebar'); } catch (_) {} }
+    DOCK_MQ.addEventListener('change', () => {
+      // revamp1157: no state reset here — a session collapse survives every
+      // resize. Widening only re-docks when the user never collapsed (or has
+      // re-opened it with the desktop hamburger) — what dockWanted() says.
       if (window.__applyDock) window.__applyDock();
     });
   }
@@ -4722,7 +4725,8 @@ function renderStickyHeroBar(container, route) {
   // revamp1052: a manual collapse only lasts the session — every fresh page
   // load defaults the sidebar to expanded on any width that can hold it. So
   // clear the stored 'closed' flag once at startup; a mid-session collapse
-  // still persists until the next refresh.
+  // still persists until the next refresh (and, since revamp1157, across any
+  // amount of resizing in between).
   try { if (localStorage.getItem('st:sidebar') === 'closed') localStorage.removeItem('st:sidebar'); } catch (_) {}
   applyDock();
 
