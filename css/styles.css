@@ -30777,10 +30777,16 @@ body.home-search.tt-on:not(.nav-docked) #topic-layout {
 /* The tab strip takes the banner's inset in BOTH states — it was pinned at 16
    by the shared `body.tt-on .topic-viewtabs` shorthand, which has no docked
    step. Longhand so that shorthand's vertical padding survives. */
+/* The #sub-header half of each pair is not decoration: the rule being replaced
+   is written `body.home-search.tt-on #sub-header .home-viewtabs, …`, and an id
+   outranks any number of classes — a class-only selector here loses however
+   specific it looks. */
+body.home-search.tt-on #sub-header .home-viewtabs,
 body.home-search.tt-on .home-viewtabs {
   padding-left: 16px !important;
   padding-right: 16px !important;
 }
+body.home-search.tt-on.nav-docked #sub-header .home-viewtabs,
 body.home-search.tt-on.nav-docked .home-viewtabs {
   padding-left: 32px !important;
   padding-right: 32px !important;

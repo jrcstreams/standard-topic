@@ -2767,6 +2767,19 @@ function closeAllPickers(except) {
 // Home reset — used by the site title + the Home nav icon. Navigates home and
 // tears down every open overlay (nav dropdown, modals, topic pickers) so home is
 // always a clean slate (#img10).
+// revamp1176: the homepage's tabs are in-page state, not routes, so "go home"
+// from another tab was a no-op — the router sees the same #/ and skips, leaving
+// you sitting on AI Briefings while the page insists you're home. Home means the
+// News Feed. Click the tab rather than re-implementing it: that handler also
+// scrolls to the top, swaps the news-only filter row back in, and re-measures
+// the sub-header height that #content's padding is derived from.
+// A no-op off tab mode (where every section shows at once and news is already
+// the active tab) and on any page that has no home tabs.
+function showHomeNewsTab() {
+  const news = document.querySelector('[data-hview="news"]');
+  if (news && !news.classList.contains('is-active')) news.click();
+}
+
 function resetToHome(e) {
   if (e) e.preventDefault();
   window.dispatchEvent(new CustomEvent('close-all-modals'));
@@ -2774,8 +2787,11 @@ function resetToHome(e) {
   try { closeAllPickers(); } catch (_) {}
   const h = routeHash() || '';
   if (h === '#/' || h === '' || h === '#') {
+    showHomeNewsTab();
     try { window.scrollTo(0, 0); } catch (_) {}
   } else {
+    // Leaving another page re-renders the homepage, which builds its tabs with
+    // News Feed already selected — nothing to reset here.
     navigate('#/');
   }
 }
@@ -4813,6 +4829,9 @@ function renderStickyHeroBar(container, route) {
   navPanel.querySelectorAll('a, #navmenu-all-topics').forEach(link => {
     link.addEventListener('click', closeUnlessDocked);
   });
+  // revamp1176: the sidebar's Home CTA is a plain #/ link, so clicking it while
+  // already home never reaches the router — land it on the News Feed tab too.
+  navPanel.querySelector('#navmenu-home-link')?.addEventListener('click', showHomeNewsTab);
   navPanel.querySelector('#navmenu-all-topics')?.addEventListener('click', (e) => {
     e.preventDefault();
     closeUnlessDocked();
