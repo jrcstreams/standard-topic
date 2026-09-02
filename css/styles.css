@@ -29683,3 +29683,39 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
    Edit link (it was riding the bottom of the paragraph, #img1286). */
 .aii-pc-prevwrap { padding-top: 4px !important; }
 .aii-pc-edit { margin-top: 12px !important; }
+
+/* ═══ revamp1157 — expanded-sidebar search reads as a field, not a hard box ═══
+   It wore a 2px navy border on a blue-grey fill, so it shouted louder than the
+   navy brand bar above it and clashed with the soft white nav cards below
+   (#img1287). Make it the same white inset as those cards — one calm border,
+   the same shadow and radius — but with placeholder-weight text so it still
+   reads as a search field rather than a sixth nav row. */
+#navmenu-searchbtn, .navmenu-searchbtn {
+  background: #fff !important;
+  border: 1.5px solid #cdd6e6 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 1px 2px rgba(20, 40, 90, 0.05) !important;
+  min-height: 42px !important;
+  padding: 10px 12px !important;
+  gap: 0.55rem !important;
+  margin: 14px 16px 2px !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  color: #64749a !important;
+  transition: border-color .14s ease, box-shadow .14s ease, background .14s ease !important;
+}
+#navmenu-searchbtn svg, .navmenu-searchbtn svg { color: #7c8aab !important; }
+@media (hover: hover) {
+  #navmenu-searchbtn:hover, .navmenu-searchbtn:hover {
+    background: #fff !important; border-color: #b3c1dc !important;
+    box-shadow: 0 1px 3px rgba(20, 40, 90, 0.09) !important;
+  }
+  #navmenu-searchbtn:hover svg, .navmenu-searchbtn:hover svg { color: #2f4d9e !important; }
+}
+#navmenu-searchbtn:focus-visible, .navmenu-searchbtn:focus-visible {
+  outline: none !important; border-color: #6f8fd8 !important;
+  box-shadow: 0 0 0 3px rgba(47, 77, 158, 0.18) !important;
+}
+/* Tighten the head-room above the nav group so search and the rows read as one
+   rhythm (the 1.1rem base left an odd gap under the field). */
+.navmenu-quicklinks { padding-top: 0.85rem !important; }
