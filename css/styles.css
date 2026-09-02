@@ -31374,3 +31374,13 @@ body:not(.tt-on).home-search .home-v2 .newsfeed-head {
   justify-content: flex-end !important;
   align-items: stretch !important;
 }
+
+/* ═══ revamp1181f — home, tab mode: the grid's row gap has nothing to space ══
+   #topic-layout is a grid whose first two children (the blue hero and the
+   body-tabs strip) are display:none in tab mode, leaving one item and an empty
+   0px row — but the 25.6px row-gap is still drawn above it, so the first story
+   sat ~44px under the tab strip where a card wants ~18. */
+body.tt-on.home-search #topic-layout,
+body.tt-on.home-search .topic-layout.home-grid {
+  row-gap: 0 !important;
+}
