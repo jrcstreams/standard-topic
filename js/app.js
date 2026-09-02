@@ -1155,8 +1155,11 @@ function wirePromptsDropdown(panel, initialView) {
   const syncOpenSeps = () => {
     root.querySelectorAll('.pdir, .ph-featured .aii-fi-acclist').forEach((grid) => {
       const items = [...grid.children];
-      const opens = items.filter((el) => el.classList.contains('is-open'));
-      items.forEach((el) => el.classList.toggle('is-aboveopen', !el.classList.contains('is-open')
+      // offsetHeight guards the hidden section in tab mode, where every row
+      // measures 0 and would otherwise read as touching the open card.
+      const opens = items.filter((el) => el.classList.contains('is-open') && el.offsetHeight > 0);
+      items.forEach((el) => el.classList.toggle('is-aboveopen', el.offsetHeight > 0
+        && !el.classList.contains('is-open')
         && opens.some((o) => Math.abs((el.offsetTop + el.offsetHeight) - o.offsetTop) <= 14)));
     });
   };
