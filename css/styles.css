@@ -30698,8 +30698,10 @@ body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-ch
    — but 30px of air sat between them (#content's 22px content gap, plus 4px on
    .aii-nav-dd-inner and 4px on .aii-nav-dd-scroll), leaving the first topic
    floating (#img1315/1316). Sit the list on the sub-nav's bottom edge. Narrow
-   only: on the wide layout the sub-nav is hidden and the blue hero leads. */
-html body.tt-on.pagenav-mode.has-subnav:has(.aii-nav-dd-topics) #content {
+   only: on the wide layout the sub-nav is hidden and the blue hero leads.
+   The tab-mode reserve this overrides (revamp1171) carries a `[class]`
+   specificity bump of its own, so match it and add one. */
+html body.tt-on.pagenav-mode.sticky-always.has-subnav[class][class]:has(.aii-nav-dd-topics) #content {
   padding-top: calc(var(--nav-h) + var(--subnav-height, 102px)) !important;
 }
 body.tt-on .ndp.aii-nav-dd-topics .aii-nav-dd-inner,
