@@ -31225,10 +31225,12 @@ body.tt-on[class][class] .topic-viewtabs {
   align-items: center !important;
 }
 
-/* (6) Search and Topics were almost touching in the mobile header. */
+/* (6) Search and Topics in the mobile header. The row's own 16px flex gap read
+   as almost touching between two pills; 10px on top of it (revamp1180) was an
+   over-correction the other way. 4px — a 20px gap — is the middle (#img1336). */
 #site-header .nav-searchbar + .navbtn--topics-right,
 .sticky-hero-inner .nav-searchbar + .navbtn--topics-right {
-  margin-left: 10px !important;
+  margin-left: 4px !important;
 }
 
 /* ═══ revamp1180 — Topics is a nav LINK first, a button second ═══════════════
