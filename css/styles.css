@@ -30539,9 +30539,11 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child:
 /* (3) With the first story open, the "Today's News" rule became a second line
    stacked right above the open card's own border. The open card supplies its own
    edge — drop the rule for as long as it's open. (The rule lives on
-   .newsfeed-headrow, not on .newsfeed-head.) */
-body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child.news-card--open) .newsfeed-headrow,
-body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child:has(.news-act-ai[aria-expanded="true"])) .newsfeed-headrow {
+   .newsfeed-headrow, not on .newsfeed-head.)
+   One selector, not the usual --open/[aria-expanded] pair: :has() may not be
+   nested inside :has(), and an invalid selector takes the whole rule down with
+   it. The class is what the JS toggles anyway. */
+body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child.news-card--open) .newsfeed-headrow {
   border-bottom-color: transparent !important;
 }
 
@@ -30657,3 +30659,7 @@ body:not(.tt-on).home-search .home-v2 .home-featbriefs .hb-head { margin: 0 0 14
    air and let the card's own padding be the space. */
 body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-list,
 body:not(.tt-on).home-search .home-v2 .news-list { margin-top: 2px !important; }
+
+/* revamp1172b — Featured Prompts' list wrapper kept a 2.4px top margin of its
+   own, so the section rule still didn't quite meet the first row. */
+#content .prompts-home--v2 .ph-featured .ph-flist { margin-top: 0 !important; }
