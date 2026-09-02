@@ -651,6 +651,70 @@ function homeSubnavPickerHTML() {
     </div>`;
 }
 
+// ── revamp1176: "Change Page" ────────────────────────────────────────────────
+// The topic pages' "Change Topic" control, ported to the pages that aren't
+// topics (Home, AI Briefings, Trending, Prompts, Topics, Search). It is the
+// SAME component — .topic-subnav-picker with [data-topic-picker], so
+// wireSubnavPicker() finds and wires it with no special-casing. Only the panel
+// contents differ: there is no related-topic family to browse here, so the
+// actions row sheds its two pills (and with them its separator, which then had
+// nothing left to separate) down to just the ✕, and the grid lists the site's
+// pages under a "Choose Page" label.
+const PAGE_PICKER_ICONS = {
+  home: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>',
+  intelligence: '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg>',
+  trending: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
+  prompts: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  topics: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  search: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+};
+// Canonical order. The ACTIVE page is lifted to the front (with the check) and
+// the rest follow in this order, so "where am I" is always the first cell.
+const PAGE_PICKER_ITEMS = [
+  { key: 'home', name: 'Home', href: '#/' },
+  { key: 'intelligence', name: 'AI Briefings', href: '#/intelligence' },
+  { key: 'trending', name: 'Trending', href: '#/trending' },
+  { key: 'prompts', name: 'AI Prompts', href: '#/prompts' },
+  { key: 'topics', name: 'View All Topics', href: '#/topics' },
+  { key: 'search', name: 'Search Custom Topic', href: '#/search' },
+];
+function pagePickerHTML(activeKey, panelId = 'tsp-panel-page') {
+  const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  const X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  const cell = (p) => {
+    const active = p.key === activeKey;
+    return `<a href="${p.href}" class="tsp-cell${active ? ' is-active' : ''}"${active ? ' aria-current="page"' : ''}>
+        <span class="tsp-cell-ic">${PAGE_PICKER_ICONS[p.key] || ''}</span>
+        <span class="tsp-cell-name">${escapeHTML(p.name)}</span>
+        ${active ? `<span class="tsp-cell-check" aria-hidden="true">${CHECK}</span>` : ''}
+      </a>`;
+  };
+  const ordered = PAGE_PICKER_ITEMS.filter((p) => p.key === activeKey)
+    .concat(PAGE_PICKER_ITEMS.filter((p) => p.key !== activeKey));
+  return `
+    <div class="topic-subnav-picker is-page-picker" data-topic-picker>
+      <button type="button" class="tsp-btn tsp-btn-browse" aria-expanded="false" aria-controls="${escapeAttr(panelId)}" aria-label="Change page">
+        <span class="tsp-btn-lead">
+          <span class="tsp-btn-name">Change Page</span>
+        </span>
+        ${TSP_CHEV}
+      </button>
+      <div class="tsp-panelwrap">
+        <div class="tsp-panel" id="${escapeAttr(panelId)}" role="region" aria-label="Choose page">
+          <div class="tsp-panel-inner">
+            <div class="tsp-actions tsp-actions--bare">
+              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${X_IC}</button>
+            </div>
+            <div class="tsp-scroll">
+              <div class="tsp-group-label">Choose Page</div>
+              <div class="tsp-grid">${ordered.map(cell).join('')}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
 // Desktop body topic-header (revamp774): the topic name leads the landing page
 // as its own section — a real page title with the related topics as quiet inline
 // links beneath it, over a hairline. The sticky subnav band is hidden until the
@@ -2993,6 +3057,7 @@ function renderLayout(route) {
           <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg></span>
           <span class="subnav-ident-name">Home</span>
         </div>
+        ${pagePickerHTML('home', 'tsp-panel-page-home')}
       </div></div>
       <!-- revamp1025: the tab rows live INSIDE the subnav, not in #content.
            In #content they inherited four levels of padding, were clipped by
@@ -3017,6 +3082,7 @@ function renderLayout(route) {
     document.body.classList.toggle('home-scrolled', (window.scrollY || 0) > 12);
     if (heroEl) heroEl.innerHTML = '';
     setupResponsiveNav();
+    wireSubnavPicker(subHeader);
     return;
   }
 
@@ -3106,6 +3172,7 @@ function renderLayout(route) {
             <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>
             <span class="subnav-ident-name">AI Briefings</span>
           </div>
+          ${pagePickerHTML('intelligence', 'tsp-panel-page-brief')}
         </div>
       </div>${briefTabs}`;
     subHeader.querySelectorAll('[data-brief-subnav-tabs] [data-bview]').forEach((b) => b.addEventListener('click', () => {
@@ -3115,6 +3182,7 @@ function renderLayout(route) {
       window.scrollTo(0, 0);
     }));
     observeSubnavHeight();
+    wireSubnavPicker(subHeader);
     wirePageNavReveal();
     return;
   }
@@ -4183,6 +4251,7 @@ function renderPageNavBar(kind) {
           <span class="subnav-ident-name">${name}</span>
         </div>
         ${action}
+        ${pagePickerHTML(kind === 'topics' ? 'topics' : kind, `tsp-panel-page-${kind}`)}
       </div>
     </div>${promptsTabs}${topicsTabs}`;
   subHeader.querySelectorAll('[data-topics-subnav-tabs] [data-tsview]').forEach((b) => b.addEventListener('click', () => {
@@ -4197,6 +4266,7 @@ function renderPageNavBar(kind) {
     // with All Topics), and #content's reserve is measured off it.
     try { setSubnavHeightVar(true); } catch (_) {}
   }));
+  wireSubnavPicker(subHeader);
   // revamp1168: drive the SAME state the in-page control drives — the trending
   // component owns it and re-renders both the list and its own toggle.
   subHeader.querySelector('[data-trend-sports-nav]')?.addEventListener('click', () => {
@@ -5138,8 +5208,16 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     {
       const grid = container.querySelector('.home-v2');
       // revamp1025: the tabs live in #sub-header, so query the document.
+      // revamp1176: in tab mode the home tabs are a doorway, not a viewport.
+      // The narrow layout can only show a peek of each section — which reads as
+      // the whole thing and dead-ends there. The peek earns its place on the
+      // wide layout, where the section sits beside the feed and the full page is
+      // one click away; here the tab IS the page, so go to it. News Feed is the
+      // one that stays put: it's what Home is.
+      const HVIEW_PAGE = { brief: '#/intelligence', trend: '#/trending', tools: '#/prompts' };
       document.querySelectorAll('[data-hview]').forEach((b) => b.addEventListener('click', () => {
         const v = b.dataset.hview;
+        if (document.body.classList.contains('tt-on') && HVIEW_PAGE[v]) { navigate(HVIEW_PAGE[v]); return; }
         // revamp1098: each home tab is its own state — always opens at the top.
         try { (document.scrollingElement || document.documentElement).scrollTop = 0; window.scrollTo(0, 0); } catch (_) {}
         grid.classList.toggle('hview-brief', v === 'brief');

@@ -30812,3 +30812,44 @@ body.tt-on #content .dih .dih-group.dih-group--featured .dih-items {
    needs no re-render — and a display:none card never intersects the observer
    that fills it, so the tail costs nothing until tab mode shows it. */
 body:not(.tt-on) #content .dih .dih-item--extra { display: none !important; }
+
+/* ═══ revamp1176 — "Change Page" picker on the non-topic pages ═══════════════
+   Same .topic-subnav-picker the topic pages use, so it inherits the trigger,
+   the panel, the open/close animation and wireSubnavPicker() wholesale. Two
+   differences, both because there is no topic family to browse here:
+   the actions row is down to its ✕ (no View All Topics / Search Custom Topic
+   pills — they're cells in the list now), and with the row's only content gone
+   its separator was drawing a line under nothing. */
+.tsp-actions--bare {
+  justify-content: flex-end !important;
+  border-bottom: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 6px !important;
+}
+.topic-bodyhead .tsp-actions--bare,
+.is-page-picker .tsp-actions--bare { background: none !important; border-bottom: 0 !important; }
+/* The page names are short and fixed — two even columns read as a menu rather
+   than a topic grid, at every width the panel opens at. */
+.is-page-picker .tsp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 560px) { .is-page-picker .tsp-grid { grid-template-columns: 1fr; } }
+
+/* The trigger sits at the right end of the grey ident bar, after whatever
+   control that page already carries (Expand all / Include Sports Trends). */
+#sub-header .topic-subnav-inner,
+#sub-header .home-ident-row { align-items: center; }
+#sub-header .is-page-picker { margin-left: auto; flex: none; }
+#sub-header .topic-subnav-inner > .pagenav-toggle,
+#sub-header .topic-subnav-inner > .trend-sports-toggle { margin-left: auto; }
+#sub-header .topic-subnav-inner > .pagenav-toggle + .is-page-picker,
+#sub-header .topic-subnav-inner > .trend-sports-toggle + .is-page-picker { margin-left: 14px; }
+
+/* ═══ revamp1177 — Home tab mode: the first story sat on the tab strip ═══════
+   4px of top padding (revamp1140) put the headline hard against the strip's
+   rule the moment the page loaded (#img1316). Give it the same air the rest of
+   the list keeps between stories. */
+body.home-search.tt-on .home-v2 #section-newsfeed .news-list > .news-card:first-child {
+  padding-top: 12px !important;
+}
+body.home-search.tt-on .home-v2 #section-newsfeed .news-list > .news-card:first-child .news-card-link {
+  padding-top: 0 !important;
+}
