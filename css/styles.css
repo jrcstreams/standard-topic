@@ -29766,3 +29766,80 @@ html body.nav-docked:not(.tt-on):not(.home-search)[class][class] #content {
   padding-top: 10px !important;
 }
 .search-page .search-panel-hero { padding-top: 0 !important; }
+
+/* ═══ revamp1160 — trending: an expanded trend swallows the rule above it, and
+   one consistent action-button row (#img1291-1293) ═══════════════════════════
+
+   (1) The grid gap is 0, so the row above's grey border-bottom sits flush on
+   the expanded card's 1.5px blue top border — you read the grey rule, not the
+   card edge, and the line from a half-empty row above runs straight into the
+   card. Kill the rule on whichever cards make up the row directly above, the
+   way the row below already reads clean (its own rule is on ITS bottom edge). */
+.aii-nav-dd-trending .trend-card-grid > .trend-card:has(+ .trend-card.is-expanded) {
+  border-bottom-color: transparent !important;
+}
+@media (min-width: 641px) {
+  /* Two-up: when the expanded card starts a fresh row (odd position) the card
+     TWO before it is the other half of the row above, so it needs it too. */
+  .aii-nav-dd-trending .trend-card-grid > .trend-card:has(+ .trend-card + .trend-card.is-expanded:nth-child(odd)) {
+    border-bottom-color: transparent !important;
+  }
+}
+
+/* (2) Search this / Sources / Close were three different objects: the pill was
+   drawn TWICE on Close (outer .te-drawer border + the inner .te-drawer-sum's
+   own border/fill), while the other two were sized off .te-drawer-sum's own
+   padding and drifted taller with a second radius from the base .te-drawer
+   rule. One border, one radius, one height, on the OUTER element only. */
+.trend-exp-drawers .te-drawer:not([open]) {
+  border: 1px solid #ccd6e8 !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  align-self: center !important;
+}
+.trend-exp-drawers .te-drawer:not([open]) > .te-drawer-sum {
+  border: 0 !important;
+  background: transparent !important;
+  border-radius: inherit !important;
+  box-sizing: border-box !important;
+  min-height: 38px !important;
+  padding: 0 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  line-height: 1 !important;
+  font-family: var(--font-family) !important;
+}
+.trend-exp-drawers .te-drawer-title {
+  font-size: 0.85rem !important; font-weight: 600 !important;
+  line-height: 1 !important; color: inherit !important;
+}
+.trend-exp-drawers .te-drawer:not([open]) > .te-drawer-sum { color: #33455f !important; }
+.trend-exp-drawers .te-drawer-ic { color: #64748b !important; }
+.trend-exp-drawers .te-drawer-ic svg,
+.trend-exp-drawers .te-drawer-chev,
+.trend-exp-drawers .te-drawer-go { width: 15px !important; height: 15px !important; flex: none !important; }
+@media (hover: hover) {
+  .trend-exp-drawers .te-drawer:not([open]):hover { border-color: #a9bce0 !important; background: #f4f7fd !important; }
+  .trend-exp-drawers .te-drawer:not([open]):hover > .te-drawer-sum { background: transparent !important; }
+}
+
+/* Close is the same object at the same size — it just wears a faint red so the
+   one destructive control in the row is unmistakable, with a heavier X than the
+   hairline it had. */
+.trend-exp-drawers .te-drawer--close:not([open]) {
+  border-color: #eccdcd !important; background: #fdf5f5 !important;
+}
+.trend-exp-drawers .te-drawer--close:not([open]) > .te-drawer-sum { color: #9d3d3d !important; }
+.trend-exp-drawers .te-drawer--close > .te-drawer-sum > svg {
+  width: 15px !important; height: 15px !important; flex: none !important;
+  color: #b94a4a !important; stroke-width: 2.8 !important;
+}
+@media (hover: hover) {
+  .trend-exp-drawers .te-drawer--close:not([open]):hover { border-color: #dfa9a9 !important; background: #fbeaea !important; }
+  .trend-exp-drawers .te-drawer--close:not([open]):hover > .te-drawer-sum { background: transparent !important; color: #8a2f2f !important; }
+  .trend-exp-drawers .te-drawer--close:not([open]):hover > .te-drawer-sum > svg { color: #a53a3a !important; }
+}
