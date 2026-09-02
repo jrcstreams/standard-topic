@@ -31622,3 +31622,33 @@ body #section-newsfeed .news-card[class][class]:has(.news-act-ai[aria-expanded="
   width: 14px !important;
   height: 14px !important;
 }
+
+/* ═══ revamp1188 — Home's tab strip is never a passenger in the grey band ════
+
+   The band-plus-strip stack is written inside `@media (max-width: 1199.98px)`,
+   from when tab mode could only happen below that width. revamp1187 moved
+   Home's threshold to 1024 CONTENT px, so with the sidebar docked Home can now
+   be in tab mode at a 1200-1400px viewport — outside that media query, where
+   #sub-header is still a 56px flex ROW and the strip rides in it beside the
+   page name and Change Page (#img1364). State the stack for tab mode itself,
+   not for a width. No padding here: the strip's gutter is revamp1178/1179's. */
+body.home-search.tt-on #sub-header.is-home-ident,
+body.nav-docked.home-search.tt-on #sub-header.is-home-ident {
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+body.home-search.tt-on #sub-header.is-home-ident .topic-banner {
+  min-height: 56px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+body.home-search.tt-on #sub-header .home-viewtabs[class] {
+  display: flex !important;
+  width: 100% !important;
+  margin: 0 !important;
+  align-items: center !important;
+  background: #f8f9fc !important;
+  border-top: 1px solid #e5e9f2 !important;
+  border-bottom: 1px solid #e5e9f2 !important;
+}
