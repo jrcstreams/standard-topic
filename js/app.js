@@ -1370,20 +1370,6 @@ function wirePromptsDropdown(panel, initialView) {
         });
       });
     }
-    // revamp1146 — Prompts page tab nav (tab mode only): switch between the
-    // Featured Prompts and Prompts by Topic sections.
-    const pTabs = root.querySelector('[data-prompts-viewtabs]');
-    const pHome = root.querySelector('.prompts-home--v2');
-    if (pTabs && pHome && !pTabs.__wired) {
-      pTabs.__wired = true;
-      pTabs.querySelectorAll('[data-pview]').forEach((b) => b.addEventListener('click', () => {
-        const v = b.dataset.pview;
-        pHome.classList.toggle('pview-topics', v === 'topics');
-        pHome.classList.toggle('pview-featured', v === 'featured');
-        pTabs.querySelectorAll('[data-pview]').forEach((x) => { const on = x === b; x.classList.toggle('is-active', on); x.setAttribute('aria-selected', String(on)); });
-        window.scrollTo(0, 0);
-      }));
-    }
     syncViewHash(null);
     requestAnimationFrame(updateNavDdFades);
   };
@@ -2371,10 +2357,36 @@ function renderIntelligenceHub(container) {
 
   // A parent card flips between its list of topics and one topic's briefing.
   let openGroup = null;
+  // revamp1171: the briefing opens WHERE it was clicked. The panel is authored
+  // as a sibling after the whole list, so on the multi-column featured row it
+  // always appeared below the last card — a long way from the one you picked.
+  // Move it into the grid, directly under the clicked card's visual row (the
+  // same full-width-child pattern the Prompts accordions use), and put it back
+  // when the briefing closes.
+  const placeBrief = (group, btn) => {
+    const items = group.querySelector('.dih-items');
+    const brief = group.querySelector('[data-dih-brief]');
+    if (!items || !brief || !btn) return;
+    const row = [...items.children].filter((el) => el !== brief && Math.abs(el.offsetTop - btn.offsetTop) < 4);
+    const anchor = row.length ? row[row.length - 1] : btn;
+    if (brief.previousElementSibling !== anchor || brief.parentElement !== items) {
+      items.insertBefore(brief, anchor.nextSibling);
+    }
+    brief.classList.add('dih-brief--inline');
+  };
+  const resetBrief = (group) => {
+    const brief = group.querySelector('[data-dih-brief]');
+    const body = group.querySelector('.dih-groupbody');
+    if (!brief || !body) return;
+    brief.classList.remove('dih-brief--inline');
+    if (brief.parentElement !== body) body.appendChild(brief);
+  };
   const showList = (group) => {
     group.classList.remove('is-brief');
     const brief = group.querySelector('[data-dih-brief]');
     if (brief) brief.hidden = true;
+    group.querySelectorAll('[data-dih-item].is-openitem').forEach((b) => b.classList.remove('is-openitem'));
+    resetBrief(group);
     if (openGroup === group) openGroup = null;
   };
   container.querySelectorAll('[data-dih-group]').forEach((group) => {
@@ -2391,12 +2403,15 @@ function renderIntelligenceHub(container) {
         // briefing's own masthead line (topic pill · date · updated).
         if (title) title.innerHTML = '';
         if (host) { host.innerHTML = ''; renderDailyIntelligence(host, { topic: name, label: name, slug, inline: true }); }
+        group.querySelectorAll('[data-dih-item].is-openitem').forEach((b) => b.classList.remove('is-openitem'));
+        btn.classList.add('is-openitem');
+        placeBrief(group, btn);
         if (brief) brief.hidden = false;
         group.classList.add('is-brief');
         openGroup = group;
         try {
-          const r = group.getBoundingClientRect();
-          if (r.top < 70 || r.top > window.innerHeight * 0.5) group.scrollIntoView({ block: 'start', behavior: 'smooth' });
+          const r = btn.getBoundingClientRect();
+          if (r.top < 70 || r.top > window.innerHeight * 0.6) btn.scrollIntoView({ block: 'start', behavior: 'smooth' });
         } catch (_) {}
       });
     });
@@ -2411,7 +2426,9 @@ function renderIntelligenceHub(container) {
   // responsive, so find the bottom row by offsetTop and mark it.
   const markLastRows = () => {
     container.querySelectorAll('[data-dih-group] .dih-items').forEach((list) => {
-      const items = [...list.children];
+      // Only the cards — an inline briefing panel (revamp1171) also lives in
+      // this grid and would otherwise be measured as a row.
+      const items = [...list.children].filter((el) => el.classList.contains('dih-item'));
       if (!items.length) return;
       let maxTop = -1;
       items.forEach((i) => { i.classList.remove('is-lastrow'); if (i.offsetTop > maxTop) maxTop = i.offsetTop; });
@@ -4114,12 +4131,16 @@ function renderPageNavBar(kind) {
   // revamp1148 — the Prompts page carries its section tabs INSIDE the sub-header
   // band (like the other pages), not floating in the content. Active state is
   // held on the body (body.pview-topics) so it survives sub-header re-renders.
-  const pOnTopics = document.body.classList.contains('pview-topics');
-  const PV_IC = { featured: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 21 3-1 12.5-12.5a2.1 2.1 0 0 0-3-3L3 17z"/><path d="m15 5 3 3"/></svg>', topics: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>' };
+  // revamp1169: Build a Prompt is the third tab. It used to be a promo card
+  // pinned under whichever section was showing, which read as a stray footer on
+  // Featured and was the ONLY thing on By Topic while that section was broken.
+  const pView = document.body.classList.contains('pview-topics') ? 'topics'
+    : document.body.classList.contains('pview-build') ? 'build' : 'featured';
+  const PV_IC = { featured: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 21 3-1 12.5-12.5a2.1 2.1 0 0 0-3-3L3 17z"/><path d="m15 5 3 3"/></svg>', topics: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>', build: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 21 7-7"/><path d="m15 3.5 1.1 2.9 2.9 1.1-2.9 1.1L15 11.5l-1.1-2.9L11 7.5l2.9-1.1z"/><path d="M19.5 13.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z"/></svg>' };
+  const pTab = (v, label) => `<button type="button" class="pst-tab${pView === v ? ' is-active' : ''}" data-pview="${v}" role="tab" aria-selected="${pView === v}"><span class="pst-ic" aria-hidden="true">${PV_IC[v]}</span>${label}</button>`;
   const promptsTabs = kind === 'prompts' ? `
     <div class="prompts-subnav-tabs" data-prompts-subnav-tabs role="tablist" aria-label="Prompts sections">
-      <button type="button" class="pst-tab${pOnTopics ? '' : ' is-active'}" data-pview="featured"><span class="pst-ic" aria-hidden="true">${PV_IC.featured}</span>Featured Prompts</button>
-      <button type="button" class="pst-tab${pOnTopics ? ' is-active' : ''}" data-pview="topics"><span class="pst-ic" aria-hidden="true">${PV_IC.topics}</span>Prompts by Topic</button>
+      ${pTab('featured', 'Featured Prompts')}${pTab('topics', 'Prompts by Topic')}${pTab('build', 'Build a Prompt')}
     </div>` : '';
   subHeader.innerHTML = `
     <div class="topic-subnav-title">
@@ -4137,9 +4158,16 @@ function renderPageNavBar(kind) {
     window.__trendSports?.toggle();
   });
   subHeader.querySelectorAll('[data-prompts-subnav-tabs] [data-pview]').forEach((b) => b.addEventListener('click', () => {
-    const topics = b.dataset.pview === 'topics';
-    document.body.classList.toggle('pview-topics', topics);
-    subHeader.querySelectorAll('[data-prompts-subnav-tabs] [data-pview]').forEach((x) => x.classList.toggle('is-active', x === b));
+    const v = b.dataset.pview;
+    // Two booleans rather than one: 'featured' is the state where neither is set,
+    // so it needs no class of its own and an older body keeps working.
+    document.body.classList.toggle('pview-topics', v === 'topics');
+    document.body.classList.toggle('pview-build', v === 'build');
+    subHeader.querySelectorAll('[data-prompts-subnav-tabs] [data-pview]').forEach((x) => {
+      const on = x === b;
+      x.classList.toggle('is-active', on);
+      x.setAttribute('aria-selected', String(on));
+    });
     window.scrollTo(0, 0);
   }));
   // The Topics bar's expand toggle drives the page's condensed/expanded views.

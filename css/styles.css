@@ -30366,3 +30366,70 @@ body.tt-on:not(.pview-build) #content .prompts-home--v2 .ph-buildzone { display:
     border-radius: 0 !important; background: #f2f5f9 !important; z-index: 0 !important;
   }
 }
+
+/* ═══ revamp1171 — AI Briefings: one responsive layout, and briefings that open
+   where you clicked ═══════════════════════════════════════════════════════════
+
+   (1) Featured Briefings had FIVE layouts stacked on top of each other, added
+   one at a time: auto-fit/240px (947), auto-fit/230px (947b), a fixed 4-col
+   grid with 1100/600 breakpoints (947c), a horizontal snap RAIL from 1100px
+   down (the "half page" state in #img1262/1263), a 2-col tile grid under 600px,
+   and a 1-col override in tab mode. Between them the row changed character
+   three times on the way down and never simply reflowed.
+
+   One grid, everywhere. auto-fit sizes to the CONTAINER, so it needs no
+   viewport breakpoints and no docked-sidebar offset: the max() floor caps it at
+   four columns (each track is at least a quarter of the row) and drops to 3 / 2
+   / 1 as the row narrows past a 200px card. */
+.dih-group.dih-group--featured .dih-items,
+body.tt-on #content .dih .dih-group--featured .dih-items {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(max(200px, (100% - 4.8rem) / 4), 1fr)) !important;
+  column-gap: 1.6rem !important;
+  row-gap: 0 !important;
+  overflow: visible !important;
+  scroll-snap-type: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+/* The rail dressed its cards as bordered tiles; they're separator rows again. */
+@media (max-width: 1100px) {
+  .dih-group.dih-group--featured .dih-item {
+    flex: none !important; width: auto !important;
+    border: 0 !important; border-bottom: 1px solid #e6ebf3 !important;
+    border-radius: 0 !important; background: transparent !important;
+    box-shadow: none !important; padding: 13px 4px 15px !important;
+  }
+  .dih-group.dih-group--featured .dih-item-sum { -webkit-line-clamp: 3; font-size: 0.85rem; }
+}
+
+/* (2) In tab mode the tabs ARE the page's navigation — the "Explore all topics"
+   footer card is a third destination competing with them, and it's the thing
+   pushing the tab content off the bottom (#img1262). Drop it there. */
+body.tt-on #content .dih .dih-foot { display: none !important; }
+
+/* (3) Content rode UNDER the sticky bar on every tab-mode page (#img1266/1267):
+   the reserve is written `calc(var(--nav-h) + 60px + 22px)` with the bar's
+   height hard-coded at 60px, but in tab mode the bar stacks an identity band
+   AND a tab row — 103px. Reserve what the bar actually measures. */
+html body.tt-on.pagenav-mode.sticky-always.has-subnav[class] #content {
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 60px) + 22px) !important;
+}
+
+/* (4) A briefing opens inline, under the row of the card you clicked, as a
+   bordered panel — the same treatment an open Prompts accordion gets. */
+.dih-brief--inline {
+  grid-column: 1 / -1 !important;
+  margin: 10px 0 14px !important;
+  border: 1.5px solid #b9c6e4 !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: 0 8px 24px -14px rgba(30, 58, 138, 0.30) !important;
+  padding: 0.9rem 1rem 1rem !important;
+}
+/* The list stays put while a briefing is open — you can pick another one. */
+.dih-group.is-brief .dih-items { display: grid !important; }
+.dih-group .dih-item.is-openitem {
+  background: #eef2fa !important;
+  border-radius: 10px 10px 0 0 !important;
+}
