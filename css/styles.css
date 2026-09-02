@@ -30663,3 +30663,44 @@ body:not(.tt-on).home-search .home-v2 .news-list { margin-top: 2px !important; }
 /* revamp1172b — Featured Prompts' list wrapper kept a 2.4px top margin of its
    own, so the section rule still didn't quite meet the first row. */
 #content .prompts-home--v2 .ph-featured .ph-flist { margin-top: 0 !important; }
+
+/* ═══ revamp1175 — Trending in tab mode: close the gap over the AI caption ════
+   35px of air sat between the sticky grey band and the "AI-generated content
+   included" caption — a 15px line of small print floating in the middle of it
+   (#img1307). Three separate paddings stack up to it: the tab-mode reserve
+   (revamp1171) puts 22px under the bar, .aii-nav-dd-inner adds 2, and the
+   caption bar carries 11 of its own. The 22px is right for the pages whose tab
+   content opens on a section head; it is too much before a caption line that is
+   itself only a label for the list beneath it.
+
+   Pulled up rather than taken out of the shared reserve, so this stays a
+   Trending change — every other tab-mode page keeps its 22px. The list below
+   follows the caption up, which is the point. */
+body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-subbar {
+  margin-top: -14px !important;
+  padding-top: 8px !important;
+}
+
+/* ═══ revamp1175 — home: the open first story's rule, and Topics' list meets its
+   sub-nav ════════════════════════════════════════════════════════════════════ */
+
+/* (1) revamp1170(3) dropped the "Today's News" rule while the first story is
+   open, but revamp1174 then re-stated `border-bottom: 2px` on .newsfeed-headrow
+   at a heavier selector and further down the file, so the line came back. Same
+   weight, stated last. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child.news-card--open) .newsfeed-headrow,
+body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child.news-card--open) .newsfeed-headrow {
+  border-bottom-color: transparent !important;
+}
+
+/* (2) Topics page in tab mode: the sub-nav carries the page title AND the
+   Featured/All tab strip, so the list below it is a continuation of that header
+   — but 30px of air sat between them (#content's 22px content gap, plus 4px on
+   .aii-nav-dd-inner and 4px on .aii-nav-dd-scroll), leaving the first topic
+   floating (#img1315/1316). Sit the list on the sub-nav's bottom edge. Narrow
+   only: on the wide layout the sub-nav is hidden and the blue hero leads. */
+html body.tt-on.pagenav-mode.has-subnav:has(.aii-nav-dd-topics) #content {
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 102px)) !important;
+}
+body.tt-on .ndp.aii-nav-dd-topics .aii-nav-dd-inner,
+body.tt-on .ndp.aii-nav-dd-topics .aii-nav-dd-scroll { padding-top: 0 !important; }
