@@ -26082,8 +26082,6 @@ body.pagenav-mode #content { background: #fff !important; min-height: 100dvh; }
 /* ── 3. Prompts page in tab mode: one section at a time. ── */
 body.tt-on .ph-viewtabs { display: flex !important; margin-bottom: 1.1rem; }
 body.tt-on .prompts-home .ph-build { display: none !important; }
-body.tt-on .prompts-home:not(.pview-bytopic) .ph-lib { display: none !important; }
-body.tt-on .prompts-home.pview-bytopic .ph-featured { display: none !important; }
 body.tt-on .prompts-home .ph-cta { display: none !important; }
 body.tt-on .prompts-home .ph-featured .ph-sec-head { display: none !important; }
 body.tt-on .prompts-home .ph-lib .ph-sec-head { display: none !important; }
@@ -28518,7 +28516,9 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
 
 /* revamp1082b: v2 is one continuous scroll — every section is always visible,
    overriding the retired pview-tab gating (which hid By Topic unless its tab was
-   active). Id-scoped so it beats the tt-on :not(.pview-bytopic) rules. */
+   active). The .pview-bytopic rules this was written to out-specify are gone as
+   of revamp1169; the id scope now only has to beat the plain-class defaults, and
+   the tab-mode switching below deliberately out-specifies THIS. */
 #content .prompts-home--v2 .ph-featured,
 #content .prompts-home--v2 .ph-lib { display: block !important; }
 #content .prompts-home--v2 .ph-lib .ph-sec-head { display: block !important; }
@@ -29517,14 +29517,15 @@ body.tt-on .prompts-viewtabs .tvt {
 body.tt-on .prompts-viewtabs .tvt.is-active { background: #e8eefb; color: #1e3a8a; }
 body.tt-on .prompts-viewtabs .tvt-ic { display: inline-flex; }
 @media (hover: hover) { body.tt-on .prompts-viewtabs .tvt:not(.is-active):hover { background: #f2f5fb; color: #334155; } }
-/* Switch the sections in tab mode. */
-body.tt-on .prompts-home--v2.pview-topics .ph-featured { display: none !important; }
-body.tt-on .prompts-home--v2:not(.pview-topics) .ph-lib { display: none !important; }
-
-/* revamp1146b — the section-switch rules need the #content prefix to beat the
-   base '#content .prompts-home--v2 .ph-* { display }' specificity. */
-body.tt-on #content .prompts-home--v2:not(.pview-topics) .ph-lib { display: none !important; }
-body.tt-on #content .prompts-home--v2.pview-topics .ph-featured { display: none !important; }
+/* revamp1169 — the element-scoped section-switch rules that used to live here
+   (revamp1146/1146b, and an older .pview-bytopic pair further up) are gone. They
+   keyed off a .pview-topics class on .prompts-home--v2 itself, but revamp1148
+   moved the state to the BODY and the in-content tab strip those rules were
+   written for no longer exists — so the class was never set on the element and
+   ':not(.pview-topics) .ph-lib { display: none }' matched permanently. Selecting
+   "Prompts by Topic" hid Featured (body rule, working) without ever revealing
+   By Topic (element rule, stuck) — an empty tab. The body-scoped rules below are
+   now the only ones. */
 
 /* ═══ revamp1147 — Prompts tab strip sticks just below the sub-header, and the
    now-redundant section headers hide in tab mode (the tab labels the section,
@@ -30257,4 +30258,61 @@ body.tt-on .ndp.aii-nav-dd-trending .trend-sports-toggle { display: none !import
    the band also carries the icon + page name. */
 @media (max-width: 400px) {
   #sub-header [data-trend-sports-nav] .tst-lead { display: none !important; }
+}
+
+/* ═══ revamp1169 — every directory section head's rule IS the first row's top
+   border ══════════════════════════════════════════════════════════════════════
+
+   The Topics page already gets this right: `.tfeat-head` / `.aiidd-pagehead`
+   sit at margin-bottom 0, so the 2px section rule doubles as the top edge of
+   the first row in every column and the rows read as one connected list. Every
+   other directory head kept a 4-16px margin under its rule, which left the
+   first row of each column floating below the line with more air above its
+   label than below it (#img1256-1258) — the complaint that keeps coming back
+   every time one of these lists is restyled. One rule for all of them. */
+#content .prompts-home--v2 .ph-featured .ph-sec-head--card,
+#content .prompts-home--v2 .ph-lib .ph-sec-head--card,
+.dih-featuredhead.ph-sec-head--card,
+.dih-bytopic-head.ph-sec-head--card,
+.ndp .aiidd-pagehead,
+.ndp .aiidd-pagehead.tfeat-head { margin-bottom: 0 !important; }
+/* …and nothing under the rule may re-open the gap. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist,
+#content .prompts-home--v2 .ph-lib .pdir,
+.dih-group--featured .dih-items,
+.dih-groups,
+.ndp .tfeat-grid,
+.ndp .aiidd-tree { margin-top: 0 !important; padding-top: 0 !important; }
+
+/* Featured Prompts' LAST row lost its rule — `:last-child` zeroes the border,
+   so in a 2-column grid the left column ended on a line and the right column
+   ended on nothing (#img1256). Every row keeps its rule; the section closes on
+   a full-width line under both columns, like Prompts by Topic. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist > .aii-fi-acc:last-child > .aii-fi-accsum {
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent) !important;
+}
+
+/* Featured Prompts → Prompts by Topic was 67px apart: the shared prompt
+   component's .aii-builder-secs carries 32px of tail padding, and the page adds
+   a 2.2rem row-gap on top of it. Drop the tail padding and match the Topics
+   page's 1.7rem between its two sections. */
+#content .prompts-home--v2 .ph-featured .aii-builder-secs { padding-bottom: 0 !important; }
+#content .prompts-home--v2 { row-gap: 1.7rem !important; }
+
+/* ═══ revamp1169 — trending: each column's first row sits ON the header rule ═══
+   .aii-nav-dd-scroll carried a 2px top padding, so both columns' first trend
+   floated 2px below the separator and their hover band opened with a white
+   sliver above it (#img1308/1309). Close the gap on the wide layout (tab mode
+   reads fine as it is), and stop the first row's 1px hover bleed — which is
+   there so every other row's hover covers the hairline above it — from painting
+   over the header's own rule. */
+body:not(.tt-on) .ndp.aii-nav-dd-trending .aii-nav-dd-scroll,
+body:not(.tt-on) .ndp.aii-nav-dd-trending .trend-card-grid {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+@media (hover: hover) {
+  body:not(.tt-on) .ndp.aii-nav-dd-trending .trend-card:nth-child(-n+2):not(.is-expanded):hover::before {
+    top: 0 !important;
+  }
 }
