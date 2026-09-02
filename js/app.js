@@ -2186,6 +2186,13 @@ function renderIntelligenceHub(container) {
   // Section-head icons (matching the Prompts page treatment): a sparkle for the
   // "Featured" section, a grid for the "by Topic" directory.
   const SEC_IC_FEATURED = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M19 14l.7 1.9L21.6 17l-1.9.7L19 20l-.7-1.9L16.4 17l1.9-.7z"/></svg>';
+  // revamp1164: a briefing runs long enough that the close control at the TOP
+  // is far off-screen by the time you finish reading it — repeat it at the foot
+  // of the brief. Same [data-dih-back] hook, so the existing per-group wiring
+  // (close + scroll the group back into view) covers it with no extra JS.
+  const DIH_BRIEF_FOOT = `<div class="dih-brief-footbar">
+    <button type="button" class="dih-brief-backfoot" data-dih-back><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Close Briefing</span></button>
+  </div>`;
   const SEC_IC_BYTOPIC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
   container.innerHTML = `
     <div class="dih">
@@ -2224,6 +2231,7 @@ function renderIntelligenceHub(container) {
             </div>
             <div class="dih-brief-title" data-dih-brief-title></div>
             <div data-dih-host></div>
+            ${DIH_BRIEF_FOOT}
           </div>
         </div>
       </section>
@@ -2263,6 +2271,7 @@ function renderIntelligenceHub(container) {
               </div>
               <div class="dih-brief-title" data-dih-brief-title></div>
               <div data-dih-host></div>
+              ${DIH_BRIEF_FOOT}
             </div>
             </div>
           </section>`).join('')}

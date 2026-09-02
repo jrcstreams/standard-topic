@@ -30073,3 +30073,26 @@ body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-head { padding-bottom: 0.3rem !i
 .tfeat-grid .tfeat-item { min-height: 58px !important; }
 .aiidd-tree .aiidd-parent-name { font-size: 0.97rem !important; font-weight: 600 !important; }
 .aiidd-tree .aiidd-parent-head { padding: 13px 10px !important; }
+
+/* ═══ revamp1164 — a Close Briefing control at the FOOT of an open briefing ══
+   A briefing runs several screens; by the time you finish it the close control
+   in the top bar is long gone off-screen and the only way out is to scroll all
+   the way back. The foot repeats it where you actually finish reading. Same
+   compact scale and faint-red treatment as the Close on the trend/news insight
+   rows, under a hairline so it reads as the end of the brief, not part of it. */
+.dih-brief-footbar {
+  display: flex; justify-content: flex-start;
+  margin-top: 16px; padding-top: 14px;
+  border-top: 1px solid #e2e8f2;
+}
+.dih-brief-backfoot {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 13px; border-radius: 10px; cursor: pointer;
+  border: 1px solid #eccdcd; background: #fdf5f5;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #9d3d3d;
+}
+.dih-brief-backfoot svg { flex: none; width: 14px; height: 14px; color: #b94a4a; }
+@media (hover: hover) {
+  .dih-brief-backfoot:hover { background: #fbeaea; border-color: #dfa9a9; color: #8a2f2f; }
+  .dih-brief-backfoot:hover svg { color: #a53a3a; }
+}
