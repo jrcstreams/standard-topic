@@ -30096,3 +30096,19 @@ body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-head { padding-bottom: 0.3rem !i
   .dih-brief-backfoot:hover { background: #fbeaea; border-color: #dfa9a9; color: #8a2f2f; }
   .dih-brief-backfoot:hover svg { color: #a53a3a; }
 }
+
+/* ═══ revamp1164 — grey-nav page title left-aligns with the nav and the content
+   below it on tablet/phone widths (#img1260). ═══════════════════════════════
+   The main nav dropped its gutter from 2rem to 1rem at ≤899.98 (see the
+   .sticky-hero-inner rule in the ≤899.98 block) and .topic-viewtabs / the topic
+   body both sit at 16px there — but .topic-subnav-inner only stepped down at
+   ≤640, a breakpoint that predates the nav's move. So between 641 and 899 the
+   topic name and its icon started 16px right of the hamburger above them and
+   the tab strip below them. Same gutter, same breakpoint. */
+@media (max-width: 899.98px) {
+  #sub-header.is-subnav .topic-subnav-inner,
+  #sub-header.pagenav .topic-subnav-inner,
+  .topic-subnav-inner {
+    padding-left: 1rem !important; padding-right: 1rem !important;
+  }
+}
