@@ -31563,20 +31563,29 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
    (#img1358-1360). Paint it once on the card; the panel below keeps its own
    lighter ground and now bleeds to the card's edges rather than floating inside
    its padding. */
-#section-newsfeed .news-card--open {
+/* The open state is stated twice in this file — as `.news-card--open` and as
+   `:has(.news-act-ai[aria-expanded="true"])`, which is a class and an attribute
+   deeper. Both forms, both matched, or the per-child tints keep winning. */
+#section-newsfeed .news-card--open[class],
+#section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) {
   background: #eef2fa !important;
   padding-bottom: 0 !important;
 }
-#section-newsfeed .news-card--open > .news-card-link,
-#section-newsfeed .news-card--open > .news-card-foot,
-#section-newsfeed .news-card--open > .news-card-body {
+#section-newsfeed .news-card--open[class] > .news-card-link,
+#section-newsfeed .news-card--open[class] > .news-card-foot,
+#section-newsfeed .news-card--open[class] > .news-card-body,
+#section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-card-link,
+#section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-card-foot,
+#section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-card-body {
   background: transparent !important;
 }
 /* The actions row sat ON the rule that closes the header. */
-#section-newsfeed .news-card--open > .news-card-body {
+#section-newsfeed .news-card--open[class] > .news-card-body,
+#section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-card-body {
   padding-bottom: 12px !important;
 }
-#section-newsfeed .news-card--open > .news-panel {
+#section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-panel,
+#section-newsfeed .news-card--open[class] > .news-panel {
   background: #f8fafc !important;
   margin-left: -16px !important;
   margin-right: -16px !important;
