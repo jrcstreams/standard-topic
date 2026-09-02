@@ -31206,10 +31206,21 @@ body.tt-on #content .ndp .prompts-home--v2 {
    that border for the wide layout, where the cards are bordered boxes and the
    first one read as an open box, and it followed into tab mode where the cards
    are full-bleed rows (#img1334/1335). */
-body.tt-on.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child,
-body.tt-on.home-search .home-v2 .news-list > .news-card:first-child,
-body.tt-on .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
-  border-top: 0 !important;
+@media (max-width: 879.98px) {
+  body.tt-on.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child,
+  body.tt-on.home-search .home-v2 .news-list > .news-card:first-child,
+  body.tt-on .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
+    border-top: 0 !important;
+  }
+}
+/* …but 880 and up the feed is bordered CARDS even in tab mode (revamp1181),
+   and a card without its top edge is the open box revamp1179 closed. The rule
+   above is about ROWS, so it belongs to the width where rows exist. */
+@media (min-width: 880px) {
+  body.tt-on.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[class],
+  body.tt-on.home-search .home-v2 .news-list > .news-card:first-child[class] {
+    border-top: 1px solid #e8edf5 !important;
+  }
 }
 
 /* (5) The tab strip carries a little more height on every page. The tabs stay
