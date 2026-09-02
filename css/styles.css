@@ -31566,8 +31566,11 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
 /* The open state is stated twice in this file — as `.news-card--open` and as
    `:has(.news-act-ai[aria-expanded="true"])`, which is a class and an attribute
    deeper. Both forms, both matched, or the per-child tints keep winning. */
-#section-newsfeed .news-card--open[class],
-#section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) {
+/* `body` counts too: the card's white ground in tab mode is stated as
+   `body.tt-on.home-search .home-v2 #section-newsfeed .news-card` — same class
+   count as this, plus one type selector, which breaks the tie. */
+body #section-newsfeed .news-card--open[class][class],
+body #section-newsfeed .news-card[class][class]:has(.news-act-ai[aria-expanded="true"]) {
   background: #eef2fa !important;
   padding-bottom: 0 !important;
 }
