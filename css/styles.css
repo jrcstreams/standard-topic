@@ -31518,6 +31518,7 @@ html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).sticky-always.
    the label keeps a different shape on the one surface where it is largest. */
 body.tt-on .tview-brief .di-prov2[class][class][class],
 body.tt-on .tview-brief [data-di-host] .di-prov2[class][class][class],
+.tdi-cardprov[class][class][class],
 .di-prov2[class][class][class] {
   align-self: flex-start;
   padding: 5px 11px !important;
@@ -31527,6 +31528,7 @@ body.tt-on .tview-brief [data-di-host] .di-prov2[class][class][class],
 }
 @media (hover: hover) {
   body.tt-on .tview-brief .di-prov2[class][class][class]:hover,
+  .tdi-cardprov[class][class][class]:hover,
   .di-prov2[class][class][class]:hover { background: #dfe6f3 !important; border-color: color-mix(in srgb, #2f4d9e 18%, transparent) !important; }
 }
 
