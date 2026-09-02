@@ -30725,3 +30725,17 @@ body:not(.tt-on) .topic-band .topic-home .trail-head {
   border-bottom: 2px solid #e0e5ee !important;
 }
 body:not(.tt-on) .topic-band .topic-home .newsfeed-headrow { width: 100% !important; border-bottom: 0 !important; padding: 0 !important; margin: 0 !important; }
+
+/* ═══ revamp1169 — Featured Briefings need air under their section rule ══════
+   revamp1168 zeroed the gap under every directory head at once
+   (.dih-group--featured .dih-items → margin/padding 0) to stop list ROWS from
+   floating below the line. But the featured briefings aren't rows — they're
+   cards with only 9px of their own top padding, so at zero the icon and title
+   sat right on the rule (#img1263). Put the gap back on the CONTAINER, not the
+   card: the section starts 14px below its rule, while each card keeps its own
+   internal rhythm. Featured only — the accordion lists under "Briefings by
+   Topic" carry their own row padding and are fine as they are. */
+.dih .dih-group.dih-group--featured .dih-items,
+body.tt-on #content .dih .dih-group--featured .dih-items {
+  padding-top: 14px !important;
+}
