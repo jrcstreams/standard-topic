@@ -30166,3 +30166,24 @@ body.tt-on .topic-home.tview-brief .topic-top-main {
 body:not(.tt-on) .topic-band .topic-home > .topic-bodyhead {
   padding-top: 22px !important;
 }
+
+/* ═══ revamp1167 — one head spec for the four standalone page heros ══════════
+   Topics / Trending / Prompts render their hero as `.ndp .aii-nav-dd-head`;
+   AI Briefings renders the same design as `.page-hero`. Two components meant to
+   look identical, drifting: revamp1139 gave the ndp head a 16px bottom pad and
+   left .page-hero on 22px, so the rule under the subtext sat at a different
+   distance per page, and revamp1103's 6px top pad left every one of them
+   starting right at the very top edge of the content column (#img1299-1303).
+
+   State both heads together, once: same top pad, same title→subtext gap, same
+   subtext→rule gap. (Trending's tighter margin BELOW the rule stays — its next
+   row is the AI-gen caption, not a section head, per revamp1161.) */
+body:not(.tt-on) .ndp .aii-nav-dd-head,
+body:not(.tt-on) .page-hero {
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
+}
+body:not(.tt-on) .ndp .aii-nav-dd-sub,
+body:not(.tt-on) .page-hero-sub {
+  margin-top: 10px !important;
+}
