@@ -31484,3 +31484,48 @@ html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).sticky-always[
 html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).sticky-always.has-subnav[class][class] #content {
   padding-top: var(--nav-h) !important;
 }
+
+/* ═══ revamp1186 — one briefing masthead, on every surface it appears ════════
+
+   The topic pill → date · time → AI-generated label lockup renders in five
+   places (the hub's open briefing, the topic sidebar card open and closed, the
+   topic page's AI Briefing tab, the homepage rail), and each had drifted on the
+   same four details: the separator dot sat nearer the date than the time, the
+   three lines were packed tighter than they read, the AI label had no shape of
+   its own (so its hover painted a square), and the section rules under "The Big
+   Picture" / "What Matters Today" were a 1px hairline against 17.6px display
+   type. Fixed once on the shared components (#img1349-1356). */
+
+/* (1) The dot sits between date and time, not beside the date. Its own
+   margin-right (9) has to equal the row's column-gap (7) or it reads off-centre
+   — they are the two halves of the same gap. */
+.di-mast-when { column-gap: 10px !important; }
+.di-mast-date + .di-mast-time::before,
+.di-mast-topic ~ .di-mast-time::before,
+.di-mast-date ~ .di-mast-time::before { margin-right: 10px !important; }
+
+/* (2) Air between the three lines: the pill, the date line, the label. */
+.di-mast { gap: 10px !important; }
+.di-page .di-body,
+.tdi-card--hero2.is-open .di-page .di-body { gap: 0.7rem !important; }
+
+/* (3) The AI-generated label is a pill wherever it appears — the shape the
+   collapsed sidebar card already gives it — so its hover has something to
+   round. A touch darker than the card it sits on, and darker again on hover. */
+.di-prov2[class] {
+  align-self: flex-start;
+  padding: 5px 11px !important;
+  border-radius: 999px !important;
+  background: #e9edf6 !important;
+  border: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent) !important;
+}
+@media (hover: hover) {
+  .di-prov2[class]:hover { background: #dfe6f3 !important; border-color: color-mix(in srgb, #2f4d9e 18%, transparent) !important; }
+}
+
+/* (4) The section rules carry the weight of the type above them. */
+.di-sectitle[class] {
+  border-bottom-width: 2px !important;
+  border-bottom-color: #dfe5ef !important;
+  padding-bottom: 9px !important;
+}

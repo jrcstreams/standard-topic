@@ -5209,7 +5209,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <div class="home-hero-headrow">
             <h1 class="home-hero-title">What's Happening</h1>
           </div>
-          <p class="home-hero-sub">Real news and clear insight on any topic.</p>
+          <p class="home-hero-sub">Real news and AI insights on any topic.</p>
           ${heroTopics.length ? `<div class="home-hero-chips">${heroTopics.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="home-hero-chip">${escapeHTML(t.name)}</a>`).join('')}</div>` : ''}
         </div>
       </section>`;

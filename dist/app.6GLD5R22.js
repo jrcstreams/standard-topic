@@ -1653,7 +1653,7 @@ ${M}`),k.length?k.join(`
           <div class="home-hero-headrow">
             <h1 class="home-hero-title">What's Happening</h1>
           </div>
-          <p class="home-hero-sub">Real news and clear insight on any topic.</p>
+          <p class="home-hero-sub">Real news and AI insights on any topic.</p>
           ${p.length?`<div class="home-hero-chips">${p.map(f=>`<a href="#/topic/${Q(f.slug)}" class="home-hero-chip">${z(f.name)}</a>`).join("")}</div>`:""}
         </div>
       </section>`;e.innerHTML=`
