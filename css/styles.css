@@ -30750,46 +30750,75 @@ body.tt-on.home-search #home-trending .trend-legend-row {
   margin-top: 11px !important;
 }
 
-/* ═══ revamp1176 — homepage stacked-nav mode: one gutter for all three bands ══
+/* ═══ revamp1178 — stacked-nav mode: ONE page gutter, every page ══════════
    In the layout where the grey identity band drops to its own line under the
-   main nav, three stacked bands each ran on a different left edge (#img1308):
+   main nav, the three stacked bands each ran on a different left edge, and which
+   one was the odd one out changed from page to page (#img1308):
 
-                     narrow 644     docked 1101
-     band title          16             32
-     tab strip           16             16
-     news feed           20             32
+                       home 644   home 1101   topic 644   topic 1101
+     band title           16          32          16          32
+     tab strip            16          16          16          16
+     body content         20          32          16          16
 
-   Docked, the tab strip hangs 16px left of both its neighbours; narrow, the feed
-   sits 4px right of both. Nothing agrees in either state.
+   One value settles all of it. The band's inset IS .topic-banner's own padding —
+   16, stepping to 32 when the sidebar docks — so the banner becomes the single
+   definition of the page gutter and the other two follow it. That makes the
+   gutter a property of the MODE rather than of the page: 16 normally, 32 docked,
+   on home and topic alike. The homepage body's 20 and the tab strip's missing
+   docked step were the two actual defects; the topic body's flat 16 was the
+   third, and it only looked correct because its tab strip was wrong in the same
+   direction.
 
-   The band's inset is .topic-banner's own padding (16 / 32 docked), and the topic
-   pages already run their feed at 16 — so the homepage feed's 20 is the outlier
-   in the whole system, and the tab strip simply never tracked the docked step at
-   all. Both now follow the banner, which makes the banner the single definition
-   of the page gutter and leaves the topic pages untouched. */
+   Deliberately not scoped to .home-search. A per-page override is what produced
+   four different answers in the first place. */
 
-/* The feed joins the banner (and the topic pages) at 16. Docked it is already
-   32, which is the banner's docked value — nothing to do there. */
-body.home-search.tt-on:not(.nav-docked) #topic-layout {
+/* Body content. */
+body.tt-on:not(.nav-docked) #topic-layout {
   padding-left: 16px !important;
   padding-right: 16px !important;
 }
-/* The tab strip takes the banner's inset in BOTH states — it was pinned at 16
-   by the shared `body.tt-on .topic-viewtabs` shorthand, which has no docked
-   step. Longhand so that shorthand's vertical padding survives. */
-/* The #sub-header half of each pair is not decoration: the rule being replaced
-   is written `body.home-search.tt-on #sub-header .home-viewtabs, …`, and an id
-   outranks any number of classes — a class-only selector here loses however
-   specific it looks. */
-body.home-search.tt-on #sub-header .home-viewtabs,
-body.home-search.tt-on .home-viewtabs {
-  padding-left: 16px !important;
-  padding-right: 16px !important;
-}
-body.home-search.tt-on.nav-docked #sub-header .home-viewtabs,
-body.home-search.tt-on.nav-docked .home-viewtabs {
+body.tt-on.nav-docked #topic-layout {
   padding-left: 32px !important;
   padding-right: 32px !important;
+}
+
+/* The tab strip. It was pinned at a flat 16 by the shared
+   `body.tt-on .topic-viewtabs` shorthand, which has no docked step at all.
+   Longhand, so that shorthand's vertical padding survives.
+
+   The #sub-header half of each pair is not decoration: the homepage rule being
+   replaced is written `body.home-search.tt-on #sub-header .home-viewtabs, …`,
+   and an id outranks any number of classes — a class-only selector loses here
+   however specific it looks.
+
+   The [class][class] repeats are the same: dropping `.home-search` to make this
+   universal also dropped a specificity point, and under 640px there is a
+   `body.home-search.tt-on #sub-header .home-viewtabs` rule tightening the strip
+   to .75rem that then won — small phones alone came back misaligned at 12. */
+body.tt-on[class][class] #sub-header .home-viewtabs,
+body.tt-on[class][class] #sub-header .topic-viewtabs,
+body.tt-on[class][class] .home-viewtabs,
+body.tt-on[class][class] .topic-viewtabs {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+body.tt-on.nav-docked[class][class] #sub-header .home-viewtabs,
+body.tt-on.nav-docked[class][class] #sub-header .topic-viewtabs,
+body.tt-on.nav-docked[class][class] .home-viewtabs,
+body.tt-on.nav-docked[class][class] .topic-viewtabs {
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+/* The topic strip sits INSIDE the band, so it is already carrying the gutter
+   from an ancestor; its -16px pull existed to cancel that and full-bleed the
+   strip's rule to the container edge before re-applying the inset as padding.
+   That pull has to equal the gutter, so it scales with it — left at -16 against
+   a 32px gutter it lands the tabs at 64, twice as far in as its neighbours. The
+   home strip needs none of this: it lives in the fixed sub-header, outside the
+   band entirely. */
+body.nav-docked.tt-on .topic-band .topic-viewtabs {
+  margin-left: -32px !important;
+  margin-right: -32px !important;
 }
 
 /* ═══ revamp1171 — AI Briefings in tab mode: one column, and a longer featured
