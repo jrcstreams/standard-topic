@@ -22,20 +22,23 @@ export function drawerLinkHTML(label, href, icon = '', sub = '') {
 export const DRAWER_SEARCH_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>';
 export const DRAWER_SOURCES_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
 
-// <details> opens instantly and the browser makes no attempt to keep the header
-// you clicked on screen, so opening a drawer near the bottom of a long brief
-// dropped the reader into the middle of the list with no context.
-//
-// Anchoring is done with scrollIntoView + a CSS `scroll-margin-top` on the
-// drawer (see .te-drawer / .xf-acc). That resolves correctly against whatever
-// the real scroll container turns out to be — window on the homepage, the panel
-// on the Trending page — which hand-rolled scrollTop math kept getting wrong.
+// <details> opens instantly, and the body grows BELOW the summary you clicked —
+// so the row under your cursor never moves and there is nothing to chase. An
+// earlier version anchored every open with scrollIntoView({block:'start'}),
+// which threw the reader down to a seemingly random spot in the freshly opened
+// list (revamp1157). Now we only nudge when the summary itself is clipped out
+// of view, and only by the minimum amount: block:'nearest' is a no-op when the
+// row is already fully visible, and it resolves against whatever the real
+// scroll container turns out to be — window on the homepage, the panel on the
+// Trending page.
 export function wireDrawers(root) {
   if (!root || root.dataset.teDrawersWired === '1') return;
   root.dataset.teDrawersWired = '1';
   const EASE = 'cubic-bezier(.22,.61,.21,1)';
-  const anchor = (el) => {
-    try { el.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+  // Target the summary row (small, no scroll-margin) rather than the <details>,
+  // which becomes taller than the scrollport once open and would force a scroll.
+  const keepInView = (el) => {
+    try { el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (_) {}
   };
   root.addEventListener('click', (e) => {
     const sum = e.target.closest('.te-drawer-sum');
@@ -67,10 +70,9 @@ export function wireDrawers(root) {
         });
         setTimeout(() => { body.removeAttribute('style'); }, 300);
         // The body is inserted BELOW the summary, so the summary's own position
-        // doesn't move — anchor immediately, then re-assert once it settles in
-        // case the container compensated for the growth.
-        anchor(det);
-        setTimeout(() => anchor(det), 320);
+        // doesn't move. Nothing to do unless the container reflowed the row off
+        // screen while growing — re-check once the animation settles.
+        setTimeout(() => keepInView(sum), 320);
       }
       return;
     }
@@ -80,8 +82,7 @@ export function wireDrawers(root) {
     if (xs && root.contains(xs)) {
       const acc = xs.closest('.xf-acc');
       if (!acc) return;
-      if (!acc.open) anchor(acc);
-      setTimeout(() => anchor(acc), 320);
+      setTimeout(() => keepInView(xs), 320);
     }
   });
 }
