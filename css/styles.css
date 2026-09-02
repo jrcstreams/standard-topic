@@ -30882,3 +30882,255 @@ body.home-search.tt-on .home-v2 #section-newsfeed .news-list > .news-card:first-
 body.home-search.tt-on .home-v2 #section-newsfeed .news-list > .news-card:first-child .news-card-link {
   padding-top: 0 !important;
 }
+
+/* ═══ revamp1179 — stacked-nav mode, part two: the gutter reaches the pages the
+   nav-dropdown shell renders, and ONE seam under the sub-header ═══════════════
+
+   revamp1178 made the gutter a property of the MODE (16, stepping to 32 when the
+   sidebar docks) and applied it at #topic-layout. But only Home and the topic
+   pages HAVE a #topic-layout: Topics, Trending, AI Briefings, Prompts and Search
+   render through the nav-dropdown shell, which carries its gutter on #content
+   instead — a flat 32, plus the shell's own 2px scroll padding, so those lists
+   ran at 34 against a band title at 16. That single number is every "not wide
+   enough / not full width" report on those five pages.
+
+   The vertical seam was the same story told four ways. Measured from the
+   sub-header's bottom edge to the first ink:
+
+     home news feed    -3   (the hero-seam pull, below)
+     topics             18
+     trending            8
+     ai briefings       49
+
+   The rule for the mode: content sits ON the sub-header's bottom edge, and each
+   surface's own first-row padding supplies the air — which lands every page at
+   ~18px of ink offset, the value the topic list already had and the one nobody
+   has complained about. The 22px reserve that used to sit under the bar is what
+   made the briefings page read as detached; the home feed's hero-seam pull is
+   what made it read as jammed. */
+
+/* ── The gutter ─────────────────────────────────────────────────────────────
+   :not(:has(> #topic-layout)) picks out exactly the shell-rendered pages —
+   Home and the topic pages already get theirs from revamp1178 and would
+   otherwise double it to 32/64. */
+html body.tt-on:not(.nav-docked) #content:not(:has(> #topic-layout)) {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+html body.tt-on.nav-docked #content:not(:has(> #topic-layout)) {
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+/* The shell's 2px inline padding is a scrollbar gutter it needs as a DROPDOWN.
+   As a page it has no scroller of its own, and it was landing the content at 18
+   (or 34 docked) — 2px off its own band title, which is exactly the kind of
+   near-miss that reads as broken without being nameable. */
+body.tt-on #content .ndp .aii-nav-dd-inner,
+body.tt-on #content .ndp .aii-nav-dd-scroll {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* ── The seam ───────────────────────────────────────────────────────────────
+   Three [class] repeats: revamp1171 wrote this reserve with one and revamp1175
+   with two (to sit the Topics list on the bar). This restates it for every
+   pagenav page at once, so it has to outrank both. */
+html body.tt-on.pagenav-mode.sticky-always.has-subnav[class][class][class] #content {
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 60px)) !important;
+}
+/* Home. The -0.7rem pull (revamp1173) closes the seam under the blue hero's
+   rule — a WIDE-layout concern. In tab mode there is no hero, the tab strip is
+   the page's top edge, and the pull dragged the first story 11px up BEHIND it
+   (#img1317): its headline sat 9px under the strip. */
+body.home-search.app-mode.tt-on .topic-layout.home-grid > .home-sections {
+  margin-top: 0 !important;
+}
+/* Trending. Its -14px caption pull existed only to cancel the 22 above it
+   (revamp1175); with the 22 gone it would drag the caption under the bar.
+   11px above the caption, which is what the homepage Trending tab uses. */
+body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-subbar {
+  margin-top: 0 !important;
+  padding-top: 11px !important;
+}
+/* AI Briefings. 14px of container padding (revamp1169) on top of the 22 put the
+   first briefing 49px off the strip — the "too far from the tabular nav" report.
+   The cards carry 13px of their own, so 6 here lands them at the same ~19. */
+body.tt-on #content .dih .dih-group--featured .dih-items {
+  padding-top: 6px !important;
+}
+
+/* ═══ revamp1179 — the homepage news feed IS the topic news feed ═════════════
+
+   Three separate reports, one cause: the feed's grid rules are all written
+   `.topic-band #section-newsfeed …`, and the homepage feed lives in .home-v2,
+   not in a topic band. So it never picked up the two-column grid (it stayed a
+   flex column at every width, while a topic page with the SAME 1100px column
+   goes to two), and its head and first card kept a set of homepage-only values
+   that drifted from the topic page's. Match the topic page on all three. */
+
+/* (1) Two columns, on the same threshold the topic feed uses — tnews-1col is
+   already computed from content width (updateTopicViewMode), so both pages flip
+   at the same moment. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-list {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 14px !important;
+}
+body:not(.tt-on).home-search.tnews-1col .home-v2 #section-newsfeed .news-list {
+  grid-template-columns: 1fr !important;
+}
+
+/* (2) The first story is a card like every other one. Three separate rules zero
+   its top border — a hangover from when the feed was a list of divider-rows and
+   the head's rule stood in for the first row's top edge. As a bordered card it
+   just reads as an open box (#img1318). */
+body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child,
+body.home-search .home-v2 .news-list > .news-card:first-child {
+  border-top: 1px solid #e8edf5 !important;
+  padding-top: 14px !important;
+  margin-top: 0 !important;
+}
+
+/* (3) The head. revamp1174 pinned Home's two column heads to a 48px box with
+   14px under the title and bottom-aligned contents; the topic page (revamp1175)
+   pins its two to 44 with 12, centred. Same problem, two answers — and Home's
+   is the one that reads cramped (#img1319). Take the topic page's. Both Home
+   heads move together, which is the constraint revamp1174 existed to protect. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-head,
+body:not(.tt-on).home-search .home-v2 .newsfeed-head,
+body:not(.tt-on).home-search .home-v2 .home-featbriefs .hb-head {
+  display: flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  height: auto !important;
+  min-height: 44px !important;
+  padding: 0 0 12px !important;
+  margin: 0 0 14px !important;
+  border-bottom: 2px solid #e0e5ee !important;
+}
+/* The rule belongs to the head box now, so the row inside it carries none. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-headrow,
+body:not(.tt-on).home-search .home-v2 .newsfeed-headrow {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-bottom: 0 !important;
+}
+body:not(.tt-on).home-search .home-v2 .newsfeed-title,
+body:not(.tt-on).home-search .home-v2 .newsfeed-headrow h2 {
+  font-weight: 800 !important;
+}
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-list,
+body:not(.tt-on).home-search .home-v2 .news-list {
+  margin-top: 12px !important;
+}
+/* revamp1175 hid the head's rule while the first story is open by targeting
+   .newsfeed-headrow, which no longer carries it. Follow the rule to its box. */
+body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child.news-card--open) .newsfeed-head {
+  border-bottom-color: transparent !important;
+}
+
+/* ═══ revamp1179 — the AI Prompts rows get the topic list's row furniture ════
+
+   The prompt accordions' icon chip is a 20px ground behind a 19px glyph, so the
+   grey barely shows and reads as an icon with a smudge rather than the chip
+   every other list on the site uses. The topic list's row is the reference:
+   a 26px ground at radius 9 behind a 16px glyph, a 15.5px/600 label, and a grey
+   hover band across the whole row. Desktop and tab mode alike (#img1320-1323). */
+.aii-fi-acc-ic[class],
+body.tt-on .aii-fi-acc-ic[class] {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 9px !important;
+  background: #f0f2f8 !important;
+}
+.aii-fi-acc-ic[class] svg,
+body.tt-on .aii-fi-acc-ic[class] svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+@media (hover: hover) {
+  .aii-fi-accsum:not([aria-expanded="true"]):hover { background: #f6f9fd !important; }
+  .aii-fi-accsum:not([aria-expanded="true"]):hover .aii-fi-acc-ic { background: #e7ecf7 !important; }
+}
+/* In tab mode the prompt rows sit where the topic list's rows sit, at the same
+   width, so they take its type and row height too. */
+body.tt-on .aii-fi-accsum[class] {
+  min-height: 58px !important;
+}
+body.tt-on .aii-fi-accsum[class] .aii-fi-acc-name {
+  font-size: 0.97rem !important;
+  font-weight: 600 !important;
+}
+
+/* ═══ revamp1179 — tab mode: the two page controls move into the body ════════
+
+   "Expand all" (Topics) and "Include Sports Trends" (Trending) ride in the grey
+   identity band, which in tab mode is already carrying the page name, the tab
+   strip below it and the Change Page picker — three things competing for a
+   ~330px middle. Both belong with the list they act on. The Trending page
+   already renders its toggle in the body's caption row on the wide layout
+   (renderTrendingModal's controlbar); tab mode was hiding it there and showing
+   the band copy instead (revamp1168). Reverse that, and give Topics the same
+   caption-row treatment its head already provides. */
+
+/* Trending — the toggle rejoins the AI-generated caption, on its line. */
+body.tt-on .ndp.aii-nav-dd-trending .trend-sports-toggle[class] {
+  display: inline-flex !important;
+}
+body.tt-on #sub-header.pagenav [data-trend-sports-nav] { display: none !important; }
+body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-subbar .tlm-controlbar-inner {
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 8px 14px !important;
+}
+/* Two contingencies, in order: drop "Trends" from the label first (the switch
+   still says what it does), and only then let the row wrap to a second line. */
+@media (max-width: 560px) {
+  body.tt-on .ndp.aii-nav-dd-trending .trend-sports-toggle .tst-tail { display: none !important; }
+}
+
+/* Topics — "Expand all" becomes the body's caption row. The head that carries
+   it is hidden wholesale in tab mode (the tabs name the sections); show the box
+   back with its title and subtext still hidden, so what is left IS the switch,
+   sitting where Trending's caption sits. */
+body.tt-on.tview-all #content .ndp > .aiidd-pagehead[class][class] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 11px 0 !important;
+  margin: 0 !important;
+  border-bottom: 1px solid #e4e8f0 !important;
+}
+body.tt-on #content .ndp > .aiidd-pagehead .aiidd-pagehead-tx { display: none !important; }
+body.tt-on #content .ndp > .aiidd-pagehead .aiidd-expandall { margin-left: 0 !important; }
+body.tt-on #sub-header.pagenav [data-topics-expand] { display: none !important; }
+
+/* ═══ revamp1179 — AI Briefings: a briefing REPLACES its preview card ════════
+
+   Opening a briefing on the directory page left the preview card sitting above
+   it, still showing the same summary the briefing opens with, and dropped a
+   white bordered panel underneath — so one briefing read as two cards, the
+   second one repeating the first (#img1326/1327). The card and the briefing are
+   the same object in two states: hide the card while its briefing is open, and
+   dress the open panel as the soft-grey briefing card the homepage uses.
+
+   Directory only. On a topic page's AI Briefing tab the briefing is the whole
+   surface rather than one row of a list, and its white treatment there is the
+   right one — a different UX, deliberately. */
+body #content .dih .dih-group .dih-item.is-openitem {
+  display: none !important;
+}
+body #content .dih .dih-brief--inline {
+  background: #f5f7fc !important;
+  border: 1px solid #e2e8f4 !important;
+  box-shadow: none !important;
+  border-radius: 14px !important;
+  margin: 0 0 14px !important;
+  padding: 0.9rem 1rem 1rem !important;
+}

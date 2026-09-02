@@ -413,7 +413,7 @@ function ttIsSports(t) { return /^sports$/i.test(ttCatOf(t) || ''); }
 const TREND_SPORTS_TOGGLE_HTML = () => {
   const inc = !isExcludeSports();
   return `<button type="button" class="trend-sports-toggle" data-trend-sports-toggle role="switch" aria-checked="${inc ? 'true' : 'false'}" title="Show or hide sports trends">
-    <span class="trend-sports-toggle-label">Include Sports Trends</span>
+    <span class="trend-sports-toggle-label"><span class="tst-lead">Include </span>Sports<span class="tst-tail"> Trends</span></span>
     <span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span>
   </button>`;
 };
