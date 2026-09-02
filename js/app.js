@@ -690,8 +690,12 @@ function pagePickerHTML(activeKey, panelId = 'tsp-panel-page') {
         ${active ? `<span class="tsp-cell-check" aria-hidden="true">${CHECK}</span>` : ''}
       </a>`;
   };
-  const ordered = PAGE_PICKER_ITEMS.filter((p) => p.key === activeKey)
-    .concat(PAGE_PICKER_ITEMS.filter((p) => p.key !== activeKey));
+  // revamp1182: the topic picker leads with the topic you're on, because that
+  // list is a family of ~100 and the current one is the anchor you read the
+  // rest against. This list is four fixed destinations, so a stable order is
+  // worth more than an active-first one — Home always leads, and the checkmark
+  // still says where you are.
+  const ordered = PAGE_PICKER_ITEMS;
   return `
     <div class="topic-subnav-picker is-page-picker" data-topic-picker>
       <button type="button" class="tsp-btn tsp-btn-browse" aria-expanded="false" aria-controls="${escapeAttr(panelId)}" aria-label="Change page">
