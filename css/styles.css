@@ -31363,3 +31363,11 @@ body:not(.tt-on).home-search .home-v2 .newsfeed-head,
 body:not(.tt-on).home-search .home-v2 .home-featbriefs .hb-head {
   align-items: flex-end !important;
 }
+/* The feed head is a flex COLUMN (the rail head is a row), so on it the axis
+   that bottom-aligns is justify-content — align-items alone left the title
+   pinned to the top of the box, which is the 30px gap itself. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-head,
+body:not(.tt-on).home-search .home-v2 .newsfeed-head {
+  justify-content: flex-end !important;
+  align-items: stretch !important;
+}
