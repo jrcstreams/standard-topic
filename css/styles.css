@@ -30187,3 +30187,16 @@ body:not(.tt-on) .ndp .aii-nav-dd-sub,
 body:not(.tt-on) .page-hero-sub {
   margin-top: 10px !important;
 }
+
+/* ═══ revamp1168 — the same section rule under every directory head ══════════
+   Featured Prompts wears the 2px blue-tinted rule (revamp1088); every other
+   section head on the four directory pages was left on revamp1105's thinner
+   1.5px grey — a different weight and a different colour for the same object
+   (#img1304/1305). One rule, everywhere: Featured Briefings, Briefings by
+   Topic, Prompts by Topic, Featured Topics, All Topics. */
+.dih-featuredhead.ph-sec-head--card,
+.dih-bytopic-head.ph-sec-head--card,
+#content .prompts-home--v2 .ph-lib .ph-sec-head--card,
+.ndp .aiidd-pagehead {
+  border-bottom: 2px solid color-mix(in srgb, #2f4d9e 22%, transparent) !important;
+}
