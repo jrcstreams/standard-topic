@@ -29732,3 +29732,20 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
 }
 .prompts-home .pdir .pdir-card-name,
 .ph-body .pdir .pdir-card-name { font-size: 0.97rem !important; }
+
+/* ═══ revamp1158 ══════════════════════════════════════════════════════════════
+   The white strip above the identity band, sitewide (#img1248). Every #content
+   top-padding rule is written as `calc(var(--nav-h) + <gap>)`, from the days of
+   the fixed top nav. With the sidebar docked --nav-h is 0 and #sub-header is
+   visibility:hidden, so all that's left of those rules is a bare 21-22px of
+   white above a band that's meant to start at the very top of the content
+   column (topic pages 1.35rem via revamp778, Topics/Prompts/Trending/Briefings
+   22px via the pagenav rule).
+
+   Zero it whenever the sidebar is docked AND the sticky tab strip is off:
+   tt-on keeps a real visible 56px sub-header to clear, and the home hero paints
+   its blue behind the padding (no white there), so both keep theirs. The
+   [class] repeats exist only to out-specify those !important rules. */
+html body.nav-docked:not(.tt-on):not(.home-search)[class][class] #content {
+  padding-top: 0 !important;
+}
