@@ -30844,11 +30844,12 @@ body:not(.tt-on) #content .dih .dih-item--extra { display: none !important; }
 
 /* ═══ revamp1176 — "Change Page" picker on the non-topic pages ═══════════════
    Same .topic-subnav-picker the topic pages use, so it inherits the trigger,
-   the panel, the open/close animation and wireSubnavPicker() wholesale. Two
-   differences, both because there is no topic family to browse here:
-   the actions row is down to its ✕ (no View All Topics / Search Custom Topic
-   pills — they're cells in the list now), and with the row's only content gone
-   its separator was drawing a line under nothing. */
+   the panel, the open/close animation and wireSubnavPicker() wholesale.
+   revamp1181: and now the same actions row too — View All Topics / Search
+   Custom Topic as pills above the separator with the ✕ at its right, rather
+   than two more rows in a list of pages. The --bare variant it used while
+   that row held only a ✕ is retired; the class is kept styled in case any
+   other surface still renders it. */
 .tsp-actions--bare {
   justify-content: flex-end !important;
   border-bottom: 0 !important;
@@ -31266,3 +31267,64 @@ body.tt-on #content .ndp .prompts-dd {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+
+/* ═══ revamp1181 — six fixes ═════════════════════════════════════════════════ */
+
+/* (1) The "Change Page" trigger was an unstyled browser button on the homepage:
+   the `.tsp-btn` reset (border/background/padding off) lives inside a
+   narrow-width media block, and the HOME band is the one place that renders the
+   picker outside it — so at wider widths it fell back to the UA's 2px outset
+   grey chrome (#img1337/1338). The reset belongs to the component, not to a
+   width. */
+.tsp-btn[class] {
+  display: flex; align-items: center; justify-content: flex-start;
+  gap: 0.45rem; padding: 0.4rem 0.15rem;
+  border: none; background: none; box-shadow: none; cursor: pointer;
+  text-align: left; font-family: var(--font-family);
+  -webkit-tap-highlight-color: transparent;
+}
+.tsp-btn-browse[class] { gap: 0.3rem; padding: 0.3rem 0; width: auto; }
+
+/* (2) The homepage feed keeps its cards for exactly as long as a topic feed
+   does. Topic pages switch cards→rows at a VIEWPORT of 880px (revamp765/803);
+   Home was switching on `:not(.tt-on)`, which is CONTENT width — so with the
+   sidebar docked at 1160 the topic feed showed cards while Home, on the same
+   screen, showed flat rows (#img1339). Same trigger for both. */
+@media (min-width: 880px) {
+  body.tt-on.home-search .home-v2 #section-newsfeed .news-list {
+    gap: 14px !important;
+    padding: 4px 0 6px !important;
+  }
+  body.tt-on.home-search .home-v2 #section-newsfeed .news-card {
+    display: flex !important; flex-direction: column; align-items: stretch;
+    min-width: 0; position: relative; text-align: left;
+    border: 1px solid #e8edf5 !important; border-radius: 12px !important;
+    background: #fff !important;
+    padding: 14px 16px 12px !important; margin: 0 !important;
+  }
+  body.tt-on.home-search .home-v2 #section-newsfeed .news-card::after { display: none !important; }
+  body.tt-on.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child {
+    padding-top: 14px !important;
+  }
+
+  /* (3) …and in card mode the first story stops riding the tab strip. Flush is
+     right for a row — the strip's bottom rule reads as the row's top edge — but
+     a bordered card glued to the strip reads as caught under it (#img1340).
+     Rows (below 880) keep the flush seam. */
+  html body.tt-on #section-newsfeed .news-list[class] { margin-top: 12px !important; }
+}
+
+/* (4) The homepage hero: the title starts higher, and the topic chips get real
+   room above the rule that closes the band instead of nearly touching it. */
+body.home-search .home-hero {
+  padding-top: 4px !important;
+  padding-bottom: 18px !important;
+}
+
+/* (5) The sidebar's five links were two different heights — 47.5 for Home /
+   Topic Pages / AI Briefings, 43 for Trending / Prompts. Same padding, same
+   icons: the first three are <a>s, which inherit the document's 1.6 line-height,
+   while the other two are <button>s, which reset it to `normal`. Pin the label's
+   line-height so the element type stops deciding the row height (#img1341). */
+.navmenu-quicklink .navmenu-cta-label,
+.navmenu-cta .navmenu-cta-label { line-height: 1.2 !important; }

@@ -670,13 +670,14 @@ const PAGE_PICKER_ICONS = {
 };
 // Canonical order. The ACTIVE page is lifted to the front (with the check) and
 // the rest follow in this order, so "where am I" is always the first cell.
+// revamp1181: View All Topics / Search Custom Topic are no longer rows in the
+// page list — they are the actions row above the separator, exactly as the topic
+// pages' "Change Topic" picker has them. The list below is pages only.
 const PAGE_PICKER_ITEMS = [
   { key: 'home', name: 'Home', href: '#/' },
   { key: 'intelligence', name: 'AI Briefings', href: '#/intelligence' },
   { key: 'trending', name: 'Trending', href: '#/trending' },
   { key: 'prompts', name: 'AI Prompts', href: '#/prompts' },
-  { key: 'topics', name: 'View All Topics', href: '#/topics' },
-  { key: 'search', name: 'Search Custom Topic', href: '#/search' },
 ];
 function pagePickerHTML(activeKey, panelId = 'tsp-panel-page') {
   const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -702,7 +703,9 @@ function pagePickerHTML(activeKey, panelId = 'tsp-panel-page') {
       <div class="tsp-panelwrap">
         <div class="tsp-panel" id="${escapeAttr(panelId)}" role="region" aria-label="Choose page">
           <div class="tsp-panel-inner">
-            <div class="tsp-actions tsp-actions--bare">
+            <div class="tsp-actions">
+              <a href="#/topics" class="tsp-foot-btn"${activeKey === 'topics' ? ' aria-current="page"' : ''}>${PAGE_PICKER_ICONS.topics || ''}<span>View All Topics</span></a>
+              <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary"${activeKey === 'search' ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
               <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${X_IC}</button>
             </div>
             <div class="tsp-scroll">
