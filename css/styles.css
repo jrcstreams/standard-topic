@@ -31099,7 +31099,7 @@ body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-subbar .tlm-controlbar-inner {
    it is hidden wholesale in tab mode (the tabs name the sections); show the box
    back with its title and subtext still hidden, so what is left IS the switch,
    sitting where Trending's caption sits. */
-body.tt-on.tview-all #content .ndp > .aiidd-pagehead[class][class] {
+body.tt-on.tview-all #content .ndp .aiidd-pagehead:not(.tfeat-head)[class][class] {
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
@@ -31107,8 +31107,8 @@ body.tt-on.tview-all #content .ndp > .aiidd-pagehead[class][class] {
   margin: 0 !important;
   border-bottom: 1px solid #e4e8f0 !important;
 }
-body.tt-on #content .ndp > .aiidd-pagehead .aiidd-pagehead-tx { display: none !important; }
-body.tt-on #content .ndp > .aiidd-pagehead .aiidd-expandall { margin-left: 0 !important; }
+body.tt-on #content .ndp .aiidd-pagehead .aiidd-pagehead-tx { display: none !important; }
+body.tt-on #content .ndp .aiidd-pagehead .aiidd-expandall { margin-left: 0 !important; }
 body.tt-on #sub-header.pagenav [data-topics-expand] { display: none !important; }
 
 /* ═══ revamp1179 — AI Briefings: a briefing REPLACES its preview card ════════
@@ -31127,10 +31127,35 @@ body #content .dih .dih-group .dih-item.is-openitem {
   display: none !important;
 }
 body #content .dih .dih-brief--inline {
-  background: #f5f7fc !important;
-  border: 1px solid #e2e8f4 !important;
+  background: #f4f6fa !important;
+  border: 1px solid #e2e7f0 !important;
   box-shadow: none !important;
   border-radius: 14px !important;
   margin: 0 0 14px !important;
   padding: 0.9rem 1rem 1rem !important;
+}
+
+/* ═══ revamp1179b — two follow-ups measured on the deployed page ═════════════ */
+
+/* (1) The pagenav tab strip (Topics / Trending / AI Briefings / Prompts) is the
+   one band still on its own edge: revamp1178 gave the home and topic strips the
+   mode's 16/32, but those pages' strips are .home-viewtabs / .topic-viewtabs —
+   this one is .prompts-subnav-tabs, and it kept a flat 12. */
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs[class] {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+body.tt-on.nav-docked #sub-header.pagenav .prompts-subnav-tabs[class] {
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+
+/* (2) Home's two column heads: min-height alone let the AI Briefing rail head
+   grow to 45.8 against the feed head's 44, so their rules landed 1.8px apart —
+   the exact failure revamp1174 pinned a fixed box to prevent. Pin it again, at
+   the topic page's 44. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-head,
+body:not(.tt-on).home-search .home-v2 .newsfeed-head,
+body:not(.tt-on).home-search .home-v2 .home-featbriefs .hb-head {
+  height: 44px !important;
 }
