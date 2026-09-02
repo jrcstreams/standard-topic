@@ -2539,7 +2539,14 @@ function renderIntelligenceHub(container) {
   // scroll (or a legend jump past several sections) can bring dozens into range
   // at once, and firing them together earns a 403 from the API. Queue them
   // behind a small concurrency gate so a burst becomes a trickle (revamp826).
-  const pending = new Set();
+  // revamp1184: dedupe by ELEMENT. Keying on the topic NAME meant the second
+  // card for a topic was silently dropped — and every parent topic has two, one
+  // in Featured Briefings and one leading its own by-topic group, so every
+  // group's first card sat on "Loading your briefing…" forever. The fetch
+  // itself is cache-only and memoised by name below, so two cards for one topic
+  // still cost one read.
+  const pending = new WeakSet();
+  const byName = new Map();
   const queue = [];
   let inFlight = 0;
   const MAX_INFLIGHT = 4;
@@ -2552,8 +2559,8 @@ function renderIntelligenceHub(container) {
   };
   const fill = (el) => {
     const name = el.dataset.dihItem;
-    if (!name || pending.has(name)) return;
-    pending.add(name);
+    if (!name || pending.has(el)) return;
+    pending.add(el);
     queue.push(() => fillNow(el));
     pump();
   };
@@ -2564,7 +2571,9 @@ function renderIntelligenceHub(container) {
       // revamp908: the hub lazy-loads a card per topic. Reading CACHE-ONLY
       // means scrolling the hub can never trigger paid generation — the crons
       // stay the only writer. Cards with no brief yet show the pending note.
-      const d = await fetchDailyBrief(el.dataset.dihItem, false, true);
+      const key = el.dataset.dihItem;
+      if (!byName.has(key)) byName.set(key, fetchDailyBrief(key, false, true));
+      const d = await byName.get(key);
       if (!el.isConnected) return;
       if (sum) setClampedSummary(sum, (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.');
       if (stamp && d && d.generatedAt) stamp.innerHTML = diEditionStampHTML(d.generatedAt);
@@ -4666,6 +4675,10 @@ function renderStickyHeroBar(container, route) {
   if (route && route.type === 'intelligence') document.getElementById('nav-daily')?.classList.add('is-active');
   if (route && route.type === 'trending') document.getElementById('nav-trending')?.classList.add('is-active');
   if (route && route.type === 'prompts') document.getElementById('nav-prompts')?.classList.add('is-active');
+  // revamp1184: …including the Topics link, now that Topics is one of them
+  // (revamp1180). Only the inline link lights: the button beside Search is an
+  // action, not a place, and it is the only way in once the links row is gone.
+  if (route && route.type === 'topics') document.getElementById('nav-topics-link')?.classList.add('is-active');
 
   // Prompts — opens a dropdown with two paths: Build a Custom Prompt (the prompt
   // builder inline) and Prompt Library (pick a topic → its ready-made prompts).
