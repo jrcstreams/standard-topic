@@ -30153,3 +30153,16 @@ body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-head { padding-bottom: 0.3rem !i
 body.tt-on .topic-home.tview-brief .topic-top-main {
   padding-left: 8px !important; padding-right: 8px !important;
 }
+
+/* ═══ revamp1166 — topic page: air above the title on the wide, no-grey-nav
+   layout (#img1262) ═══════════════════════════════════════════════════════
+   revamp1013's "topic title rides higher" set .topic-bodyhead to a flat 0.35rem
+   !important. In tab mode the title lives in the grey subnav so the body head is
+   a leftover strip and 5px is right — but in the two-column desktop layout the
+   body head IS the page title, and it ended up sitting ~5px off the top of the
+   content area with the icon almost touching the nav. Give the title block back
+   its top margin, scoped to the not-tabbed topic layout so tab mode is
+   untouched. */
+body:not(.tt-on) .topic-band .topic-home > .topic-bodyhead {
+  padding-top: 22px !important;
+}
