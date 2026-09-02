@@ -30749,3 +30749,60 @@ body.tt-on #content .dih .dih-group--featured .dih-items {
 body.tt-on.home-search #home-trending .trend-legend-row {
   margin-top: 11px !important;
 }
+
+/* ═══ revamp1176 — homepage stacked-nav mode: one gutter for all three bands ══
+   In the layout where the grey identity band drops to its own line under the
+   main nav, three stacked bands each ran on a different left edge (#img1308):
+
+                     narrow 644     docked 1101
+     band title          16             32
+     tab strip           16             16
+     news feed           20             32
+
+   Docked, the tab strip hangs 16px left of both its neighbours; narrow, the feed
+   sits 4px right of both. Nothing agrees in either state.
+
+   The band's inset is .topic-banner's own padding (16 / 32 docked), and the topic
+   pages already run their feed at 16 — so the homepage feed's 20 is the outlier
+   in the whole system, and the tab strip simply never tracked the docked step at
+   all. Both now follow the banner, which makes the banner the single definition
+   of the page gutter and leaves the topic pages untouched. */
+
+/* The feed joins the banner (and the topic pages) at 16. Docked it is already
+   32, which is the banner's docked value — nothing to do there. */
+body.home-search.tt-on:not(.nav-docked) #topic-layout {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+/* The tab strip takes the banner's inset in BOTH states — it was pinned at 16
+   by the shared `body.tt-on .topic-viewtabs` shorthand, which has no docked
+   step. Longhand so that shorthand's vertical padding survives. */
+body.home-search.tt-on .home-viewtabs {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+body.home-search.tt-on.nav-docked .home-viewtabs {
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+
+/* ═══ revamp1171 — AI Briefings in tab mode: one column, and a longer featured
+   set (#img1265/1266) ═══════════════════════════════════════════════════════
+
+   (1) Tab mode is a narrow single-purpose surface, but both briefing lists kept
+   their desktop grids: the featured row auto-fit to 3 columns at ~838px and the
+   by-topic groups took the base 2-column rule from 760px up. Three ~250px
+   columns of clamped summary text is unreadable and left a ragged half-empty
+   last row. One column, on both lists. */
+body.tt-on #content .dih .dih-items,
+body.tt-on #content .dih .dih-group.dih-group--featured .dih-items {
+  grid-template-columns: minmax(0, 1fr) !important;
+  column-gap: 0 !important;
+}
+
+/* (2) The featured set runs to 15 in tab mode, where there's a whole page to
+   fill; the desktop grid still leads with four. Both are in the DOM (see
+   FEATURED_LEAD in renderIntelligenceHub) so a resize across the threshold
+   needs no re-render — and a display:none card never intersects the observer
+   that fills it, so the tail costs nothing until tab mode shows it. */
+body:not(.tt-on) #content .dih .dih-item--extra { display: none !important; }

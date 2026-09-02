@@ -2146,16 +2146,23 @@ function renderIntelligenceHub(container) {
 
   // revamp822: topics are BLOCKS inside their parent's card, not cards of
   // their own. Clicking one turns the whole parent card into that briefing.
-  // Up to four featured topics lead the page. Falls back to the first parents
-  // when no featured set is configured.
+  // Falls back to the first parents when no featured set is configured.
+  //
+  // revamp1171: the desktop grid still leads with FOUR, but tab mode has a full
+  // single-column page to fill, so it runs the whole featured set (capped at
+  // 15). Both are rendered and CSS hides the tail off tab mode — the cards fill
+  // lazily on intersection, and a display:none card never intersects, so the
+  // extras cost nothing until they're actually on screen. Rendering both also
+  // means crossing the tab-mode threshold on a resize needs no re-render.
+  const FEATURED_LEAD = 4;
   const featuredBriefs = (() => {
     let f = [];
-    try { f = (getFeaturedTopics() || []).slice(0, 4); } catch (_) {}
-    if (!f.length) f = (groups || []).slice(0, 4).map((g) => g.parent).filter(Boolean);
+    try { f = (getFeaturedTopics() || []).slice(0, 15); } catch (_) {}
+    if (!f.length) f = (groups || []).slice(0, 15).map((g) => g.parent).filter(Boolean);
     return f;
   })();
-  const item = (t) => `
-    <button type="button" class="dih-item" data-dih-item="${escapeAttr(t.name)}" data-dih-slug="${escapeAttr(t.slug)}">
+  const item = (t, i = 0) => `
+    <button type="button" class="dih-item${i >= FEATURED_LEAD ? ' dih-item--extra' : ''}" data-dih-item="${escapeAttr(t.name)}" data-dih-slug="${escapeAttr(t.slug)}">
       <span class="dih-item-head">
         <span class="dih-item-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
         <span class="dih-item-name">${escapeHTML(t.name)}</span>
@@ -2207,7 +2214,7 @@ function renderIntelligenceHub(container) {
           <p class="ph-sec-sub dih-bytopic-sub">A few of today's briefings to start with.</p>
         </div>
         <div class="dih-groupbody">
-          <div class="dih-items">${featuredBriefs.map(item).join('')}</div>
+          <div class="dih-items">${featuredBriefs.map((t, i) => item(t, i)).join('')}</div>
           <div class="dih-brief" data-dih-brief hidden>
             <div class="dih-brief-bar">
               <button type="button" class="dih-brief-back fb-closelink" data-dih-back><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Close Briefing</span></button>
@@ -2245,7 +2252,7 @@ function renderIntelligenceHub(container) {
               ${PDIR_CHEV}
             </button>
             <div class="dih-groupbody" hidden>
-            <div class="dih-items">${[g.parent, ...(g.subtopics || [])].map(item).join('')}</div>
+            <div class="dih-items">${[g.parent, ...(g.subtopics || [])].map((t) => item(t)).join('')}</div>
             <div class="dih-brief" data-dih-brief hidden>
               <!-- revamp949: a close-link on the left and a larger X on the
                    right, in place of the back link. -->
