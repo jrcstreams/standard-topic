@@ -31469,3 +31469,18 @@ body.home-search .home-v2 .newsfeed-title-main[class] {
 #content .dih .dih-group--featured .dih-items > .dih-item:has(+ .dih-brief--inline) {
   border-bottom-color: transparent !important;
 }
+
+/* ═══ revamp1185 — the topic hero meets the nav when the sidebar is collapsed ═
+
+   #content's reserve is written `calc(var(--nav-h) + 1.35rem)` — the nav's
+   height plus a gap, from the era when the page under it was white. The topic
+   hero paints a blue band from the top of that content box, so those 21.6px
+   show as a white stripe between the nav and the band (#img1347/1348). Docked,
+   revamp1158 already zeroes the whole reserve and the band sits flush; this is
+   the same fix for the collapsed-sidebar case, where the nav is real and only
+   the gap under it has to go. */
+html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).has-subnav[class][class] #content,
+html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).sticky-always[class][class] #content,
+html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).sticky-always.has-subnav[class][class] #content {
+  padding-top: var(--nav-h) !important;
+}
