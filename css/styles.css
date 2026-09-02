@@ -30444,3 +30444,40 @@ html body.tt-on.pagenav-mode.sticky-always.has-subnav[class] #content {
 body.home-search #topic-layout,
 body.home-search .topic-layout.home-grid { margin-top: 0 !important; }
 body.home-search .home-hero { padding-top: 9px !important; }
+
+/* ═══ revamp1167 — homepage "Today's News" head = the topic page's "News Feed"
+   head (#img1263) ═══════════════════════════════════════════════════════════
+   The topic page's two-column layout gives its feed a display-font title at
+   1.24rem/750 sitting on a 2px rule, with the rail heads (AI Briefing / AI
+   Prompts) on the same baseline. The homepage had most of that from revamp1032,
+   but only above 1200px, and two later rules pushed .newsfeed-title-main to
+   1.5/1.55rem — the outer .newsfeed-title was being sized while the inner span
+   is what renders. Same treatment, same numbers, wherever the desktop layout is
+   showing (body:not(.tt-on) is the two-column mode on both surfaces). */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-head,
+body:not(.tt-on).home-search .home-v2 .newsfeed-head {
+  border-bottom: 0 !important;
+  padding: 0 !important;
+  margin: 0 0 12px !important;
+  justify-content: flex-start !important;
+}
+/* The rule belongs to the TITLE row, not the head — a filter row inside the
+   head would otherwise push it out of line with the rail heads. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-headrow,
+body:not(.tt-on).home-search .home-v2 .newsfeed-headrow {
+  border-bottom: 2px solid #e0e5ee !important;
+  padding: 0 0 12px !important;
+  margin: 0 !important;
+}
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-title,
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-title-main,
+body:not(.tt-on).home-search .home-v2 .newsfeed-title,
+body:not(.tt-on).home-search .home-v2 .newsfeed-title-main {
+  font-family: var(--font-display, var(--font-family)) !important;
+  font-size: 1.24rem !important; font-weight: 750 !important;
+  letter-spacing: -0.012em !important; color: #14204a !important;
+  line-height: 1.25 !important; margin: 0 !important; padding: 0 !important;
+}
+/* Same 12px the topic feed keeps between its rule and the first story. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-list,
+body:not(.tt-on).home-search .home-v2 .news-list { margin-top: 12px !important; }
