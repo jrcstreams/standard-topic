@@ -30481,3 +30481,140 @@ body:not(.tt-on).home-search .home-v2 .newsfeed-title-main {
 /* Same 12px the topic feed keeps between its rule and the first story. */
 body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-list,
 body:not(.tt-on).home-search .home-v2 .news-list { margin-top: 12px !important; }
+
+/* ═══ revamp1170 — homepage news feed: card view, and a clean open story ══════
+   Three related fixes on the home feed (#img1310-1313). */
+
+/* (1) The homepage feed stayed on the flat divider rows retired-then-restored by
+   revamp765/803, while topic pages got the bordered card view back at 880px+.
+   Same markup, different CSS — so give home the same cards. One column, not two:
+   the feed shares the row with the sidebar, so its column is ~640-900px, and
+   two cards in that space would be the ~300px columns revamp1162 just fixed on
+   Prompts. Tab mode keeps the flat list, exactly as topic pages do. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-list {
+  gap: 14px !important;
+  padding: 4px 0 6px !important;
+}
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-card {
+  display: flex !important; flex-direction: column; align-items: stretch;
+  min-width: 0; position: relative; text-align: left;
+  border: 1px solid #e8edf5 !important; border-radius: 12px !important;
+  background: #fff !important;
+  padding: 14px 16px 12px !important; margin: 0 !important;
+}
+/* The hairline between rows was the list's separator — the gap between cards is
+   the separator now. (Both pseudo-elements: ::before carries the hover fill.) */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-card::after { display: none !important; }
+/* Two older rules tuck the FIRST story up under the head rule (3px/14px/2px of
+   top padding depending on width). A card sets its own padding. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child {
+  padding-top: 14px !important;
+}
+/* Actions sit under the summary inside the card, the way the topic cards read,
+   instead of floating at the right edge of a row. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-card .news-card-body {
+  display: flex !important; flex-direction: column; align-items: stretch;
+  gap: 10px; padding: 0 !important; margin-top: 5px !important;
+}
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-card .news-card-body > .news-card-actions {
+  margin-left: 0 !important; justify-content: flex-start;
+}
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-card .news-card-desc {
+  max-width: none !important;
+}
+
+/* (2) An OPEN story's header band starts at the card's inner edge. The first
+   card carries a 2px top padding (revamp1085's "tuck it under the head rule"),
+   which on an open card showed as a 2px strip of the lighter body fill above the
+   tinted header — the stray line across the top of the card. */
+#section-newsfeed .news-card--open,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) {
+  padding-top: 0 !important;
+}
+
+/* (3) With the first story open, the section head's own 2px rule became a second
+   line stacked right above the open card's border. The open card supplies its
+   own edge — drop the rule for as long as it's open. */
+body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child.news-card--open) .newsfeed-head,
+body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-child:has(.news-act-ai[aria-expanded="true"])) .newsfeed-head {
+  border-bottom-color: transparent !important;
+}
+
+/* ═══ revamp1172 — the page sub-navs adopt the homepage bar's spec, and Topics
+   gets tabs in tab mode ═══════════════════════════════════════════════════════
+
+   (1) One spec for the sticky bar. The homepage bar is the reference: a 58px
+   identity band (1.28rem/800 title, 18px glyph) over a 46px tab row on an
+   off-white ground, with 0.8rem/650 pills. The standalone pages had drifted —
+   a smaller 1.09rem/700 title over LARGER 0.9rem/600 tabs on white — so the two
+   bars read as different components (#img1269). Match the homepage on all of
+   them. */
+#sub-header.pagenav .subnav-ident-name {
+  font-size: 1.28rem !important; font-weight: 800 !important; letter-spacing: -0.02em !important;
+}
+body.tt-on #sub-header.pagenav .topic-subnav-inner { padding: 0.92rem 1rem !important; }
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs {
+  padding: 0 12px !important; min-height: 46px !important; align-items: center !important;
+  gap: 4px !important; background: #f8f9fc !important;
+}
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-tab {
+  padding: 8px 9px !important; border-radius: 10px !important; gap: 6px !important;
+  font-size: 0.8rem !important; font-weight: 650 !important; color: #46557a !important;
+}
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-ic { color: #7488ad; }
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-ic svg { width: 15px !important; height: 15px !important; display: block; }
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-tab.is-active {
+  background: #dfe8fb !important; color: #1d3a8a !important;
+}
+body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-tab.is-active .pst-ic { color: #1d3a8a; }
+@media (hover: hover) {
+  body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-tab:not(.is-active):hover {
+    background: #e9eefa !important; color: #1d3a8a !important;
+  }
+  body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-tab:not(.is-active):hover .pst-ic { color: #1d3a8a; }
+}
+
+/* (2) The AI Prompts tab glyph sits 1.4px high: measured against the icon box,
+   its ink runs 2.2px from the top and 5px from the bottom, where the other three
+   are symmetric. Centre the ink, not the viewBox. */
+.tvt[data-hview="tools"] .tvt-ic svg,
+.tvt[data-tview="tools"] .tvt-ic svg { transform: translateY(1.4px); }
+
+/* (3) Topics in tab mode: the two sections become the two tabs. Their in-page
+   heads (and the small-caps labels they condense to) go — the tabs name them —
+   so each list starts right under the bar. "Expand all" already rides in the
+   identity band there, so nothing is lost with the All Topics head. */
+body.tt-on.tview-all #content .ndp .tfeat-section { display: none !important; }
+body.tt-on:not(.tview-all) #content .ndp > .aiidd-pagehead,
+body.tt-on:not(.tview-all) #content .ndp .aiidd-tree { display: none !important; }
+body.tt-on #content .ndp .aiidd-pagehead,
+body.tt-on #content .ndp .tfeat-head { display: none !important; }
+/* Expand all only means anything on the All Topics tab. */
+body.tt-on:not(.tview-all) #sub-header.pagenav [data-topics-expand] { display: none !important; }
+
+/* ═══ revamp1173 — Home: hero rule, room under "Today's News", tighter seam ══
+
+   (1) Every other page's title band closes with a faint rule (revamp1139); the
+   Home hero was the one that didn't. Same hairline, same colour. */
+body.home-search .home-hero {
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 13%, transparent) !important;
+}
+
+/* (2) "Today's News" sat 12px off its 2px rule and read cramped. Give it 17px —
+   and the same +5 to the AI Briefing rail head, which is bottom-aligned to the
+   identical min-height precisely so the two rules land on one line (revamp1052).
+   Moving one without the other is what breaks that alignment. */
+body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-headrow,
+body:not(.tt-on).home-search .home-v2 .newsfeed-headrow {
+  padding-bottom: 17px !important;
+}
+body:not(.tt-on).home-search .home-v2 .home-featbriefs .hb-head {
+  padding-bottom: 16px !important;
+}
+
+/* (3) …and close the seam above them. The hero's own bottom padding plus its
+   0.6rem margin plus the grid's 1.6rem gap left the columns floating well below
+   the chips row; the hero's new rule is the section's real end, so the content
+   can sit up against it. */
+body.home-search .home-hero { padding-bottom: 10px !important; margin-bottom: 0 !important; }
+body.home-search.app-mode .topic-layout.home-grid > .home-sections { margin-top: -0.7rem !important; }
