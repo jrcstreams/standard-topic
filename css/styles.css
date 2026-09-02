@@ -30433,3 +30433,14 @@ html body.tt-on.pagenav-mode.sticky-always.has-subnav[class] #content {
   background: #eef2fa !important;
   border-radius: 10px 10px 0 0 !important;
 }
+
+/* ═══ revamp1170 — Home: close the gap above "What's Happening" ══════════════
+   Two things stack above the title: #topic-layout's 0.4rem top margin and the
+   hero's own 8px pad — ~14px, against the ~6px the topic-page header sits at
+   since revamp1077. Drop the layout margin (the hero's blue band already bleeds
+   22px above itself, so nothing needs the spacer) and let the hero's own pad be
+   the only thing above the title. 9px: the topic pages' rhythm, with a touch
+   more room because Home leads with a full hero. */
+body.home-search #topic-layout,
+body.home-search .topic-layout.home-grid { margin-top: 0 !important; }
+body.home-search .home-hero { padding-top: 9px !important; }
