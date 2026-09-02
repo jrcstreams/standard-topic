@@ -30524,11 +30524,15 @@ body:not(.tt-on).home-search .home-v2 #section-newsfeed .news-card .news-card-de
 }
 
 /* (2) An OPEN story's header band starts at the card's inner edge. The first
-   card carries a 2px top padding (revamp1085's "tuck it under the head rule"),
-   which on an open card showed as a 2px strip of the lighter body fill above the
-   tinted header — the stray line across the top of the card. */
+   card carries a top padding of its own (2px from revamp1085's "tuck it under
+   the head rule", 14px from the card view above), which on an open card shows as
+   a strip of the lighter body fill above the tinted header — the stray line
+   across the top of the card. Stated at the card view's own weight so it wins on
+   the first card too, not just on specificity-lighter siblings. */
 #section-newsfeed .news-card--open,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) {
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]),
+body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child.news-card--open,
+body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child:has(.news-act-ai[aria-expanded="true"]) {
   padding-top: 0 !important;
 }
 
@@ -30549,7 +30553,7 @@ body.home-search .home-v2 #section-newsfeed:has(.news-list > .news-card:first-ch
    a smaller 1.09rem/700 title over LARGER 0.9rem/600 tabs on white — so the two
    bars read as different components (#img1269). Match the homepage on all of
    them. */
-#sub-header.pagenav .subnav-ident-name {
+body.tt-on #sub-header.pagenav .subnav-ident-name {
   font-size: 1.28rem !important; font-weight: 800 !important; letter-spacing: -0.02em !important;
 }
 body.tt-on #sub-header.pagenav .topic-subnav-inner { padding: 0.92rem 1rem !important; }

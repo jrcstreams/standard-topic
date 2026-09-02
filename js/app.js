@@ -4142,6 +4142,16 @@ function renderPageNavBar(kind) {
     <div class="prompts-subnav-tabs" data-prompts-subnav-tabs role="tablist" aria-label="Prompts sections">
       ${pTab('featured', 'Featured Prompts')}${pTab('topics', 'Prompts by Topic')}${pTab('build', 'Build a Prompt')}
     </div>` : '';
+  // revamp1172 — the Topics page gets the same treatment in tab mode: two tabs,
+  // Featured Topics / All Topics, switching the two sections. Their in-page
+  // heads hide there (the tabs name them), so each list starts at the bar.
+  const tOnAll = document.body.classList.contains('tview-all');
+  const TV_IC_STAR = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.72 5.51 6.08.88-4.4 4.29 1.04 6.06L12 16.98l-5.44 2.86 1.04-6.06-4.4-4.29 6.08-.88z"/></svg>';
+  const tTab = (v, label, ic) => `<button type="button" class="pst-tab${(v === 'all') === tOnAll ? ' is-active' : ''}" data-tsview="${v}" role="tab" aria-selected="${(v === 'all') === tOnAll}"><span class="pst-ic" aria-hidden="true">${ic}</span>${label}</button>`;
+  const topicsTabs = kind === 'topics' ? `
+    <div class="prompts-subnav-tabs" data-topics-subnav-tabs role="tablist" aria-label="Topics sections">
+      ${tTab('featured', 'Featured Topics', TV_IC_STAR)}${tTab('all', 'All Topics', PV_IC.topics)}
+    </div>` : '';
   subHeader.innerHTML = `
     <div class="topic-subnav-title">
       <div class="topic-subnav-inner">
@@ -4151,7 +4161,19 @@ function renderPageNavBar(kind) {
         </div>
         ${action}
       </div>
-    </div>${promptsTabs}`;
+    </div>${promptsTabs}${topicsTabs}`;
+  subHeader.querySelectorAll('[data-topics-subnav-tabs] [data-tsview]').forEach((b) => b.addEventListener('click', () => {
+    document.body.classList.toggle('tview-all', b.dataset.tsview === 'all');
+    subHeader.querySelectorAll('[data-topics-subnav-tabs] [data-tsview]').forEach((x) => {
+      const on = x === b;
+      x.classList.toggle('is-active', on);
+      x.setAttribute('aria-selected', String(on));
+    });
+    window.scrollTo(0, 0);
+    // The bar can change height when the sections swap (the toggle only rides
+    // with All Topics), and #content's reserve is measured off it.
+    try { setSubnavHeightVar(true); } catch (_) {}
+  }));
   // revamp1168: drive the SAME state the in-page control drives — the trending
   // component owns it and re-renders both the list and its own toggle.
   subHeader.querySelector('[data-trend-sports-nav]')?.addEventListener('click', () => {
