@@ -31516,6 +31516,8 @@ html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).sticky-always.
    `body.tt-on .tview-brief .di-prov2` (three classes) with a translucent ground
    and no border, and .how-aigen states a fourth. This has to outrank both or
    the label keeps a different shape on the one surface where it is largest. */
+body.tt-on .tview-brief .di-prov2[class][class][class],
+body.tt-on .tview-brief [data-di-host] .di-prov2[class][class][class],
 .di-prov2[class][class][class] {
   align-self: flex-start;
   padding: 5px 11px !important;
@@ -31524,6 +31526,7 @@ html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).sticky-always.
   border: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent) !important;
 }
 @media (hover: hover) {
+  body.tt-on .tview-brief .di-prov2[class][class][class]:hover,
   .di-prov2[class][class][class]:hover { background: #dfe6f3 !important; border-color: color-mix(in srgb, #2f4d9e 18%, transparent) !important; }
 }
 
