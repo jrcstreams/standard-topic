@@ -1146,6 +1146,31 @@ function wirePromptDirectory(root, ctls) {
 function wirePromptsDropdown(panel, initialView) {
   const root = panel.querySelector('[data-prompts-root]');
   if (!root) return;
+  // revamp1162: a row sitting directly above an open (full-width) accordion
+  // shouldn't draw its separator — the open card supplies that edge, and the row
+  // BELOW it doesn't draw one either, so the line read as one-sided. Which rows
+  // those are depends on the column count and on which cell the open card landed
+  // in, so match on geometry (bottom edge meets the open card's top edge) rather
+  // than on nth-child parity, and let the CSS hide the line via `is-aboveopen`.
+  const syncOpenSeps = () => {
+    root.querySelectorAll('.pdir, .ph-featured .aii-fi-acclist').forEach((grid) => {
+      const items = [...grid.children];
+      const opens = items.filter((el) => el.classList.contains('is-open'));
+      items.forEach((el) => el.classList.toggle('is-aboveopen', !el.classList.contains('is-open')
+        && opens.some((o) => Math.abs((el.offsetTop + el.offsetHeight) - o.offsetTop) <= 14)));
+    });
+  };
+  let sepQueued = false;
+  const queueOpenSeps = () => {
+    if (sepQueued) return;
+    sepQueued = true;
+    requestAnimationFrame(() => { sepQueued = false; syncOpenSeps(); });
+  };
+  // Opening a card is a class change; re-rendering a view replaces the nodes;
+  // resizing changes the column count. The observers stop on their own once the
+  // panel is detached, so there's nothing to tear down.
+  try { new MutationObserver(queueOpenSeps).observe(root, { subtree: true, childList: true, attributeFilter: ['class'] }); } catch (_) {}
+  try { new ResizeObserver(queueOpenSeps).observe(root); } catch (_) {}
   // Keep the URL in step with the visible view (#/prompts · /build · /library) when
   // the dropdown is route-driven — replaceState so view switches don't re-render.
   const syncViewHash = (seg) => {
@@ -4624,14 +4649,19 @@ function renderStickyHeroBar(container, route) {
   const DOCK_MQ = window.matchMedia('(min-width: 900px)');
   // revamp1036: the sidebar IS the site's primary navigation, so a docked
   // sidebar is the default at any width that can hold one.
-  // revamp1157: a manual collapse holds for the REST OF THE SESSION — resizing
-  // across the dock threshold no longer undoes it. Closing the sidebar is a
-  // deliberate choice; the layout shouldn't second-guess it every time the
-  // window changes size. Leaving it open keeps the old behaviour: it re-docks
-  // on its own at any width that can hold it. The choice is session-scoped —
-  // a fresh page load starts expanded again (see the startup clear below).
-  const dockWanted = () => { try { return localStorage.getItem('st:sidebar') !== 'closed'; } catch (_) { return true; } };
-  const setDockPref = (open) => { try { localStorage.setItem('st:sidebar', open ? 'open' : 'closed'); } catch (_) {} };
+  // revamp1161: closing it is a DELIBERATE choice, so it stays closed for the
+  // rest of the session — no navigation, resize or breakpoint crossing reopens
+  // it. Leaving it open is unchanged: it re-docks on its own at any width that
+  // can hold one. The flag lives in sessionStorage (per tab) rather than
+  // localStorage, because this is session state, not a saved preference: it
+  // survives everything the user does in this tab, and a brand-new tab starts
+  // expanded again. It used to be a localStorage flag deleted by a "clear it
+  // at startup" line at the bottom of this function — but this function is
+  // renderStickyHeroBar, which re-runs on EVERY route change AND on every
+  // 640px breakpoint crossing (see onBreakpointCross), so that line wiped the
+  // collapse the moment you navigated or dragged the window narrow and back.
+  const dockWanted = () => { try { return sessionStorage.getItem('st:sidebar') !== 'closed'; } catch (_) { return true; } };
+  const setDockPref = (open) => { try { sessionStorage.setItem('st:sidebar', open ? 'open' : 'closed'); } catch (_) {} };
   const applyDock = () => {
     const docked = DOCK_MQ.matches && dockWanted();
     document.body.classList.toggle('nav-docked', docked);
@@ -4656,6 +4686,8 @@ function renderStickyHeroBar(container, route) {
       // revamp1157: no state reset here — a session collapse survives every
       // resize. Widening only re-docks when the user never collapsed (or has
       // re-opened it with the desktop hamburger) — what dockWanted() says.
+      // revamp1161: same rule at the 640px crossing, which re-runs this whole
+      // function; dockWanted() is now the ONLY thing that decides.
       if (window.__applyDock) window.__applyDock();
     });
   }
@@ -4722,12 +4754,14 @@ function renderStickyHeroBar(container, route) {
     openSearchFromNav();
   });
 
-  // revamp1052: a manual collapse only lasts the session — every fresh page
-  // load defaults the sidebar to expanded on any width that can hold it. So
-  // clear the stored 'closed' flag once at startup; a mid-session collapse
-  // still persists until the next refresh (and, since revamp1157, across any
-  // amount of resizing in between).
-  try { if (localStorage.getItem('st:sidebar') === 'closed') localStorage.removeItem('st:sidebar'); } catch (_) {}
+  // revamp1161: the collapse now lives in sessionStorage (see dockWanted), which
+  // expires with the tab on its own — nothing to clear here. Sweep away the old
+  // localStorage flag once per load so a 'closed' saved by an earlier build
+  // can't outlive the tab that set it.
+  if (!window.__sbLegacySwept) {
+    window.__sbLegacySwept = true;
+    try { localStorage.removeItem('st:sidebar'); } catch (_) {}
+  }
   applyDock();
 
   // Mobile top-bar search icon (kept upper-right even though Search is also

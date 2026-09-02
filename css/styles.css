@@ -29932,3 +29932,67 @@ body:not(.tt-on) .ndp.aii-nav-dd-trending .aii-nav-dd-head { margin-bottom: 0.25
 body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-head { padding-bottom: 0.3rem !important; margin-bottom: 0.25rem !important; }
 .ndp.aii-nav-dd-trending .aii-nav-dd-subbar { padding-top: 2px !important; }
 .aii-nav-dd-trending .tlm-controlbar { margin-top: 0 !important; }
+
+/* ═══ revamp1162 — Prompts page: column count, row height, row centering ═════
+   Four related fixes on the Prompts landing (#img1249-1253). */
+
+/* (1) Featured Prompts went 3-wide from 1100px of VIEWPORT, which with the
+   320px docked sidebar left ~290px columns — every second name wrapped to two
+   lines. The longest name ("What to Watch, Listen To and Play This Week")
+   measures 337px, plus 95px of icon/gap/chevron chrome = ~432px per column, so
+   three columns need ~1320px of LIST width. Two columns is the default; three
+   only once the list really has the room — which is a different viewport
+   number docked (+320px sidebar) than undocked. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+@media (min-width: 1420px) {
+  body:not(.nav-docked) #content .prompts-home--v2 .ph-featured .aii-fi-acclist {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+@media (min-width: 1740px) {
+  body.nav-docked #content .prompts-home--v2 .ph-featured .aii-fi-acclist {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+/* Re-state the single column — the 2-column base above is later in the file
+   than the original max-width:560px rule and would otherwise beat it. */
+@media (max-width: 560px) {
+  #content .prompts-home--v2 .ph-featured .aii-fi-acclist {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* (2) Both lists' rows get more height to sit in — 52px read as a squeezed
+   line of text rather than a row you press. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist > .aii-fi-acc > .aii-fi-accsum {
+  min-height: 60px !important;
+}
+.prompts-home .pdir > .pdir-card > .pdir-cardhead,
+.ph-body .pdir > .pdir-card > .pdir-cardhead {
+  min-height: 60px !important;
+}
+
+/* (3) Prompts by Topic rows weren't centered on their separators and the first
+   row of each column looked shorter than the rest. Both are the grid's 0.6rem
+   ROW-GAP: the separator is each card's border-bottom, so the gap landed
+   *above* the next row's content (26px above the text, 36px below it), and the
+   first row had no gap above it at all. Zero the row gap, keep the column gap —
+   the same trap as revamp1123/1126/1142/1145. The open card keeps its own
+   9px margin, so it still breathes. */
+.prompts-home .pdir,
+.ph-body .pdir,
+[data-prompts-host] .pdir { row-gap: 0 !important; }
+
+/* (4) A row sitting directly above an open card shouldn't draw its separator.
+   The open card supplies that edge, and the row below it doesn't draw one
+   either, so the line read as one-sided. `is-aboveopen` is set from geometry in
+   app.js (syncOpenSeps), so it follows the open card into whichever cell it
+   lands in, at 2 or 3 columns. */
+.prompts-home .pdir > .pdir-card.is-aboveopen,
+.ph-body .pdir > .pdir-card.is-aboveopen,
+[data-prompts-host] .pdir > .pdir-card.is-aboveopen { border-bottom-color: transparent !important; }
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist > .aii-fi-acc.is-aboveopen > .aii-fi-accsum {
+  border-bottom-color: transparent !important;
+}
