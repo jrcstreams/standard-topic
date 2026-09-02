@@ -30706,3 +30706,22 @@ html body.tt-on.pagenav-mode.sticky-always.has-subnav[class][class]:has(.aii-nav
 }
 body.tt-on .ndp.aii-nav-dd-topics .aii-nav-dd-inner,
 body.tt-on .ndp.aii-nav-dd-topics .aii-nav-dd-scroll { padding-top: 0 !important; }
+
+/* ═══ revamp1175 — topic pages: the News Feed rule and the rail rule land on
+   one line (#img1315) ═══════════════════════════════════════════════════════
+   Same failure mode revamp1174 fixed on Home, different components. Each head
+   sized itself from its own contents: the feed head is a 24.8px title + 12px,
+   the rail head a 26px icon chip + 12px, so the two rules ended up ~3px apart
+   and the titles with them. Pin both boxes to the same 44px border-box and
+   centre their contents — the rule is then the box's own bottom edge, at the
+   same offset in both columns, whatever sits inside. */
+body:not(.tt-on) .topic-band .topic-home .newsfeed-head,
+body:not(.tt-on) .topic-band .topic-home .trail-head {
+  display: flex !important; align-items: center !important;
+  box-sizing: border-box !important;
+  min-height: 44px !important;
+  padding-top: 0 !important; padding-bottom: 12px !important;
+  margin-top: 0 !important; margin-bottom: 12px !important;
+  border-bottom: 2px solid #e0e5ee !important;
+}
+body:not(.tt-on) .topic-band .topic-home .newsfeed-headrow { width: 100% !important; border-bottom: 0 !important; padding: 0 !important; margin: 0 !important; }
