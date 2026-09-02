@@ -49,11 +49,26 @@ function readInput(req) {
 //          a day the grounding budget was spent). Re-grounds on view, but ONLY
 //          with headroom today, else it just regenerates sourceless and burns
 //          tokens. News matters most: it never refreshes by age, so without this
-//          a sourceless news brief stays that way forever.
+//          a sourceless news brief stays that way forever. Bounded to briefs
+//          cached on an EARLIER day: the trigger (no citations) survives its own
+//          fix whenever the model simply returns none, so an unbounded heal
+//          regenerates the same brief on every view for a citation that is never
+//          coming. A day is the right bound because the thing being waited on —
+//          the grounding free tier — is what resets daily. The cron's runHeal
+//          solves the same problem with OLDEST-first ordering (#revamp1160).
 //      Trend briefs are RAG: their sources come from retrieval, and a trend
 //      whose coverage fails the relevance gate KEEPS coming back sourceless —
 //      healing it every view re-burns a SerpAPI search forever (#serpburn).
 //      Never sources-heal trends.
+// True when a cached brief was generated on an earlier UTC day than now — the
+// heal's once-a-day bound. Unknown/unparseable timestamps read as "not yet",
+// which keeps an undated cache entry out of the loop entirely.
+function cachedBefore(generatedAt) {
+  const t = Date.parse(generatedAt || '');
+  if (!Number.isFinite(t)) return false;
+  return new Date(t).toISOString().slice(0, 10) < new Date().toISOString().slice(0, 10);
+}
+
 async function afterResponse(sql, input, out) {
   if (input.type === 'trend' && out && out.content && !out.cached && invalidateByTag) {
     try { await invalidateByTag('trending-all'); } catch (_) {}
@@ -73,7 +88,18 @@ async function afterResponse(sql, input, out) {
     const windowH = effectiveWindowHours(input.group, tierForTopic(input.topic));
     if (Number.isFinite(ageH) && ageH >= windowH) doRefresh = true;
   }
-  if (!doRefresh && input.type !== 'trend' && sourcesEmpty(out.sources) && await groundingHeadroom(sql)) doRefresh = true;
+  // The daily brief is excluded from the sources-heal for the same reason it is
+  // excluded from the age-refresh above: the wave owns it outright. Healing it
+  // on view re-stamps its "today, 9:37 PM ET" dateline at whatever hour someone
+  // happened to open the page — which is how a brief came to be datelined an
+  // hour later than the edition a reader had just been looking at. It is also
+  // the surface where the loop was worst: builders never carry per-section
+  // citations, so EVERY cached daily brief matched the sourceless trigger and
+  // re-generated on essentially every view.
+  const dailyBrief = input.type === 'shortcut' && input.group === 'daily';
+  const healable = !dailyBrief && input.type !== 'trend' && cachedBefore(out.generatedAt);
+  if (!doRefresh && healable && sourcesEmpty(out.sources)
+      && await groundingHeadroom(sql, { overview: input.type === 'shortcut' })) doRefresh = true;
   if (doRefresh) {
     waitUntil((async () => { try { await generateInsight(sql, { ...input, refresh: 1 }); } catch (_) {} })());
   }
@@ -142,3 +168,8 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Insight unavailable' });
   }
 };
+
+// Exported for test/sources-heal.test.js — the once-a-day bound is the whole
+// point of the rule, so it gets asserted rather than eyeballed. Attached after
+// the handler assignment above, which would otherwise clobber it.
+module.exports._cachedBefore = cachedBefore;
