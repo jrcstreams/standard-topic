@@ -30260,7 +30260,7 @@ body.tt-on .ndp.aii-nav-dd-trending .trend-sports-toggle { display: none !import
   #sub-header [data-trend-sports-nav] .tst-lead { display: none !important; }
 }
 
-/* ═══ revamp1169 — every directory section head's rule IS the first row's top
+/* ═══ revamp1170 — every directory section head's rule IS the first row's top
    border ══════════════════════════════════════════════════════════════════════
 
    The Topics page already gets this right: `.tfeat-head` / `.aiidd-pagehead`
@@ -30314,5 +30314,55 @@ body:not(.tt-on) .ndp.aii-nav-dd-trending .trend-card-grid {
 @media (hover: hover) {
   body:not(.tt-on) .ndp.aii-nav-dd-trending .trend-card:nth-child(-n+2):not(.is-expanded):hover::before {
     top: 0 !important;
+  }
+}
+
+/* ═══ revamp1169 — Prompts page: three tabs, and one column sooner ═══════════ */
+
+/* (1) Build a Prompt gets its own tab (#img1291). In tab mode each section
+   shows only under its own tab; the promo no longer trails the bottom of
+   Featured, and By Topic is no longer the promo alone. Outside tab mode the page
+   is still one continuous scroll with all three, which is revamp1082's design.
+   These out-specify '#content .prompts-home--v2 .ph-lib { display: block }'. */
+body.tt-on.pview-topics #content .prompts-home--v2 .ph-featured,
+body.tt-on.pview-build #content .prompts-home--v2 .ph-featured { display: none !important; }
+body.tt-on:not(.pview-topics) #content .prompts-home--v2 .ph-lib { display: none !important; }
+body.tt-on:not(.pview-build) #content .prompts-home--v2 .ph-buildzone { display: none !important; }
+
+/* (2) Featured Prompts held two columns down to 560px, where the columns are
+   ~260px and nearly every name wraps to two or three lines (#img1290). One
+   column from 640px — and 320px later than that when the sidebar is docked,
+   since the sidebar comes off the list width, the same +320px offset the
+   three-column breakpoints above already use. */
+@media (max-width: 640px) {
+  body:not(.nav-docked) #content .prompts-home--v2 .ph-featured .aii-fi-acclist {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 960px) {
+  body.nav-docked #content .prompts-home--v2 .ph-featured .aii-fi-acclist {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ═══ revamp1169 — homepage trending rows get the Trending page's hover ══════
+   The rows had no hover at all (#img1306). revamp1030 flattened them with
+   `.home-v2 #home-trending .trend-card { background: none !important }` at
+   (1,2,0), which silently outranked revamp766's plain `background: #f5f7fa`
+   hover at (1,4,1) — !important beats specificity — and revamp765's rounded
+   inset ::before was explicitly killed by revamp766's `content: none`.
+
+   Use the Trending page's mechanism verbatim (revamp763b): a ::before that
+   bleeds 1px past the row so the fill covers the separator instead of stopping
+   at it, with the row's children lifted above it. The id-in-path selectors are
+   what it takes to outrank both of those. */
+#home-trending .trend-card-grid > .trend-card > * { position: relative; z-index: 1; }
+@media (hover: hover) {
+  #home-trending .trend-card-grid > .trend-card:not(.is-expanded):hover {
+    background: transparent !important;
+  }
+  #home-trending .trend-card-grid > .trend-card:not(.is-expanded):hover::before {
+    content: '' !important; position: absolute !important; inset: -1px 0 -1px !important;
+    border-radius: 0 !important; background: #f2f5f9 !important; z-index: 0 !important;
   }
 }
