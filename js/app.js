@@ -4539,7 +4539,13 @@ function updateTopicViewMode() {
   const sbw = docked ? (window.innerWidth <= 1280 ? 264 : 320) : 0;
   const cw = window.innerWidth - sbw;
   const wasTt = document.body.classList.contains('tt-on');
-  const isTt = cw < 900;
+  // revamp1187: Home needs more room than a topic page — its dashboard is two
+  // columns (feed + rail) and gives up on them at 1024, where it used to STACK:
+  // AI Briefing over Prompts over Trending over the feed, a layout nobody asked
+  // for and the tabs already solve. Home goes to tab mode at the same width its
+  // second column stops fitting, so the stacked state no longer exists.
+  const isHome = document.body.classList.contains('home-search');
+  const isTt = cw < (isHome ? 1024 : 900);
   document.body.classList.toggle('tt-on', isTt);
   document.body.classList.toggle('tnews-1col', cw < 1160);
   // revamp1087: leaving tab mode → desktop shows every section at once, so an

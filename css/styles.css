@@ -31538,3 +31538,65 @@ body.tt-on .tview-brief [data-di-host] .di-prov2[class][class][class],
   border-bottom-color: #dfe5ef !important;
   padding-bottom: 9px !important;
 }
+
+/* ═══ revamp1187 — five fixes ════════════════════════════════════════════════ */
+
+/* (1) The blue band reaches the screen edge on wide displays. Its bleed is a
+   fixed `left/right: -48px` on the hero's ::before, which was enough when the
+   page filled the window; past #content's 1760px cap the gutters grow past 48
+   and the band stops short with white either side of it (#img1357). Span the
+   viewport instead, and clip the overshoot at the app so it can never become a
+   horizontal scrollbar. The docked sidebar paints over its own side. */
+#app { overflow-x: clip; }
+.home-hero::before,
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
+  left: 50% !important;
+  right: auto !important;
+  width: 100vw !important;
+  margin-left: -50vw !important;
+}
+
+/* (2) An open story's header is ONE tinted block. The tint was painted on three
+   separate children — the title link, the meta foot and the body — so the card's
+   own lighter ground showed through as white bars between them and around them,
+   and which bars you got depended on which rows that story happened to have
+   (#img1358-1360). Paint it once on the card; the panel below keeps its own
+   lighter ground and now bleeds to the card's edges rather than floating inside
+   its padding. */
+#section-newsfeed .news-card--open {
+  background: #eef2fa !important;
+  padding-bottom: 0 !important;
+}
+#section-newsfeed .news-card--open > .news-card-link,
+#section-newsfeed .news-card--open > .news-card-foot,
+#section-newsfeed .news-card--open > .news-card-body {
+  background: transparent !important;
+}
+/* The actions row sat ON the rule that closes the header. */
+#section-newsfeed .news-card--open > .news-card-body {
+  padding-bottom: 12px !important;
+}
+#section-newsfeed .news-card--open > .news-panel {
+  background: #f8fafc !important;
+  margin-left: -16px !important;
+  margin-right: -16px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  border-top: 1px solid #cfdaee !important;
+}
+
+/* (3) The briefing's foot rule was doubling: the last story block already ends
+   on its own hairline, and the foot bar drew a second one 16px under it
+   (#img1361). The bar keeps the spacing, the story block keeps the line. */
+.dih-brief-footbar { border-top: 0 !important; }
+
+/* (4) The separator between date and time reads centred. Geometrically it
+   already was — but the run to its LEFT ends in text while the run to its RIGHT
+   starts with an icon whose glyph is inset inside its box, so equal gaps put the
+   dot visibly nearer the date (#img1362/1363). Give the text side ~3px more and
+   the two read even. */
+.di-mast-when { column-gap: 13px !important; }
+.di-mast-date + .di-mast-time::before,
+.di-mast-topic ~ .di-mast-time::before,
+.di-mast-date ~ .di-mast-time::before { margin-right: 9px !important; }
+.tdi-date .tdi-stamp-sep { margin-left: 3px !important; }
