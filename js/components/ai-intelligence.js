@@ -2327,7 +2327,11 @@ function diNewsRows(feed, cites, cap = 15) {
     const tkey = title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
     if (seen.has(ukey) || (tkey && seenT.has(tkey))) continue;
     seen.add(ukey); if (tkey) seenT.add(tkey);
-    out.push({ uri, title, meta, kind });
+    const row = { uri, title, meta, kind };
+    // revamp1191: Gemini's groundingSupports say which passages this source
+    // backs. Carried through so attribution can be read rather than guessed.
+    if (Array.isArray(x.quotes) && x.quotes.length) row.quotes = x.quotes;
+    out.push(row);
     if (out.length >= cap) break;
   }
   return out;
@@ -2447,6 +2451,36 @@ export function renderDailyIntelligence(container, scope) {
     const rows = diNewsRows(flat(data.headlines), flat(data.sources), 20).filter((x) => x.title);
     const pseudo = items.map((it) => ({ name: it.lede, body: it.text, prose: it.hasLede ? it.rest : it.raw }));
     const { buckets, unmatched } = attributeItemsToSections(rows, pseudo);
+
+    // revamp1191 — where the model told us which passage a source supports,
+    // USE it: a quoted segment that appears in a story's text is attribution
+    // read off the response, not inferred from shared words. Text overlap stays
+    // for ungrounded briefs and for cached ones written before quotes existed.
+    const norm = (v) => String(v || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const itemText = items.map((it) => norm(it.text));
+    const quoted = items.map(() => []);
+    let anyQuoted = false;
+    for (const r of rows) {
+      if (!Array.isArray(r.quotes) || !r.quotes.length) continue;
+      for (let i = 0; i < itemText.length; i++) {
+        if (!itemText[i]) continue;
+        const hit = r.quotes.some((q) => {
+          const nq = norm(q);
+          // A segment can span a sentence boundary the brief later reflowed, so
+          // match on a long-enough head of the quote rather than all of it.
+          return nq.length >= 24 && (itemText[i].includes(nq) || itemText[i].includes(nq.slice(0, 48)));
+        });
+        if (hit && quoted[i].length < 4 && !quoted[i].some((x) => x.uri === r.uri)) {
+          quoted[i].push(r);
+          anyQuoted = true;
+        }
+      }
+    }
+    if (anyQuoted) {
+      const claimed = new Set();
+      quoted.forEach((list, i) => { if (list.length) { buckets[i] = list; list.forEach((r) => claimed.add(r.uri)); } });
+      for (let i = unmatched.length - 1; i >= 0; i--) if (claimed.has(unmatched[i].uri)) unmatched.splice(i, 1);
+    }
     // revamp1190 — a chip under a story ASSERTS that the article is about that
     // story. revamp1063 filled empty buckets from the leftover pool in list
     // order, which is how a Nepal-flood report ended up cited under an Iranian
