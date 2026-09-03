@@ -31703,3 +31703,22 @@ body:not(.tt-on) #content .dih .dih-group--featured .dih-items > button.dih-item
    story, shown as what they are rather than pinned under a claim (revamp1190). */
 .di-related { margin-top: 22px !important; }
 .di-related .dib-srcs { margin-top: 10px !important; }
+
+/* ═══ revamp1193 — the subnav's topic glyph sits on the title's optical centre ══
+
+   `.topic-subnav-inner .subnav-ident-ico { transform: translateY(2.5px) }` was
+   added when the icon "read ~3px too high" against the name — but the row is
+   `align-items: center` and the type has since changed, so the nudge now
+   overshoots in the other direction. Measured on /topic/physics at 600px:
+   glyph centre 86.0, the name's line-box centre 83.5, and its cap-band centre
+   (cap top to baseline, which is what the eye reads as the middle of a word)
+   ~83.8. The nudge is what put it 2px low.
+
+   Flex centring alone lands the glyph at 83.5 — within half a pixel of the cap
+   band — because the ascender space above the caps and the descender space
+   below happen to balance at this size. So take the nudge out rather than
+   replace one magic number with another. */
+.topic-subnav-inner .subnav-ident-ico,
+#sub-header .topic-subnav-inner .subnav-ident-ico {
+  transform: none !important;
+}
