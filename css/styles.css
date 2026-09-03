@@ -31652,3 +31652,49 @@ body.home-search.tt-on #sub-header .home-viewtabs[class] {
   border-top: 1px solid #e5e9f2 !important;
   border-bottom: 1px solid #e5e9f2 !important;
 }
+
+/* ═══ revamp1189 — Featured Briefings are cards, and they fill their rows ════
+
+   (1) The by-topic lists render each briefing as a bordered card; Featured
+   rendered the same markup as bare columns of text, so the page's two halves
+   looked like two different components (#img1365-1367). Same card here — the
+   by-topic values exactly, so they stay one component. */
+body #content .dih .dih-group--featured .dih-item {
+  border: 1px solid #e6ebf3 !important;
+  border-radius: 12px !important;
+  background: #fbfcfe !important;
+  padding: 13.6px 16px 15.2px !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+body #content .dih .dih-group--featured .dih-items {
+  gap: 16px 25.6px !important;
+}
+
+/* (2) The set fills whole rows instead of leaving a ragged one: 8 across four
+   columns, 6 across three, 4 across two. Fourteen are always rendered (tab mode
+   runs the lot in one column) and the tail is hidden per layout — a display:none
+   card never intersects, so the ones you can't see cost no fetch.
+   nth-of-TYPE, not nth-child: an open briefing panel is also a child of this
+   grid, and counting it would shift the cut by one. */
+body:not(.tt-on) #content .dih .dih-group--featured .dih-items > button.dih-item {
+  display: flex !important;
+}
+body:not(.tt-on) #content .dih .dih-group--featured .dih-items > button.dih-item:nth-of-type(n+9) {
+  display: none !important;
+}
+/* Three columns between 1100 and 1400: the four-column grid at those widths
+   left ~260px columns, which is where the summaries start breaking badly. */
+@media (min-width: 1100px) and (max-width: 1399.98px) {
+  .dih-group.dih-group--featured .dih-items {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+  body:not(.tt-on) #content .dih .dih-group--featured .dih-items > button.dih-item:nth-of-type(n+7) {
+    display: none !important;
+  }
+}
+@media (max-width: 1099.98px) {
+  body:not(.tt-on) #content .dih .dih-group--featured .dih-items > button.dih-item:nth-of-type(n+5) {
+    display: none !important;
+  }
+}
