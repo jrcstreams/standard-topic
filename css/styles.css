@@ -31800,6 +31800,9 @@ body.custom-mode .search-page .search-panel-hero {
 }
 .search-panel-results .aii-builder-secs,
 .search-panel-results .aii-fi-acclist { padding-top: 0 !important; margin-top: 0 !important; }
+/* News keeps a 6px lead-in of its own — Prompts and Web Resources land at 0. */
+.search-panel-results .search-news-section .news-list,
+.search-panel-results .news-list { padding-top: 0 !important; }
 
 /* ═══ revamp1196 — the query and the tabs stay with the results ═════════════
    Scrolling past the hero left the grey band saying "Search" and nothing else:
