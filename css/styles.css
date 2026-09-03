@@ -31615,12 +31615,17 @@ body #section-newsfeed .news-card[class][class]:has(.news-act-ai[aria-expanded="
   }
 }
 @media (max-width: 899.98px) {
+  /* A row carries no side padding of its own — its TEXT is inset 15px by the
+     link and meta inside it (title measured at 32.5 against a content box
+     starting at 17.5). The panel matches that inset so the insight lines up
+     with the headline above it, and takes no negative margin, since there is
+     nothing to cancel. */
   #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-panel,
   #section-newsfeed .news-card--open[class] > .news-panel {
     margin-left: 0 !important;
     margin-right: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
   }
 }
 
