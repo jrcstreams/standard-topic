@@ -6516,10 +6516,13 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
            revamp1196: echo + tabs share a wrapper so they STICK together under
            the grey band once the hero scrolls away — scrolled results kept the
            page name but lost both the query and the kind you were looking at. -->
-      ${isModal ? '<div class="search-stickzone" data-search-stickzone>' : ''}
-      <p class="search-echo" data-role="search-echo" hidden></p>
-      ${isModal ? '<div class="search-topzone-tabs" data-search-tabs-slot></div></div>' : ''}
       ${isModal ? '</div>' : ''}
+      ${isModal
+        ? `<div class="search-stickzone" data-search-stickzone>
+             <p class="search-echo" data-role="search-echo" hidden></p>
+             <div class="search-topzone-tabs" data-search-tabs-slot></div>
+           </div>`
+        : '<p class="search-echo" data-role="search-echo" hidden></p>'}
       ${!isModal ? `<div class="search-panel-starters" aria-label="Popular topics"></div>` : ''}
       <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
     </div>`;

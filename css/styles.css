@@ -31806,6 +31806,10 @@ body.custom-mode .search-page .search-panel-hero {
    no query, no indication of which of the three kinds you were reading. The
    echo and the tab strip now stick together directly under whatever chrome is
    on screen — the band when it's there, the nav when it isn't. */
+/* Sticky sticks only within its PARENT's box, so this lives as a sibling of the
+   results rather than inside .search-panel-topfold — inside that short fold it
+   scrolled away with the hero (measured: -397px at scrollY 700) instead of
+   pinning. Its parent is now .search-panel, whose box spans the results. */
 .search-stickzone {
   position: sticky;
   z-index: 40;
