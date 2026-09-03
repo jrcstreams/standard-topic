@@ -31596,11 +31596,32 @@ body #section-newsfeed .news-card[class][class]:has(.news-act-ai[aria-expanded="
 #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-panel,
 #section-newsfeed .news-card--open[class] > .news-panel {
   background: #f8fafc !important;
-  margin-left: -16px !important;
-  margin-right: -16px !important;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
   border-top: 1px solid #cfdaee !important;
+}
+/* The panel's ground reaches the card's edges by cancelling the card's own side
+   padding. revamp1187 hard-coded that as -16, which is right for a bordered
+   CARD (padding 14px 16px 12px) and wrong for a ROW, whose side padding is 0 —
+   there the -16 pushed the panel OUTSIDE the card and left the insight text
+   riding the screen edge (#img1376). Bleed only where there is padding to
+   cancel; a row's panel is already flush and its content lines up with the
+   story title above it. */
+@media (min-width: 900px) {
+  #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-panel,
+  #section-newsfeed .news-card--open[class] > .news-panel {
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+@media (max-width: 899.98px) {
+  #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-panel,
+  #section-newsfeed .news-card--open[class] > .news-panel {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
 }
 
 /* (3) The briefing's foot rule was doubling: the last story block already ends
