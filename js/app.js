@@ -435,7 +435,11 @@ function setSubnavHeightVar(force) {
   // The grey identity bar height (topic page). The name-picker dropdown hangs off
   // THIS bar's bottom so it overlays the (lower-hierarchy) control tabs. Falls back
   // to the whole subnav where there's no separate control bar (home).
-  const title = sub.querySelector('.topic-subnav-title');
+  // revamp1194: home's band is `.topic-banner`, not `.topic-subnav-title`, so
+  // this fell through to `h` — the WHOLE sub-header, tab strip included — and
+  // the Change Page panel anchored BELOW the strip instead of over it. The
+  // fallback was written when home had no strip to overlay; it does now.
+  const title = sub.querySelector('.topic-subnav-title, .topic-banner');
   const th = title ? title.offsetHeight : h;
   if (th > 0 && (force || th !== setSubnavHeightVar._th)) {
     setSubnavHeightVar._th = th;

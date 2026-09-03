@@ -19628,7 +19628,13 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
       ADDITIVE: a new block for 880-1023 only, scoped to the topic landing —
       the existing 1024+ block is untouched, and nothing here can reach the
       homepage (which is what revamp803 broke). ── */
-@media (min-width: 880px) and (max-width: 1023.98px) {
+/* revamp1194: 900, not 880. Any viewport of 880-899 is ALWAYS tab mode (tab
+   mode is content width < 900, and the sidebar only makes content narrower), so
+   the old floor opened a ~20px band where a narrowing window showed one column
+   of CARDS for a moment before settling into rows. Starting at 900 removes that
+   flicker and touches nothing else: every width this block still covers is
+   either desktop or docked tab mode, which is where cards belong. */
+@media (min-width: 900px) and (max-width: 1023.98px) {
   .topic-band .topic-home #section-newsfeed .news-list {
     display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 14px !important; align-items: stretch;
@@ -31206,7 +31212,7 @@ body.tt-on #content .ndp .prompts-home--v2 {
    that border for the wide layout, where the cards are bordered boxes and the
    first one read as an open box, and it followed into tab mode where the cards
    are full-bleed rows (#img1334/1335). */
-@media (max-width: 879.98px) {
+@media (max-width: 899.98px) {
   body.tt-on.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child,
   body.tt-on.home-search .home-v2 .news-list > .news-card:first-child,
   body.tt-on .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
@@ -31216,7 +31222,7 @@ body.tt-on #content .ndp .prompts-home--v2 {
 /* …but 880 and up the feed is bordered CARDS even in tab mode (revamp1181),
    and a card without its top edge is the open box revamp1179 closed. The rule
    above is about ROWS, so it belongs to the width where rows exist. */
-@media (min-width: 880px) {
+@media (min-width: 900px) {
   body.tt-on.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[class],
   body.tt-on.home-search .home-v2 .news-list > .news-card:first-child[class] {
     border-top: 1px solid #e8edf5 !important;
@@ -31303,7 +31309,7 @@ body.tt-on #content .ndp .prompts-dd {
    Home was switching on `:not(.tt-on)`, which is CONTENT width — so with the
    sidebar docked at 1160 the topic feed showed cards while Home, on the same
    screen, showed flat rows (#img1339). Same trigger for both. */
-@media (min-width: 880px) {
+@media (min-width: 900px) {
   body.tt-on.home-search .home-v2 #section-newsfeed .news-list {
     gap: 14px !important;
     padding: 4px 0 6px !important;
