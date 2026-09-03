@@ -31698,3 +31698,8 @@ body:not(.tt-on) #content .dih .dih-group--featured .dih-items > button.dih-item
     display: none !important;
   }
 }
+
+/* Related Coverage closes the briefing: the sources that matched no single
+   story, shown as what they are rather than pinned under a claim (revamp1190). */
+.di-related { margin-top: 22px !important; }
+.di-related .dib-srcs { margin-top: 10px !important; }

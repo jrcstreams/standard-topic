@@ -227,9 +227,20 @@ function attributeItemsToSections(items, sections) {
   for (const s of scored) {
     const decisive = s.score >= MIN_SCORE && s.score >= s.runnerUp * 1.5;
     if (s.best >= 0 && decisive && buckets[s.best].length < 4) buckets[s.best].push(s.it);
-    else leftover.push(s.it);
+    else leftover.push(s);
   }
-  return { buckets, unmatched: leftover };
+  // revamp1190 — a relaxed SECOND pass, for empty buckets only. The dominance
+  // test above ("clearly this story, not that one") is what leaves a story with
+  // no sources at all even when a source genuinely matches it best; that
+  // emptiness is what tempted the old caller into handing out arbitrary links.
+  // Same evidence bar, dominance dropped, and only where nothing was attributed
+  // — a source still has to be about the story to appear under it.
+  const stillLeft = [];
+  for (const s of leftover) {
+    if (s.best >= 0 && s.score >= MIN_SCORE && buckets[s.best].length === 0) buckets[s.best].push(s.it);
+    else stillLeft.push(s.it);
+  }
+  return { buckets, unmatched: stillLeft };
 }
 function secSourcesHTML(items, hideLabel, collapsible) {
   if (!items || !items.length) return '';
@@ -2350,19 +2361,13 @@ export function renderDailyIntelligence(container, scope) {
     const rows = diNewsRows(flat(data.headlines), flat(data.sources), 20).filter((x) => x.title);
     const pseudo = items.map((it) => ({ name: it.lede, body: it.text }));
     const { buckets, unmatched } = attributeItemsToSections(rows, pseudo);
-    // revamp1063: many items came back with NO attributed sources, so they showed
-    // none. Fall back to the unmatched grounding pool (then the full row set) so
-    // every item surfaces a couple of the briefing's real sources.
-    const fbPool = ((unmatched && unmatched.length ? unmatched : rows) || []).slice();
-    let fbIdx = 0;
-    const srcsFor = (i) => {
-      const b = buckets[i];
-      if (b && b.length) return b;
-      let out = fbPool.slice(fbIdx, fbIdx + 2);
-      fbIdx += out.length;
-      if (!out.length) out = (rows || []).slice(0, 2);
-      return out;
-    };
+    // revamp1190 — a chip under a story ASSERTS that the article is about that
+    // story. revamp1063 filled empty buckets from the leftover pool in list
+    // order, which is how a Nepal-flood report ended up cited under an Iranian
+    // tanker attack and a UK-PM story under the White House's midterm strategy
+    // (#img1368/1369). Nothing matched means nothing is shown; the leftovers go
+    // to Related Coverage below, where they claim nothing.
+    const srcsFor = (i) => buckets[i] || [];
 
     // Masthead: the day plus when this version was actually written. Editions
     // are gone — one briefing a day makes "Morning/Night" meaningless, and the
@@ -2398,6 +2403,10 @@ export function renderDailyIntelligence(container, scope) {
           <div class="dib-body aii-sec-body">${renderBriefBody(it.hasLede ? it.rest : it.raw, null)}</div>
           ${srcChips(srcsFor(i))}
         </article>`).join('')}
+      </section>` : ''}
+      ${(unmatched && unmatched.length) ? `<section class="di-related">
+        <h3 class="di-sectitle">Related Coverage</h3>
+        ${srcChips(unmatched.slice(0, 4), null)}
       </section>` : ''}
 `;
   };
