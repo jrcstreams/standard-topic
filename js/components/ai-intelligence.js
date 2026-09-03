@@ -190,18 +190,34 @@ function attrTokens(s) {
 // Proper nouns are read from the story's PROSE, where capitalisation still
 // means something — a headline may be Title Case, in which case every word
 // looks like a name. The first word of each sentence proves nothing either.
+// Dates are capitalised and rare inside one briefing, but every story published
+// today shares them — "September", "Thursday", "2026" cited a gold-price table
+// under Iran sanctions and a CD-rates table under APAC fintech (revamp1190c).
+// A date says when, never what, so it is never evidence.
+const ATTR_DATE_STOP = new Set([
+  'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+  'september', 'october', 'november', 'december',
+  'jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'sept', 'oct', 'nov', 'dec',
+  'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+  'today', 'tonight', 'yesterday', 'tomorrow', 'week', 'month', 'year',
+]);
 function properTokens(text) {
   const out = new Set();
   String(text || '').split(/(?<=[.!?])\s+|\n+/).forEach((sentence) => {
     sentence.trim().split(/\s+/).forEach((word, i) => {
       const clean = word.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, '');
       if (!clean) return;
-      // Figures and years are names too — "684.85", "2026".
-      if (/^\d[\d,.]*$/.test(clean)) { if (clean.length >= 3) out.add(clean.toLowerCase()); return; }
+      // A figure is a name when it is specific — "684.85", "1,200,000". A bare
+      // year is a date, and every story carries this one.
+      if (/^\d[\d,.]*$/.test(clean)) {
+        if (/^(19|20)\d\d$/.test(clean)) return;
+        if (clean.length >= 3) out.add(clean.toLowerCase());
+        return;
+      }
       if (i === 0) return;
       if (!/^[A-Z]/.test(clean)) return;
       const low = clean.toLowerCase();
-      if (low.length < 3 || ATTR_STOP.has(low)) return;
+      if (low.length < 3 || ATTR_STOP.has(low) || ATTR_DATE_STOP.has(low)) return;
       out.add(low);
     });
   });
