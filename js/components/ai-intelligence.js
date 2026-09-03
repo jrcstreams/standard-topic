@@ -223,6 +223,17 @@ function properTokens(text) {
   });
   return out;
 }
+// Adjacent content-word pairs — "hugging face", "first-round picks", "natural
+// sciences", "midterm strategy". A shared pair is the one signal that survives
+// Title Case headlines: it needs no capitalisation to be distinctive, and two
+// stories about different things almost never share one (revamp1190f).
+function attrBigrams(s) {
+  const words = String(s || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/)
+    .filter((w) => w.length > 2 && !ATTR_STOP.has(w) && !ATTR_DATE_STOP.has(w));
+  const out = new Set();
+  for (let i = 0; i + 1 < words.length; i++) out.add(words[i] + ' ' + words[i + 1]);
+  return out;
+}
 function attributeItemsToSections(items, sections) {
   const secToks = sections.map((p) => attrTokens((p.name || '') + ' ' + (p.body || '')));
   // `prose` is the item without its bold lede. A lede is Title Case, where
@@ -230,6 +241,7 @@ function attributeItemsToSections(items, sections) {
   // "Ceases" became names and cited four unrelated bank stories under a
    // fintech raise (revamp1190d).
   const secKeys = sections.map((p) => properTokens(p.prose || p.body || p.name || ''));
+  const secGrams = sections.map((p) => attrBigrams((p.name || '') + ' ' + (p.body || '')));
   // A name shared by most of the briefing's stories does not tell them apart:
   // "Trump" in a politics briefing, "Bank" in a business one. Only a name that
   // belongs to FEW stories is evidence for one of them.
@@ -265,21 +277,24 @@ function attributeItemsToSections(items, sections) {
 
   const scored = items.map((it) => {
     const t = attrTokens(it.title);
-    let best = -1, bestScore = 0, runnerUp = 0, bestKeys = 0;
+    const g = attrBigrams(it.title);
+    let best = -1, bestScore = 0, runnerUp = 0, bestKeys = 0, bestGrams = 0;
     for (let i = 0; i < secToks.length; i++) {
-      let score = 0, keys = 0;
+      let score = 0, keys = 0, grams = 0;
       t.forEach((w) => {
         if (secToks[i].has(w)) score += weight(w);
         if (secKeys[i].has(w) && distinctName(w)) keys++;
       });
-      // No shared NAME, no evidence: a source that shares only ordinary words
-      // with a story is not about that story, however rare those words are
+      g.forEach((b) => { if (secGrams[i].has(b)) grams++; });
+      // No shared name and no shared phrase: a source that has only ordinary
+      // words in common is not about this story, however rare those words are
       // inside one briefing.
-      if (!keys) score = 0;
-      if (score > bestScore) { runnerUp = bestScore; bestScore = score; best = i; bestKeys = keys; }
+      if (!keys && !grams) score = 0;
+      else score += grams * 2;
+      if (score > bestScore) { runnerUp = bestScore; bestScore = score; best = i; bestKeys = keys; bestGrams = grams; }
       else if (score > runnerUp) runnerUp = score;
     }
-    return { it, best, score: bestScore, runnerUp, keys: bestKeys };
+    return { it, best, score: bestScore, runnerUp, keys: bestKeys, grams: bestGrams };
   });
 
   // Needs real evidence AND a clear winner: a source that matches several
@@ -293,7 +308,7 @@ function attributeItemsToSections(items, sections) {
   // left are about the story they sit under; everything else falls to Related
   // Coverage, which claims nothing.
   const MIN_SCORE = 2;
-  const isEvidence = (s) => s.keys >= 2 || (s.keys >= 1 && s.score >= 4);
+  const isEvidence = (s) => s.grams >= 1 || s.keys >= 2 || (s.keys >= 1 && s.score >= 4);
   const leftover = [];
   for (const s of scored) {
     const decisive = isEvidence(s) && s.score >= MIN_SCORE && s.score >= s.runnerUp * 1.5;
