@@ -180,8 +180,36 @@ function attrTokens(s) {
   String(s || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).forEach((w) => { if (w.length > 2 && !ATTR_STOP.has(w)) set.add(w); });
   return set;
 }
+// revamp1190b — the tokens that make a source EVIDENCE are names, not rare
+// words. Distinctiveness was measured as document frequency across the ~7
+// stories in one briefing, a corpus far too small to tell a name from an
+// ordinary word: "removal", "journalist" and "court" each appeared in exactly
+// one story, scored as "unique — strong", and cited a Nepal tunnel rescue under
+// Israel/Gaza and a Vietnam drug trial under a Maltese murder acquittal.
+//
+// Proper nouns are read from the story's PROSE, where capitalisation still
+// means something — a headline may be Title Case, in which case every word
+// looks like a name. The first word of each sentence proves nothing either.
+function properTokens(text) {
+  const out = new Set();
+  String(text || '').split(/(?<=[.!?])\s+|\n+/).forEach((sentence) => {
+    sentence.trim().split(/\s+/).forEach((word, i) => {
+      const clean = word.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, '');
+      if (!clean) return;
+      // Figures and years are names too — "684.85", "2026".
+      if (/^\d[\d,.]*$/.test(clean)) { if (clean.length >= 3) out.add(clean.toLowerCase()); return; }
+      if (i === 0) return;
+      if (!/^[A-Z]/.test(clean)) return;
+      const low = clean.toLowerCase();
+      if (low.length < 3 || ATTR_STOP.has(low)) return;
+      out.add(low);
+    });
+  });
+  return out;
+}
 function attributeItemsToSections(items, sections) {
   const secToks = sections.map((p) => attrTokens((p.name || '') + ' ' + (p.body || '')));
+  const secKeys = sections.map((p) => properTokens(p.body || p.name || ''));
   const buckets = sections.map(() => []);
 
   // revamp915 — attribute by DISTINCTIVENESS, not raw overlap.
@@ -210,14 +238,21 @@ function attributeItemsToSections(items, sections) {
 
   const scored = items.map((it) => {
     const t = attrTokens(it.title);
-    let best = -1, bestScore = 0, runnerUp = 0;
+    let best = -1, bestScore = 0, runnerUp = 0, bestKeys = 0;
     for (let i = 0; i < secToks.length; i++) {
-      let score = 0;
-      t.forEach((w) => { if (secToks[i].has(w)) score += weight(w); });
-      if (score > bestScore) { runnerUp = bestScore; bestScore = score; best = i; }
+      let score = 0, keys = 0;
+      t.forEach((w) => {
+        if (secToks[i].has(w)) score += weight(w);
+        if (secKeys[i].has(w)) keys++;
+      });
+      // No shared NAME, no evidence: a source that shares only ordinary words
+      // with a story is not about that story, however rare those words are
+      // inside one briefing.
+      if (!keys) score = 0;
+      if (score > bestScore) { runnerUp = bestScore; bestScore = score; best = i; bestKeys = keys; }
       else if (score > runnerUp) runnerUp = score;
     }
-    return { it, best, score: bestScore, runnerUp };
+    return { it, best, score: bestScore, runnerUp, keys: bestKeys };
   });
 
   // Needs real evidence AND a clear winner: a source that matches several
@@ -225,7 +260,7 @@ function attributeItemsToSections(items, sections) {
   const MIN_SCORE = 2;
   const leftover = [];
   for (const s of scored) {
-    const decisive = s.score >= MIN_SCORE && s.score >= s.runnerUp * 1.5;
+    const decisive = s.keys > 0 && s.score >= MIN_SCORE && s.score >= s.runnerUp * 1.5;
     if (s.best >= 0 && decisive && buckets[s.best].length < 4) buckets[s.best].push(s.it);
     else leftover.push(s);
   }
@@ -237,7 +272,7 @@ function attributeItemsToSections(items, sections) {
   // — a source still has to be about the story to appear under it.
   const stillLeft = [];
   for (const s of leftover) {
-    if (s.best >= 0 && s.score >= MIN_SCORE && buckets[s.best].length === 0) buckets[s.best].push(s.it);
+    if (s.best >= 0 && s.keys > 0 && s.score >= MIN_SCORE && buckets[s.best].length === 0) buckets[s.best].push(s.it);
     else stillLeft.push(s.it);
   }
   return { buckets, unmatched: stillLeft };
