@@ -225,7 +225,18 @@ function properTokens(text) {
 }
 function attributeItemsToSections(items, sections) {
   const secToks = sections.map((p) => attrTokens((p.name || '') + ' ' + (p.body || '')));
-  const secKeys = sections.map((p) => properTokens(p.body || p.name || ''));
+  // `prose` is the item without its bold lede. A lede is Title Case, where
+  // every word looks like a proper noun — that is how "Bank", "African" and
+  // "Ceases" became names and cited four unrelated bank stories under a
+   // fintech raise (revamp1190d).
+  const secKeys = sections.map((p) => properTokens(p.prose || p.body || p.name || ''));
+  // A name shared by most of the briefing's stories does not tell them apart:
+  // "Trump" in a politics briefing, "Bank" in a business one. Only a name that
+  // belongs to FEW stories is evidence for one of them.
+  const nameDf = new Map();
+  secKeys.forEach((set) => set.forEach((w) => nameDf.set(w, (nameDf.get(w) || 0) + 1)));
+  const NAME_MAX_DF = Math.max(1, Math.floor(sections.length * 0.25));
+  const distinctName = (w) => (nameDf.get(w) || 0) <= NAME_MAX_DF;
   const buckets = sections.map(() => []);
 
   // revamp915 — attribute by DISTINCTIVENESS, not raw overlap.
@@ -259,7 +270,7 @@ function attributeItemsToSections(items, sections) {
       let score = 0, keys = 0;
       t.forEach((w) => {
         if (secToks[i].has(w)) score += weight(w);
-        if (secKeys[i].has(w)) keys++;
+        if (secKeys[i].has(w) && distinctName(w)) keys++;
       });
       // No shared NAME, no evidence: a source that shares only ordinary words
       // with a story is not about that story, however rare those words are
@@ -2410,7 +2421,7 @@ export function renderDailyIntelligence(container, scope) {
 
     const flat = (v) => (Array.isArray(v) ? v : Object.values(v || {}).flat());
     const rows = diNewsRows(flat(data.headlines), flat(data.sources), 20).filter((x) => x.title);
-    const pseudo = items.map((it) => ({ name: it.lede, body: it.text }));
+    const pseudo = items.map((it) => ({ name: it.lede, body: it.text, prose: it.hasLede ? it.rest : it.raw }));
     const { buckets, unmatched } = attributeItemsToSections(rows, pseudo);
     // revamp1190 — a chip under a story ASSERTS that the article is about that
     // story. revamp1063 filled empty buckets from the leftover pool in list
