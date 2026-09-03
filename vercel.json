@@ -26,30 +26,6 @@
     },
     {
       "path": "/api/cron/pregenerate?type=daily&n=40",
-      "schedule": "0 23 * * *"
-    },
-    {
-      "path": "/api/cron/pregenerate?type=daily&n=40",
-      "schedule": "10 23 * * *"
-    },
-    {
-      "path": "/api/cron/pregenerate?type=daily&n=40",
-      "schedule": "20 23 * * *"
-    },
-    {
-      "path": "/api/cron/pregenerate?type=daily&n=40",
-      "schedule": "30 23 * * *"
-    },
-    {
-      "path": "/api/cron/pregenerate?type=daily&n=40",
-      "schedule": "40 23 * * *"
-    },
-    {
-      "path": "/api/cron/pregenerate?type=daily&n=40",
-      "schedule": "50 23 * * *"
-    },
-    {
-      "path": "/api/cron/pregenerate?type=daily&n=40",
       "schedule": "0 0 * * *"
     },
     {

@@ -58,6 +58,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // refreshes each topic whose brief predates it — that single comparison is the
 // entire scheduling rule, so a topic is either in this wave or already done by
 // it, with nothing in between to guess at.
+// revamp1192: the wave's crons now run 00:00-00:50 UTC (20:00-20:50 ET). They
+// used to ALSO run 23:00-23:50 UTC — the end of the UTC day the grounding budget
+// keys on — and because a wave skips topics an earlier run already wrote, those
+// six runs claimed all ~100 topics on an exhausted budget and every brief was
+// generated UNGROUNDED, i.e. with no citations at all. Dropping them lets the
+// 00:xx runs do the same work on a fresh 1,500-query budget. The wave START
+// stays 19:00 ET, so 20:xx ET is still this wave and freshness is unchanged.
 const DAILY_WAVE_HOURS_ET = [19];
 const ET_FMT = new Intl.DateTimeFormat('en-US', {
   timeZone: 'America/New_York', hour12: false,
