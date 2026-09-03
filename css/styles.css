@@ -31772,16 +31772,52 @@ body.custom-mode .search-page .search-panel-hero {
 
 /* The tab strip closes on a rule, and the first result sits ON it rather than
    drawing a second one (or none — Prompts had a doubled line, News had no top
-   border at all, Web Resources had one; #img1374/1375). */
-.search-panel-results .aii-flatnav {
+   border at all, Web Resources had one; #img1374/1375).
+
+   revamp1196: the rule belongs on `.search-topzone-tabs` — the strip you can
+   actually see. `.aii-flatnav` is the builder's own nav, which this surface
+   renders display:none, so the first pass drew its 2px line on nothing. */
+.search-stickzone,
+.search-topzone-tabs[class] {
   border-bottom: 2px solid #e0e5ee !important;
   margin-bottom: 0 !important;
-  padding-bottom: 10px !important;
 }
+.search-topzone-tabs[class] {
+  padding-bottom: 10px !important;
+  border-bottom: 0 !important;
+}
+/* Whatever the active tab renders first sits on that rule and adds nothing of
+   its own — three surfaces that each had a different answer. */
 .search-panel-results .aii-builder-secs > *:first-child,
+.search-panel-results .aii-fi-acclist > .aii-fi-acc:first-child,
 .search-panel-results .aii-fi-acclist > .aii-fi-acc:first-child > .aii-fi-accsum,
 .search-panel-results .news-list > .news-card:first-child,
-.search-panel-results .pdir > *:first-child {
+.search-panel-results .pdir > *:first-child,
+.search-panel-results .aii-ext-block:first-child,
+.search-panel-results .search-news-section .news-list > .news-card:first-child {
   border-top: 0 !important;
   margin-top: 0 !important;
 }
+.search-panel-results .aii-builder-secs,
+.search-panel-results .aii-fi-acclist { padding-top: 0 !important; margin-top: 0 !important; }
+
+/* ═══ revamp1196 — the query and the tabs stay with the results ═════════════
+   Scrolling past the hero left the grey band saying "Search" and nothing else:
+   no query, no indication of which of the three kinds you were reading. The
+   echo and the tab strip now stick together directly under whatever chrome is
+   on screen — the band when it's there, the nav when it isn't. */
+.search-stickzone {
+  position: sticky;
+  z-index: 40;
+  background: #fff;
+  padding-top: 6px;
+}
+body.custom-mode.nav-docked .search-stickzone {
+  top: var(--subnav-height, 56px);
+}
+body.custom-mode:not(.nav-docked) .search-stickzone {
+  top: calc(var(--nav-h) + var(--subnav-height, 56px));
+}
+/* Over the hero's blue it should read as part of the hero, not a white slab —
+   it only needs its own ground once it is actually stuck over results. */
+.search-panel[data-state="collapsed"] .search-stickzone { background: transparent; }
