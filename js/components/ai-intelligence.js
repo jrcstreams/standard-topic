@@ -284,10 +284,19 @@ function attributeItemsToSections(items, sections) {
 
   // Needs real evidence AND a clear winner: a source that matches several
   // stories equally well isn't evidence for any one of them.
+  //
+  // revamp1190e — ONE shared name says "same subject", not "same story":
+  // "Google" tied an antitrust ruling to a coding-model launch, "Nvidia" tied a
+  // Hugging Face acquisition to an Equinix partnership, "African" tied a
+  // Sharpeville lawsuit to Uber leaving Nigeria. Evidence is two distinctive
+  // names, or one plus substantial supporting overlap. Fewer chips, and the ones
+  // left are about the story they sit under; everything else falls to Related
+  // Coverage, which claims nothing.
   const MIN_SCORE = 2;
+  const isEvidence = (s) => s.keys >= 2 || (s.keys >= 1 && s.score >= 4);
   const leftover = [];
   for (const s of scored) {
-    const decisive = s.keys > 0 && s.score >= MIN_SCORE && s.score >= s.runnerUp * 1.5;
+    const decisive = isEvidence(s) && s.score >= MIN_SCORE && s.score >= s.runnerUp * 1.5;
     if (s.best >= 0 && decisive && buckets[s.best].length < 4) buckets[s.best].push(s.it);
     else leftover.push(s);
   }
@@ -299,7 +308,7 @@ function attributeItemsToSections(items, sections) {
   // — a source still has to be about the story to appear under it.
   const stillLeft = [];
   for (const s of leftover) {
-    if (s.best >= 0 && s.keys > 0 && s.score >= MIN_SCORE && buckets[s.best].length === 0) buckets[s.best].push(s.it);
+    if (s.best >= 0 && isEvidence(s) && s.score >= MIN_SCORE && buckets[s.best].length === 0) buckets[s.best].push(s.it);
     else stillLeft.push(s.it);
   }
   return { buckets, unmatched: stillLeft };
