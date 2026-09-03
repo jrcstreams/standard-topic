@@ -985,10 +985,11 @@ export function renderAIIntelligence(container, scope) {
     // small "Results for 'x'" label.
     const topicEl = scope.lockTopic
       ? (scope.resultsFor
-        ? `<div class="aii-builder-topic aii-builder-topic--locked aii-builder-topic--resultsfor">
-             <h2 class="aii-srhead">Results for “${esc(topicTitle)}”</h2>
-             <span class="aii-srpill">${esc(((builderTabs().find((x) => x.group === curGroup) || {}).tab) || ((builderTabs().find((x) => x.group === curGroup) || {}).label) || 'Results')}</span>
-           </div>`
+        // revamp1195: the "Results for 'x'" header and its kind pill are gone —
+        // the query now echoes under the search bar, above the tabs, and the tab
+        // itself says which kind you are looking at. What is left below the tabs
+        // is the results list, sitting on the strip's own rule.
+        ? ''
         : `<div class="aii-builder-topic aii-builder-topic--locked"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span></div>`)
       : `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
     const viewLink = scope.topicKey ? `<button type="button" class="aii-view-topic" data-view-topic>View Topic Page${RIGHT_ARROW}</button>` : '';

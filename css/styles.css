@@ -31728,3 +31728,60 @@ body:not(.tt-on) #content .dih .dih-group--featured .dih-items > button.dih-item
 #sub-header .topic-subnav-inner .subnav-ident-ico {
   transform: none !important;
 }
+
+/* ═══ revamp1195 — the Search page: one seam to the nav, and results that lead ══
+
+   Three layouts, three different bugs, one cause: #content's top reserve was
+   written for a page whose first element is white. The search page opens on a
+   blue hero band, so any reserve that doesn't exactly match the visible chrome
+   shows as a white stripe above the band — or, when the reserve is too small,
+   swallows the title behind the bar (#img1370-1373):
+
+     docked           reserve 0    → title UNDER the grey band
+     wide, collapsed  reserve 78   → 22px of white between nav and band
+     tab mode         flush        → title behind the band
+
+   Reserve exactly what is on screen, and put the breathing room INSIDE the hero
+   where it belongs — so the band always meets the chrome, and the title always
+   has the same air under it whatever is above. */
+body.custom-mode.nav-docked[class][class] #content {
+  padding-top: var(--subnav-height, 56px) !important;
+}
+body.custom-mode:not(.nav-docked).tt-on[class][class] #content {
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 56px)) !important;
+}
+body.custom-mode:not(.nav-docked):not(.tt-on)[class][class] #content {
+  padding-top: var(--nav-h) !important;
+}
+/* The air the title needs, stated once, in the hero. */
+body.custom-mode .search-panel-hero,
+body.custom-mode .search-page .search-panel-hero {
+  padding-top: 30px !important;
+}
+
+/* The query, echoed under the bar in place of the old results header. */
+.search-echo {
+  margin: 10px 0 0 !important;
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #6b7a96;
+  text-align: center;
+}
+.search-echo[hidden] { display: none !important; }
+
+/* The tab strip closes on a rule, and the first result sits ON it rather than
+   drawing a second one (or none — Prompts had a doubled line, News had no top
+   border at all, Web Resources had one; #img1374/1375). */
+.search-panel-results .aii-flatnav {
+  border-bottom: 2px solid #e0e5ee !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 10px !important;
+}
+.search-panel-results .aii-builder-secs > *:first-child,
+.search-panel-results .aii-fi-acclist > .aii-fi-acc:first-child > .aii-fi-accsum,
+.search-panel-results .news-list > .news-card:first-child,
+.search-panel-results .pdir > *:first-child {
+  border-top: 0 !important;
+  margin-top: 0 !important;
+}

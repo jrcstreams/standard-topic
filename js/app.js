@@ -6509,6 +6509,11 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         </form>
         <div class="search-panel-suggest" role="listbox" hidden></div>
       </div>
+      <!-- revamp1195: the query echoes under the bar in quote style, replacing the
+           "Results for 'x'" header that used to sit below the tabs. It says the
+           same thing where the eye already is, and leaves the tab strip sitting
+           directly on the results. -->
+      <p class="search-echo" data-role="search-echo" hidden></p>
       ${isModal ? '<div class="search-topzone-tabs" data-search-tabs-slot></div>' : ''}
       ${isModal ? '</div>' : ''}
       ${!isModal ? `<div class="search-panel-starters" aria-label="Popular topics"></div>` : ''}
@@ -6523,6 +6528,14 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const resultsInner = panelEl.querySelector('.search-panel-results-inner');
   const copyLinkBtn = panelEl.querySelector('.search-panel-copylink');
   function syncClear() { if (clearBtn) clearBtn.hidden = !input.value; }
+  const echoEl = panelEl.querySelector('[data-role="search-echo"]');
+  function syncEcho() {
+    if (!echoEl) return;
+    const v = (input.value || '').trim();
+    const on = !!v && panelEl.dataset.state === 'expanded';
+    echoEl.hidden = !on;
+    if (on) echoEl.textContent = '\u201C' + v + '\u201D';
+  }
   // Placeholder shortens on narrower screens so it doesn't get cut off (#img459).
   function syncPlaceholder() {
     const w = window.innerWidth;
@@ -6715,9 +6728,14 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       mountAii(t, { news: !!(news && news.length), trends: !!(trends && trends.length) });
     });
   }
-  function expand(rawTerm) {
+  function expand(rawTerm, opts) {
     const t = (rawTerm || '').trim();
     if (!t) return;
+    // revamp1195: `silent` renders results without telling the router. Typing
+    // now opens results live, and pushing #/custom/<term> on every keystroke
+    // would fill the back button with half-typed words. Enter, a suggestion and
+    // a trend chip still publish the shareable URL.
+    const silent = !!(opts && opts.silent);
     // Homepage inline panel: open the search dropdown/modal (same as mobile + the
     // nav Search) instead of rendering results inside the hero card. Every entry
     // point (Enter, a suggestion row, a trend chip) routes through here.
@@ -6728,13 +6746,15 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     renderResults(t);
     panelEl.dataset.state = 'expanded';
     syncClear();
-    ctl.onExpand && ctl.onExpand(t);
+    syncEcho();
+    if (!silent) ctl.onExpand && ctl.onExpand(t);
   }
   function collapse() {
     currentTerm = '';
     input.value = '';
     panelEl.dataset.state = 'collapsed';
     hideSuggest();
+    syncEcho();
     destroyAii();
     resultsInner.innerHTML = '';
     syncClear();
@@ -6887,7 +6907,16 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       }, 350);
     } else {
       refreshSuggestions();
+      // revamp1195: results come up as you type — no Enter. Two characters is
+      // the floor (one letter matches everything), and the same 350ms debounce
+      // the expanded state uses keeps it to one request per pause.
+      clearTimeout(liveTimer);
+      liveTimer = setTimeout(() => {
+        const t = input.value.trim();
+        if (isModal && t.length >= 2 && panelEl.dataset.state !== 'expanded') expand(t, { silent: true });
+      }, 350);
     }
+    syncEcho();
   });
   input.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(1); }
