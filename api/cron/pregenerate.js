@@ -275,9 +275,16 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
     // Under normal operation the wave keeps every brief inside that window, so
     // this finds nothing and costs nothing.
     const CATCHUP_HOURS = 26;
-    const CATCHUP_MAX = 12;
     if (!onWave) {
-      let healed = 0;
+      // The catch-up is a WAVE, not a trickle: every briefing on the site is
+      // meant to post inside one tight window, so recovery uses the same shape
+      // as the real thing — a cluster of staggered runs, each taking as many
+      // topics as its time budget allows, converging in under an hour. Spread
+      // across the day it would leave the site showing briefings stamped hours
+      // apart, which is the thing the wave exists to prevent.
+      let healed = 0; let budgetC = total;
+      const startedAtC = Date.now();
+      const timeLeftC = () => Date.now() - startedAtC < 230 * 1000;
       try {
         const cands = overviewCandidates();
         const byKeyC = new Map(cands.map((c) => [`${c.topic.toLowerCase()}|${c.insight}`, c]));
@@ -285,11 +292,13 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
           `SELECT entity_key FROM ai_insights
             WHERE entity_type='shortcut' AND insight='daily:b'
               AND created_at < now() - ($1 || ' hours')::interval
-            ORDER BY created_at ASC LIMIT $2`, [String(CATCHUP_HOURS), CATCHUP_MAX]);
+            ORDER BY created_at ASC LIMIT $2`, [String(CATCHUP_HOURS), budgetC]);
         for (const r of stale) {
+          if (budgetC <= 0 || !timeLeftC()) break;
           const c = byKeyC.get(`${r.entity_key}|daily:b`);
           if (!c) continue;
           if (await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1, refresh: 1 })) healed++;
+          budgetC--;
           await sleep(600);
         }
       } catch (e) {
