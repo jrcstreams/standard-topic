@@ -70,19 +70,23 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // this constant, every run hit the off-wave-hour guard below and returned
 // `skipped`, and no briefing refreshed for a full day.
 //
-// revamp1200: 2am ET. The wave wants two things that pull against each other —
-// a briefing that is CURRENT for the reader's day, and an intact Google
-// grounding budget, which resets on the UTC day (8pm ET in summer). An early
-// morning wave lands six hours into that budget day in the quietest traffic
-// window, and its briefing carries today's date from the moment anyone opens
-// the site. A 6am ET wave would read marginally fresher and spend four more
-// hours of budget to get there; budget is what decides whether a briefing has
-// citations at all.
+// revamp1201: 5am ET. A daily briefing has to be written late enough to hold
+// the night behind it and early enough to be current when the day starts —
+// 5am clears the overnight cycle and the start of the European morning, and
+// lands before any reader is awake to see it stale. It is also the hour the
+// category settled on for the same reason.
 //
-// vercel.json registers both DST candidates (06:xx and 07:xx UTC) so exactly one
-// of them is 2am in New York year-round; the other falls through to the
+// The trade it accepts: 5am ET is nine hours into the UTC day the Google
+// grounding budget keys on (that day begins at 8pm ET in summer), so this slot
+// has less headroom than an evening one. If briefings start coming back without
+// citations again, the budget — not the hour — is what to fix: reserve capacity
+// for the wave, or key the accounting day to ET so it matches the editorial
+// clock.
+//
+// vercel.json registers both DST candidates (09:xx and 10:xx UTC) so exactly one
+// of them is 5am in New York year-round; the other falls through to the
 // catch-up, which is harmless.
-const DAILY_WAVE_HOURS_ET = [2];
+const DAILY_WAVE_HOURS_ET = [5];
 const ET_FMT = new Intl.DateTimeFormat('en-US', {
   timeZone: 'America/New_York', hour12: false,
   year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit',
