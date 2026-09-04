@@ -31910,7 +31910,10 @@ body.custom-mode:not(.nav-docked) .search-stickzone {
 .di-metasep { display: inline-block; width: 1px; height: 14px; background: #c9d2e1; flex: none; }
 /* The AI-generated pill keeps revamp1186's shape; it just loses its stack
    margins (0.4rem from the base rule, 6/12 in tab mode) to sit on the line. */
-.di-metaline .di-prov2[class][class][class][class] { margin: 0 !important; align-self: center !important; }
+/* flex-start, not center: in the narrow column the line stacks, and center
+   would then centre the pill HORIZONTALLY. On one row the pill is the tallest
+   item, so start and centre coincide. */
+.di-metaline .di-prov2[class][class][class][class] { margin: 0 !important; align-self: flex-start !important; }
 /* Narrow column: date | time on one line, the AI-generated pill under it. */
 @container (max-width: 479px) {
   .di-metaline { flex-direction: column; align-items: flex-start; gap: 9px; }
@@ -31919,6 +31922,9 @@ body.custom-mode:not(.nav-docked) .search-stickzone {
 /* In tab mode the topic pill is gone (the subnav names the topic) and there is
    no ✕ to clear, so the masthead takes back the 38px reserved for it. */
 body.tt-on .tview-brief [data-di-host] .di-mast--v2[class] { padding-right: 0 !important; }
+/* Tab mode keeps the pill (the mobile reference leads with it) but a tab-mode
+   rule gives it an 8px margin of its own on top of the masthead's 10px gap. */
+body.tt-on .tview-brief .di-mast--v2 .di-mast-topic[class][class] { margin: 0 !important; }
 
 /* ── Section labels: small blue caps; the rule variant runs a line to the right ── */
 .di-lbl {
@@ -31962,7 +31968,9 @@ body.tt-on .tview-brief [data-di-host] .di-mast--v2[class] { padding-right: 0 !i
   display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px;
   margin: 0 !important; padding: 15px 0 16px !important; border-top: 1px solid #e8edf5 !important;
 }
-.di-briefs.di-briefs--v2 .dib:first-child[class] { margin-top: 0 !important; padding-top: 12px !important; border-top: 0 !important; }
+/* The label is the section's first child, so `:first-child` never reaches
+   the first story; it is the label's next sibling. */
+.di-briefs.di-briefs--v2 .di-lbl + .dib[class] { margin-top: 0 !important; padding-top: 12px !important; border-top: 0 !important; }
 .di-briefs.di-briefs--v2 .dib:last-child[class] { border-bottom: 1px solid #e8edf5 !important; }
 .dib-main { min-width: 0; }
 .dib--v2 .dib-head[class] {
@@ -31984,7 +31992,9 @@ body.tt-on .tview-brief [data-di-host] .di-mast--v2[class] { padding-right: 0 !i
 
 /* ── The preview card carries the same masthead, scaled down ── */
 .tdi-mast2 { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; margin: 0 0 12px; min-width: 0; width: 100%; }
-.tdi-mast2 .tdi-topiclabel--inline[class] {
+/* (0,5,0): the evening edition recolours the pill's text at
+   `.topic-home .tdi-card--hero2.is-evening .tdi-topiclabel` (0,4,0 !important). */
+.tdi-card .tdi-mast2 .tdi-topiclabel--inline[class][class] {
   margin: 0 !important; padding: 5px 11px !important; border-radius: 7px !important;
   font-size: 0.7rem !important; letter-spacing: 0.09em !important; line-height: 1.2 !important; color: #1e3a8a !important;
 }
@@ -32015,11 +32025,11 @@ body.tt-on .tview-brief [data-di-host] .di-mast--v2[class] { padding-right: 0 !i
 /* 5 classes: revamp1086 states the label's padding/gap at `.tdi-card .di-prov2`
    and revamp1186's pill at `.tdi-cardprov[class][class][class]`; the margin
    below it is stated with !important elsewhere. */
-.tdi-metaline .tdi-cardprov[class][class][class][class] { margin: 0 !important; align-self: center !important; }
+.tdi-metaline .tdi-cardprov[class][class][class][class] { margin: 0 !important; align-self: flex-start !important; }
 /* The card's column is narrow (the topic rail is ~340px): date | time on one
    line, the AI-generated pill under it. */
 .tdi-card .tdi-metaline { flex-direction: column; align-items: flex-start; gap: 9px; }
-.tdi-card .tdi-metaline .tdi-metasep--prov { display: none; }
+.tdi-card .tdi-metaline .tdi-metasep--prov { display: none !important; }
 /* The masthead's title used to be the hidden "Your 5-minute AI briefing" h3 —
    that rule targets .tdi-today-title, which the new title does not carry. */
 .tdi-card--hero2 .tdi-summary[class] { margin: 0 0 13px !important; }
