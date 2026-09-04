@@ -2501,32 +2501,46 @@ export function renderDailyIntelligence(container, scope) {
     const timeET = stampD ? new Intl.DateTimeFormat('en-US', {
       timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' }).format(stampD) : '';
 
+    // revamp1198 — the briefing reads as an edition: pill → "<Topic> Briefing"
+    // masthead → date | time | AI-generated, piped. The site-wide brief is
+    // already labelled "Global Briefing", so it keeps that title and takes an
+    // "All Topics" pill rather than saying "Briefing" twice.
+    const isHome = scope.slug === 'home' || scope.topic === 'home';
+    const briefTitle = mastLabel ? (/briefing$/i.test(mastLabel) ? mastLabel : `${mastLabel} Briefing`) : 'Briefing';
+    const pillLabel = isHome ? 'All Topics' : mastLabel;
+    const SEP = '<span class="di-metasep" aria-hidden="true"></span>';
+    const provBtn = `<button type="button" class="di-prov2 how-aigen" data-how-it-works>${LOGO}<span>AI-generated content included</span>${DI_INFO_ICON}</button>`;
+    const whenHTML = `${dateLong ? `<span class="di-meta-date">${CAL_SVG}<span>${esc(dateLong)}</span></span>` : ''}${dateLong && timeET ? SEP : ''}${timeET ? `<span class="di-meta-time">${CLOCK_SVG}<span>${esc(timeET)} ET</span></span>` : ''}`;
+
     body.innerHTML = `
-      <div class="di-mast">
-        ${mastLabel ? `<span class="di-mast-topic">${esc(mastLabel)}</span>` : ''}
-        <span class="di-mast-when">
-          ${dateLong ? `<span class="di-mast-date">${CAL_SVG}<span>${esc(dateLong)}</span></span>` : ''}
-          ${timeET ? `<span class="di-mast-time">${CLOCK_SVG}<span>${esc(timeET)} ET</span></span>` : ''}
-        </span>
+      <div class="di-mast di-mast--v2">
+        ${pillLabel ? `<span class="di-mast-topic">${esc(pillLabel)}</span>` : ''}
+        <h2 class="di-title">${esc(briefTitle)}</h2>
+        <div class="di-metaline">
+          ${whenHTML ? `<span class="di-metagrp">${whenHTML}</span><span class="di-metasep di-metasep--prov" aria-hidden="true"></span>` : ''}
+          ${provBtn}
+        </div>
       </div>
-      <!-- revamp1043: provenance is one clickable label — "AI-generated content ·
-           Source-grounded" with the info icon; opens the shared how-it-works modal. -->
-      <button type="button" class="di-prov2 how-aigen" data-how-it-works>${LOGO}<span>AI-generated content included</span>${DI_INFO_ICON}</button>
-      ${overview ? `<section class="di-big di-big--plain">
-        <h3 class="di-sectitle">The Big Picture</h3>
-        ${thingsList.length ? `<ul class="di-big-lead">${thingsList.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
-        <div class="di-big-body aii-sec-body">${renderBriefBody(overview, null)}</div>
+      ${thingsList.length ? `<section class="di-focus">
+        <h3 class="di-lbl di-focus-lbl">Today in Focus</h3>
+        <ul class="di-focus-list">${thingsList.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
       </section>` : ''}
-      ${items.length ? `<section class="di-briefs">
-        <h3 class="di-sectitle">What Matters Today</h3>
-        ${items.map((it, i) => `<article class="dib">
-          ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}</h4>` : ''}
-          <div class="dib-body aii-sec-body">${renderBriefBody(it.hasLede ? it.rest : it.raw, null)}</div>
-          ${srcChips(srcsFor(i))}
-        </article>`).join('')}
+      ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
+      ${items.length ? `<section class="di-briefs di-briefs--v2">
+        <h3 class="di-lbl di-lbl--rule">Top Stories</h3>
+        ${items.map((it, i) => {
+          const srcs = srcsFor(i);
+          return `<article class="dib dib--v2${srcs.length ? ' has-srcs' : ''}">
+          <div class="dib-main">
+            ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}</h4>` : ''}
+            <div class="dib-body aii-sec-body">${renderBriefBody(it.hasLede ? it.rest : it.raw, null)}</div>
+          </div>
+          ${srcs.length ? `<div class="dib-side">${srcChips(srcs)}</div>` : ''}
+        </article>`;
+        }).join('')}
       </section>` : ''}
       ${(unmatched && unmatched.length) ? `<section class="di-related">
-        <h3 class="di-sectitle">Related Coverage</h3>
+        <h3 class="di-lbl di-lbl--rule">Related Coverage</h3>
         ${srcChips(unmatched.slice(0, 4), null)}
       </section>` : ''}
 `;

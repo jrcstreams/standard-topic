@@ -31854,3 +31854,172 @@ body.custom-mode:not(.nav-docked) .search-stickzone {
 /* Over the hero's blue it should read as part of the hero, not a white slab —
    it only needs its own ground once it is actually stuck over results. */
 .search-panel[data-state="collapsed"] .search-stickzone { background: transparent; }
+
+/* ═══ revamp1198 — the AI Briefing is an edition ════════════════════════════
+
+   Both cards — the collapsed preview and the open briefing — read as one
+   masthead now: topic pill → "<Topic> Briefing" → date | time | AI-generated,
+   piped. Under the masthead the open briefing runs a "Today in Focus" panel
+   (the three lead points, three columns with vertical rules in a wide column,
+   stacked with hairlines in a narrow one), the summary paragraph on its own,
+   then "Top Stories" — each story's text on the left with its SOURCES in a
+   ruled right-hand column when the container is wide enough, inline beneath
+   it otherwise. Which chips appear is unchanged (revamp1190/1191); only where.
+
+   The title face: a serif, from the system. The site sets every heading in
+   General Sans, so a General Sans title here would be one more heading; the
+   reference's high-contrast serif is what makes the briefing read as an
+   edition. Iowan Old Style (macOS/iOS) → Palatino Linotype / Book Antiqua
+   (Windows) → Georgia → the platform serif: no webfont, no request, and one
+   token to swap if a self-hosted display serif is ever wanted. */
+:root { --font-brief-title: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, 'Times New Roman', serif; }
+
+/* ── Masthead ── */
+/* [class]×3: `.tdi-card--hero2.is-open .di-page .di-mast` (0,4,0) and
+   `body.tt-on .tview-brief .di-mast` (0,3,1) both state margins with
+   !important; this has to outrank both. */
+.di-page .di-mast.di-mast--v2[class][class][class] {
+  display: flex !important; flex-direction: column !important; align-items: flex-start !important;
+  flex-wrap: nowrap !important; gap: 10px !important; margin: 0 0 6px !important;
+  font-size: 1rem !important;
+}
+.di-mast--v2 .di-mast-topic[class] {
+  flex-basis: auto !important; margin: 0 !important;
+  padding: 5px 11px !important; border-radius: 7px !important;
+  font-size: 0.7rem !important; letter-spacing: 0.09em !important;
+}
+.di-mast--v2 .di-title {
+  margin: 0 !important; padding: 0 !important;
+  font-family: var(--font-brief-title) !important;
+  font-weight: 700 !important;
+  font-size: clamp(1.7rem, 1.1rem + 2.3cqi, 2.5rem) !important;
+  line-height: 1.08 !important; letter-spacing: -0.012em !important;
+  color: #101a33 !important;
+  text-wrap: balance;
+}
+.di-metaline {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+  width: 100%; min-width: 0;
+}
+.di-metagrp { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.di-meta-date, .di-meta-time {
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; line-height: 1.2; color: #5c6a85;
+}
+.di-meta-date svg, .di-meta-time svg { width: 15px; height: 15px; flex: none; opacity: .8; }
+.di-metasep { display: inline-block; width: 1px; height: 14px; background: #c9d2e1; flex: none; }
+/* The AI-generated pill keeps revamp1186's shape; it just loses its stack
+   margins (0.4rem from the base rule, 6/12 in tab mode) to sit on the line. */
+.di-metaline .di-prov2[class][class][class][class] { margin: 0 !important; align-self: center !important; }
+/* Narrow column: date | time on one line, the AI-generated pill under it. */
+@container (max-width: 479px) {
+  .di-metaline { flex-direction: column; align-items: flex-start; gap: 9px; }
+  .di-metasep--prov { display: none; }
+}
+/* In tab mode the topic pill is gone (the subnav names the topic) and there is
+   no ✕ to clear, so the masthead takes back the 38px reserved for it. */
+body.tt-on .tview-brief [data-di-host] .di-mast--v2[class] { padding-right: 0 !important; }
+
+/* ── Section labels: small blue caps; the rule variant runs a line to the right ── */
+.di-lbl {
+  margin: 0; padding: 0; border: 0;
+  font-family: var(--font-family) !important; font-size: 0.69rem !important; font-weight: 750 !important;
+  letter-spacing: 0.11em !important; text-transform: uppercase; line-height: 1.2 !important;
+  color: #2d54b4 !important;
+}
+.di-lbl--rule { display: flex; align-items: center; gap: 14px; }
+.di-lbl--rule::after { content: ""; flex: 1 1 auto; height: 1px; background: #dfe5ef; }
+
+/* ── Today in Focus ── */
+.di-focus {
+  margin: 0 0 8px !important; padding: 16px 20px 17px;
+  border-radius: 14px; background: #eef2f9; border: 1px solid #e2e8f3;
+}
+.di-focus-lbl { margin-bottom: 12px !important; }
+.di-focus-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+.di-focus-list li {
+  min-width: 0; padding: 10px 0; border-top: 1px solid #d3dcec;
+  font-family: var(--font-family); font-size: 0.95rem; font-weight: 600; line-height: 1.45; color: #172444;
+}
+.di-focus-list li:first-child { border-top: 0; padding-top: 0; }
+.di-focus-list li:last-child { padding-bottom: 0; }
+@container (min-width: 640px) {
+  .di-focus { padding: 16px 22px 18px; }
+  .di-focus-list { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 22px; }
+  .di-focus-list li { padding: 0 0 0 22px; border-top: 0; border-left: 1px solid #cfd8e8; }
+  .di-focus-list li:first-child { padding-left: 0; border-left: 0; }
+}
+
+/* ── The summary, on its own under the panel ── */
+.di-summary { font-family: var(--font-family); font-size: 0.98rem; line-height: 1.66; color: #2b3853; }
+.di-summary p { margin: 0 0 0.8em; }
+.di-summary p:last-child { margin-bottom: 0; }
+
+/* ── Top Stories ── */
+.di-briefs.di-briefs--v2[class] { margin-top: 16px !important; }
+.di-briefs--v2 .di-lbl--rule { margin-bottom: 4px; }
+.di-briefs.di-briefs--v2 .dib[class] {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px;
+  margin: 0 !important; padding: 15px 0 16px !important; border-top: 1px solid #e8edf5 !important;
+}
+.di-briefs.di-briefs--v2 .dib:first-child[class] { margin-top: 0 !important; padding-top: 12px !important; border-top: 0 !important; }
+.di-briefs.di-briefs--v2 .dib:last-child[class] { border-bottom: 1px solid #e8edf5 !important; }
+.dib-main { min-width: 0; }
+.dib--v2 .dib-head[class] {
+  margin: 0 0 6px !important;
+  font-family: var(--font-display) !important; font-size: 1.02rem !important; font-weight: 700 !important;
+  letter-spacing: -0.012em !important; line-height: 1.3 !important; color: #14204a !important;
+}
+.dib--v2 .dib-body { font-size: 0.93rem; line-height: 1.6; color: #34405a; }
+.dib-side { min-width: 0; }
+.dib-side .dib-srcs { margin-top: 0; }
+@container (min-width: 700px) {
+  .di-briefs.di-briefs--v2 .dib[class] { grid-template-columns: minmax(0, 1fr) 200px; column-gap: 24px; }
+  .dib-side { border-left: 1px solid #e3e9f3; padding-left: 22px; align-self: stretch; }
+  .dib-side .dib-srcs { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .dib-side .dib-srcs-label { margin: 0 0 1px; }
+  .dib-side .dib-src { max-width: 100%; }
+}
+.di-related .di-lbl--rule { margin-bottom: 2px; }
+
+/* ── The preview card carries the same masthead, scaled down ── */
+.tdi-mast2 { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; margin: 0 0 12px; min-width: 0; width: 100%; }
+.tdi-mast2 .tdi-topiclabel--inline[class] {
+  margin: 0 !important; padding: 5px 11px !important; border-radius: 7px !important;
+  font-size: 0.7rem !important; letter-spacing: 0.09em !important; line-height: 1.2 !important; color: #1e3a8a !important;
+}
+.tdi-card .tdi-brieftitle[class] {
+  display: block !important; margin: 0 !important; padding: 0 !important;
+  font-family: var(--font-brief-title) !important; font-weight: 700 !important;
+  font-size: 1.5rem !important; line-height: 1.12 !important; letter-spacing: -0.01em !important;
+  color: #101a33 !important; text-wrap: balance;
+}
+.tdi-metaline { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; width: 100%; min-width: 0; }
+.tdi-metaline .tdi-date[class][class] {
+  display: inline-flex !important; align-items: center !important; gap: 10px !important; margin: 0 !important; padding: 0 !important;
+  font-size: 0.82rem !important; font-weight: 600 !important; color: #5c6a85 !important;
+  letter-spacing: 0 !important; text-transform: none !important; line-height: 1.2 !important; white-space: nowrap;
+}
+.tdi-metaline .tdi-stamp-val[class][class] {
+  display: inline-flex !important; align-items: center !important; gap: 6px !important;
+  font-size: 0.82rem !important; font-weight: 600 !important; color: #5c6a85 !important;
+  letter-spacing: 0 !important; text-transform: none !important; line-height: 1.2 !important; margin: 0 !important; padding: 0 !important;
+}
+.tdi-metaline .tdi-stamp-val svg { width: 14px !important; height: 14px !important; opacity: .8; }
+.tdi-metaline .tdi-stamp-sep[class][class],
+.tdi-metaline .tdi-metasep {
+  display: inline-block !important; width: 1px !important; height: 14px !important; flex: none;
+  margin: 0 !important; padding: 0 !important; background: #c9d2e1 !important; color: transparent !important; font-size: 0 !important;
+  border-radius: 0 !important; opacity: 1 !important;
+}
+/* 5 classes: revamp1086 states the label's padding/gap at `.tdi-card .di-prov2`
+   and revamp1186's pill at `.tdi-cardprov[class][class][class]`; the margin
+   below it is stated with !important elsewhere. */
+.tdi-metaline .tdi-cardprov[class][class][class][class] { margin: 0 !important; align-self: center !important; }
+/* The card's column is narrow (the topic rail is ~340px): date | time on one
+   line, the AI-generated pill under it. */
+.tdi-card .tdi-metaline { flex-direction: column; align-items: flex-start; gap: 9px; }
+.tdi-card .tdi-metaline .tdi-metasep--prov { display: none; }
+/* The masthead's title used to be the hidden "Your 5-minute AI briefing" h3 —
+   that rule targets .tdi-today-title, which the new title does not carry. */
+.tdi-card--hero2 .tdi-summary[class] { margin: 0 0 13px !important; }

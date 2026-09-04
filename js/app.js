@@ -1837,6 +1837,12 @@ function diHeroCardHTML(o) {
   // revamp898: no "Topic:" prefix — the name reads as an all-caps standfirst
   // directly beneath AI Briefing title.
   const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
+  // revamp1198: "<Topic> Briefing" title for the masthead. The site-wide card
+  // is labelled "Global Briefing" already, so it keeps that and takes an
+  // "All Topics" pill (o.pillLabel) instead of repeating itself.
+  const briefTitle = o.topicLabel ? (/briefing$/i.test(o.topicLabel) ? o.topicLabel : `${o.topicLabel} Briefing`) : 'Briefing';
+  const pillLabel = o.pillLabel || o.topicLabel || '';
+  const provBtn = `<button type="button" class="tdi-cardprov how-aigen" data-how-it-works>${DI_SPARK}<span>AI-generated content included</span>${DI_INFO_ICON}</button>`;
   const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the AI Briefings Hub${SUBPAGE_ARROW}</a></p>` : '';
   const HUB_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M21.2 12h-2M4.8 12h-2M18.5 5.5l-1.4 1.4M6.9 17.1l-1.4 1.4M18.5 18.5l-1.4-1.4M6.9 6.9L5.5 5.5"/></svg>';
   const HUB_DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3.5"/></svg>';
@@ -1878,22 +1884,18 @@ function diHeroCardHTML(o) {
       <div class="tdi-bodygrid">
         <div class="tdi-briefcol">
           ${o.art ? `
-          <!-- revamp987: with the art variant the hierarchy is eyebrow →
-               headline → one meta line, so the card reads top-down and gets
-               shorter. The eyebrow's wording and glyph follow the edition and
-               are filled by applyBriefArt(). -->
-          <div class="tdi-eyebrow" data-tdi-eyebrow>
-            <span class="tdi-eyebrow-ic" data-tdi-eyebrow-ic aria-hidden="true">${DI_SUN}</span>
-            <span class="tdi-eyebrow-tx" data-tdi-eyebrow-tx>Today\u2019s Briefing</span>
-          </div>
-          <div class="tdi-todayhead">
-            <h3 class="tdi-today-title">Your 5-minute AI briefing</h3>
-          </div>
-          <!-- revamp1043: the topic pill sits on its own line; the date + publish
-               time run below it (weightier), no separator pill on the same row. -->
-          <div class="tdi-metarow tdi-metarow--stack">
-            ${o.topicLabel ? `<span class="tdi-topiclabel tdi-topiclabel--inline">${escapeHTML(o.topicLabel)}</span>` : ''}
-            <span class="tdi-date" data-tdi-date></span>
+          <!-- revamp1198: the preview is a small edition masthead — pill →
+               "<Topic> Briefing" in the briefing serif → date | time |
+               AI-generated on one piped line — the same lockup the open
+               briefing carries, scaled to the card. -->
+          <div class="tdi-mast2">
+            ${pillLabel ? `<span class="tdi-topiclabel tdi-topiclabel--inline">${escapeHTML(pillLabel)}</span>` : ''}
+            <h3 class="tdi-brieftitle">${escapeHTML(briefTitle)}</h3>
+            <div class="tdi-metaline">
+              <span class="tdi-date" data-tdi-date></span>
+              <span class="tdi-metasep tdi-metasep--prov" aria-hidden="true"></span>
+              ${provBtn}
+            </div>
           </div>` : `
           <div class="tdi-todayhead">
             <h3 class="tdi-today-title">AI Briefing</h3>
@@ -1902,8 +1904,8 @@ function diHeroCardHTML(o) {
           <!-- revamp915: the edition stamp sits UNDER the topic standfirst,
                above the summary — CSS order couldn't do this because the stamp
                used to live inside .tdi-todayhead alongside the title. -->
-          <div class="tdi-stamprow"><span class="tdi-date" data-tdi-date></span></div>`}
-          <button type="button" class="tdi-cardprov how-aigen" data-how-it-works>${DI_SPARK}<span>AI-generated content included</span>${DI_INFO_ICON}</button>
+          <div class="tdi-stamprow"><span class="tdi-date" data-tdi-date></span></div>
+          ${provBtn}`}
           <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
           <div class="tdi-actions">
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
@@ -2092,7 +2094,7 @@ function renderFeaturedBriefings(host, opts) {
       </div>
       <div class="hb-hero hb-hero--side" data-home-briefing>
         <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-          noHeader: true, hubLink: false, art: true, topicLabel: 'Global Briefing',
+          noHeader: true, hubLink: false, art: true, topicLabel: 'Global Briefing', pillLabel: 'All Topics',
           sublabel: 'Your daily briefing across every topic we cover.',
           allBriefingsCta: true,
         })}</div>
@@ -2140,7 +2142,7 @@ function renderFeaturedBriefings(host, opts) {
       <div class="hb-grid">
         <div class="hb-hero" data-home-briefing>
           <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-            noHeader: true, hubLink: false, art: true, topicLabel: 'Global Briefing',
+            noHeader: true, hubLink: false, art: true, topicLabel: 'Global Briefing', pillLabel: 'All Topics',
             sublabel: 'Your daily briefing across every topic we cover.',
           })}</div>
         </div>
