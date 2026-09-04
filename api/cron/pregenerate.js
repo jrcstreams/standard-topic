@@ -65,14 +65,24 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // generated UNGROUNDED, i.e. with no citations at all. Dropping them lets the
 // 00:xx runs do the same work on a fresh 1,500-query budget. The wave START
 // stays 19:00 ET, so 20:xx ET is still this wave and freshness is unchanged.
-// revamp1199: 20, not 19. This is the hour the wave's cron runs must land on in
-// New York, and revamp1192 moved those runs from 23:xx UTC (19:00 ET) to 00:xx
-// UTC (20:00 ET) for a fresh grounding budget WITHOUT moving this — so every run
-// hit the off-wave-hour guard below, returned `skipped`, and no brief was
-// refreshed for a full day. vercel.json registers both DST candidates (00:xx and
-// 01:xx UTC) so exactly one of them is 20:00 in New York year-round; the other
-// falls through to the catch-up.
-const DAILY_WAVE_HOURS_ET = [20];
+// The hour the wave's cron runs must land on in New York. Change this and the
+// schedules in vercel.json together — revamp1192 moved the runs without moving
+// this constant, every run hit the off-wave-hour guard below and returned
+// `skipped`, and no briefing refreshed for a full day.
+//
+// revamp1200: 2am ET. The wave wants two things that pull against each other —
+// a briefing that is CURRENT for the reader's day, and an intact Google
+// grounding budget, which resets on the UTC day (8pm ET in summer). An early
+// morning wave lands six hours into that budget day in the quietest traffic
+// window, and its briefing carries today's date from the moment anyone opens
+// the site. A 6am ET wave would read marginally fresher and spend four more
+// hours of budget to get there; budget is what decides whether a briefing has
+// citations at all.
+//
+// vercel.json registers both DST candidates (06:xx and 07:xx UTC) so exactly one
+// of them is 2am in New York year-round; the other falls through to the
+// catch-up, which is harmless.
+const DAILY_WAVE_HOURS_ET = [2];
 const ET_FMT = new Intl.DateTimeFormat('en-US', {
   timeZone: 'America/New_York', hour12: false,
   year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit',
