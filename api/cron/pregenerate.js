@@ -65,7 +65,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // generated UNGROUNDED, i.e. with no citations at all. Dropping them lets the
 // 00:xx runs do the same work on a fresh 1,500-query budget. The wave START
 // stays 19:00 ET, so 20:xx ET is still this wave and freshness is unchanged.
-const DAILY_WAVE_HOURS_ET = [19];
+// revamp1199: 20, not 19. This is the hour the wave's cron runs must land on in
+// New York, and revamp1192 moved those runs from 23:xx UTC (19:00 ET) to 00:xx
+// UTC (20:00 ET) for a fresh grounding budget WITHOUT moving this — so every run
+// hit the off-wave-hour guard below, returned `skipped`, and no brief was
+// refreshed for a full day. vercel.json registers both DST candidates (00:xx and
+// 01:xx UTC) so exactly one of them is 20:00 in New York year-round; the other
+// falls through to the catch-up.
+const DAILY_WAVE_HOURS_ET = [20];
 const ET_FMT = new Intl.DateTimeFormat('en-US', {
   timeZone: 'America/New_York', hour12: false,
   year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit',
@@ -259,8 +266,36 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
     // vercel.json registers both DST candidates for each wave; only the run
     // that is actually 6am/6pm in New York does any work.
     const etHour = etParts(new Date()).h;
-    if (!DAILY_WAVE_HOURS_ET.includes(etHour)) {
-      return res.status(200).json({ ok: true, type: 'daily', skipped: 'off-wave-hour', etHour });
+    const onWave = DAILY_WAVE_HOURS_ET.includes(etHour);
+    // revamp1199 — off-wave runs are no longer a bare no-op. A wave that never
+    // fires (a schedule moved out from under this guard, a deploy window, an
+    // outage) used to leave every brief stale until the same hour came round
+    // again a day later, and nothing in the system noticed. Off-wave runs now
+    // refresh anything that has gone past a full day plus slack, capped hard.
+    // Under normal operation the wave keeps every brief inside that window, so
+    // this finds nothing and costs nothing.
+    const CATCHUP_HOURS = 26;
+    const CATCHUP_MAX = 12;
+    if (!onWave) {
+      let healed = 0;
+      try {
+        const cands = overviewCandidates();
+        const byKeyC = new Map(cands.map((c) => [`${c.topic.toLowerCase()}|${c.insight}`, c]));
+        const stale = await sql.query(
+          `SELECT entity_key FROM ai_insights
+            WHERE entity_type='shortcut' AND insight='daily:b'
+              AND created_at < now() - ($1 || ' hours')::interval
+            ORDER BY created_at ASC LIMIT $2`, [String(CATCHUP_HOURS), CATCHUP_MAX]);
+        for (const r of stale) {
+          const c = byKeyC.get(`${r.entity_key}|daily:b`);
+          if (!c) continue;
+          if (await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1, refresh: 1 })) healed++;
+          await sleep(600);
+        }
+      } catch (e) {
+        return res.status(200).json({ ok: true, type: 'daily', skipped: 'off-wave-hour', etHour, catchupError: String((e && e.message) || e).slice(0, 200) });
+      }
+      return res.status(200).json({ ok: true, type: 'daily', mode: 'catchup', etHour, healed });
     }
     const waveStartISO = dailyWaveStart().toISOString();
     const sleepMs = 600;
