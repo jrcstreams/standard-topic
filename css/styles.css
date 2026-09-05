@@ -56,12 +56,12 @@
      face: it reads as news before a word of it is read. It is a grotesque,
      like Inter, so it does not seam against the body copy the way Playfair's
      serif did (1202) — and it is plainly not General Sans, the geometric
-     every other heading on the site uses. ExtraBold, latin subset, 16KB. */
+     every other heading on the site uses. Bold: Franklin's newspaper weight. Latin subset, 16KB. */
   font-family: 'Libre Franklin';
   font-style: normal;
-  font-weight: 800;
+  font-weight: 700;
   font-display: swap;
-  src: url('/assets/fonts/libre-franklin-800.woff2') format('woff2');
+  src: url('/assets/fonts/libre-franklin-700.woff2') format('woff2');
 }
 /* === Reset & Base === */
 *, *::before, *::after {
@@ -32640,13 +32640,13 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
 .di-mast--v2 .di-title[class],
 .tdi-card .tdi-brieftitle[class][class] {
   font-family: var(--font-brief-title) !important;
-  font-weight: 800 !important;
+  font-weight: 700 !important;
   letter-spacing: -0.008em !important;
   line-height: 1.12 !important;
   color: #14213d !important;
 }
 .di-title-name,
-.di-title-kind { font-weight: 800; color: #14213d; letter-spacing: -0.008em; }
+.di-title-kind { font-weight: 700; color: #14213d; letter-spacing: -0.008em; }
 .di-mast--v2 .di-title[class] { font-size: clamp(1.42rem, 1.05rem + 1.4cqi, 1.9rem) !important; }
 .tdi-card .tdi-brieftitle[class][class] { font-size: 1.35rem !important; }
 
@@ -32656,3 +32656,9 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
   font-size: 0.88rem !important;
   line-height: 1.4 !important;
 }
+
+/* revamp1214 — the masthead drops to Franklin's Bold. ExtraBold at 1.35–1.9rem
+   closed the counters up: the word read as a block and lost the face's own
+   character, which was the whole reason for choosing it. It also stacked a
+   second extreme weight directly under the heavy "AI Briefing" section header,
+   so neither line led. Weight tracks size, and the size came down in 1213. */
