@@ -32096,3 +32096,119 @@ body.tt-on:not(.home-search) #section-newsfeed .news-card {
 body.tt-on.nav-docked:not(.home-search) #section-newsfeed .news-card {
   scroll-margin-top: calc(var(--subnav-height, 56px) + var(--tt-tabstrip-h, 56px) + 14px);
 }
+
+/* ═══ revamp1204 — ONE definition for an opened story ═══════════════════════
+
+   The open card's chrome had accumulated across a dozen rules that disagreed
+   with each other, so what you saw depended on which page you were on, which
+   position the card held, and how wide the window was (#img1379-1398):
+
+     · the card lost its vertical padding, so the headline rode the top edge
+     · the title and source line kept a 15px inset the card's own padding had
+       already provided, so they sat right of the insight text beneath them
+     · `.news-card-body` drew a bottom border AND the panel drew a top one —
+       the phantom second line under Close Insight / View Story, on every page
+     · the border was 1px #e8edf5 here and 1.5px #b9c6e4 there, and on some
+       positions it vanished at the top entirely
+     · rows below 900px kept their hairline separators around a card that now
+       has a real border, so a line poked out beside it
+
+   This states the whole thing once, for every surface (feed, topic page,
+   search results), every position and both layouts. Read it as the definition;
+   anything above that disagrees is history. */
+
+/* ── The card ── */
+body #section-newsfeed .news-card--open[class],
+body #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]),
+body .search-news-section .news-card--open[class],
+body .search-news-section .news-card[class]:has(.news-act-ai[aria-expanded="true"]) {
+  border: 1.5px solid #b9c6e4 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background: #eef2fa !important;
+  box-shadow: 0 6px 20px -14px rgba(30, 58, 138, 0.28) !important;
+}
+/* A bordered card supplies its own edges — the list's row hairlines must not
+   draw around it, on either side. */
+body #section-newsfeed .news-card--open[class]::after,
+body #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"])::after,
+body #section-newsfeed .news-card[class]:has(+ .news-card--open)::after {
+  display: none !important;
+}
+
+/* ── The header: title, source line, actions ── */
+@media (min-width: 900px) {
+  body #section-newsfeed .news-card--open[class],
+  body #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) {
+    padding: 14px 16px 0 !important;
+  }
+  /* The card already insets its contents; the link and foot must not inset them
+     again, or the headline sits right of the insight text below it. */
+  body #section-newsfeed .news-card--open[class] > .news-card-link,
+  body #section-newsfeed .news-card--open[class] > .news-card-foot,
+  body #section-newsfeed .news-card--open[class] > .news-card-body,
+  body #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-card-link,
+  body #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-card-foot,
+  body #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-card-body {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+@media (max-width: 899.98px) {
+  /* Rows carry no side padding of their own — the 15px inset lives on the link
+     and foot, and the panel matches it (revamp1197b). */
+  body #section-newsfeed .news-card--open[class],
+  body #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) {
+    padding: 14px 0 0 !important;
+  }
+}
+
+/* ── The seam between header and insight: ONE rule, the panel's. ── */
+body #section-newsfeed .news-card--open[class] > .news-card-body,
+body #section-newsfeed .news-card[class]:has(.news-act-ai[aria-expanded="true"]) > .news-card-body,
+body .search-news-section .news-card--open[class] > .news-card-body {
+  border-bottom: 0 !important;
+  padding-bottom: 12px !important;
+}
+
+/* ── Section headings inside the insight ──
+   They were 12.8px against 15px body copy — SMALLER than the text they head,
+   which is why the structure reads flat. Up to 0.95rem and the site's navy. */
+.ni-sec-name[class] {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: #1e3a8a !important;
+  letter-spacing: -0.005em;
+}
+
+/* ── Hover ──
+   A story card had a background transition and nothing else, so on a bordered
+   card there was no hover at all. The border and a shallow lift carry it; the
+   two actions get their own. */
+@media (hover: hover) {
+  body #section-newsfeed .news-card:not(.news-card--open):hover,
+  body .search-news-section .news-card:not(.news-card--open):hover {
+    border-color: #c3d0e8 !important;
+    box-shadow: 0 4px 14px -10px rgba(30, 58, 138, 0.35) !important;
+  }
+  body #section-newsfeed .news-card .news-act:hover,
+  body .search-news-section .news-card .news-act:hover {
+    background: #eef2fa !important;
+    border-color: #b9c6e4 !important;
+    color: #14213d !important;
+  }
+}
+#section-newsfeed .news-card,
+.search-news-section .news-card {
+  transition: background .13s ease, border-color .13s ease, box-shadow .16s ease !important;
+}
+#section-newsfeed .news-card .news-act,
+.search-news-section .news-card .news-act {
+  transition: background .12s ease, border-color .12s ease, color .12s ease !important;
+}
+
+/* ── Full width wherever the feed is a grid ── */
+.search-news-section .news-list .news-card--open,
+.search-news-section .news-list .news-card:has(.news-act-ai[aria-expanded="true"]) {
+  grid-column: 1 / -1 !important;
+}
