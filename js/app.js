@@ -1617,12 +1617,12 @@ function topicsTreeHTML() {
     </div>
     <button type="button" class="trend-sports-toggle aiidd-expandall" data-topics-expandall role="switch" aria-checked="false" title="Expand every topic's subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
   </header>`;
-  // revamp1122 — Featured Topics: a handpicked mix across parents AND subtopics
-  // (news-heavy, broad appeal), in a multi-column grid above All Topics.
+  // revamp1122 — Featured Topics: a handpicked set above All Topics.
+  // revamp1205: exactly SIX, in a fixed order, so the grid fills its rows at
+  // three columns (2 rows) and two columns (3 rows) alike — fifteen left a
+  // ragged last row at both widths and read as a second directory.
   const FEATURED_TOPIC_SLUGS = [
-    'artificial-intelligence', 'world', 'us-politics', 'markets', 'cryptocurrency',
-    'technology', 'nfl', 'health-wellness', 'astronomy-space', 'cybersecurity',
-    'economy', 'climate-environment', 'middle-east', 'entertainment', 'soccer',
+    'world', 'politics', 'markets', 'artificial-intelligence', 'technology', 'sports',
   ];
   const featItems = FEATURED_TOPIC_SLUGS.map((slug) => {
     const t = getTopicBySlug(slug);
@@ -4272,16 +4272,10 @@ function renderPageNavBar(kind) {
     <div class="prompts-subnav-tabs" data-prompts-subnav-tabs role="tablist" aria-label="Prompts sections">
       ${pTab('featured', 'Featured Prompts')}${pTab('topics', 'Prompts by Topic')}${pTab('build', 'Build a Prompt')}
     </div>` : '';
-  // revamp1172 — the Topics page gets the same treatment in tab mode: two tabs,
-  // Featured Topics / All Topics, switching the two sections. Their in-page
-  // heads hide there (the tabs name them), so each list starts at the bar.
-  const tOnAll = document.body.classList.contains('tview-all');
-  const TV_IC_STAR = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.72 5.51 6.08.88-4.4 4.29 1.04 6.06L12 16.98l-5.44 2.86 1.04-6.06-4.4-4.29 6.08-.88z"/></svg>';
-  const tTab = (v, label, ic) => `<button type="button" class="pst-tab${(v === 'all') === tOnAll ? ' is-active' : ''}" data-tsview="${v}" role="tab" aria-selected="${(v === 'all') === tOnAll}"><span class="pst-ic" aria-hidden="true">${ic}</span>${label}</button>`;
-  const topicsTabs = kind === 'topics' ? `
-    <div class="prompts-subnav-tabs" data-topics-subnav-tabs role="tablist" aria-label="Topics sections">
-      ${tTab('featured', 'Featured Topics', TV_IC_STAR)}${tTab('all', 'All Topics', PV_IC.topics)}
-    </div>` : '';
+  // revamp1172 gave the Topics page a Featured / All tab strip in tab mode;
+  // revamp1205 removed it. Featured is six rows and All Topics is a closed
+  // accordion list, so both fit one stacked page under their own section heads
+  // — the same page the wide layout shows, just one column.
   subHeader.innerHTML = `
     <div class="topic-subnav-title">
       <div class="topic-subnav-inner">
@@ -4292,19 +4286,7 @@ function renderPageNavBar(kind) {
         ${action}
         ${pagePickerHTML(kind === 'topics' ? 'topics' : kind, `tsp-panel-page-${kind}`)}
       </div>
-    </div>${promptsTabs}${topicsTabs}`;
-  subHeader.querySelectorAll('[data-topics-subnav-tabs] [data-tsview]').forEach((b) => b.addEventListener('click', () => {
-    document.body.classList.toggle('tview-all', b.dataset.tsview === 'all');
-    subHeader.querySelectorAll('[data-topics-subnav-tabs] [data-tsview]').forEach((x) => {
-      const on = x === b;
-      x.classList.toggle('is-active', on);
-      x.setAttribute('aria-selected', String(on));
-    });
-    window.scrollTo(0, 0);
-    // The bar can change height when the sections swap (the toggle only rides
-    // with All Topics), and #content's reserve is measured off it.
-    try { setSubnavHeightVar(true); } catch (_) {}
-  }));
+    </div>${promptsTabs}`;
   wireSubnavPicker(subHeader);
   // revamp1168: drive the SAME state the in-page control drives — the trending
   // component owns it and re-renders both the list and its own toggle.

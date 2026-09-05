@@ -28934,7 +28934,8 @@ body:not(.tt-on) #home-trending .trend-card-grid > .trend-card:nth-child(n+13) {
 .aiidd-pagehead { display: flex !important; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .aiidd-pagehead-tx { min-width: 0; flex: 1; }
 .aiidd-expandall { flex: none; }
-body.tt-on .aiidd-expandall { display: none !important; }
+/* revamp1205: the tab-mode hide on .aiidd-expandall is gone — the switch rides
+   beside the All Topics head at every width now. */
 
 /* Site footer retired in every scenario. */
 .st-footer { display: none !important; }
@@ -29212,17 +29213,8 @@ body.tt-on .newsfeed-scroll-wrap .news-card:first-child { padding-top: 5px !impo
   .tfeat-item:hover .tfeat-arrow { color: #5f7196; }
 }
 
-/* Mobile / tab mode: keep the Topics page non-tabular but CONDENSE the section
-   headers to the small-caps label style (like TOPIC-SPECIFIC / EVERGREEN on the
-   prompt pages) and drop the subtext. Applies to Featured Topics + All Topics.
-   (The nav dropdown reuses .aiidd-pagehead but is hidden in tab mode.) */
-body.tt-on .aiidd-pagehead-sub { display: none !important; }
-body.tt-on .aiidd-pagehead { padding-bottom: 6px !important; margin-bottom: 8px !important; border-bottom: 1px solid #e6ebf3 !important; }
-body.tt-on .aiidd-pagehead-title {
-  font-family: var(--font-family) !important;
-  font-size: 0.76rem !important; font-weight: 700 !important;
-  text-transform: uppercase; letter-spacing: 0.07em; color: #64748b !important;
-}
+/* (The tab-mode small-caps condensing of the Topics section heads that lived
+   here was removed in revamp1205 — the heads render as on the wide layout.) */
 
 /* ═══ revamp1123 — Featured Topics title weight + All Topics row alignment ═══
    (1) Featured Topics titles were too heavy (#img1190). (2) The All Topics tree
@@ -29312,7 +29304,7 @@ body.tt-on .aiidd-pagehead-title {
   background: color-mix(in srgb, #2f4d9e 12%, #fff); color: #2f4d9e;
 }
 .tfeat-head-ic svg { width: 17px; height: 17px; display: block; }
-body.tt-on .tfeat-head-ic { display: none !important; }
+/* revamp1205: .tfeat-head-ic is no longer hidden in tab mode. */
 
 /* (fix 3) Prompts by Topic: borderless separator rows (not cards), bigger icon
    chips + font (like the All Topics section), bordered container when open. */
@@ -30606,17 +30598,8 @@ body.tt-on #sub-header.pagenav .prompts-subnav-tabs .pst-tab.is-active .pst-ic {
 .tvt[data-hview="tools"] .tvt-ic svg,
 .tvt[data-tview="tools"] .tvt-ic svg { transform: translateY(1.4px); }
 
-/* (3) Topics in tab mode: the two sections become the two tabs. Their in-page
-   heads (and the small-caps labels they condense to) go — the tabs name them —
-   so each list starts right under the bar. "Expand all" already rides in the
-   identity band there, so nothing is lost with the All Topics head. */
-body.tt-on.tview-all #content .ndp .tfeat-section { display: none !important; }
-body.tt-on:not(.tview-all) #content .ndp > .aiidd-pagehead,
-body.tt-on:not(.tview-all) #content .ndp .aiidd-tree { display: none !important; }
-body.tt-on #content .ndp .aiidd-pagehead,
-body.tt-on #content .ndp .tfeat-head { display: none !important; }
-/* Expand all only means anything on the All Topics tab. */
-body.tt-on:not(.tview-all) #sub-header.pagenav [data-topics-expand] { display: none !important; }
+/* (3) — the Topics tab-mode tab strip (body.tview-all) that lived here was
+   removed in revamp1205: both sections stack under their own heads. */
 
 /* ═══ revamp1173 — Home: hero rule, room under "Today's News", tighter seam ══
 
@@ -31115,25 +31098,9 @@ body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-subbar .tlm-controlbar-inner {
   body.tt-on .ndp.aii-nav-dd-trending .trend-sports-toggle .tst-tail { display: none !important; }
 }
 
-/* Topics — "Expand all" becomes the body's caption row. The head that carries
-   it is hidden wholesale in tab mode (the tabs name the sections); show the box
-   back with its title and subtext still hidden, so what is left IS the switch,
-   sitting where Trending's caption sits. */
-body.tt-on.tview-all #content .ndp .aiidd-pagehead:not(.tfeat-head)[class][class] {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  padding: 11px 0 !important;
-  margin: 0 !important;
-  border-bottom: 1px solid #e4e8f0 !important;
-}
-body.tt-on #content .ndp .aiidd-pagehead .aiidd-pagehead-tx { display: none !important; }
-/* …and the switch itself is hidden in tab mode by an older rule
-   (`body.tt-on .aiidd-expandall`), from when the band copy was the only one. */
-body.tt-on #content .ndp .aiidd-pagehead .aiidd-expandall[class] {
-  display: inline-flex !important;
-  margin-left: 0 !important;
-}
+/* Topics — the switch stays in the All Topics head at every width (revamp1205
+   restored the heads in tab mode); only the band's copy goes, the band being
+   the crowded one there. */
 body.tt-on #sub-header.pagenav [data-topics-expand] { display: none !important; }
 
 /* ═══ revamp1179 — AI Briefings: a briefing REPLACES its preview card ════════
@@ -32236,3 +32203,90 @@ body #section-newsfeed .news-list > .news-card:first-child[class][class][class][
     padding: 14px 0 0 !important;
   }
 }
+
+/* ═══ revamp1205 — ONE accordion card for the three directories ═════════════
+
+   All Topics (Topics page), Briefings by Topic (AI Briefings hub) and Prompts by
+   Topic (Prompts page) had drifted to hairline rows — revamp1108b/1116/1126
+   flattened three separately-built accordions, and each only grew its box when
+   opened. They are cards again, and the same card: a 1px border, 12px corners,
+   a 10px row gap, a 58px head with 14px side padding, and the open one darkens
+   its border, tints its head and spans the row (the base rules already give it
+   `grid-column: 1 / -1`). The `#content` prefix out-specifies every earlier
+   `.aiidd-tree .aiidd-parent` / `.dih .dih-group:not(...)` / `.ph-body .pdir
+   .pdir-card` rule (all class-only), including the open-state ones and the
+   Prompts `is-aboveopen` separator hide — a bordered card keeps every edge. */
+#content .aiidd-tree > .aiidd-parent,
+#content .dih .dih-groups > .dih-group:not(.dih-group--featured),
+#content .ph-body .pdir > .pdir-card {
+  border: 1px solid #dfe5ef !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  align-self: start;
+  transition: border-color .14s ease, box-shadow .14s ease;
+}
+/* The grids: a real gap between cards (three earlier rules zeroed the row gap
+   so hairline rows would sit on their separators), and a little air under the
+   section head's rule so the first card doesn't butt into it. */
+#content .ndp .aiidd-tree,
+#content .dih .dih-groups,
+#content .ph-lib .ph-body .pdir {
+  row-gap: 10px !important;
+  column-gap: 12px !important;
+  margin-top: 12px !important;
+  padding-top: 0 !important;
+}
+/* Heads: one height, one inset. */
+#content .aiidd-tree > .aiidd-parent > .aiidd-parent-head,
+#content .dih .dih-groups > .dih-group:not(.dih-group--featured) > .dih-grouphead,
+#content .ph-body .pdir > .pdir-card > .pdir-cardhead {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 58px !important;
+  padding: 0 14px !important;
+  border-radius: 0 !important;
+  border-bottom: 0 !important;
+  margin: 0 !important;
+}
+/* The flat parent (no subtopics) is a link, not a button — same row height. */
+#content .aiidd-tree > .aiidd-parent.aiidd-parent-flat {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 58px !important;
+  padding: 0 14px !important;
+}
+@media (hover: hover) {
+  #content .aiidd-tree > .aiidd-parent[data-open="false"]:hover,
+  #content .dih .dih-groups > .dih-group:not(.dih-group--featured):not(.is-open):hover,
+  #content .ph-body .pdir > .pdir-card:not(.is-open):hover {
+    border-color: #b9c6e4 !important;
+  }
+  #content .aiidd-tree > .aiidd-parent.aiidd-parent-flat:hover { border-color: #b9c6e4 !important; }
+}
+/* Open: darker edge, tinted head, a soft lift; the head's rule closes it off
+   from the body. No extra margin — the grid gap is the spacing now. */
+#content .aiidd-tree > .aiidd-parent[data-open="true"],
+#content .dih .dih-groups > .dih-group:not(.dih-group--featured).is-open,
+#content .ph-body .pdir > .pdir-card.is-open {
+  border-color: #b9c6e4 !important;
+  box-shadow: 0 8px 24px -14px rgba(30, 58, 138, 0.30) !important;
+  grid-column: 1 / -1;
+}
+#content .aiidd-tree > .aiidd-parent[data-open="true"] > .aiidd-parent-head,
+#content .dih .dih-groups > .dih-group:not(.dih-group--featured).is-open > .dih-grouphead,
+#content .ph-body .pdir > .pdir-card.is-open > .pdir-cardhead {
+  background: #eef2fa !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+}
+/* The Topics subtopic list sat 6px in from a borderless row; inside a card it
+   lines up under the head's 14px inset (the list carries its own 16px). */
+#content .aiidd-tree > .aiidd-parent > .aiidd-parent-body { padding: 6px 4px 8px !important; }
+
+/* Topics page in tab mode: the section heads come back exactly as the wide
+   layout draws them (the small-caps condensing and the tab-strip hides are
+   gone above). The switch keeps its place at the head's right edge. */
+body.tt-on #content .ndp .aiidd-pagehead .aiidd-expandall[class] { display: inline-flex !important; }
