@@ -29356,7 +29356,7 @@ body.tt-on .ph-sec-head--hastoggle .pdir-expandall { display: none !important; }
   background: color-mix(in srgb, #2f4d9e 12%, #fff); color: #2f4d9e;
 }
 .aiidd-head-ic svg { width: 17px; height: 17px; display: block; }
-body.tt-on .aiidd-head-ic { display: none !important; }
+/* revamp1205b: .aiidd-head-ic is no longer hidden in tab mode. */
 /* Featured Topics head: left-aligned block (no toggle), icon now lives inside
    the title row so the head no longer needs the old icon-outside layout. */
 .tfeat-head { justify-content: flex-start !important; gap: 0 !important; align-items: flex-start !important; }
@@ -32290,3 +32290,10 @@ body #section-newsfeed .news-list > .news-card:first-child[class][class][class][
    layout draws them (the small-caps condensing and the tab-strip hides are
    gone above). The switch keeps its place at the head's right edge. */
 body.tt-on #content .ndp .aiidd-pagehead .aiidd-expandall[class] { display: inline-flex !important; }
+
+/* revamp1205b — tab mode, Topics: the first section head sat on the band.
+   The tab strip used to be the thing under the band; with the heads back the
+   Featured Topics title rode the band's bottom edge (2px). Same breathing room
+   the wide layout gives it, and the head glyphs come back too (their tab-mode
+   hide is removed in place above) — it IS the wide layout, one column. */
+body.tt-on #content .ndp .tfeat-section > .aiidd-pagehead.tfeat-head[class] { padding-top: 18px !important; }
