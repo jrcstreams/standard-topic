@@ -4877,16 +4877,22 @@ function renderStickyHeroBar(container, route) {
   // revamp1161: closing it is a DELIBERATE choice, so it stays closed for the
   // rest of the session — no navigation, resize or breakpoint crossing reopens
   // it. Leaving it open is unchanged: it re-docks on its own at any width that
-  // can hold one. The flag lives in sessionStorage (per tab) rather than
-  // localStorage, because this is session state, not a saved preference: it
-  // survives everything the user does in this tab, and a brand-new tab starts
-  // expanded again. It used to be a localStorage flag deleted by a "clear it
-  // at startup" line at the bottom of this function — but this function is
-  // renderStickyHeroBar, which re-runs on EVERY route change AND on every
-  // 640px breakpoint crossing (see onBreakpointCross), so that line wiped the
-  // collapse the moment you navigated or dragged the window narrow and back.
-  const dockWanted = () => { try { return sessionStorage.getItem('st:sidebar') !== 'closed'; } catch (_) { return true; } };
-  const setDockPref = (open) => { try { sessionStorage.setItem('st:sidebar', open ? 'open' : 'closed'); } catch (_) {} };
+  // can hold one. The flag is persisted (see dockWanted) — note that this
+  // function is renderStickyHeroBar, which re-runs on EVERY route change AND
+  // on every 640px breakpoint crossing (see onBreakpointCross), so nothing in
+  // here may ever CLEAR the flag: a clear at this scope wipes the collapse the
+  // moment you navigate or drag the window narrow and back. Only the two
+  // explicit controls write it.
+  // revamp1216: back to localStorage — closing it is a preference, not session
+  // state, so it stays closed across tabs and visits until the user reopens it
+  // from the hamburger. The absent key means OPEN, so a first-time visitor and
+  // anyone who never collapsed it gets the sidebar. What it deliberately does
+  // NOT record is the viewport: DOCK_MQ decides whether the width can hold a
+  // sidebar at all, and narrow widths never call setDockPref, so shrinking the
+  // window hides the sidebar without touching the preference and widening back
+  // restores it. Only the two controls below ever write the flag.
+  const dockWanted = () => { try { return localStorage.getItem('st:sidebar') !== 'closed'; } catch (_) { return true; } };
+  const setDockPref = (open) => { try { localStorage.setItem('st:sidebar', open ? 'open' : 'closed'); } catch (_) {} };
   const applyDock = () => {
     const docked = DOCK_MQ.matches && dockWanted();
     document.body.classList.toggle('nav-docked', docked);
@@ -4982,14 +4988,6 @@ function renderStickyHeroBar(container, route) {
     openSearchFromNav();
   });
 
-  // revamp1161: the collapse now lives in sessionStorage (see dockWanted), which
-  // expires with the tab on its own — nothing to clear here. Sweep away the old
-  // localStorage flag once per load so a 'closed' saved by an earlier build
-  // can't outlive the tab that set it.
-  if (!window.__sbLegacySwept) {
-    window.__sbLegacySwept = true;
-    try { localStorage.removeItem('st:sidebar'); } catch (_) {}
-  }
   applyDock();
 
   // Mobile top-bar search icon (kept upper-right even though Search is also
