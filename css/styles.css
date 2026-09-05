@@ -32652,7 +32652,7 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
 
 /* The focus headlines were set at the size of body copy in bold, so three of
    them read as a wall rather than three scannable lines. */
-.di-focus-list li[class] {
+.di-focus-list[class][class] li {
   font-size: 0.88rem !important;
   line-height: 1.4 !important;
 }
