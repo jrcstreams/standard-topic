@@ -32468,12 +32468,15 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
   width: auto !important;
   text-wrap: balance;
 }
-.di-title-name { font-weight: 700; color: #14213d; }
-.di-title-kind {
-  font-weight: 300;
-  color: #6b7a96;
-  letter-spacing: -0.012em;   /* the light weight needs marginally less negative tracking */
-}
+/* revamp1211: ONE weight, ONE colour. The two-tone — first as a gradient
+   (1207), then as 700-against-300 (1209) — kept reading as an inconsistency
+   rather than a device: the eye sees two different treatments in one phrase and
+   asks what broke. The spans stay in the markup (harmless, and they keep the
+   line breakable at the right point), but both halves are now the same weight
+   and colour. Prominence comes from size, weight and tracking alone, which is
+   what "normal but prominent" actually means. */
+.di-title-name,
+.di-title-kind { font-weight: 700; color: #14213d; letter-spacing: -0.024em; }
 
 /* Room to breathe. The pill, the title and the date line were on a flat 10px
    rhythm, which is why the lockup read as cramped — a masthead needs its title
@@ -32561,3 +32564,11 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
 @media (hover: hover) {
   .home-hero-chip:hover .home-hero-chip-ic { color: color-mix(in srgb, var(--tc, #1d4ed8) 82%, #000); }
 }
+
+/* revamp1211 — the card's masthead stands down when the briefing opens.
+   The expanded view renders its OWN masthead (topic pill, title, full date, the
+   ✕), so with the card's still showing you got the title, then the title again
+   four lines later. The old hide rules name `.tdi-eyebrow` / `.tdi-metarow`,
+   the classes this markup replaced in 1207 — so nothing was hiding the new one. */
+.tdi-card--hero2.is-open .tdi-mast2,
+.tdi-card.is-open .tdi-mast2 { display: none !important; }
