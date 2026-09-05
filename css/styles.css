@@ -50,6 +50,19 @@
   font-display: swap;
   src: url('/assets/fonts/general-sans-700.woff2') format('woff2');
 }
+@font-face {
+  /* revamp1213 — the briefing masthead only. Libre Franklin is a Franklin
+     Gothic revival, and Franklin Gothic is the American newspaper headline
+     face: it reads as news before a word of it is read. It is a grotesque,
+     like Inter, so it does not seam against the body copy the way Playfair's
+     serif did (1202) — and it is plainly not General Sans, the geometric
+     every other heading on the site uses. ExtraBold, latin subset, 16KB. */
+  font-family: 'Libre Franklin';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/assets/fonts/libre-franklin-800.woff2') format('woff2');
+}
 /* === Reset & Base === */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -31846,7 +31859,8 @@ body.custom-mode:not(.nav-docked) .search-stickzone {
    file: heavier, larger, tightly tracked, and two-tone (navy into the accent
    blue) via a gradient clipped to the glyphs. One token still swaps every
    surface. */
-:root { --font-brief-title: var(--font-display, 'General Sans', Inter, sans-serif); }
+/* revamp1213: see the @font-face at the top of this file for why Franklin. */
+:root { --font-brief-title: 'Libre Franklin', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
 
 /* ── Masthead ── */
 /* [class]×3: `.tdi-card--hero2.is-open .di-page .di-mast` (0,4,0) and
@@ -32605,3 +32619,40 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
    composed. */
 .di-page .di-mast.di-mast--v2[class][class][class] { margin-bottom: 20px !important; }
 .di-focus { margin-bottom: 20px !important; }
+
+/* ═══ revamp1213 — the masthead, sized to its column ════════════════════════
+
+   Three things were wrong at once, and only the first is a typeface problem.
+
+   (1) It was the site's own heading face, so the card's title and the "AI
+   Briefing" header above it were the same voice. Libre Franklin — a Franklin
+   Gothic revival, the American newspaper headline face — reads as news on
+   sight, shares Inter's grotesque skeleton so it doesn't seam against the body,
+   and is plainly not the geometric General Sans the interface heads with.
+
+   (2) It was too large. At up to 2.8rem the title outweighed the briefing it
+   introduces; a masthead should label the page, not dominate it. It now tops
+   out near 1.9rem in the wide column and 1.35rem in the rail — still the
+   biggest thing in the card, no longer competing with the content.
+
+   (3) Franklin's proportions want less negative tracking than a geometric
+   does: -0.024em closed its apertures up. -0.008em. */
+.di-mast--v2 .di-title[class],
+.tdi-card .tdi-brieftitle[class][class] {
+  font-family: var(--font-brief-title) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.008em !important;
+  line-height: 1.12 !important;
+  color: #14213d !important;
+}
+.di-title-name,
+.di-title-kind { font-weight: 800; color: #14213d; letter-spacing: -0.008em; }
+.di-mast--v2 .di-title[class] { font-size: clamp(1.42rem, 1.05rem + 1.4cqi, 1.9rem) !important; }
+.tdi-card .tdi-brieftitle[class][class] { font-size: 1.35rem !important; }
+
+/* The focus headlines were set at the size of body copy in bold, so three of
+   them read as a wall rather than three scannable lines. */
+.di-focus-list li[class] {
+  font-size: 0.88rem !important;
+  line-height: 1.4 !important;
+}
