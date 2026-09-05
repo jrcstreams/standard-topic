@@ -32524,3 +32524,24 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
 /* Subtopic rows: the hue as ink only — no chip, matching the Topics page. */
 .navmenu-topic-acc .navmenu-subtopics .navmenu-subtopic-link svg { color: var(--tc, currentColor); }
 .navmenu-topic-acc[open] .navmenu-topic-summary { background: color-mix(in srgb, var(--tc, #2f4d9e) 7%, transparent); }
+
+/* revamp1210 — the sidebar's expanded subtopics get their glyphs, matching the
+   Topics-page accordions: bare marks in the parent's hue, no chip. The chip is
+   what marks a PARENT; giving one to every subtopic would flatten that
+   distinction and crowd a 288px rail. */
+.navmenu-subtopic-link {
+  display: flex !important;
+  align-items: center;
+  gap: 9px;
+}
+.navmenu-subtopic-ic {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px; height: 17px;
+  color: var(--tc, #6b7a96);
+}
+.navmenu-subtopic-ic svg { width: 15px; height: 15px; display: block; }
+/* The parent row ("All World") keeps its trailing arrow pushed to the end. */
+.navmenu-subtopic-parent .navmenu-subtopic-arrow { margin-left: auto; }

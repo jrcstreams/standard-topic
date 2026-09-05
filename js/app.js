@@ -4584,7 +4584,9 @@ function renderStickyHeroBar(container, route) {
         <span class="navmenu-topic-name">${escapeHTML(t.name)}</span>
       </a>`;
     }
-    const subsHTML = subs.map(s => `<a href="#/topic/${escapeAttr(s.slug)}" class="navmenu-subtopic-link">${escapeHTML(s.name)}</a>`).join('');
+    // revamp1210: subtopics carry their own glyph, bare (no chip) and inked in
+    // the parent's hue — the treatment the Topics-page accordions already use.
+    const subsHTML = subs.map(s => `<a href="#/topic/${escapeAttr(s.slug)}" class="navmenu-subtopic-link"><span class="navmenu-subtopic-ic" aria-hidden="true">${topicIconSVG(s.icon || 'globe', '')}</span><span>${escapeHTML(s.name)}</span></a>`).join('');
     return `<details class="navmenu-topic-acc"${tcs}>
       <summary class="navmenu-topic-summary">
         <span class="navmenu-topic-icon">${topicIconSVG(t.icon || 'globe', '')}</span>
@@ -4592,7 +4594,7 @@ function renderStickyHeroBar(container, route) {
         <span class="navmenu-topic-chev" aria-hidden="true">${NAVMENU_CHEV}</span>
       </summary>
       <div class="navmenu-subtopics">
-        <a href="#/topic/${escapeAttr(t.slug)}" class="navmenu-subtopic-link navmenu-subtopic-parent"><span>All ${escapeHTML(t.name)}</span><svg class="navmenu-subtopic-arrow" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+        <a href="#/topic/${escapeAttr(t.slug)}" class="navmenu-subtopic-link navmenu-subtopic-parent"><span class="navmenu-subtopic-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span><span>All ${escapeHTML(t.name)}</span><svg class="navmenu-subtopic-arrow" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
         ${subsHTML}
       </div>
     </details>`;
