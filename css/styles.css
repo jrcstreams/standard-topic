@@ -32437,3 +32437,84 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
 @media (min-width: 1200px) {
   body:not(.tt-on) .topic-band .topic-home .trail-head[class] { color: #1a2c66 !important; }
 }
+
+/* ═══ revamp1209 — the briefing masthead, third attempt ═════════════════════
+
+   Playfair (1202) was a different product's typeface. The gradient-clipped
+   General Sans that replaced it (1207) had the opposite problem: at 700 in
+   navy-into-blue it is the SAME lockup as the "AI Briefing" section header
+   sitting directly above it, so the card's own title read as a second header
+   rather than a masthead — and the gradient did the differentiating work that
+   ought to be structural (#img1399).
+
+   What separates a masthead from a heading isn't colour, it's CONTRAST. The
+   family already ships 300 and 700, so the two halves of the title carry
+   different weights: the topic heavy, the word "Briefing" light beside it. No
+   new font, no gradient, nothing borrowed from another component — and at a
+   glance it cannot be mistaken for the section header above, which is one
+   weight throughout. The old rule's `background-clip: text` is unset
+   explicitly; left standing it would clip the new colours to nothing. */
+.di-mast--v2 .di-title[class],
+.tdi-card .tdi-brieftitle[class][class] {
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: #14213d !important;
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.024em !important;
+  line-height: 1.06 !important;
+  width: auto !important;
+  text-wrap: balance;
+}
+.di-title-name { font-weight: 700; color: #14213d; }
+.di-title-kind {
+  font-weight: 300;
+  color: #6b7a96;
+  letter-spacing: -0.012em;   /* the light weight needs marginally less negative tracking */
+}
+
+/* Room to breathe. The pill, the title and the date line were on a flat 10px
+   rhythm, which is why the lockup read as cramped — a masthead needs its title
+   set apart from the label above it and the metadata below. */
+.di-page .di-mast.di-mast--v2[class][class][class] { gap: 14px !important; margin: 0 0 14px !important; }
+.di-mast--v2 .di-title[class] { margin: 2px 0 0 !important; }
+.tdi-mast2 { gap: 12px !important; }
+.tdi-card .tdi-brieftitle[class][class] { margin: 1px 0 0 !important; }
+
+/* ═══ revamp1209 — the colour is the ICON's, not the text's ═════════════════
+
+   An open accordion tinted its parent name and every subtopic link with the
+   topic hue, so the same list changed colour as you opened it and the copy
+   read as links rather than text (#img1400/1401). The scheme belongs to the
+   icon; the words stay the navy they are when the card is closed — which is
+   also the only value the eye can compare across fourteen different hues. */
+#content .aiidd-tree .aiidd-parent[data-open="true"] .aiidd-parent-name[class],
+#content .aiidd-tree .aiidd-parent[open] .aiidd-parent-name[class],
+#content .aiidd-tree .aiidd-parent .aiidd-parent-body a[class],
+#content .aiidd-tree .aiidd-parent .aiidd-sub[class],
+#content .dih .dih-group[data-open="true"] .dih-grouptitle[class],
+#content .ph-body .pdir .pdir-card .pdir-sub[class] {
+  color: #1e2d44 !important;
+}
+
+/* ═══ revamp1209 — the sidebar joins the scheme ═════════════════════════════
+   Its topic rows now carry --tc (set in renderStickyHeroBar), so the parent's
+   glyph gets the filled chip every other directory gives it and the subtopics
+   under it inherit the hue as bare glyphs. Names are untouched: colour-coding
+   the text as well was the overkill the accordions just had removed. */
+.navmenu-topic-acc .navmenu-topic-icon,
+.navmenu-topic-link .navmenu-topic-icon {
+  background: var(--tc, #eef2fa) !important;
+  color: #fff !important;
+  border-radius: 9px;
+  width: 26px; height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: none;
+}
+.navmenu-topic-acc .navmenu-topic-icon svg,
+.navmenu-topic-link .navmenu-topic-icon svg { width: 15px; height: 15px; }
+/* Subtopic rows: the hue as ink only — no chip, matching the Topics page. */
+.navmenu-topic-acc .navmenu-subtopics .navmenu-subtopic-link svg { color: var(--tc, currentColor); }
+.navmenu-topic-acc[open] .navmenu-topic-summary { background: color-mix(in srgb, var(--tc, #2f4d9e) 7%, transparent); }

@@ -1841,7 +1841,9 @@ function diHeroCardHTML(o) {
   // revamp1198: "<Topic> Briefing" title for the masthead. The site-wide card
   // is labelled "Global Briefing" already, so it keeps that and takes an
   // "All Topics" pill (o.pillLabel) instead of repeating itself.
-  const briefTitle = o.topicLabel ? (/briefing$/i.test(o.topicLabel) ? o.topicLabel : `${o.topicLabel} Briefing`) : 'Briefing';
+  // revamp1209: two weights, two spans — see .di-title-name / .di-title-kind.
+  const briefName = o.topicLabel ? String(o.topicLabel).replace(/\s*briefing$/i, '') : '';
+  const briefTitle = `${briefName ? `<span class="di-title-name">${escapeHTML(briefName)}</span> ` : ''}<span class="di-title-kind">Briefing</span>`;
   const pillLabel = o.pillLabel || o.topicLabel || '';
   const provBtn = `<button type="button" class="tdi-cardprov how-aigen" data-how-it-works>${DI_SPARK}<span>AI-generated content included</span>${DI_INFO_ICON}</button>`;
   const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the AI Briefings Hub${SUBPAGE_ARROW}</a></p>` : '';
@@ -1891,7 +1893,7 @@ function diHeroCardHTML(o) {
                briefing carries, scaled to the card. -->
           <div class="tdi-mast2">
             ${pillLabel ? `<span class="tdi-topiclabel tdi-topiclabel--inline">${escapeHTML(pillLabel)}</span>` : ''}
-            <h3 class="tdi-brieftitle">${escapeHTML(briefTitle)}</h3>
+            <h3 class="tdi-brieftitle">${briefTitle}</h3>
             <div class="tdi-metaline">
               <span class="tdi-date" data-tdi-date></span>
               <span class="tdi-metasep tdi-metasep--prov" aria-hidden="true"></span>
@@ -4573,14 +4575,17 @@ function renderStickyHeroBar(container, route) {
   // with no subtopics stay a plain link.
   const featuredLinksHTML = featured.map(t => {
     const subs = getSubtopics(t.slug);
+    // revamp1209: the sidebar carries the topic's colour like every other
+    // directory — set once on the row, read by the icon rules as var(--tc).
+    const tcs = topicColorStyle(t);
     if (!subs.length) {
-      return `<a href="#/topic/${t.slug}" class="navmenu-topic-link">
+      return `<a href="#/topic/${t.slug}" class="navmenu-topic-link"${tcs}>
         <span class="navmenu-topic-icon">${topicIconSVG(t.icon || 'globe', '')}</span>
         <span class="navmenu-topic-name">${escapeHTML(t.name)}</span>
       </a>`;
     }
     const subsHTML = subs.map(s => `<a href="#/topic/${escapeAttr(s.slug)}" class="navmenu-subtopic-link">${escapeHTML(s.name)}</a>`).join('');
-    return `<details class="navmenu-topic-acc">
+    return `<details class="navmenu-topic-acc"${tcs}>
       <summary class="navmenu-topic-summary">
         <span class="navmenu-topic-icon">${topicIconSVG(t.icon || 'globe', '')}</span>
         <span class="navmenu-topic-name">${escapeHTML(t.name)}</span>

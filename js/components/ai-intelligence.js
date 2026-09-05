@@ -2506,7 +2506,10 @@ export function renderDailyIntelligence(container, scope) {
     // already labelled "Global Briefing", so it keeps that title and takes an
     // "All Topics" pill rather than saying "Briefing" twice.
     const isHome = scope.slug === 'home' || scope.topic === 'home';
-    const briefTitle = mastLabel ? (/briefing$/i.test(mastLabel) ? mastLabel : `${mastLabel} Briefing`) : 'Briefing';
+    // revamp1209: the masthead is set in TWO weights of one family — the topic
+    // heavy, the word "Briefing" light — so the two halves need their own spans.
+    const briefName = mastLabel ? String(mastLabel).replace(/\s*briefing$/i, '') : '';
+    const briefTitle = `${briefName ? `<span class="di-title-name">${esc(briefName)}</span> ` : ''}<span class="di-title-kind">Briefing</span>`;
     const pillLabel = isHome ? 'All Topics' : mastLabel;
     const SEP = '<span class="di-metasep" aria-hidden="true"></span>';
     const provBtn = `<button type="button" class="di-prov2 how-aigen" data-how-it-works>${LOGO}<span>AI-generated content included</span>${DI_INFO_ICON}</button>`;
@@ -2515,7 +2518,7 @@ export function renderDailyIntelligence(container, scope) {
     body.innerHTML = `
       <div class="di-mast di-mast--v2">
         ${pillLabel ? `<span class="di-mast-topic">${esc(pillLabel)}</span>` : ''}
-        <h2 class="di-title">${esc(briefTitle)}</h2>
+        <h2 class="di-title">${briefTitle}</h2>
         <div class="di-metaline">
           ${whenHTML ? `<span class="di-metagrp">${whenHTML}</span><span class="di-metasep di-metasep--prov" aria-hidden="true"></span>` : ''}
           ${provBtn}
