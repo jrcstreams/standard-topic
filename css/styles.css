@@ -16,6 +16,19 @@
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
+  /* revamp1202 — the briefing masthead's serif. Self-hosted like every other
+     face here: the previous system stack rendered as Iowan Old Style on macOS,
+     Palatino on Windows and Georgia on Android, so the one piece of type meant
+     to carry the product's voice looked different on every platform. Latin
+     subset, one weight, 23KB — the same as a single General Sans weight. */
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/assets/fonts/playfair-display-700.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
   font-family: 'General Sans';
   font-style: normal;
   font-weight: 300;
@@ -31872,7 +31885,13 @@ body.custom-mode:not(.nav-docked) .search-stickzone {
    edition. Iowan Old Style (macOS/iOS) → Palatino Linotype / Book Antiqua
    (Windows) → Georgia → the platform serif: no webfont, no request, and one
    token to swap if a self-hosted display serif is ever wanted. */
-:root { --font-brief-title: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, 'Times New Roman', serif; }
+/* revamp1202: a high-contrast editorial serif, not a book face. Iowan Old Style
+   is warm and bookish — it read as a paperback rather than a masthead, and it
+   was whatever each OS happened to supply. Playfair Display's sharp thick/thin
+   contrast is what gives the title newspaper authority against the geometric
+   sans the rest of the UI is set in; the old stack stays as the fallback while
+   the file loads. Swapping this one token changes every surface. */
+:root { --font-brief-title: 'Playfair Display', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif; }
 
 /* ── Masthead ── */
 /* [class]×3: `.tdi-card--hero2.is-open .di-page .di-mast` (0,4,0) and
