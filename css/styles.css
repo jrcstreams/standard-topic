@@ -32492,8 +32492,14 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
    also the only value the eye can compare across fourteen different hues. */
 #content .aiidd-tree .aiidd-parent[data-open="true"] .aiidd-parent-name[class],
 #content .aiidd-tree .aiidd-parent[open] .aiidd-parent-name[class],
-#content .aiidd-tree .aiidd-parent .aiidd-parent-body a[class],
-#content .aiidd-tree .aiidd-parent .aiidd-sub[class],
+/* The subtopic links are `.aiidd-vlink` / `.aiidd-vall` inside
+   `.aiidd-parent-body > .aiidd-vlist`, and 1207 tints them with
+   `color-mix(var(--tc) 64%, #14213d)` at `.aiidd-parent[style*="--tc"]
+   .aiidd-vall[class]` — one attribute selector deeper than a plain class, so
+   this has to name them the same way. */
+#content .aiidd-tree > .aiidd-parent[style*="--tc"] .aiidd-vlink[class],
+#content .aiidd-tree > .aiidd-parent[style*="--tc"] .aiidd-vall[class],
+#content .aiidd-tree .aiidd-parent .aiidd-parent-body a,
 #content .dih .dih-group[data-open="true"] .dih-grouptitle[class],
 #content .ph-body .pdir .pdir-card .pdir-sub[class] {
   color: #1e2d44 !important;
