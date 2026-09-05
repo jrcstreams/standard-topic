@@ -32572,3 +32572,36 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
    the classes this markup replaced in 1207 — so nothing was hiding the new one. */
 .tdi-card--hero2.is-open .tdi-mast2,
 .tdi-card.is-open .tdi-mast2 { display: none !important; }
+
+/* ═══ revamp1212 — the focus card holds the whole opening ═══════════════════
+
+   The three headlines and the paragraph that explains them are one thought —
+   the day, stated twice at two lengths. Splitting them left the paragraph
+   floating between two carded sections, belonging to neither. The summary now
+   sits inside the Today in Focus card, under a rule that separates the scan
+   from the read. */
+.di-focus .di-summary {
+  margin-top: 15px !important;
+  padding-top: 15px !important;
+  border-top: 1px solid #d3dcec !important;
+  font-size: 0.97rem;
+  line-height: 1.62;
+  color: #2b3853;
+}
+/* The three items lose their bottom padding when the summary follows them, so
+   the rule sits at an even distance from both. */
+.di-focus:has(.di-summary) .di-focus-list { padding-bottom: 0; }
+
+/* Section labels carry more weight — at 0.69rem they were smaller than the
+   metadata line and read as a caption rather than a heading. */
+.di-lbl[class] {
+  font-size: 0.82rem !important;
+  letter-spacing: 0.085em !important;
+}
+.di-focus-lbl[class] { margin-bottom: 14px !important; }
+
+/* Air between the masthead and the card: the AI-generated pill sat almost on
+   the card's edge, which is what made the opening feel stacked rather than
+   composed. */
+.di-page .di-mast.di-mast--v2[class][class][class] { margin-bottom: 20px !important; }
+.di-focus { margin-bottom: 20px !important; }

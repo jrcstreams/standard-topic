@@ -804,11 +804,11 @@ ${x}`),M.length?M.join(`
           ${bt}
         </div>
       </div>
-      ${q.length?`<section class="di-focus">
-        <h3 class="di-lbl di-focus-lbl">Today in Focus</h3>
-        <ul class="di-focus-list">${q.map(j=>`<li>${R(j)}</li>`).join("")}</ul>
+      ${q.length||w?`<section class="di-focus">
+        ${q.length?`<h3 class="di-lbl di-focus-lbl">Today in Focus</h3>
+        <ul class="di-focus-list">${q.map(j=>`<li>${R(j)}</li>`).join("")}</ul>`:""}
+        ${w?`<div class="di-summary aii-sec-body">${Ce(w,null)}</div>`:""}
       </section>`:""}
-      ${w?`<div class="di-summary aii-sec-body">${Ce(w,null)}</div>`:""}
       ${$.length?`<section class="di-briefs di-briefs--v2">
         <h3 class="di-lbl di-lbl--rule">Top Stories</h3>
         ${$.map((j,E)=>{let ae=F(E);return`<article class="dib dib--v2${ae.length?" has-srcs":""}">

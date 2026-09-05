@@ -2524,11 +2524,11 @@ export function renderDailyIntelligence(container, scope) {
           ${provBtn}
         </div>
       </div>
-      ${thingsList.length ? `<section class="di-focus">
-        <h3 class="di-lbl di-focus-lbl">Today in Focus</h3>
-        <ul class="di-focus-list">${thingsList.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
+      ${(thingsList.length || overview) ? `<section class="di-focus">
+        ${thingsList.length ? `<h3 class="di-lbl di-focus-lbl">Today in Focus</h3>
+        <ul class="di-focus-list">${thingsList.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+        ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
       </section>` : ''}
-      ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
       ${items.length ? `<section class="di-briefs di-briefs--v2">
         <h3 class="di-lbl di-lbl--rule">Top Stories</h3>
         ${items.map((it, i) => {
