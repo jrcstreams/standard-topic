@@ -454,6 +454,33 @@ export function wireNewsAI(root) {
       card.classList.add('news-card--open');
       btn.setAttribute('aria-expanded', 'true');
       pin();
+      // revamp1203 — an open card spans BOTH columns (see styles.css), so a card
+      // in the right-hand column moves to a row of its own and can land off
+      // screen entirely. pin() only cancels drift; it cannot know the card just
+      // changed rows. Bring the card back under the chrome when opening has put
+      // it out of comfortable reach — above the fixed header, or low enough that
+      // the insight opens below the fold.
+      requestAnimationFrame(() => {
+        try {
+          const chromeBottom = () => {
+            let n = 0;
+            for (const sel of ['#site-header', '#sub-header', '.topic-viewtabs', '.home-viewtabs']) {
+              const el = document.querySelector(sel);
+              if (!el) continue;
+              const cs = getComputedStyle(el);
+              if (cs.visibility === 'hidden' || cs.display === 'none') continue;
+              if (cs.position !== 'fixed' && cs.position !== 'sticky') continue;
+              n = Math.max(n, el.getBoundingClientRect().bottom);
+            }
+            return Math.max(0, n);
+          };
+          const top = chromeBottom();
+          const r = card.getBoundingClientRect();
+          if (r.top < top + 4 || r.top > window.innerHeight * 0.55) {
+            window.scrollTo({ top: window.scrollY + r.top - top - 12, behavior: 'smooth' });
+          }
+        } catch (_) {}
+      });
       if (kind === 'ai') renderNewsBriefInto(panel, card);
       else renderNewsWebInto(panel, card);
     });

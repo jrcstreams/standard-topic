@@ -32052,3 +32052,28 @@ body.tt-on .tview-brief .di-mast--v2 .di-mast-topic[class][class] { margin: 0 !i
 /* The masthead's title used to be the hidden "Your 5-minute AI briefing" h3 —
    that rule targets .tdi-today-title, which the new title does not carry. */
 .tdi-card--hero2 .tdi-summary[class] { margin: 0 0 13px !important; }
+
+/* ═══ revamp1203 — an open story takes the whole row, and the first one stops
+   sitting lower than the rest ═══════════════════════════════════════════════
+
+   (1) The insight opened inside its own grid column, so on the two-column feed
+   it rendered in half the width available while the column beside it sat empty
+   (#img1377). A briefing wants the full measure: the open card spans both
+   columns and the cards around it reflow, which is also what makes the panel's
+   line length readable. */
+#section-newsfeed .news-list .news-card--open,
+#section-newsfeed .news-list .news-card:has(.news-act-ai[aria-expanded="true"]) {
+  grid-column: 1 / -1 !important;
+}
+
+/* (2) The first story's title sat 27px into its card against 15px for every
+   other one. `.news-card:first-child .news-card-link { padding-top: 0.95rem }`
+   is a leftover from the flat-list layout, where the first row had to clear the
+   head's rule and the card had no padding of its own to do it. As a bordered
+   card it does, so the extra is pure offset (#img1378). Rows below 900 keep it —
+   there the sub-header's rule really is the first story's top edge. */
+@media (min-width: 900px) {
+  #section-newsfeed .news-list .news-card:first-child .news-card-link[class] {
+    padding-top: 0 !important;
+  }
+}
