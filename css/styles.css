@@ -32212,3 +32212,27 @@ body .search-news-section .news-card--open[class] > .news-card-body {
 .search-news-section .news-list .news-card:has(.news-act-ai[aria-expanded="true"]) {
   grid-column: 1 / -1 !important;
 }
+
+/* revamp1204b — …and the FIRST story, which had its own rules.
+   Several `:first-child` rules (revamp1179/1181h) pin that card's top border
+   and padding for the CLOSED state, at five classes plus a type selector. Open,
+   they beat the definition above and left story one alone looking like the old
+   card: a 1px grey top border and the headline riding the edge. Same values,
+   stated for the position that has its own history. */
+body #section-newsfeed .news-list > .news-card--open:first-child[class][class][class][class],
+body #section-newsfeed .news-list > .news-card:first-child[class][class][class][class]:has(.news-act-ai[aria-expanded="true"]) {
+  border: 1.5px solid #b9c6e4 !important;
+  border-radius: 12px !important;
+}
+@media (min-width: 900px) {
+  body #section-newsfeed .news-list > .news-card--open:first-child[class][class][class][class],
+  body #section-newsfeed .news-list > .news-card:first-child[class][class][class][class]:has(.news-act-ai[aria-expanded="true"]) {
+    padding: 14px 16px 0 !important;
+  }
+}
+@media (max-width: 899.98px) {
+  body #section-newsfeed .news-list > .news-card--open:first-child[class][class][class][class],
+  body #section-newsfeed .news-list > .news-card:first-child[class][class][class][class]:has(.news-act-ai[aria-expanded="true"]) {
+    padding: 14px 0 0 !important;
+  }
+}
