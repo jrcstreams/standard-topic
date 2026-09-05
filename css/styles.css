@@ -32545,3 +32545,19 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
 .navmenu-subtopic-ic svg { width: 15px; height: 15px; display: block; }
 /* The parent row ("All World") keeps its trailing arrow pushed to the end. */
 .navmenu-subtopic-parent .navmenu-subtopic-arrow { margin-left: auto; }
+
+/* revamp1210b — the homepage hero chips are the same control as a topic page's
+   related-topic pills, so they carry the same mark: the topic's glyph inside
+   the pill, inked in its hue, no chip behind it. Mirrors .tbh-sub-ic exactly —
+   including the -2px pull, which keeps the glyph optically inside the pill's
+   radius rather than sitting on it. */
+.home-hero-chip { gap: 7px; }
+.home-hero-chip-ic {
+  display: inline-grid; place-items: center; flex: none;
+  width: 16px; height: 16px; margin-left: -2px;
+  color: var(--tc, #4a5f8f);
+}
+.home-hero-chip-ic svg { display: block; width: 15px; height: 15px; }
+@media (hover: hover) {
+  .home-hero-chip:hover .home-hero-chip-ic { color: color-mix(in srgb, var(--tc, #1d4ed8) 82%, #000); }
+}
