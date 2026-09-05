@@ -32073,7 +32073,10 @@ body.tt-on .tview-brief .di-mast--v2 .di-mast-topic[class][class] { margin: 0 !i
    card it does, so the extra is pure offset (#img1378). Rows below 900 keep it —
    there the sub-header's rule really is the first story's top edge. */
 @media (min-width: 900px) {
-  #section-newsfeed .news-list .news-card:first-child .news-card-link[class] {
+  /* `body` and a second [class]: the 12px is stated as
+     `body.home-search #section-newsfeed … .news-card-link` — same class count,
+     plus a type selector, and the type column breaks the tie. */
+  body #section-newsfeed .news-list .news-card:first-child .news-card-link[class][class] {
     padding-top: 0 !important;
   }
 }
