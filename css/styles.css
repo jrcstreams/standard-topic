@@ -32080,3 +32080,19 @@ body.tt-on .tview-brief .di-mast--v2 .di-mast-topic[class][class] { margin: 0 !i
     padding-top: 0 !important;
   }
 }
+
+/* revamp1203c — where an opened story comes to rest. scrollIntoView honours
+   scroll-margin-top, and unlike a measurement taken at click time this is
+   resolved against the SCROLLED state — the sticky band is revealed by
+   scrolling, so measuring it beforehand under-reads it by its own height and
+   parks the card behind it. */
+#section-newsfeed .news-card { scroll-margin-top: calc(var(--nav-h) + var(--subnav-height, 56px) + 14px); }
+body.nav-docked #section-newsfeed .news-card { scroll-margin-top: calc(var(--subnav-height, 56px) + 14px); }
+/* Topic pages in tab mode carry a separate fixed strip that --subnav-height
+   does not measure (see --tt-tabstrip-h). */
+body.tt-on:not(.home-search) #section-newsfeed .news-card {
+  scroll-margin-top: calc(var(--nav-h) + var(--subnav-height, 56px) + var(--tt-tabstrip-h, 56px) + 14px);
+}
+body.tt-on.nav-docked:not(.home-search) #section-newsfeed .news-card {
+  scroll-margin-top: calc(var(--subnav-height, 56px) + var(--tt-tabstrip-h, 56px) + 14px);
+}

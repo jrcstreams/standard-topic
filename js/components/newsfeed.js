@@ -462,22 +462,16 @@ export function wireNewsAI(root) {
       // the insight opens below the fold.
       requestAnimationFrame(() => {
         try {
-          const chromeBottom = () => {
-            let n = 0;
-            for (const sel of ['#site-header', '#sub-header', '.topic-viewtabs', '.home-viewtabs']) {
-              const el = document.querySelector(sel);
-              if (!el) continue;
-              const cs = getComputedStyle(el);
-              if (cs.visibility === 'hidden' || cs.display === 'none') continue;
-              if (cs.position !== 'fixed' && cs.position !== 'sticky') continue;
-              n = Math.max(n, el.getBoundingClientRect().bottom);
-            }
-            return Math.max(0, n);
-          };
-          const top = chromeBottom();
+          // The offset comes from CSS `scroll-margin-top` (see styles.css), not
+          // from measuring the chrome here: the sticky band is REVEALED by
+          // scrolling, so at the top of the page it measures ~44px shorter than
+          // it will be once the scroll lands, and the card ends up tucked behind
+          // it. scroll-margin is resolved by the browser against the scrolled
+          // state, which is the state that matters.
           const r = card.getBoundingClientRect();
-          if (r.top < top + 4 || r.top > window.innerHeight * 0.55) {
-            window.scrollTo({ top: window.scrollY + r.top - top - 12, behavior: 'smooth' });
+          const chrome = card.closest('#section-newsfeed') ? 140 : 100;   // decision only
+          if (r.top < chrome || r.top > window.innerHeight * 0.55) {
+            card.scrollIntoView({ block: 'start', behavior: 'smooth' });
           }
         } catch (_) {}
       });
