@@ -1,5 +1,5 @@
 import { initRouter, onRoute, getCurrentRoute, navigate as routerNavigate, routeHash, replaceRoute } from './utils/router.js?v=20260815-revamp763';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById, fetchWithTimeout } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById, fetchWithTimeout, topicColorStyle } from './utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, openModel, copyPrompt } from './utils/ai-models.js?v=20260605-polish30';
 import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
@@ -758,12 +758,13 @@ function topicBodyHeadHTML(topic) {
   const ordered = parent ? [parent].concat(rest) : rest;
   // revamp1044: the "Overview" pill is retired — the page title already tells
   // you where you are. The subtopic links stand on their own.
-  const pills = ordered.map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`).join('');
+  // revamp1207: each pill carries its topic's icon, in that topic's colour (wide layout only — CSS).
+  const pills = ordered.map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}"${topicColorStyle(t)}><span class="tbh-sub-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>${escapeHTML(t.name)}</a>`).join('');
   return `
     <header class="topic-bodyhead topic-subnav-picker" data-topic-picker>
       <a class="tbh-back" href="#/topics">${TBH_BACK_CHEV}<span>Topics</span></a>
       <div class="tbh-titlerow">
-        <span class="tbh-titleic" aria-hidden="true">${topicIconSVG(topic.icon || 'globe', '')}</span>
+        <span class="tbh-titleic" aria-hidden="true"${topicColorStyle(topic)}>${topicIconSVG(topic.icon || 'globe', '')}</span>
         <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
       </div>
       ${desc ? `<p class="tbh-desc">${escapeHTML(desc)}</p>` : ''}
@@ -1103,7 +1104,7 @@ function promptDirectoryHTML() {
       <span class="pdir-cell-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
       <span class="pdir-cell-name">${escapeHTML(t.name)}</span>
     </button>`;
-  const block = ({ parent, subtopics }) => `<section class="pdir-card" data-pdir-card>
+  const block = ({ parent, subtopics }) => `<section class="pdir-card" data-pdir-card${topicColorStyle(parent)}>
       <button type="button" class="pdir-cardhead" aria-expanded="false">
         <span class="pdir-card-ic" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span>
         <span class="pdir-card-tx">
@@ -1585,7 +1586,7 @@ function topicsTreeHTML() {
   const block = ({ parent, subtopics }) => {
     const subs = subtopics || [];
     if (!subs.length) {
-      return `<a href="#/topic/${parent.slug}" class="aiidd-parent aiidd-parent-flat" data-aiidd-link>
+      return `<a href="#/topic/${parent.slug}" class="aiidd-parent aiidd-parent-flat" data-aiidd-link${topicColorStyle(parent)}>
         <span class="aiidd-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
         <span class="aiidd-parent-name">${escapeHTML(parent.name)}</span>
         <span class="aiidd-flat-arrow" aria-hidden="true">${TSP_CHEV}</span>
@@ -1595,7 +1596,7 @@ function topicsTreeHTML() {
     // on its own row. No count badge.
     const links = `<a href="#/topic/${parent.slug}" class="aiidd-vall" data-aiidd-link><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span><span class="aiidd-vlink-name">${escapeHTML(parent.name)}</span>${AIIDD_CHEV_R}</a>`
       + subs.map((s) => `<a href="#/topic/${s.slug}" class="aiidd-vlink" data-aiidd-link><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(s.icon || 'globe', '')}</span><span class="aiidd-vlink-name">${escapeHTML(s.name)}</span></a>`).join('');
-    return `<section class="aiidd-parent" data-open="false">
+    return `<section class="aiidd-parent" data-open="false"${topicColorStyle(parent)}>
       <button type="button" class="aiidd-parent-head" data-aiidd-toggle aria-expanded="false">
         <span class="aiidd-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
         <span class="aiidd-parent-name">${escapeHTML(parent.name)}</span>
@@ -2317,7 +2318,7 @@ function renderIntelligenceHub(container) {
 
       <div class="dih-groups" data-dih-groups>
         ${groups.map((g) => `
-          <section class="dih-group" id="dih-${escapeAttr(g.parent.slug)}" data-dih-group>
+          <section class="dih-group" id="dih-${escapeAttr(g.parent.slug)}" data-dih-group${topicColorStyle(g.parent)}>
             <!-- revamp933: parent groups are real accordions now — closed on
                  load, bordered, two across, matching the accordion pattern used
                  on Prompts and the search results. -->

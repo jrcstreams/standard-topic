@@ -275,3 +275,19 @@ export function searchTopics(query) {
       parentName: t.parent ? getTopicBySlug(t.parent)?.name || null : null,
     }));
 }
+
+// revamp1207: one colour per PARENT topic (data/topics.json `color`); a subtopic
+// takes its parent's hue, barely lighter. Returned as a CSS colour so the
+// stylesheet can stay generic — everything derives from `--tc` with color-mix().
+export function topicColor(topic) {
+  if (!topic) return null;
+  const parent = topic.parent ? getTopicBySlug(topic.parent) : null;
+  const base = (parent && parent.color) || topic.color || null;
+  if (!base) return null;
+  return topic.parent ? `color-mix(in srgb, ${base} 86%, #fff)` : base;
+}
+// ` style="--tc: …"` for a template literal, or '' when the topic has no scheme.
+export function topicColorStyle(topic) {
+  const c = topicColor(topic);
+  return c ? ` style="--tc: ${c}"` : '';
+}
