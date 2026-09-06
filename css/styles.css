@@ -32860,7 +32860,8 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead[style*="--tc"]::before {
    was removed (1220), so the value stays in the design even though the element
    that carried it is gone. Unscoped by width on purpose: these rows appear in
    the topic sidebar, the tab-mode column and on mobile, and the fix is the same
-   in all three. */
+   in all three.
+
    Specificity: the topic sidebar states these at
    `.topic-band .topic-home .tpr-inline .aii-fi-sectitle` (0,4,0) in two
    separate blocks — 0.78rem in one, #3f4b63 in the other. A single [class]
