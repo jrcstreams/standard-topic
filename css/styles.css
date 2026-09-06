@@ -32386,11 +32386,12 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
 #content .ph-body .pdir > .pdir-card[style*="--tc"].is-open .pdir-card-ic[class] {
   background: color-mix(in srgb, var(--tc) 78%, #000) !important;
 }
-#content .aiidd-tree > .aiidd-parent[style*="--tc"][data-open="true"] .aiidd-parent-name,
-#content .dih .dih-groups > .dih-group[style*="--tc"].is-open .dih-grouptitle,
-#content .ph-body .pdir > .pdir-card[style*="--tc"].is-open .pdir-card-name[class] {
-  color: color-mix(in srgb, var(--tc) 72%, #14213d) !important;
-}
+/* revamp1219: the open head's TITLE is deliberately not tinted. Colouring the
+   name as well as the chip was the overkill already removed from the sidebar
+   rows; the chip, border, head tint and row glyphs carry the scheme, and the
+   title stays the same colour open or closed so opening a card does not look
+   like it changed the heading. The rule that lived here is deleted rather than
+   overridden, so the title keeps whatever the base stylesheet gives it. */
 /* The rows: glyphs in the colour, no chip. */
 #content .aiidd-tree > .aiidd-parent[style*="--tc"] .aiidd-vlink-ic[class],
 #content .aiidd-tree > .aiidd-parent[style*="--tc"] .aiidd-vall .aiidd-vlink-ic[class],
