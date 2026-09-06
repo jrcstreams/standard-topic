@@ -32855,13 +32855,14 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead[style*="--tc"]::before {
 
 /* revamp1222 — "TOPIC-SPECIFIC PROMPTS" / "EVERGREEN PROMPTS" were 0.78rem in
    a mid slate (#3f4b63), lighter and smaller than the prompt names they head,
-   so they read as captions under the list rather than labels over it. Off-black
-   and a step up in size — enough to lead the section, still a label and not a
-   heading. Unscoped by width on purpose: the same rows appear in the topic
-   sidebar, the tab-mode column and on mobile, and the fix is the same in all
-   three. */
+   so they read as captions under the list rather than labels over it. A step up
+   in size, and #1e3a8a — the navy the briefing card's topic pill used before it
+   was removed (1220), so the value stays in the design even though the element
+   that carried it is gone. Unscoped by width on purpose: these rows appear in
+   the topic sidebar, the tab-mode column and on mobile, and the fix is the same
+   in all three. */
 .aii-fi-sectitle[class] {
   font-size: 0.86rem !important;
-  color: #1a2233 !important;
+  color: #1e3a8a !important;
   font-weight: 700 !important;
 }
