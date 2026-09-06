@@ -2517,7 +2517,6 @@ export function renderDailyIntelligence(container, scope) {
 
     body.innerHTML = `
       <div class="di-mast di-mast--v2">
-        ${pillLabel ? `<span class="di-mast-topic">${esc(pillLabel)}</span>` : ''}
         <h2 class="di-title">${briefTitle}</h2>
         <div class="di-metaline">
           ${whenHTML ? `<span class="di-metagrp">${whenHTML}</span><span class="di-metasep di-metasep--prov" aria-hidden="true"></span>` : ''}

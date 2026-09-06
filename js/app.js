@@ -761,7 +761,7 @@ function topicBodyHeadHTML(topic) {
   // revamp1207: each pill carries its topic's icon, in that topic's colour (wide layout only — CSS).
   const pills = ordered.map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}"${topicColorStyle(t)}><span class="tbh-sub-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>${escapeHTML(t.name)}</a>`).join('');
   return `
-    <header class="topic-bodyhead topic-subnav-picker" data-topic-picker>
+    <header class="topic-bodyhead topic-subnav-picker" data-topic-picker${topicColorStyle(topic)}>
       <a class="tbh-back" href="#/topics">${TBH_BACK_CHEV}<span>Topics</span></a>
       <div class="tbh-titlerow">
         <span class="tbh-titleic" aria-hidden="true"${topicColorStyle(topic)}>${topicIconSVG(topic.icon || 'globe', '')}</span>
@@ -1097,12 +1097,14 @@ const TBH_MORE_CHEV = '<svg viewBox="0 0 24 24" width="13" height="13" fill="non
 const PH_ARROW_R = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const PDIR_CHEV = '<svg class="pdir-chev" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 function promptDirectoryHTML() {
+const PDIR_CHEV_R = '<svg class="pdir-cell-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
   const groups = getTopicsGroupedByParent() || [];
   // revamp941: mirrors the All Topics subtopic link — icon + name, no chevron,
   // no per-cell chrome — so the two directories read as one component.
   const cell = (t) => `<button type="button" class="pdir-cell" data-pdir-topic data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}">
       <span class="pdir-cell-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
       <span class="pdir-cell-name">${escapeHTML(t.name)}</span>
+      ${PDIR_CHEV_R}
     </button>`;
   const block = ({ parent, subtopics }) => `<section class="pdir-card" data-pdir-card${topicColorStyle(parent)}>
       <button type="button" class="pdir-cardhead" aria-expanded="false">
@@ -1118,7 +1120,6 @@ function promptDirectoryHTML() {
     </section>`;
   return `<div class="pdir">${groups.map(block).join('')}</div>`;
 }
-const PDIR_CHEV_R = '<svg class="pdir-cell-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
 
 // Parent cards open to a grid of their topics; picking one swaps that card's body
 // to that topic's full prompt set in place (with a way back), so the page never
@@ -1595,7 +1596,7 @@ function topicsTreeHTML() {
     // Clean vertical list: a prominent "All {Parent} ›" link, then each subtopic
     // on its own row. No count badge.
     const links = `<a href="#/topic/${parent.slug}" class="aiidd-vall" data-aiidd-link><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span><span class="aiidd-vlink-name">${escapeHTML(parent.name)}</span>${AIIDD_CHEV_R}</a>`
-      + subs.map((s) => `<a href="#/topic/${s.slug}" class="aiidd-vlink" data-aiidd-link><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(s.icon || 'globe', '')}</span><span class="aiidd-vlink-name">${escapeHTML(s.name)}</span></a>`).join('');
+      + subs.map((s) => `<a href="#/topic/${s.slug}" class="aiidd-vlink" data-aiidd-link><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(s.icon || 'globe', '')}</span><span class="aiidd-vlink-name">${escapeHTML(s.name)}</span>${AIIDD_CHEV_R}</a>`).join('');
     return `<section class="aiidd-parent" data-open="false"${topicColorStyle(parent)}>
       <button type="button" class="aiidd-parent-head" data-aiidd-toggle aria-expanded="false">
         <span class="aiidd-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
@@ -1892,7 +1893,6 @@ function diHeroCardHTML(o) {
                AI-generated on one piped line — the same lockup the open
                briefing carries, scaled to the card. -->
           <div class="tdi-mast2">
-            ${pillLabel ? `<span class="tdi-topiclabel tdi-topiclabel--inline">${escapeHTML(pillLabel)}</span>` : ''}
             <h3 class="tdi-brieftitle">${briefTitle}</h3>
             <div class="tdi-metaline">
               <span class="tdi-date" data-tdi-date></span>
@@ -4573,6 +4573,7 @@ function renderStickyHeroBar(container, route) {
   // (so every topic is reachable from the menu); the parent itself is reachable
   // via a prominent "All {name}" link at the top of the nested list. Parents
   // with no subtopics stay a plain link.
+  const NAVMENU_SUB_ARROW = '<svg class="navmenu-subtopic-arrow" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
   const featuredLinksHTML = featured.map(t => {
     const subs = getSubtopics(t.slug);
     // revamp1209: the sidebar carries the topic's colour like every other
@@ -4586,7 +4587,9 @@ function renderStickyHeroBar(container, route) {
     }
     // revamp1210: subtopics carry their own glyph, bare (no chip) and inked in
     // the parent's hue — the treatment the Topics-page accordions already use.
-    const subsHTML = subs.map(s => `<a href="#/topic/${escapeAttr(s.slug)}" class="navmenu-subtopic-link"><span class="navmenu-subtopic-ic" aria-hidden="true">${topicIconSVG(s.icon || 'globe', '')}</span><span>${escapeHTML(s.name)}</span></a>`).join('');
+    // revamp1220: every row carries the trailing arrow, not just "All X" — the
+    // arrow says "this navigates", which is equally true of each subtopic.
+    const subsHTML = subs.map(s => `<a href="#/topic/${escapeAttr(s.slug)}" class="navmenu-subtopic-link"><span class="navmenu-subtopic-ic" aria-hidden="true">${topicIconSVG(s.icon || 'globe', '')}</span><span>${escapeHTML(s.name)}</span>${NAVMENU_SUB_ARROW}</a>`).join('');
     return `<details class="navmenu-topic-acc"${tcs}>
       <summary class="navmenu-topic-summary">
         <span class="navmenu-topic-icon">${topicIconSVG(t.icon || 'globe', '')}</span>
@@ -4594,7 +4597,7 @@ function renderStickyHeroBar(container, route) {
         <span class="navmenu-topic-chev" aria-hidden="true">${NAVMENU_CHEV}</span>
       </summary>
       <div class="navmenu-subtopics">
-        <a href="#/topic/${escapeAttr(t.slug)}" class="navmenu-subtopic-link navmenu-subtopic-parent"><span class="navmenu-subtopic-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span><span>All ${escapeHTML(t.name)}</span><svg class="navmenu-subtopic-arrow" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+        <a href="#/topic/${escapeAttr(t.slug)}" class="navmenu-subtopic-link navmenu-subtopic-parent"><span class="navmenu-subtopic-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span><span>All ${escapeHTML(t.name)}</span>${NAVMENU_SUB_ARROW}</a>
         ${subsHTML}
       </div>
     </details>`;
@@ -4921,6 +4924,19 @@ function renderStickyHeroBar(container, route) {
       // function; dockWanted() is now the ONLY thing that decides.
       if (window.__applyDock) window.__applyDock();
     });
+  }
+  // revamp1220: one topic open at a time. The rail is short and the lists are
+  // long — Technology alone is 15 subtopics — so two open accordions push the
+  // rest off-screen and the sidebar stops working as an index. `toggle` does
+  // not bubble, hence the capture-phase listener on the panel; guarding on
+  // `open` means closing one never touches the others.
+  if (!navPanel.__accExclusiveBound) {
+    navPanel.__accExclusiveBound = true;
+    navPanel.addEventListener('toggle', (e) => {
+      const d = e.target;
+      if (!d || !d.classList || !d.classList.contains('navmenu-topic-acc') || !d.open) return;
+      navPanel.querySelectorAll('.navmenu-topic-acc[open]').forEach((o) => { if (o !== d) o.open = false; });
+    }, true);
   }
   // Always open to the DEFAULT view: collapse any expanded topic accordion and
   // reset the scroll position so it never reopens where you left off (#img26).

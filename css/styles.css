@@ -32736,3 +32736,132 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
    changing the pattern rather than the number: a pale tint of the hue with the
    glyph INKED in the full colour instead of white, which reads far softer and
    gains contrast rather than spending it. */
+
+/* ═══ revamp1220 — sidebar rows, directory arrows, prompt rows, pill hover ══ */
+
+/* ── Sidebar: the subtopic list ───────────────────────────────────────────
+   Four things, all of them the same idea — the rows under an open topic are
+   a list of equal destinations, so they should look like one.
+
+   (a) Indent. 1.9rem of left padding put the names a long way inside the
+   rail, which reads as a third level of hierarchy that does not exist. 0.85rem
+   keeps them clearly nested under the parent without stranding them.
+   (b) "All <Topic>" was accent-blue and 700 against its siblings' 500. It is
+   the same kind of link as the rest — one more destination — so the weight and
+   colour go and the row is distinguished by its wording alone.
+   (c) Every row gets the trailing arrow, not just that one (markup in app.js).
+   (d) The arrow is NOT inked in the topic hue: the glyph on the left already
+   carries the scheme, and colouring both ends turns a quiet row into a stripe
+   of colour. It stays a neutral grey and deepens on hover. */
+.navmenu-subtopics[class] { padding-left: 0.85rem !important; }
+.navmenu-subtopic-parent[class] { color: #4a5568; font-weight: 500; }
+@media (hover: hover) {
+  .navmenu-subtopic-parent[class]:hover { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 8%, #fff); }
+}
+.navmenu-topic-acc .navmenu-subtopics .navmenu-subtopic-link .navmenu-subtopic-arrow[class] {
+  margin-left: auto;
+  color: #b3bece !important;
+  opacity: 1;
+}
+@media (hover: hover) {
+  .navmenu-topic-acc .navmenu-subtopics .navmenu-subtopic-link:hover .navmenu-subtopic-arrow[class] {
+    color: var(--color-primary, #2f4d9e) !important;
+    transform: translateX(2px);
+  }
+}
+/* The hue stays on the LEADING glyph only — this is the rule that used to say
+   "every svg in the row", which is what tinted the new arrow orange. */
+.navmenu-topic-acc .navmenu-subtopics .navmenu-subtopic-link .navmenu-subtopic-ic svg { color: var(--tc, currentColor); }
+
+/* An open topic gets a faint outline as well as its tint, so the expanded
+   block reads as one container rather than a change in background. */
+.navmenu-topic-acc[open][class] {
+  border: 1px solid #dde4f0;
+  box-shadow: 0 1px 2px rgba(20, 33, 61, .04);
+}
+
+/* ── Directory rows: the arrow is not a hover reward ──────────────────────
+   .aiidd-vall's chevron was opacity 0 until hover, and the subtopic rows had
+   none at all — so a grid of destinations showed no sign of being clickable
+   until the pointer was already on one. Every row now carries a right-aligned
+   arrow at rest; hover still deepens and nudges it. */
+#content .aiidd-tree .aiidd-vall .aiidd-vall-chev[class],
+#content .aiidd-tree .aiidd-vlink .aiidd-vall-chev[class] {
+  opacity: 1 !important;
+  margin: 1px 0 0 auto !important;
+  color: #b3bece;
+  transition: transform .14s ease, color .14s ease;
+}
+#content .ph-body .pdir .pdir-cell .pdir-cell-chev[class] {
+  margin-left: auto !important;
+  color: #b3bece;
+}
+@media (hover: hover) {
+  #content .aiidd-tree .aiidd-vall:hover .aiidd-vall-chev[class],
+  #content .aiidd-tree .aiidd-vlink:hover .aiidd-vall-chev[class],
+  #content .ph-body .pdir .pdir-cell:hover .pdir-cell-chev[class] {
+    color: #2f4d9e; transform: translateX(2px);
+  }
+}
+
+/* ── Prompts by Topic: the drilled-in rows are not a compact list ─────────
+   Featured Prompts moved to 0.97rem in 1157 but the scoping stopped at
+   .ph-featured, so drilling into a topic dropped back to the 0.83rem meant for
+   the search host's dense results. Same page, same rows, two sizes. Matched at
+   the width where there is room for it; narrow layouts keep the compact size. */
+@media (min-width: 900px) {
+  #content .pdir .pdir-topichost .aii-fi-acclist .aii-fi-acc-name[class] {
+    font-size: 0.97rem !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* ── Related-topic pills: hover and active in the topic's own hue ─────────
+   The pills already carry --tc for their glyphs; the hover and selected states
+   were hardcoded blue, so on an orange topic the row changed colour family the
+   moment you touched it. Both now derive from --tc, falling back to the blue
+   for any topic with no scheme. */
+@media (hover: hover) {
+  body .topic-bodyhead .tbh-sub:not(.is-active):hover {
+    background: color-mix(in srgb, var(--tc, #2f4d9e) 9%, #fff) !important;
+    border-color: color-mix(in srgb, var(--tc, #2f4d9e) 42%, transparent) !important;
+    color: color-mix(in srgb, var(--tc, #1b3d8f) 78%, #14213d) !important;
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--tc, #1e3a8a) 22%, transparent);
+  }
+}
+body .topic-bodyhead .tbh-sub.is-active[class] {
+  background: var(--tc, #2c4f9e); border-color: var(--tc, #2c4f9e); color: #fff;
+}
+
+/* ═══ revamp1221 — the topic page's header band takes the topic's colour ════
+
+   The band was the same light blue everywhere. On a general page that is
+   right — it is the site's own colour. On a topic page it fought the topic's
+   scheme: an orange NBA mark and orange pills sitting on a blue wash.
+
+   The original blue is left as the base declaration and this only overrides
+   where --tc actually exists, so a topic with no scheme keeps exactly the
+   band it has now rather than an approximation of it. General pages are not
+   .topic-bodyhead and are untouched.
+
+   22%/12% against the blue's own #c7dbf4/#dbe7fa: the mix has to stay this
+   pale because the band sits under body text and the topic title. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead[style*="--tc"]::before {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--tc) 22%, #fff) 0%,
+    color-mix(in srgb, var(--tc) 12%, #fff) 55%,
+    #ffffff 100%) !important;
+}
+
+/* revamp1222 — "TOPIC-SPECIFIC PROMPTS" / "EVERGREEN PROMPTS" were 0.78rem in
+   a mid slate (#3f4b63), lighter and smaller than the prompt names they head,
+   so they read as captions under the list rather than labels over it. Off-black
+   and a step up in size — enough to lead the section, still a label and not a
+   heading. Unscoped by width on purpose: the same rows appear in the topic
+   sidebar, the tab-mode column and on mobile, and the fix is the same in all
+   three. */
+.aii-fi-sectitle[class] {
+  font-size: 0.86rem !important;
+  color: #1a2233 !important;
+  font-weight: 700 !important;
+}
