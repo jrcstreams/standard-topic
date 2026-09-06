@@ -32861,7 +32861,12 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead[style*="--tc"]::before {
    that carried it is gone. Unscoped by width on purpose: these rows appear in
    the topic sidebar, the tab-mode column and on mobile, and the fix is the same
    in all three. */
-.aii-fi-sectitle[class] {
+   Specificity: the topic sidebar states these at
+   `.topic-band .topic-home .tpr-inline .aii-fi-sectitle` (0,4,0) in two
+   separate blocks — 0.78rem in one, #3f4b63 in the other. A single [class]
+   repeat (0,2,0) loses to that silently, which is how this shipped wrong once.
+   Four repeats put it at (0,5,0), clear of every stated variant. */
+.aii-fi-sectitle[class][class][class][class] {
   font-size: 0.86rem !important;
   color: #1e3a8a !important;
   font-weight: 700 !important;
