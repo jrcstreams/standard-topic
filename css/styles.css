@@ -32694,24 +32694,29 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
    objects rather than the 4.5:1 for text. Anything below ~80% starts crowding
    that floor, so treat 86% as near the limit of "slightly", not a midpoint.
 
-   One token, so the three surfaces that carry a filled chip stay in step and
-   there is a single number to turn. Bare-glyph surfaces (subtopic rows, the
-   related pills, the home hero chips) are deliberately NOT included: they are
-   thin strokes with no chip behind them, and lightening ink washes it out. */
-:root { --tc-chip: color-mix(in srgb, var(--tc) 86%, #fff); }
+   Bare-glyph surfaces (subtopic rows, related pills, home hero chips) are
+   deliberately NOT included: they are thin strokes with no chip behind them,
+   and lightening ink washes it out.
+
+   The mix is written out at each site rather than held in a token. A
+   `:root { --tc-chip: color-mix(… var(--tc) …) }` looks like the tidier
+   version and silently yields TRANSPARENT: a custom property's value is
+   substituted where it is DECLARED, so --tc resolves against :root — where it
+   does not exist — and the whole declaration is invalid at computed-value
+   time. --tc only exists on the rows, so the mix has to happen on the rows. */
 
 /* Sidebar rows */
 .navmenu-topic-acc .navmenu-topic-icon[style*="--tc"],
 .navmenu-topic-link .navmenu-topic-icon[style*="--tc"],
 .navmenu-topic-acc[style*="--tc"] .navmenu-topic-icon,
 .navmenu-topic-link[style*="--tc"] .navmenu-topic-icon {
-  background: var(--tc-chip) !important;
+  background: color-mix(in srgb, var(--tc) 86%, #fff) !important;
 }
 /* Directory cards — All Topics, Briefings by Topic, Prompts by Topic (closed) */
 #content .aiidd-tree > .aiidd-parent[style*="--tc"] .aiidd-parent-ic[class],
 #content .dih .dih-groups > .dih-group[style*="--tc"] .dih-group-ic[class],
 #content .ph-body .pdir > .pdir-card[style*="--tc"] .pdir-card-ic[class] {
-  background: var(--tc-chip) !important;
+  background: color-mix(in srgb, var(--tc) 86%, #fff) !important;
 }
 /* Topic page hero */
-.topic-bodyhead .tbh-titleic[class][style*="--tc"] { background: var(--tc-chip) !important; }
+.topic-bodyhead .tbh-titleic[class][style*="--tc"] { background: color-mix(in srgb, var(--tc) 86%, #fff) !important; }
