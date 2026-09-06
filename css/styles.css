@@ -32710,13 +32710,28 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
 .navmenu-topic-link .navmenu-topic-icon[style*="--tc"],
 .navmenu-topic-acc[style*="--tc"] .navmenu-topic-icon,
 .navmenu-topic-link[style*="--tc"] .navmenu-topic-icon {
-  background: color-mix(in srgb, var(--tc) 86%, #fff) !important;
+  background: color-mix(in srgb, var(--tc) 82%, #fff) !important;
 }
 /* Directory cards — All Topics, Briefings by Topic, Prompts by Topic (closed) */
 #content .aiidd-tree > .aiidd-parent[style*="--tc"] .aiidd-parent-ic[class],
 #content .dih .dih-groups > .dih-group[style*="--tc"] .dih-group-ic[class],
 #content .ph-body .pdir > .pdir-card[style*="--tc"] .pdir-card-ic[class] {
-  background: color-mix(in srgb, var(--tc) 86%, #fff) !important;
+  background: color-mix(in srgb, var(--tc) 78%, #fff) !important;
 }
 /* Topic page hero */
-.topic-bodyhead .tbh-titleic[class][style*="--tc"] { background: color-mix(in srgb, var(--tc) 86%, #fff) !important; }
+.topic-bodyhead .tbh-titleic[class][style*="--tc"] { background: color-mix(in srgb, var(--tc) 82%, #fff) !important; }
+
+/* ═══ revamp1218 — two tiers, because the weight is area, not hue ═══════════
+
+   The directory chips read heavier than the sidebar's at the SAME colour, and
+   the reason is size: 32×32 against 26×26 is 51% more coloured area per chip,
+   fourteen of them tiled in a grid rather than a single column. So they get
+   the deeper cut — 78% against the sidebar's 82% — and the two surfaces end up
+   looking equally soft even though the numbers differ.
+
+   This is the end of the road for a white glyph on a coloured chip. Lifestyle
+   (#a16207) is the constraint at every level; it measures 3.27:1 at 78%, and
+   the floor for a graphical object is 3:1. Going meaningfully fainter means
+   changing the pattern rather than the number: a pale tint of the hue with the
+   glyph INKED in the full colour instead of white, which reads far softer and
+   gains contrast rather than spending it. */
