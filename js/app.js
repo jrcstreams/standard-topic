@@ -566,7 +566,9 @@ function topicPickerPanelHTML(topic, panelId) {
   const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
   const cellHTML = (t) => {
     const active = t.slug === topic.slug;
-    return `<a href="#/topic/${t.slug}" class="tsp-cell${active ? ' is-active' : ''}"${active ? ' aria-current="page"' : ''}>
+    // revamp1223: each cell carries its own --tc so the glyph, hover and the
+    // active row read in the topic family's colour rather than the generic blue.
+    return `<a href="#/topic/${t.slug}" class="tsp-cell${active ? ' is-active' : ''}"${active ? ' aria-current="page"' : ''}${topicColorStyle(t)}>
         <span class="tsp-cell-ic">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span>
         <span class="tsp-cell-name">${escapeHTML(t.name)}</span>
         ${active ? `<span class="tsp-cell-check" aria-hidden="true">${CHECK}</span>` : ''}
@@ -625,7 +627,7 @@ function homeSubnavPickerHTML() {
   const HOME_IC = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>';
   const GRID_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
   const X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-  const cellHTML = (t) => `<a href="#/topic/${t.slug}" class="tsp-cell">
+  const cellHTML = (t) => `<a href="#/topic/${t.slug}" class="tsp-cell"${topicColorStyle(t)}>
       <span class="tsp-cell-ic">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span>
       <span class="tsp-cell-name">${escapeHTML(t.name)}</span>
     </a>`;

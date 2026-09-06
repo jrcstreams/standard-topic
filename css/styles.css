@@ -32872,3 +32872,28 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead[style*="--tc"]::before {
   color: #1e3a8a !important;
   font-weight: 700 !important;
 }
+
+/* ═══ revamp1223 — the Related Topics picker takes the topic's colour ═══════
+
+   The picker was the last surface still on the generic blue: grey glyphs, a
+   grey-blue active row and a blue hover, sitting under a header band and a pill
+   row that are both in the topic's hue. Every cell now carries its own --tc
+   (each related topic's, so a cross-family entry shows its own colour).
+
+   Specificity: the stated rules are `.tsp-cell:hover .tsp-cell-ic` (0,3,0) and
+   `.tsp-cell.is-active .tsp-cell-ic` (0,2,0). The [style*="--tc"] guard is
+   itself an attribute selector, so these land at (0,3,0)/(0,4,0) — at or above
+   each, and later in the file. The guard also means a topic with no scheme
+   keeps exactly the blue treatment it has now. */
+.tsp-cell[style*="--tc"] .tsp-cell-ic { color: var(--tc); }
+@media (hover: hover) {
+  .tsp-cell[style*="--tc"]:hover {
+    background: color-mix(in srgb, var(--tc) 8%, #fff);
+    color: color-mix(in srgb, var(--tc) 76%, #14213d);
+  }
+  .tsp-cell[style*="--tc"]:hover .tsp-cell-ic { color: var(--tc); }
+}
+.tsp-cell[style*="--tc"].is-active { background: color-mix(in srgb, var(--tc) 10%, #fff); }
+.tsp-cell[style*="--tc"].is-active .tsp-cell-ic,
+.tsp-cell[style*="--tc"].is-active .tsp-cell-check { color: color-mix(in srgb, var(--tc) 82%, #14213d); }
+.tsp-cell[style*="--tc"].is-active .tsp-cell-name { color: color-mix(in srgb, var(--tc) 76%, #14213d); }
