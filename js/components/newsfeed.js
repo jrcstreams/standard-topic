@@ -846,7 +846,7 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       // revamp1225: no leading icon chips and no arrow, matching the trend
       // expansion — the row is the same control on both and has to hold one
       // line in a two-column feed as well as full width.
-      const drawers = drawerLinkHTML('Search this', '#/custom/' + encodeURIComponent(card.dataset.title || ''), '', '', { noArrow: true })
+      const drawers = drawerLinkHTML('Search story', '#/custom/' + encodeURIComponent(card.dataset.title || ''), '', '', { noArrow: true })
         + (sourcesInner ? drawerHTML('Sources', sourcesInner, '') : '')
         + `<button type="button" class="te-drawer te-drawer--close ni-close-btn" data-ni-close><span class="te-drawer-sum"><span class="te-drawer-title">Close</span></span></button>`;
       panel.innerHTML = `<div class="ni-inner ai-reveal">

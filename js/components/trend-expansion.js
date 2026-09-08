@@ -172,7 +172,7 @@ export function renderTrendExpansionBody(term, brief) {
   // cost ~75px of it — enough to wrap "Close" onto a second line on its own,
   // which is what it was doing. Sources keeps its chevron because that one is
   // not decoration: it is the only thing saying the row expands.
-  const drawers = drawerLinkHTML('Search Trend', '#/custom/' + encodeURIComponent(term), '', '', { noArrow: true })
+  const drawers = drawerLinkHTML('Search trend', '#/custom/' + encodeURIComponent(term), '', '', { noArrow: true })
     + (src ? drawerHTML('Sources', src, '') : '')
     + `<button type="button" class="te-drawer te-drawer--close trend-exp-close" data-trend-close><span class="te-drawer-sum"><span class="te-drawer-title">Close</span></span></button>`;
   return `<div class="trend-exp im-secs">

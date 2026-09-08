@@ -33047,10 +33047,7 @@ body.tt-on .tview-brief .di-prov2[class][class][class][class][class] {
   gap: 7px;
 }
 .trend-exp-drawers.ni-actions[class] > .te-drawer { min-width: 0; }
-.trend-exp-drawers.ni-actions[class] .te-drawer-sum {
-  padding: 0 11px !important;
-  white-space: nowrap;
-}
+.trend-exp-drawers.ni-actions[class] .te-drawer-sum { white-space: nowrap; }
 @media (max-width: 380px) {
   .trend-exp-drawers.ni-actions[class] { flex-wrap: wrap; }
 }
@@ -33360,3 +33357,28 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
 .di-related .di-lbl--rule[class][class][class] {
   font-size: 1.02rem !important;
 }
+
+/* ═══ revamp1235 — the action row gets real proportions ═════════════════════
+
+   revamp1225 zeroed the vertical padding (`padding: 0 11px`) to squeeze three
+   buttons onto one line while they still carried icon chips. The chips are
+   gone, so the squeeze is no longer buying anything — it was just making the
+   labels sit tight against the pill edges. Stated once here, for both the
+   trend expansion and the news insight, at proportions that hold a line
+   without looking compressed: 34px tall, 0.82rem, 14px of side padding, 8px
+   between them. */
+.trend-exp-drawers.ni-actions[class][class] { gap: 8px !important; }
+.trend-exp-drawers.ni-actions[class][class] .te-drawer:not([open]) > .te-drawer-sum {
+  min-height: 34px !important;
+  padding: 0 14px !important;
+  font-size: 0.82rem !important;
+  gap: 7px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* The provenance chip in the expanded briefing sat hard against the date line
+   above it: the metaline's row-gap was tuned for a single row. Even air above
+   and below, on every surface rather than only the full-width page. */
+.di-mast--v2 .di-metaline[class][class] { row-gap: 11px !important; }
+.di-mast--v2 .di-metaline[class][class] .di-prov2 { margin-top: 1px !important; }
