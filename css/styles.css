@@ -33335,3 +33335,17 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
 .di-page .di-metaline[class] { flex-wrap: wrap; row-gap: 9px; }
 .di-page .di-metaline[class] .di-prov2 { flex-basis: 100%; }
 .di-page .di-metaline[class] .di-metasep--prov { display: none !important; }
+
+/* revamp1234 — the two briefing section heads become identical. 1228 gave
+   "Top Stories" a 2px rule and left "Today in Focus" on the 1px hairline it
+   inherited from being a card heading, so two peers were marked at two
+   weights. Same 2px #d3dcec, and both step up from 0.95rem to 1.02rem. */
+.di-focus-lbl[class][class][class][class] {
+  border-bottom: 2px solid #d3dcec !important;
+  padding-bottom: 9px !important;
+}
+.di-focus-lbl[class][class][class][class],
+.di-briefs--v2 .di-lbl--rule[class][class][class],
+.di-related .di-lbl--rule[class][class][class] {
+  font-size: 1.02rem !important;
+}
