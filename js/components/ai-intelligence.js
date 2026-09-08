@@ -2328,8 +2328,21 @@ function diNewsRows(feed, cites, cap = 15) {
   // actually used; a news-feed HEADLINE is just a topical article that may or
   // may not relate to a given claim. Merging them lost that distinction, which
   // let feed headlines be presented as citations for claims they don't support.
-  const list = (feed || []).map((x) => ({ x, kind: 'feed' }))
-    .concat((cites || []).map((x) => ({ x, kind: 'cite' })));
+  // revamp1255d — CITATIONS FIRST.
+  //
+  // This walked feed headlines first and stopped at `cap`. A daily builder
+  // supplies 28 headlines against a cap of 20, so the loop filled on feed alone
+  // and broke BEFORE reaching a single citation — the rows carrying the model's
+  // own attribution (revamp1208) were never examined at all. Three earlier fixes
+  // this session operated on code that never ran.
+  //
+  // Citations are the scarcer and more meaningful half: a citation is a source
+  // the model actually used, a feed headline is a topical article that may not
+  // relate to any claim. So they go first and can never be crowded out; feed
+  // headlines fill the remainder. The dedupe below merges the two when a
+  // citation resolves to a headline already present.
+  const list = (cites || []).map((x) => ({ x, kind: 'cite' }))
+    .concat((feed || []).map((x) => ({ x, kind: 'feed' })));
   const seen = new Set(); const seenT = new Set(); const out = [];
   for (const entry of list) {
     const x = entry.x; const kind = entry.kind;
