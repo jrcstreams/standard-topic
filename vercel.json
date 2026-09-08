@@ -91,6 +91,14 @@
     {
       "path": "/api/cron/pregenerate?type=daily&n=40",
       "schedule": "50 15 * * *"
+    },
+    {
+      "schedule": "40 23 * * *",
+      "path": "/api/cron/pregenerate?type=budget"
+    },
+    {
+      "schedule": "20 4 * * 0",
+      "path": "/api/cron/pregenerate?type=purge&scope=orphans"
     }
   ],
   "rewrites": [

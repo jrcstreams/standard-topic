@@ -195,6 +195,50 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
     const scope = (req.query.scope || 'overviews').trim();
     let purged = 0;
     try {
+      // revamp1247 — scope=orphans: the only purge that is SAFE TO SCHEDULE.
+      //
+      // news_stories prunes to the newest 1,000 per topic on every ingest, but
+      // ai_insights has never had a retention rule of any kind: a brief written
+      // for a story that has since been pruned stays forever, keyed by a URL the
+      // site no longer serves. Nothing reads those rows and nothing removed them.
+      // At ~4,900 stories a day that grows without bound, on the database whose
+      // compute quota has already taken the site down once.
+      //
+      // Every other scope here deletes LIVE rows and forces paid regeneration —
+      // which is why they are manual. This one deletes only rows whose story is
+      // already gone, so it can run on a timer without ever costing a generation
+      // or removing something a reader could still reach.
+      //
+      // The 5,000-row cap per run bounds both the statement's lock time and the
+      // function's wall clock; a weekly schedule clears far more than a week
+      // accumulates, so it converges rather than falling behind.
+      if (scope === 'orphans') {
+        const cap = Math.min(Math.max(parseInt(req.query.max, 10) || 5000, 1), 20000);
+        const r = await sql2.query(
+          `WITH doomed AS (
+             SELECT ai.entity_type, ai.entity_key, ai.insight
+               FROM ai_insights ai
+              WHERE ai.entity_type = 'news'
+                AND NOT EXISTS (SELECT 1 FROM news_stories ns WHERE ns.url = ai.entity_key)
+              LIMIT $1
+           ), d AS (
+             DELETE FROM ai_insights a
+              USING doomed x
+              WHERE a.entity_type = x.entity_type AND a.entity_key = x.entity_key AND a.insight = x.insight
+              RETURNING 1
+           )
+           SELECT count(*)::int AS n FROM d`, [cap]);
+        purged = (r[0] && r[0].n) || 0;
+        let remaining = null;
+        try {
+          const rem = await sql2.query(
+            `SELECT count(*)::int AS n FROM ai_insights ai
+              WHERE ai.entity_type='news'
+                AND NOT EXISTS (SELECT 1 FROM news_stories ns WHERE ns.url = ai.entity_key)`);
+          remaining = (rem[0] && rem[0].n) || 0;
+        } catch (_) { /* count is diagnostic only */ }
+        return res.status(200).json({ ok: true, purged, remaining, scope: 'orphans' });
+      }
       if (scope === 'legacy') {
         const r = await sql2.query(
           `WITH d AS (DELETE FROM ai_insights WHERE entity_type='shortcut' AND insight NOT LIKE '%:b' RETURNING 1)
@@ -234,6 +278,63 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
   // (re)generated SINCE a cutoff (?since=ISO, default last 24h) vs the totals,
   // plus a list of the most recently regenerated keys — so a prompt change can
   // be watched as it rolls out via the gradual refresh. No generation, no cost.
+  // revamp1248 — type=budget: the daily watch on a limit that fails SILENTLY.
+  //
+  // Running out of grounding does not error. generateInsight simply stops asking
+  // for live search and returns an ungrounded answer, so the site keeps working
+  // and the briefs quietly go stale. Nothing in the stack notices. That is the
+  // one failure mode here that could run for a week unobserved, which makes it
+  // the one worth a scheduled check.
+  //
+  // Sends to ALERT_WEBHOOK_URL when set (Slack/Discord both accept a bare
+  // {text}); otherwise console.error, which surfaces in Vercel logs. Always
+  // returns the numbers in the response, so hitting the URL by hand is a status
+  // check as well as an alert.
+  if (which === 'budget') {
+    const day = new Date().toISOString().slice(0, 10);
+    try {
+      let row = [];
+      try { row = await sql.query(`SELECT calls, grounded, searches FROM ai_usage WHERE day=$1`, [day]); }
+      catch (_) { row = await sql.query(`SELECT calls FROM ai_usage WHERE day=$1`, [day]); }
+      const calls = (row[0] && Number(row[0].calls)) || 0;
+      const grounded = (row[0] && Number(row[0].grounded)) || 0;
+      const searches = (row[0] && Number(row[0].searches)) || 0;
+      const searchBudget = parseInt(process.env.AI_GROUNDED_SEARCH_BUDGET || '1450', 10);
+      const callCap = parseInt(process.env.AI_DAILY_CAP_CALLS || '5000', 10);
+      const searchPct = Math.round((searches / Math.max(searchBudget, 1)) * 100);
+      const callPct = Math.round((calls / Math.max(callCap, 1)) * 100);
+      // The ratio that the whole capacity model rests on and that nothing has
+      // ever recorded: how many search queries one grounded call actually spends.
+      const perCall = grounded > 0 ? Math.round((searches / grounded) * 100) / 100 : null;
+
+      const alerts = [];
+      if (searchPct >= 100) alerts.push(`Grounding budget EXHAUSTED (${searches}/${searchBudget}). Insights are generating ungrounded — they will read stale.`);
+      else if (searchPct >= 80) alerts.push(`Grounding at ${searchPct}% (${searches}/${searchBudget}).`);
+      if (callPct >= 80) alerts.push(`Daily call cap at ${callPct}% (${calls}/${callCap}). At 100% insights return "capped" and users see nothing.`);
+
+      if (alerts.length) {
+        const text = `Standard Topic — AI budget ${day}\n` + alerts.map((a) => `• ${a}`).join('\n')
+          + (perCall ? `\n(searches per grounded call: ${perCall})` : '');
+        const hook = process.env.ALERT_WEBHOOK_URL;
+        if (hook) {
+          try {
+            await fetch(hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, content: text }) });
+          } catch (e) { console.error('[budget] webhook failed:', String((e && e.message) || e)); }
+        } else {
+          console.error('[budget]', text.replace(/\n/g, ' | '));
+        }
+      }
+      return res.status(200).json({
+        ok: true, day, calls, grounded, searches,
+        searchBudget, callCap, searchPct, callPct,
+        searchesPerGroundedCall: perCall,
+        alerts, notified: alerts.length ? (process.env.ALERT_WEBHOOK_URL ? 'webhook' : 'log') : 'none',
+      });
+    } catch (e) {
+      return res.status(500).json({ error: String((e && e.message) || e) });
+    }
+  }
+
   if (which === 'status') {
     const since = (req.query.since || '').trim() || new Date(Date.now() - 24 * 3600 * 1000).toISOString();
     try {
