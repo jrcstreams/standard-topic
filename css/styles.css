@@ -33309,3 +33309,29 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
   font-size: 0.95rem !important;
   letter-spacing: 0.06em !important;
 }
+
+/* ═══ revamp1233 — briefing spacing, and the chip drops to its own line ═════
+
+   (1) The rule under the three focus items is gone. It was there in 1212 to
+   separate the list from the summary when both sat inside a tinted card; with
+   the card removed (1228) the section already has a rule under its heading, and
+   a second one three lines later chopped one section into two.
+
+   (2) The gap between the summary and "Top Stories" was doing the work twice —
+   .di-focus carried a 22px bottom margin AND the summary its own. One of them. */
+.di-focus .di-summary[class][class] {
+  margin-top: 13px !important;
+  padding-top: 0 !important;
+  border-top: 0 !important;
+}
+.di-focus[class][class][class] { margin-bottom: 14px !important; }
+
+/* (3) On the full-width Briefings page the masthead line runs
+   date | time | chip, which puts a control on the same baseline as two pieces
+   of metadata and stretches the line most of the way across a 1000px column.
+   The chip takes its own line under them — flex-basis forces the break without
+   restructuring the markup, and the pipe that used to precede it goes with it.
+   The rail is unaffected: it wraps there already, at its own width. */
+.di-page .di-metaline[class] { flex-wrap: wrap; row-gap: 9px; }
+.di-page .di-metaline[class] .di-prov2 { flex-basis: 100%; }
+.di-page .di-metaline[class] .di-metasep--prov { display: none !important; }
