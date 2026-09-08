@@ -2353,6 +2353,14 @@ function diNewsRows(feed, cites, cap = 15) {
     // revamp1191: Gemini's groundingSupports say which passages this source
     // backs. Carried through so attribution can be read rather than guessed.
     if (Array.isArray(x.quotes) && x.quotes.length) row.quotes = x.quotes;
+    // revamp1255b: same reasoning, different signal — revamp1208's headline
+    // tags say WHICH briefing item a source belongs to, stated by the model.
+    // This row object is what attribution actually receives, and rebuilding it
+    // field-by-field silently dropped both `via` and `item`, so the tags were
+    // written to the database, returned by the API, and thrown away one step
+    // before the code that wanted them.
+    if (x.via) row.via = x.via;
+    if (Number.isInteger(x.item)) row.item = x.item;
     out.push(row);
     if (out.length >= cap) break;
   }
