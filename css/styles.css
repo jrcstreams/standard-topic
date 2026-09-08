@@ -32897,3 +32897,38 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead[style*="--tc"]::before {
 .tsp-cell[style*="--tc"].is-active .tsp-cell-ic,
 .tsp-cell[style*="--tc"].is-active .tsp-cell-check { color: color-mix(in srgb, var(--tc) 82%, #14213d); }
 .tsp-cell[style*="--tc"].is-active .tsp-cell-name { color: color-mix(in srgb, var(--tc) 76%, #14213d); }
+
+/* ═══ revamp1224 — homepage hero chips ARE the topic pages' related pills ═══
+
+   Same control, two designs: the homepage chip was 0.9rem/600 in accent blue
+   on white with a 7px vertical pad, while .tbh-sub is a fixed 32px at
+   0.82rem/560 in slate on #f4f6fa. The homepage one also picked up the generic
+   a:hover underline, which the pill never had, and hovered blue after 1220
+   moved the pills onto the topic's own hue.
+
+   These values are copied from the .tbh-sub block rather than shared through a
+   class because the two are rendered by different pages with different markup
+   (.home-hero-chip-ic vs .tbh-sub-ic); the pairing to keep in step is stated
+   here so the next edit to either one has somewhere to look.
+
+   The hover is the 1220 pill treatment verbatim — the chips already carry --tc
+   from 1210b, so an uncoloured topic falls back to the same blue as before. */
+.home-hero-chip[class] {
+  height: 32px; padding: 0 13px;
+  font-size: 0.82rem; font-weight: 560;
+  color: #33436a;
+  background: #f4f6fa;
+  border-color: color-mix(in srgb, #2f4d9e 10%, #e2e7f0);
+  text-decoration: none;
+  transition: background .14s ease, border-color .14s ease, color .14s ease,
+              transform .16s ease, box-shadow .18s ease;
+}
+@media (hover: hover) {
+  .home-hero-chip[class]:hover {
+    background: color-mix(in srgb, var(--tc, #2f4d9e) 9%, #fff);
+    border-color: color-mix(in srgb, var(--tc, #2f4d9e) 42%, transparent);
+    color: color-mix(in srgb, var(--tc, #1b3d8f) 78%, #14213d);
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--tc, #1e3a8a) 22%, transparent);
+    text-decoration: none;
+  }
+}
