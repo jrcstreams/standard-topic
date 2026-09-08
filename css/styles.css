@@ -33465,3 +33465,48 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
   bottom: auto !important;
   transform: translateY(-50%) !important;
 }
+
+/* ═══ revamp1241 — action row with icons; homepage news-card hover ══════════
+
+   (1) The buttons carry their icons again (markup in trend-expansion.js and
+   newsfeed.js). 1225 stripped them to force three onto one line in a 280px
+   rail; the row wraps again now, so "Close" dropping to a second line in a
+   narrow column is the intended outcome rather than the failure it was being
+   contorted to avoid. Smaller with the icons back so the row does not grow:
+   30px tall, 0.78rem, 12px of side padding, 8px apart. */
+.trend-exp-drawers.ni-actions[class][class] {
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+.trend-exp-drawers.ni-actions[class][class] .te-drawer:not([open]) > .te-drawer-sum {
+  min-height: 30px !important;
+  padding: 0 12px !important;
+  font-size: 0.78rem !important;
+  gap: 6px !important;
+}
+.trend-exp-drawers.ni-actions[class][class] .te-drawer:not([open]) .te-drawer-ic svg,
+.trend-exp-drawers.ni-actions[class][class] .te-drawer:not([open]) .te-drawer-chev,
+.trend-exp-drawers.ni-actions[class][class] .te-drawer--close:not([open]) > .te-drawer-sum > svg {
+  width: 13px !important; height: 13px !important;
+}
+
+/* (2) The homepage news cards get the topic pages' hover, which they never had:
+   the shadow was reaching them but the border was not. Two rules stood in the
+   way — a `border-top-color: color-mix(--color-primary 30%, …)` at (1,4,0) and
+   a `:nth-child(-n+2)` restatement of it at (1,5,0), both written when the top
+   border was the separator between stacked rows rather than an edge of a
+   bordered card. Stated at (1,7,1) so all four sides move together, matching
+   the topic page's measured #c3d0e8. */
+@media (hover: hover) {
+  body.home-search #section-newsfeed .news-list .news-card:not(.news-card--open):hover[class][class],
+  body .topic-band #section-newsfeed .news-list .news-card:not(.news-card--open):hover[class][class] {
+    border-color: #c3d0e8 !important;
+    box-shadow: 0 4px 14px -10px rgba(30, 58, 138, 0.35) !important;
+    background: color-mix(in srgb, var(--color-primary) 4%, #fff) !important;
+  }
+}
+/* …and the open card keeps its own edge on the homepage too (1227 did the
+   topic pages only). */
+body.home-search #section-newsfeed .news-list .news-card.news-card--open[class][class] {
+  border: 1.5px solid #b9c6e4 !important;
+}

@@ -4,7 +4,7 @@
 // matches AI insights elsewhere.
 import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260817-revamp772';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
-import { drawerHTML, drawerLinkHTML, wireDrawers } from '../utils/drawers.js?v=20260908-revamp1225';
+import { drawerHTML, drawerLinkHTML, wireDrawers, DRAWER_SEARCH_IC, DRAWER_SOURCES_IC } from '../utils/drawers.js?v=20260908-revamp1241';
 export { wireDrawers as wireTrendDrawers };
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels, safeUrl } from '../utils/data.js';
@@ -132,6 +132,7 @@ function teSourcesHTML(headlines, sources) {
   return rows.length ? `<div class="im-coverage-list">${rows.join('')}</div>` : '';
 }
 
+const TE_CLOSE_X = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 const TE_INFO_ICON = '<svg class="te-aitag-info" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
 
 // Full expanded body — the retired detail modal's layout: Reasoning + Summary
@@ -172,9 +173,12 @@ export function renderTrendExpansionBody(term, brief) {
   // cost ~75px of it — enough to wrap "Close" onto a second line on its own,
   // which is what it was doing. Sources keeps its chevron because that one is
   // not decoration: it is the only thing saying the row expands.
-  const drawers = drawerLinkHTML('Search trend', '#/custom/' + encodeURIComponent(term), '', '', { noArrow: true })
-    + (src ? drawerHTML('Sources', src, '') : '')
-    + `<button type="button" class="te-drawer te-drawer--close trend-exp-close" data-trend-close><span class="te-drawer-sum"><span class="te-drawer-title">Close</span></span></button>`;
+  // revamp1241: the icons are back. 1225 stripped them to fit three buttons on
+  // one line in a 280px rail; the row is allowed to wrap now, so the width they
+  // cost is affordable and the mark is worth more than the line.
+  const drawers = drawerLinkHTML('Search trend', '#/custom/' + encodeURIComponent(term), DRAWER_SEARCH_IC, '', { noArrow: true })
+    + (src ? drawerHTML('Sources', src, DRAWER_SOURCES_IC) : '')
+    + `<button type="button" class="te-drawer te-drawer--close trend-exp-close" data-trend-close><span class="te-drawer-sum">${TE_CLOSE_X}<span class="te-drawer-title">Close</span></span></button>`;
   return `<div class="trend-exp im-secs">
     <div class="trend-exp-summary">${summaryHTML}</div>
     <div class="trend-exp-drawers ni-actions">${drawers}</div>
