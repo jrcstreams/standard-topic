@@ -33293,3 +33293,19 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
   white-space: nowrap;
   min-width: 0;
 }
+
+/* revamp1232 — the briefing's two section heads read as section heads.
+   1228 made "Top Stories" structurally a header (no trailing hairline, a 2px
+   rule under it) but left it at the 0.82rem label size, so it still looked
+   like a caption sitting on a rule. Up to 0.95rem, with the tracking eased
+   from 0.085em to 0.06em — caps at a larger size need less of it, and at the
+   old value the phrase sprawled across the column.
+
+   "Today in Focus" moves with it: the two are peers, and sizing only one makes
+   the other look like a sub-head of the section above it. */
+.di-focus-lbl[class][class][class],
+.di-briefs--v2 .di-lbl--rule[class][class],
+.di-related .di-lbl--rule[class][class] {
+  font-size: 0.95rem !important;
+  letter-spacing: 0.06em !important;
+}
