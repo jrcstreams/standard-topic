@@ -33122,14 +33122,19 @@ body.tt-on .tview-brief .di-prov2[class][class][class][class][class] {
    card had three sides at #c3d0e8 and a top at #e8edf5, and open it had a fill
    with a top edge that did not match its own border.
 
+   Note `body .topic-band` with a DESCENDANT combinator: .topic-band is a div
+   (topic-layout topic-band topic-tabbed), not a body class, so `body.topic-band`
+   matches nothing at all — which is how the first attempt at this silently did
+   nothing on the live page.
+
    Stated per state at (1,7,1)/(1,6,1) so the top simply tracks the other three
    sides. Not scoped to :nth-child(2): every card should behave this way, and
    naming the second one again is what produced two rules to reconcile. */
 @media (hover: hover) {
-  body.topic-band #section-newsfeed .news-list .news-card:not(.news-card--open):hover[class][class] {
+  body .topic-band #section-newsfeed .news-list .news-card:not(.news-card--open):hover[class][class] {
     border-top-color: #c3d0e8 !important;
   }
 }
-body.topic-band #section-newsfeed .news-list .news-card.news-card--open[class][class] {
+body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][class] {
   border-top: 1.5px solid #b9c6e4 !important;
 }
