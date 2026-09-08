@@ -33418,3 +33418,35 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
 .di-mast--v2 .di-metaline[class][class][class] { row-gap: 8px !important; }
 .di-page .di-mast.di-mast--v2[class][class][class][class] { margin-bottom: 14px !important; }
 .di-focus[class][class][class][class][class] { margin-bottom: 8px !important; }
+
+/* ═══ revamp1239 — the focus list: no rules between items, bullets on the text
+
+   Two bugs, both mine.
+
+   (1) 1233 removed the rule UNDER the list (the one before the summary) but
+   the rules BETWEEN the items are a different declaration — the base
+   `.di-focus-list li { border-top: 1px solid #d3dcec }`, which only stops
+   applying above the 640px container breakpoint where the list becomes three
+   columns. In the rail it never stopped, so three items still read as three
+   rows of a table.
+
+   (2) The bullets were positioned `top: 0.62em` against the padding box, and
+   every item except the first carries `padding-top: 10px` — so on items 2 and
+   3 the bullet landed inside that padding, above its own text. With the
+   borders gone the padding goes too, spacing moves to the grid's row-gap, and
+   one offset is then correct for every item. */
+.di-focus-list[class][class][class] { row-gap: 10px !important; }
+.di-focus-list[class][class][class] li {
+  border-top: 0 !important;
+  border-left: 0 !important;
+  padding: 0 0 0 15px !important;
+  margin: 0 !important;
+}
+.di-focus-list[class][class][class] li::before { top: 0.56em !important; }
+@container (min-width: 640px) {
+  .di-focus-list[class][class][class] li,
+  .di-focus-list[class][class][class] li:first-child {
+    padding: 0 0 0 15px !important;
+    border-left: 0 !important;
+  }
+}
