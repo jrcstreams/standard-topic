@@ -33408,3 +33408,13 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
   padding-bottom: 0.28rem !important;
 }
 .navmenu-seclabel[class][class]::after { background: #ccd5e4; }
+
+/* revamp1238 — final trims on the expanded briefing's vertical rhythm.
+   The chip had 11px of row-gap above it and the masthead 20px below, which
+   put more air around one label than between the sections it introduces; and
+   Today in Focus still cleared Top Stories by more than Top Stories clears its
+   own first story. 8 / 14 / 8. Specificity note: the masthead margin is stated
+   at (0,6,0) and .di-focus's at (0,4,0) — hence the repeats. */
+.di-mast--v2 .di-metaline[class][class][class] { row-gap: 8px !important; }
+.di-page .di-mast.di-mast--v2[class][class][class][class] { margin-bottom: 14px !important; }
+.di-focus[class][class][class][class][class] { margin-bottom: 8px !important; }
