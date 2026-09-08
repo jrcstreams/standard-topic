@@ -33394,3 +33394,17 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
   font-size: 0.95rem !important;
   color: #1e3a8a !important;
 }
+
+/* revamp1237 — the sidebar section labels settle. They were the navy the
+   topic names use, which made them read as peers of the links below rather
+   than as labels over them; off-black at #3d4759 sits back without going grey.
+   The trailing rule goes #dde4ef -> #ccd5e4, which is what it takes to be
+   visible against the rail's own #eaeef5 ground — the lighter value was
+   correct on white and invisible here. And the label sits closer to the
+   content it heads: 0.5rem of bottom padding read as a gap between two
+   sections rather than as the space inside one. */
+.navmenu-seclabel[class][class] {
+  color: #3d4759 !important;
+  padding-bottom: 0.28rem !important;
+}
+.navmenu-seclabel[class][class]::after { background: #ccd5e4; }
