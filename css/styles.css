@@ -32968,8 +32968,14 @@ body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-main,
 body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-head {
   align-items: center !important;
 }
+/* revamp1225b: .trend-card-acc is position:absolute at top:-2px, so align-self
+   was a no-op — flex alignment does not apply to an out-of-flow box. Centre it
+   against its containing block instead; that block spans the band exactly
+   (measured 9 + 28 + 4 = 41px), so 50% minus half its height lands true. */
 body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-acc {
-  align-self: center !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
 }
 /* Body inset, so the text is not flush to the new border. */
 body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-exp {
