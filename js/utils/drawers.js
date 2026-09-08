@@ -14,9 +14,12 @@ export function drawerHTML(label, bodyHTML, icon = '', sub = '') {
 
 // Sibling row to a drawer that ISN'T a drawer: a plain link (e.g. "Search this
 // trend" → the search page), styled by the same .te-drawer-sum family.
-export function drawerLinkHTML(label, href, icon = '', sub = '') {
+// revamp1225: `opts.noArrow` drops the trailing arrow for callers that need the
+// row to fit a narrow column. Everything else keeps it — it is the only mark
+// separating a link that leaves the page from a drawer that opens in place.
+export function drawerLinkHTML(label, href, icon = '', sub = '', opts = {}) {
   const ARROW = '<svg class="te-drawer-chev te-drawer-go" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
-  return `<a class="te-drawer te-drawer--link" href="${String(href).replace(/"/g, '&quot;')}"><span class="te-drawer-sum">${icon ? `<span class="te-drawer-ic" aria-hidden="true">${icon}</span>` : ''}<span class="te-drawer-tx"><span class="te-drawer-title">${esc(label)}</span>${sub ? `<span class="te-drawer-sub">${esc(sub)}</span>` : ''}</span>${ARROW}</span></a>`;
+  return `<a class="te-drawer te-drawer--link" href="${String(href).replace(/"/g, '&quot;')}"><span class="te-drawer-sum">${icon ? `<span class="te-drawer-ic" aria-hidden="true">${icon}</span>` : ''}<span class="te-drawer-tx"><span class="te-drawer-title">${esc(label)}</span>${sub ? `<span class="te-drawer-sub">${esc(sub)}</span>` : ''}</span>${opts.noArrow ? '' : ARROW}</span></a>`;
 }
 
 export const DRAWER_SEARCH_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>';

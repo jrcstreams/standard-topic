@@ -4,7 +4,7 @@
 // matches AI insights elsewhere.
 import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260817-revamp772';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
-import { drawerHTML, drawerLinkHTML, wireDrawers, DRAWER_SEARCH_IC, DRAWER_SOURCES_IC } from '../utils/drawers.js?v=20260817-revamp772';
+import { drawerHTML, drawerLinkHTML, wireDrawers } from '../utils/drawers.js?v=20260908-revamp1225';
 export { wireDrawers as wireTrendDrawers };
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels, safeUrl } from '../utils/data.js';
@@ -132,6 +132,8 @@ function teSourcesHTML(headlines, sources) {
   return rows.length ? `<div class="im-coverage-list">${rows.join('')}</div>` : '';
 }
 
+const TE_INFO_ICON = '<svg class="te-aitag-info" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+
 // Full expanded body — the retired detail modal's layout: Reasoning + Summary
 // (AI Generated Text) → Explore Further (External AI Model Insights + Web
 // Search) → Sources. `brief` = { content, summary, sources, headlines }.
@@ -154,7 +156,10 @@ export function renderTrendExpansionBody(term, brief) {
   // hang off the bottom as quiet drawers so they read as a continuation of the
   // brief rather than three peer destinations. Close is the last thing on the card.
   const summaryBody = detail || why;
-  const AITAG = `<div class="trend-exp-aitag">${aiSparkInline()}<span>AI-generated content included</span></div>`;
+  // revamp1225: the same control as the briefing's and the news insight's —
+  // a button that opens "how our AI works", not a caption. It was the only
+  // provenance label on the site that said the same words but did nothing.
+  const AITAG = `<button type="button" class="trend-exp-aitag how-aigen" data-how-it-works>${aiSparkInline()}<span>AI-generated content included</span>${TE_INFO_ICON}</button>`;
   const summaryHTML = summaryBody ? `${AITAG}${renderBriefBody(summaryBody, null)}` : '<p class="ins-empty">No summary yet.</p>';
   // "Search this trend" leads — a direct jump to the search page with the trend
   // as the query (the natural Explore Further). Sources follows as a quiet
@@ -162,15 +167,19 @@ export function renderTrendExpansionBody(term, brief) {
   const src = teSourcesHTML(b.headlines, b.sources);
   // revamp1051: same compact three-button row as the news insight — Search this,
   // Sources, Close (differentiated), all left-aligned at the bottom of the card.
-  const drawers = drawerLinkHTML('Search this', '#/custom/' + encodeURIComponent(term), DRAWER_SEARCH_IC)
-    + (src ? drawerHTML('Sources', src, DRAWER_SOURCES_IC) : '')
-    + `<button type="button" class="te-drawer te-drawer--close trend-exp-close" data-trend-close><span class="te-drawer-sum">${TE_CLOSE_X}<span class="te-drawer-title">Close</span></span></button>`;
+  // revamp1225: no leading icon chips and no arrow on the link. The row has to
+  // survive the homepage sidebar (~280px of usable width), and three icon chips
+  // cost ~75px of it — enough to wrap "Close" onto a second line on its own,
+  // which is what it was doing. Sources keeps its chevron because that one is
+  // not decoration: it is the only thing saying the row expands.
+  const drawers = drawerLinkHTML('Search Trend', '#/custom/' + encodeURIComponent(term), '', '', { noArrow: true })
+    + (src ? drawerHTML('Sources', src, '') : '')
+    + `<button type="button" class="te-drawer te-drawer--close trend-exp-close" data-trend-close><span class="te-drawer-sum"><span class="te-drawer-title">Close</span></span></button>`;
   return `<div class="trend-exp im-secs">
     <div class="trend-exp-summary">${summaryHTML}</div>
     <div class="trend-exp-drawers ni-actions">${drawers}</div>
   </div>`;
 }
-const TE_CLOSE_X = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
 
 

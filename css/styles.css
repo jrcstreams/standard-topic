@@ -32932,3 +32932,143 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead[style*="--tc"]::before {
     text-decoration: none;
   }
 }
+
+/* ═══ revamp1225 — trend/news expansion chrome, provenance chip, actions ════ */
+
+/* ── (1) The homepage sidebar's expanded trend gets the Trending page's card ──
+   revamp1030-era styling stripped it back to a flat band: `border: none`,
+   `border-radius: 0`, two box-shadow hairlines standing in for edges. That was
+   consistent with the flat rows around it but it meant the OPEN card — the one
+   thing on the rail that is a card — had no container.
+
+   Stated at (1,6,1) because the rule being replaced is
+   `body.home-search #home-trending .trend-card.is-expanded` (1,4,1) with
+   !important on every declaration.
+
+   The border is 1px #ccd8ea against the news insight's 1.5px #b9c6e4: same
+   idea, fainter, because this one sits in a 280px rail where the page version
+   sits in a 1000px column. */
+body.home-search #home-trending .trend-card-grid > .trend-card.is-expanded[class] {
+  border: 1px solid #ccd8ea !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background: #f8fafc !important;
+  box-shadow: 0 6px 20px -16px rgba(30, 58, 138, .22) !important;
+  margin: 10px 0 !important;
+}
+/* The header band: overflow:hidden on the card clips its top corners, so the
+   band needs no radius of its own. What it did need is vertical centring — the
+   ✕ is 28px against a 19px title line, and with the two stacked in a
+   `align-items: start` flow the title sat high in the band. */
+body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-trigger {
+  align-items: center !important;
+  padding: 11px 13px !important;
+}
+body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-main,
+body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-head {
+  align-items: center !important;
+}
+body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-acc {
+  align-self: center !important;
+}
+/* Body inset, so the text is not flush to the new border. */
+body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-exp {
+  padding: 0 13px 12px !important;
+}
+
+/* ── (2) The Trending page's first expanded card sat on the rule above it ────
+   The card uses the grid's top separator as its own top border, which reads
+   correctly closed and cramped open — the open card has a fill and a real
+   border, so it needs to clear the line rather than sit on it. */
+.trend-card-grid > .trend-card.is-expanded:first-child,
+.trend-card-grid > .trend-card.is-expanded:nth-child(2) { margin-top: 10px !important; }
+
+/* ── (3) The provenance chip: a rounded rectangle, not a pill ───────────────
+   999px on a chip this wide reads as a tag rather than a control. 8px matches
+   the buttons it sits above. The fill steps a shade away from the card so the
+   chip is legible on the briefing card's own tint, which it previously matched
+   almost exactly.
+
+   Five [class] repeats: revamp1186 states this at
+   `.di-prov2[class][class][class]` (0,4,0) with !important. */
+.tdi-cardprov[class][class][class][class][class],
+.di-prov2[class][class][class][class][class],
+body.tt-on .tview-brief .di-prov2[class][class][class][class][class] {
+  border-radius: 8px !important;
+  background: #e4eaf5 !important;
+  border: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
+}
+@media (hover: hover) {
+  .tdi-cardprov[class][class][class][class][class]:hover,
+  .di-prov2[class][class][class][class][class]:hover {
+    background: #d8e1f2 !important;
+    border-color: color-mix(in srgb, #2f4d9e 24%, transparent) !important;
+  }
+}
+
+/* ── (4) The trend expansion's provenance label is now the same control ─────
+   It was a bare caption — same words as the briefing's and the news insight's,
+   no chip, no info icon, nothing to click. It is a button now (see
+   trend-expansion.js), so it needs the chip's chrome and room to be a target:
+   the 7px bottom margin it had left no space for a hit area. */
+.trend-exp-aitag[class][class] {
+  display: inline-flex !important; align-items: center; gap: 6px;
+  margin: 4px 0 13px !important;
+  padding: 5px 10px !important;
+  border-radius: 8px !important;
+  background: #e4eaf5 !important;
+  border: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
+  font-size: 0.75rem !important; font-weight: 550 !important;
+  color: #46536e !important;
+  cursor: pointer;
+  transition: background .14s ease, border-color .14s ease;
+}
+.trend-exp-aitag[class][class] .te-aitag-info { opacity: .62; flex: none; }
+@media (hover: hover) {
+  .trend-exp-aitag[class][class]:hover {
+    background: #d8e1f2 !important;
+    border-color: color-mix(in srgb, #2f4d9e 24%, transparent) !important;
+  }
+}
+
+/* ── (5) The action row holds one line ──────────────────────────────────────
+   Search / Sources / Close wrapped "Close" onto a line of its own in the
+   sidebar. With the leading icon chips gone (drawers.js) the three fit; this
+   just stops them wrapping and lets them shrink instead. Below 380px — where
+   they genuinely cannot fit — wrapping comes back. */
+.trend-exp-drawers.ni-actions[class] {
+  flex-wrap: nowrap;
+  gap: 7px;
+}
+.trend-exp-drawers.ni-actions[class] > .te-drawer { min-width: 0; }
+.trend-exp-drawers.ni-actions[class] .te-drawer-sum {
+  padding: 0 11px !important;
+  white-space: nowrap;
+}
+@media (max-width: 380px) {
+  .trend-exp-drawers.ni-actions[class] { flex-wrap: wrap; }
+}
+
+/* ── (6) Topic-page news cards keep their top border on hover and when open ──
+   revamp-era hover states set `border-top-color: transparent` so the tinted
+   fill would meet the card above cleanly. On a bordered card that just deletes
+   an edge: the second card in the feed lost its top line under the pointer,
+   and the open card had a fill with no outline at all. */
+@media (hover: hover) {
+  .topic-band #section-newsfeed .news-card:hover[class],
+  body.home-search #section-newsfeed .news-card:hover[class] {
+    border-top-color: #dbe3f0 !important;
+  }
+}
+
+/* ── (7) "Read Briefing" on a topic page matches the homepage's ─────────────
+   revamp-era `.tdi-card--v3 .tdi-go` (0,2,0) lands after the hero2 sizing and
+   shrinks it to 0.42rem/0.84rem. The homepage card escapes only because it is
+   reached through `.hb-hero .tdi-card .tdi-go` (0,3,0). Restate at (0,3,0) for
+   the hero2 card so both read the same size. */
+.tdi-card--v3.tdi-card--hero2 .tdi-go[class] {
+  padding: 0.62rem 1.1rem !important;
+  font-size: 0.9rem !important;
+  border-radius: 8px !important;
+}
+.tdi-card--v3.tdi-card--hero2 .tdi-go[class] svg { width: 15px !important; height: 15px !important; }

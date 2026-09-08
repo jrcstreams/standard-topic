@@ -12,7 +12,7 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories, fetchWithTimeout, safeUrl, getTopicBySlug } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
-import { drawerHTML, drawerLinkHTML, wireDrawers, DRAWER_SEARCH_IC, DRAWER_SOURCES_IC } from '../utils/drawers.js?v=20260817-revamp772';
+import { drawerHTML, drawerLinkHTML, wireDrawers } from '../utils/drawers.js?v=20260908-revamp1225';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 import { streamInsight } from '../utils/insight-stream.js?v=20260822-revamp962';
 import { createStreamRenderer, groupBlockLines } from '../utils/stream-render.js?v=20260822-revamp968';
@@ -843,9 +843,12 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       // left-aligned buttons — Search this story, Sources, Close Insight (the
       // last one differentiated). The big subtext cards were retired.
       const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url, d.title);
-      const drawers = drawerLinkHTML('Search this', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
-        + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC) : '')
-        + `<button type="button" class="te-drawer te-drawer--close ni-close-btn" data-ni-close><span class="te-drawer-sum">${NI_X_SVG}<span class="te-drawer-title">Close</span></span></button>`;
+      // revamp1225: no leading icon chips and no arrow, matching the trend
+      // expansion — the row is the same control on both and has to hold one
+      // line in a two-column feed as well as full width.
+      const drawers = drawerLinkHTML('Search this', '#/custom/' + encodeURIComponent(card.dataset.title || ''), '', '', { noArrow: true })
+        + (sourcesInner ? drawerHTML('Sources', sourcesInner, '') : '')
+        + `<button type="button" class="te-drawer te-drawer--close ni-close-btn" data-ni-close><span class="te-drawer-sum"><span class="te-drawer-title">Close</span></span></button>`;
       panel.innerHTML = `<div class="ni-inner ai-reveal">
         <div class="ni-aitag-row"><button type="button" class="ni-aitag how-aigen" data-how-it-works>${AI_SPARK_SVG}<span>AI-generated content included</span>${INFO_ICON_SVG}</button></div>
         ${secHTML}
