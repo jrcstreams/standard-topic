@@ -275,6 +275,27 @@ function attributeItemsToSections(items, sections) {
     return 0.15;                              // near-ubiquitous — near-worthless
   };
 
+  // revamp1255 — USE THE MODEL'S OWN ANSWER FIRST.
+  //
+  // revamp1208 made the generator tag each briefing item with the headlines it
+  // actually drew on, and the resolver stores those as sources carrying
+  // { via: 'headline', item: <index> }. That is the model stating which source
+  // it used — authoritative, where everything below is inference from word
+  // overlap. It was being written to the database and then ignored at render.
+  //
+  // Tagged sources are placed directly and removed from scoring; only untagged
+  // ones fall through to the heuristic. Out-of-range indices are dropped rather
+  // than clamped: a bad index is a wrong attribution, and a missing chip beats a
+  // chip under the wrong story.
+  const tagged = [];
+  const untagged = [];
+  for (const it of items) {
+    const i = (it && it.via === 'headline' && Number.isInteger(it.item)) ? it.item : -1;
+    if (i >= 0 && i < buckets.length) { buckets[i].push(it); tagged.push(it); }
+    else untagged.push(it);
+  }
+  items = untagged;
+
   const scored = items.map((it) => {
     const t = attrTokens(it.title);
     const g = attrBigrams(it.title);
