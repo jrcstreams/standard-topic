@@ -33255,3 +33255,41 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
    only the sports toggle — let it sit at the left edge rather than centring in
    the space the legend used to share. */
 .tlm-controlbar-inner[class] { justify-content: flex-start; }
+
+/* ═══ revamp1231 — the sidebar's three sections get named ═══════════════════
+
+   The rail ran search → five buttons → topics with nothing saying where one
+   group ended and the next began; "Topics" was the only label, which made it
+   read as a heading for everything below rather than for its own group.
+   "Search" and "Navigate" join it, and all three take a trailing rule so the
+   label reads as a section head rather than as one more item in the list.
+
+   The rule is 1px #dde4ef — the site's own hairline. The reference image used
+   a heavy accent bar, which at three repeats down a 288px rail would compete
+   with the coloured topic chips it sits above. */
+.navmenu-seclabel[class] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.navmenu-seclabel[class]::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: #dde4ef;
+}
+/* The first label sits directly under the brand bar, so it needs less lead-in
+   than the two that follow a block of content. */
+.navmenu-panel .navmenu-seclabel:first-of-type[class] { padding-top: 0.55rem; }
+
+/* The search control reads as a field, so its label reads as placeholder text
+   rather than as a button caption — lighter, and it truncates instead of
+   wrapping the rail to two lines. */
+.navmenu-searchbtn-label[class] {
+  font-weight: 500;
+  color: #7b879e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}

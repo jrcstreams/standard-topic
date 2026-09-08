@@ -1533,10 +1533,12 @@ ${L}`),x.length?x.join(`
     <!-- revamp1047: the sidebar search is a button (matching the collapsed-nav
          Search button and the quicklink CTAs below), not an input \u2014 it opens the
          search page/overlay. -->
+    <div class="navmenu-featured-label navmenu-seclabel">Search</div>
     <button type="button" class="navmenu-searchbtn" id="navmenu-searchbtn" aria-label="Search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <span class="navmenu-searchbtn-label">Search</span>
+      <span class="navmenu-searchbtn-label">Search for insights on anything\u2026</span>
     </button>
+    <div class="navmenu-featured-label navmenu-seclabel">Navigate</div>
     <nav class="navmenu-quicklinks">
       <a href="#/" class="navmenu-quicklink navmenu-cta" id="navmenu-home-link">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1595,7 +1597,7 @@ ${L}`),x.length?x.join(`
       </button>
     </nav>
     <div class="navmenu-scroll">
-      <div class="navmenu-featured-label">Topics</div>
+      <div class="navmenu-featured-label navmenu-seclabel">Topics</div>
       <a href="#" class="navmenu-viewall" id="navmenu-all-topics">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7" rx="1"/>
