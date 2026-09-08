@@ -696,6 +696,19 @@ function niLoaderHTML(label) {
 function niFailHTML() {
   return `<div class="ni-fail"><p>AI insights unavailable right now.</p><button type="button" class="ni-retry" data-ni-retry>Try again</button></div>`;
 }
+// revamp1251 — the daily cap is a DIFFERENT failure from a transient one, and it
+// was being rendered as the same thing. The server returns { capped: true } with
+// no content, which fell through to the generic "unavailable" path — after two
+// pointless retries, because retrying a cap cannot succeed. It resolves on its
+// own at midnight UTC, so say that instead of offering a button that will not
+// work, and send the reader to the story rather than leaving them with nothing.
+function niCappedHTML(url) {
+  const href = String(url || '').replace(/"/g, '&quot;');
+  return `<div class="ni-fail ni-fail--capped">
+    <p>Today's AI insight limit has been reached. New insights resume tomorrow — anything generated earlier today is still available on other stories.</p>
+    ${href ? `<a class="ni-retry" href="${href}" target="_blank" rel="noopener noreferrer">Read the full story</a>` : ''}
+  </div>`;
+}
 // News briefs are generated ON DEMAND, so an "unavailable" is almost always a
 // transient blip (a momentary grounding/rate cap) that clears within a second —
 // a retry usually succeeds. So we auto-retry a couple times (loader stays up)
@@ -757,6 +770,10 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       return renderNewsBriefInto(panel, card, attempt + 1);
     }
     if (stillOpen()) showFail();
+  };
+  // A cap is terminal for the day — never spend retries on it.
+  const showCapped = () => {
+    if (stillOpen()) panel.innerHTML = `<div class="ni-inner">${niCappedHTML(card.dataset.url || d && d.url || '')}</div>`;
   };
   // Paint answer text as it streams in, so a cold generation reads as "writing"
   // rather than "hung". The finished render below then swaps in the full tabbed
@@ -868,6 +885,7 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       });
       return;
     }
+    if (data && data.capped) { showCapped(); return; }   // terminal — no retry
     await retryOrFail();                          // unavailable / no content
   } catch (_) {
     if (stillOpen()) await retryOrFail();
