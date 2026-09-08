@@ -33333,7 +33333,10 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
    restructuring the markup, and the pipe that used to precede it goes with it.
    The rail is unaffected: it wraps there already, at its own width. */
 .di-page .di-metaline[class] { flex-wrap: wrap; row-gap: 9px; }
-.di-page .di-metaline[class] .di-prov2 { flex-basis: 100%; }
+.di-page .di-metaline[class][class] .di-prov2[class][class] {
+  flex: 0 0 100% !important;
+  min-width: 100% !important;
+}
 .di-page .di-metaline[class] .di-metasep--prov { display: none !important; }
 
 /* revamp1234 — the two briefing section heads become identical. 1228 gave
