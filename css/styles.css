@@ -33240,3 +33240,18 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
 /* (6) The stories step down, so the section header leads them. */
 .dib--v2 .dib-head[class][class] { font-size: 0.94rem !important; }
 .dib--v2 .dib-body[class][class] { font-size: 0.885rem !important; line-height: 1.58 !important; }
+
+/* revamp1230 — the topic rail's preview chip, restated above revamp1228.
+   1228 states the shared chip appearance at six [class] repeats (0,7,0) with
+   `display: inline-flex !important`, which outranked 1228's own hide rule at
+   (0,6,0) — so the chip the rail was meant to drop kept rendering. Eight
+   repeats clears it. (Two rules from one block fighting each other is the
+   argument for stating the hide next to the appearance, which is what this is.) */
+.topic-band .tdi-card:not(.is-open) .tdi-cardprov[class][class][class][class][class][class][class][class] {
+  display: none !important;
+}
+
+/* With the legend gone from the Trending toolbar (trending.js), the bar holds
+   only the sports toggle — let it sit at the left edge rather than centring in
+   the space the legend used to share. */
+.tlm-controlbar-inner[class] { justify-content: flex-start; }

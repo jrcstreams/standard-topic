@@ -388,7 +388,6 @@ function trendCardsShell(topics, { fetched, viewAll }) {
   return `
     <div class="trending-topics">
       ${trendCardsHead(fetched)}
-      ${trendLegendRow()}
       <div class="trend-card-grid">${topics.map((t, i) => trendCardHTML(t, i)).join('')}</div>
       ${viewAll ? `<button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending ${CHEV}</button>` : ''}
     </div>`;
@@ -446,7 +445,7 @@ export function renderTrendingTopics(container, { limit = 20, viewAll = false } 
     container.innerHTML = `
       <div class="trending-topics">
         ${trendCardsHead(state.fetched)}
-        <div class="trend-controls-legend">${controlsHTML()}${trendLegendRow()}</div>
+        <div class="trend-controls-legend">${controlsHTML()}</div>
         <div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>
         ${viewAll ? `<button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending ${CHEV}</button>` : ''}
       </div>`;
@@ -494,12 +493,14 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
 
   function controlsHTML() {
-    // AI-generated legend + the sports include/exclude toggle (dropdown only).
+    // revamp1230: the AI-generated legend is gone from here and from the
+    // sidebar list. Every expanded trend now carries its own provenance button
+    // (revamp1225), so the toolbar copy was a second notice for the same
+    // content — and removing it lets the sports toggle sit at the left edge on
+    // a phone instead of being pushed along by it. NOTE: the collapsed cards'
+    // summaries are AI-written too, and their only disclosure is now inside the
+    // expansion; the nav dropdown still carries the legend.
     return `<div class="tlm-controlbar-inner">
-      <button type="button" class="trend-legend trend-legend--solo how-aigen" data-how-it-works aria-label="Trend summaries are AI-generated — how our AI works">
-        <span class="trend-legend-item">${aiSparkInline()}<span>AI-generated content included</span></span>
-        ${howInfoIconHTML()}
-      </button>
       ${TREND_SPORTS_TOGGLE_HTML()}
     </div>`;
   }
