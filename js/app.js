@@ -5225,9 +5225,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       <section class="home-hero home-hero--noic" data-home-hero>
         <div class="home-hero-inner">
           <div class="home-hero-headrow">
-            <h1 class="home-hero-title">What's Happening</h1>
+            <h1 class="home-hero-title">Real news and AI insights on any topic</h1>
           </div>
-          <p class="home-hero-sub">Real news and AI insights on any topic.</p>
+          <p class="home-hero-sub">Daily AI briefings, live trends, and ready-made prompts across every topic.</p>
           ${heroTopics.length ? `<div class="home-hero-chips">${heroTopics.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="home-hero-chip"${topicColorStyle(t)}><span class="home-hero-chip-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>${escapeHTML(t.name)}</a>`).join('')}</div>` : ''}
         </div>
       </section>`;
