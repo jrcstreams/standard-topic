@@ -2416,11 +2416,27 @@ export function renderDailyIntelligence(container, scope) {
   const lede = container.querySelector('[data-di-lede]');
 
   const readRow = (x) => `<a class="di-read" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer"><span class="di-read-tx"><span class="di-read-title">${esc(x.title)}</span>${x.meta ? `<span class="di-read-meta">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
+  // revamp1226: at most three chips in the rail. A story with five sources
+  // stacked five deep beside two lines of text, which made the sidebar taller
+  // than the story and — because the labels are hostnames — often repeated the
+  // same name four times. Past three, the third slot becomes a "+N" that
+  // reveals the rest in place. The old hard .slice(0, 4) is gone: the extras
+  // are reachable now rather than dropped, capped at 10 so a pathological
+  // source list cannot run away.
+  const SRC_VISIBLE = 3;
+  const srcChip = (x) => `<a class="dib-src" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span>${esc(diSrcLabel(x))}</span>${EXT}</a>`;
   const srcChips = (list, label) => {
-    const rows = (list || []).slice(0, 4);
+    const rows = (list || []).slice(0, 10);
     if (!rows.length) return '';
     const lbl = label === null ? '' : `<span class="dib-srcs-label">${esc(label || 'Sources')}</span>`;
-    return `<div class="dib-srcs">${lbl}${rows.map((x) => `<a class="dib-src" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span>${esc(diSrcLabel(x))}</span>${EXT}</a>`).join('')}</div>`;
+    if (rows.length <= SRC_VISIBLE) {
+      return `<div class="dib-srcs">${lbl}${rows.map(srcChip).join('')}</div>`;
+    }
+    const head = rows.slice(0, SRC_VISIBLE - 1).map(srcChip).join('');
+    const rest = rows.slice(SRC_VISIBLE - 1);
+    return `<div class="dib-srcs">${lbl}${head}<span class="dib-src-rest" hidden>${rest.map(srcChip).join('')}</span>`
+      + `<button type="button" class="dib-src-plus" data-src-more aria-expanded="false">`
+      + `<span class="dib-src-plus-n">+${rest.length}</span><span class="dib-src-plus-less">Less</span></button></div>`;
   };
 
   const fill = (data) => {
@@ -2547,6 +2563,25 @@ export function renderDailyIntelligence(container, scope) {
       </section>` : ''}
 `;
   };
+
+  // revamp1226: one delegated listener for every "+N" in the document, wired
+  // once. The briefing re-renders its whole body on each fill(), so anything
+  // bound to the buttons themselves would have to be re-bound every time.
+  if (!window.__srcMoreBound) {
+    window.__srcMoreBound = true;
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-src-more]');
+      if (!btn) return;
+      e.preventDefault();
+      const wrap = btn.closest('.dib-srcs');
+      const rest = wrap && wrap.querySelector('.dib-src-rest');
+      if (!rest) return;
+      const open = rest.hidden;
+      rest.hidden = !open;
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.classList.toggle('is-open', open);
+    });
+  }
 
   // "How this works" now lives in a shared, site-wide overlay (revamp1038);
   // a single global [data-how-it-works]/[data-di-how] listener opens it.

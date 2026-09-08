@@ -33072,3 +33072,34 @@ body.tt-on .tview-brief .di-prov2[class][class][class][class][class] {
   border-radius: 8px !important;
 }
 .tdi-card--v3.tdi-card--hero2 .tdi-go[class] svg { width: 15px !important; height: 15px !important; }
+
+/* revamp1226 — the "+N" that stands in for the fourth source onward. It sits
+   in the chip row as a peer of the chips, so it reads as the third slot rather
+   than a control bolted underneath: same height and radius, a filled ground
+   instead of an outline so it is clearly not itself a link out. Open, it says
+   "Less". */
+.dib-src-plus {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, #2f4d9e 16%, transparent);
+  background: #e4eaf5;
+  color: #33436a;
+  font-family: var(--font-family);
+  font-size: 0.74rem; font-weight: 650; line-height: 1.2;
+  cursor: pointer;
+  transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+@media (hover: hover) {
+  .dib-src-plus:hover { background: #d5dff1; border-color: color-mix(in srgb, #2f4d9e 30%, transparent); color: #1e3a8a; }
+}
+.dib-src-plus .dib-src-plus-less { display: none; }
+.dib-src-plus.is-open .dib-src-plus-n { display: none; }
+.dib-src-plus.is-open .dib-src-plus-less { display: inline; }
+/* The revealed chips are a plain group so they flow in the rail exactly as the
+   first two do — `display: contents` keeps the wrapper out of the layout.
+   The [hidden] restatement is required, not defensive: an author `display`
+   declaration beats the UA stylesheet's `[hidden] { display: none }` whatever
+   the specificity, so without it the "hidden" chips would never hide. */
+.dib-src-rest { display: contents; }
+.dib-src-rest[hidden] { display: none; }
