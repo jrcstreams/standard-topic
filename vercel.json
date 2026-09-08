@@ -18,7 +18,7 @@
     },
     {
       "path": "/api/cron/pregenerate?type=news&n=30&newsMax=30",
-      "schedule": "45 */3 * * *"
+      "schedule": "45 */2 * * *"
     },
     {
       "path": "/api/cron/pregenerate?type=daily&n=40",

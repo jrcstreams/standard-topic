@@ -568,7 +568,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
           LIMIT $1`, [Math.min(budget, newsMax)]);
       for (const r of rows) {
         if (budget <= 0 || !timeLeft()) break;
-        if (await call({ type: 'news', url: r.url, title: r.title, description: r.description || '', date: r.date || '', internal: 1 })) news++;
+        if (await call({ type: 'news', url: r.url, title: r.title, description: r.description || '', date: r.date || '', internal: 1, warm: 1 })) news++;
         budget--;
         await sleep(600);
       }
