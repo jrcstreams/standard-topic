@@ -2347,7 +2347,26 @@ function diNewsRows(feed, cites, cap = 15) {
     }
     if (!title) continue;
     const tkey = title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-    if (seen.has(ukey) || (tkey && seenT.has(tkey))) continue;
+    if (seen.has(ukey) || (tkey && seenT.has(tkey))) {
+      // revamp1255c — MERGE on duplicate rather than discard.
+      //
+      // The list is feed headlines FIRST, then citations. A headline-tagged
+      // citation (revamp1208) resolves to one of those very headlines, so it is
+      // always the duplicate — and dropping it threw away the only copy carrying
+      // `via`/`item`. The feed copy that survived had no attribution at all,
+      // which is why 14 fully-tagged sources produced chips on 2 of 8 stories.
+      //
+      // Keep the first row's identity and position; take the attribution from
+      // whichever copy has it.
+      const prior = out.find((o) => o.uri.toLowerCase() === ukey
+        || (tkey && o.title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() === tkey));
+      if (prior) {
+        if (!prior.via && x.via) prior.via = x.via;
+        if (!Number.isInteger(prior.item) && Number.isInteger(x.item)) prior.item = x.item;
+        if (!prior.quotes && Array.isArray(x.quotes) && x.quotes.length) prior.quotes = x.quotes;
+      }
+      continue;
+    }
     seen.add(ukey); if (tkey) seenT.add(tkey);
     const row = { uri, title, meta, kind };
     // revamp1191: Gemini's groundingSupports say which passages this source
