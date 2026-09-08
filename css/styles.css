@@ -33382,3 +33382,15 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
    and below, on every surface rather than only the full-width page. */
 .di-mast--v2 .di-metaline[class][class] { row-gap: 11px !important; }
 .di-mast--v2 .di-metaline[class][class] .di-prov2 { margin-top: 1px !important; }
+
+/* revamp1236 — the briefing section heads settle: back off 1.02rem (they were
+   starting to read as titles rather than heads) and deepen the blue from
+   #2d54b4 to #1e3a8a — the navy already used for the provenance chip's text
+   and the prompt section labels, so the site has one "section label" blue
+   rather than two that are nearly but not quite the same. */
+.di-focus-lbl[class][class][class][class][class],
+.di-briefs--v2 .di-lbl--rule[class][class][class][class],
+.di-related .di-lbl--rule[class][class][class][class] {
+  font-size: 0.95rem !important;
+  color: #1e3a8a !important;
+}
