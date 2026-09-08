@@ -33138,3 +33138,105 @@ body.tt-on .tview-brief .di-prov2[class][class][class][class][class] {
 body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][class] {
   border-top: 1.5px solid #b9c6e4 !important;
 }
+
+/* ═══ revamp1228 — the expanded briefing, restructured ══════════════════════
+
+   (1) ONE provenance chip, everywhere. The briefing's was a 999px pill on a
+   near-invisible fill; the news insight's was the rounded rectangle that
+   actually reads as a control. Rather than nudge the briefing toward it, all
+   five surfaces are stated together so they cannot drift again — and the info
+   glyph is centred (it was baseline-aligned, sitting low against the caps) and
+   the gap tightened from 8px to 6px so the label sits with its star rather
+   than beside it.
+
+   Six repeats: revamp1225 states these at five (0,5,0). */
+.ni-aitag[class][class][class][class][class][class],
+.im-sec-aitag[class][class][class][class][class][class],
+.tdi-cardprov[class][class][class][class][class][class],
+.di-prov2[class][class][class][class][class][class],
+.trend-exp-aitag[class][class][class][class][class][class] {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 5px 10px !important;
+  border-radius: 8px !important;
+  background: #eaeff8 !important;
+  border: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+}
+.ni-aitag svg, .im-sec-aitag svg, .tdi-cardprov svg, .di-prov2 svg, .trend-exp-aitag svg {
+  flex: none; align-self: center; display: block;
+}
+.di-prov2 svg.how-info-ic[class], .ni-aitag svg.how-info-ic[class],
+.im-sec-aitag svg.how-info-ic[class], .tdi-cardprov svg.how-info-ic[class] {
+  position: static !important; top: auto !important; margin: 0 !important;
+}
+
+/* (2) The preview card on a topic page's rail does not need the chip: the card
+   is three lines and a button, and the briefing it opens carries the same label
+   at the top. Two provenance notices for one piece of content is one too many. */
+.topic-band .tdi-card:not(.is-open) .tdi-cardprov[class][class] { display: none !important; }
+
+/* (3) The masthead on the full-width Briefings page. 1.9rem in a 1000px column
+   made the title the loudest thing on a page that is a LIST of briefings — the
+   preview cards were right, the open one shouted. Down to 1.6rem; the rail is
+   unaffected (it never reached the old cap). */
+.di-page .di-mast--v2 .di-title[class][class] {
+  font-size: clamp(1.34rem, 1.05rem + 0.9cqi, 1.6rem) !important;
+}
+
+/* (4) "Today in Focus" is no longer a card inside the card ───────────────────
+   A tinted, bordered, 14px-radius box sitting inside a tinted, bordered card
+   read as a nested panel — the one section of the briefing that looked like a
+   different component. It now sits on the body exactly as Top Stories does,
+   and is separated by a rule under its label rather than by a container. */
+.di-focus[class][class] {
+  margin: 0 0 22px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+}
+.di-focus-lbl[class][class] {
+  margin-bottom: 0 !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid #dfe5ef !important;
+}
+.di-focus[class] .di-focus-list { padding-top: 12px !important; }
+
+/* The three items: smaller, and marked as a list. They were body-copy size in
+   bold, which made three of them read as three headlines competing with the
+   Top Stories headlines below. */
+.di-focus-list[class][class][class] li {
+  position: relative;
+  padding-left: 15px !important;
+  font-size: 0.83rem !important;
+  line-height: 1.45 !important;
+}
+.di-focus-list[class][class][class] li::before {
+  content: "";
+  position: absolute; left: 2px; top: 0.62em;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #8f9dba;
+}
+@container (min-width: 640px) {
+  .di-focus-list[class][class][class] li { padding-left: 15px !important; border-left: 0 !important; }
+  .di-focus-list[class][class][class] li:first-child { padding-left: 15px !important; }
+  .di-focus-list[class][class][class] li::before { left: 2px; }
+}
+
+/* (5) "Top Stories" becomes a section header rather than a labelled rule ─────
+   The trailing hairline made it a caption stretched across the column. Drop the
+   line to its right, put a heavier rule under the whole header, and the label
+   reads as the head of a section — which is what it is. */
+.di-briefs--v2 .di-lbl--rule[class]::after { display: none !important; }
+.di-briefs--v2 .di-lbl--rule[class] {
+  display: block !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 9px !important;
+  border-bottom: 2px solid #d3dcec !important;
+}
+.di-briefs--v2 .dib:first-of-type { padding-top: 14px !important; }
+
+/* (6) The stories step down, so the section header leads them. */
+.dib--v2 .dib-head[class][class] { font-size: 0.94rem !important; }
+.dib--v2 .dib-body[class][class] { font-size: 0.885rem !important; line-height: 1.58 !important; }
