@@ -33109,3 +33109,27 @@ body.tt-on .tview-brief .di-prov2[class][class][class][class][class] {
    the specificity, so without it the "hidden" chips would never hide. */
 .dib-src-rest { display: contents; }
 .dib-src-rest[hidden] { display: none; }
+
+/* ═══ revamp1227 — the second news card's top edge ══════════════════════════
+
+   Two rules single out `:nth-child(2)`: revamp-era
+   `.topic-band #section-newsfeed .news-list .news-card:nth-child(2)
+    { border-top: none }` (1,4,0), later restated as
+   `.topic-band .topic-home … :nth-child(2) { border-top: 1px solid #e8edf5 }`
+   (1,5,0). Both are `border-top` SHORTHANDS, so they also set the colour — and
+   at (1,5,0) they outrank the hover rule that darkens the other three sides
+   (0,4,1) and revamp1225's (1,4,0) attempt at this. The result: on hover the
+   card had three sides at #c3d0e8 and a top at #e8edf5, and open it had a fill
+   with a top edge that did not match its own border.
+
+   Stated per state at (1,7,1)/(1,6,1) so the top simply tracks the other three
+   sides. Not scoped to :nth-child(2): every card should behave this way, and
+   naming the second one again is what produced two rules to reconcile. */
+@media (hover: hover) {
+  body.topic-band #section-newsfeed .news-list .news-card:not(.news-card--open):hover[class][class] {
+    border-top-color: #c3d0e8 !important;
+  }
+}
+body.topic-band #section-newsfeed .news-list .news-card.news-card--open[class][class] {
+  border-top: 1.5px solid #b9c6e4 !important;
+}
