@@ -32949,11 +32949,11 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead[style*="--tc"]::before {
    idea, fainter, because this one sits in a 280px rail where the page version
    sits in a 1000px column. */
 body.home-search #home-trending .trend-card-grid > .trend-card.is-expanded[class] {
-  border: 1px solid #ccd8ea !important;
+  border: 1.5px solid #b9c6e4 !important;
   border-radius: 12px !important;
   overflow: hidden !important;
   background: #f8fafc !important;
-  box-shadow: 0 6px 20px -16px rgba(30, 58, 138, .22) !important;
+  box-shadow: 0 8px 24px -16px rgba(30, 58, 138, 0.25) !important;
   margin: 10px 0 !important;
 }
 /* The header band: overflow:hidden on the card clips its top corners, so the
@@ -32962,7 +32962,11 @@ body.home-search #home-trending .trend-card-grid > .trend-card.is-expanded[class
    `align-items: start` flow the title sat high in the band. */
 body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-trigger {
   align-items: center !important;
-  padding: 11px 13px !important;
+  padding: 13px 15px 12px !important;
+  background: #eef2fa !important;
+}
+body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-title {
+  font-size: 16px !important; font-weight: 700 !important; color: #26375a !important;
 }
 body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-main,
 body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-head {
@@ -32979,7 +32983,7 @@ body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-acc {
 }
 /* Body inset, so the text is not flush to the new border. */
 body.home-search #home-trending .trend-card.is-expanded[class] .trend-card-exp {
-  padding: 0 13px 12px !important;
+  padding: 2px 15px 6px !important;
 }
 
 /* ── (2) The Trending page's first expanded card sat on the rule above it ────
@@ -33449,4 +33453,15 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
     padding: 0 0 0 15px !important;
     border-left: 0 !important;
   }
+}
+
+/* revamp1240 — the trend card's ✕ centres on BOTH surfaces. The Trending page
+   never centred it either (measured: it sits at the trigger's top edge, like
+   the sidebar's did before 1225b); rather than copy that, both get the same
+   correction. .trend-card-acc is position:absolute, so this is a top/transform
+   pair, not an alignment property — see 1225b. */
+.trend-card.is-expanded[class] .trend-card-acc {
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
 }
