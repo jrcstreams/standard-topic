@@ -34089,3 +34089,27 @@ body.home-search .newsfeed-headrow[class] { min-height: 30px; display: flex; ali
 }
 /* Near the bottom of the viewport, open upward instead of running off-screen. */
 .aii-pc .aii-pc-menu[class][class].is-up { top: auto !important; bottom: calc(100% + 6px) !important; }
+
+/* ═══ revamp1269 — the column rules land together; settings panel inset ═════
+
+   (a) 1265 set `min-height: 44px` at (0,3,0) and it never applied — measured
+   min-height: 0px on the live element while the briefing head sat at 44. The
+   #section-newsfeed id and a body type selector put this above whatever was
+   winning. The briefing head's 44px is its own stated height, so matching it
+   is what makes both rules land on the same line. */
+body .topic-band #section-newsfeed .newsfeed-head[class][class],
+body.home-search #section-newsfeed .newsfeed-head[class][class] {
+  min-height: 44px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+}
+
+/* (b) The Prompt Settings panel ran wider than the prompt text it belongs to.
+   1266 gave `.aii-pc-foot` the prevwrap's 16px inset but `.aii-pc-set` is a
+   third grid child that never got it, so the settings card sat 16px proud on
+   each side of the body content. */
+.aii-pc .aii-pc-set[class][class][class] {
+  margin-left: 16px !important;
+  margin-right: 16px !important;
+}
