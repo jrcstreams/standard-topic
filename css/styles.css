@@ -34347,13 +34347,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
    (17px/32px), the way the topic sheet's does. Its top corners follow the
    panel it caps: square where the panel hangs off the grey bar, rounded on
    the hero — where the left one squares off again to meet the trigger. */
-.is-page-picker .tsp-actions[class] {
-  margin: -17px -32px 14px;
-  padding: 13px 32px;
-  background: #f3f5f9;
-  border-bottom: 1px solid #e4e9f2;
-  border-radius: 0;
-}
+/* superseded by revamp1281 (the header block below) */
 
 .is-page-picker .tsp-actions .tsp-foot-btn[class] { background: #fff; border: 1px solid #dfe5f0; }
 .is-page-picker .tsp-actions .tsp-close--row[class] { background: #fff; border: 1px solid #dfe5f0; border-radius: 9px; }
@@ -34418,7 +34412,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
    white card: the page name is its header, the actions band sits under that,
    the menu under that — and on the topic pages it covers the description and
    subtopic strip the way a menu should. */
-.is-hero-picker.is-open .tsp-panelwrap[class] { top: 0 !important; left: 0 !important; }
+.is-hero-picker.is-open .tsp-panelwrap[class] { top: 0 !important; }
 .is-hero-picker.is-open .tsp-panel[class] {
   border-radius: 16px !important;
   padding-top: var(--tsp-head-h, 62px) !important;
@@ -34446,3 +34440,82 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   flex: 0 0 auto;
   max-width: 100%;
 }
+
+/* ═══ revamp1281 — one header on every dropdown ═════════════════════════════
+
+   The topic card and the page card had drifted into two different components:
+   different inner padding (16px vs 32px), a tinted actions row on one and not
+   the other, and a title icon sitting flush against the card's edge. They are
+   the same control and now share one set of rules.
+
+   The header is the whole top of the card — the title row AND the actions row
+   under it — as one tinted block over a rule, with the menu white below it.
+   The title can't literally live inside the panel (it's the trigger, and it
+   sits outside it in the DOM), so the panel paints the strip behind it.
+
+   That strip is a ::before rather than the actions row pulled up under the
+   title: .tsp-panel-inner clips its overflow, so a negative margin put the
+   tint exactly where it could not be seen. */
+.tsp-panel[class] { --tsp-inset: 20px; }
+.is-open .tsp-panel-inner[class] { padding: 0 var(--tsp-inset) 16px !important; }
+.is-open .tsp-actions[class] {
+  margin: 0 calc(-1 * var(--tsp-inset)) 14px !important;
+  padding: 4px var(--tsp-inset) 13px !important;
+  background: #f3f5f9 !important;
+  border-bottom: 1px solid #e4e9f2 !important;
+  border-radius: 0 !important;
+}
+.is-open .tsp-group-label[class] { padding-left: 0 !important; }
+/* Only the cards that host a title need the strip; the grey band's own card
+   carries its identity in the bar above it, so its header is just the row. */
+.is-hero-picker.is-open .tsp-panel[class],
+.topic-bodyhead.is-open .tsp-panel[class] { position: relative; }
+.is-hero-picker.is-open .tsp-panel[class]::before,
+.topic-bodyhead.is-open .tsp-panel[class]::before {
+  content: '';
+  position: absolute; left: 0; right: 0; top: 0;
+  /* +2px so no seam shows where the strip meets the actions row. */
+  height: calc(var(--tsp-head-h, 62px) + 2px);
+  background: #f3f5f9;
+  border-radius: 16px 16px 0 0;
+}
+
+/* The card sits one inset left of the title, so the title's icon lands on the
+   card's own content edge instead of against its side. */
+.is-hero-picker.is-open .tsp-panelwrap[class] { left: -20px !important; }
+body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
+  left: -20px !important; right: -20px !important; width: auto !important;
+}
+
+/* The arrow is the whole point of the control, so it reads as a control: a
+   round target on the title's centre line rather than a hairline glyph
+   floating near it. */
+.tbh-titlebtn .tsp-ident-chev,
+.tsp-btn--herotitle .tsp-ident-chev {
+  width: 30px !important; height: 30px !important;
+  padding: 5px !important; box-sizing: border-box !important;
+  border-radius: 50% !important;
+  background: rgba(15, 26, 46, .07) !important;
+  color: #26375a !important;
+  align-self: center !important;
+  margin-top: 0 !important;
+  flex: none !important;
+}
+.tsp-btn--ident .tsp-ident-chev {
+  width: 26px !important; height: 26px !important;
+  padding: 4px !important; box-sizing: border-box !important;
+  border-radius: 50% !important;
+  background: rgba(15, 26, 46, .07) !important;
+  color: #26375a !important;
+  align-self: center !important;
+  margin-top: 0 !important;
+  flex: none !important;
+}
+@media (hover: hover) {
+  .tbh-titlebtn:hover .tsp-ident-chev,
+  .tsp-btn--herotitle:hover .tsp-ident-chev,
+  .tsp-btn--ident:hover .tsp-ident-chev { background: rgba(15, 26, 46, .13) !important; }
+}
+
+/* Placeholder text, so it sits under the labels above it rather than level. */
+.navmenu-searchbtn-label[class] { font-size: 0.86rem; }
