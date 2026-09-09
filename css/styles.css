@@ -34030,3 +34030,15 @@ body.home-search .newsfeed-headrow[class] { min-height: 30px; display: flex; ali
 }
 #home-trending .trend-card.is-expanded[class][class],
 .aii-nav-dd-trending .trend-card.is-expanded[class][class] { border-top-color: #b9c6e4 !important; }
+
+/* revamp1266b — the last of the Edit-to-controls gap. `.aii-pc` is a GRID with
+   `row-gap: 15px`, which is where the space I could not account for was coming
+   from: 20px inside the prevwrap plus the grid's own 15px between tracks. The
+   gap is right for prompt → settings drawer, wrong for prompt → its own
+   controls, so the foot pulls up against it and the prevwrap's bottom padding
+   drops to the small inset the Edit line actually needs. Net: Edit to controls
+   ~14px, one cohesive panel. */
+.aii-pc[class][class] { row-gap: 0 !important; }
+.aii-pc .aii-pc-prevwrap[class][class][class] { padding-bottom: 6px !important; }
+.aii-pc .aii-pc-foot[class][class][class][class] { margin-top: 8px !important; }
+.aii-pc .aii-pc-set[class][class] { margin-top: 14px !important; }
