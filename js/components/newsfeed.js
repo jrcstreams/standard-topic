@@ -1373,7 +1373,7 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '', variant
       </div>` : ''}
     </div>`
     : `
-    <div class="newsfeed-head section-card-head newsfeed-head--home newsfeed-head--topic">
+    <div class="newsfeed-head section-card-head newsfeed-head--home newsfeed-head--topic" style="padding-bottom:15px">
       <div class="newsfeed-headtext">
         <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
       </div>

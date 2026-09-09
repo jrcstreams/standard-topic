@@ -196,6 +196,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     else if (route.type === 'trending') renderPageNavBar('trending');
     else if (route.type === 'prompts') renderPageNavBar('prompts');
     else if (route.type === 'search' || route.type === 'custom') renderPageNavBar('search');
+    else if (route.type === 'about') renderPageNavBar('about');
+    else if (route.type === 'terms') renderPageNavBar('terms');
 
     // Always refresh the bottom-nav active tab from the REAL route — overlay
     // routes (search/custom) skip renderLayout, so its internal call is missed.
@@ -3136,30 +3138,11 @@ function renderLayout(route) {
     return;
   }
 
-  if (route.type === 'about' || route.type === 'terms') {
-    document.body.classList.add('has-subnav');
-    // static-page: opts the grey identity-bar styling in without app-mode's
-    // viewport lock (these are long-scroll pages).
-    subHeader.classList.add('is-subnav', 'static-page');
-    const title = route.type === 'about' ? 'About' : 'Terms & Conditions';
-    const iconSvg = route.type === 'about'
-      ? '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>'
-      : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>';
-    // Same identity-bar pattern as topic pages (icon + name, grey fill) so the
-    // static pages' subnav matches the rest of the site (#img93/97).
-    subHeader.innerHTML = `
-      <div class="topic-subnav-title">
-        <div class="topic-subnav-inner">
-          <div class="subnav-ident">
-            <span class="subnav-ident-ico subnav-ident-ico--chip">${iconSvg}</span>
-            <span class="subnav-ident-name">${title}</span>
-          </div>
-          ${backBarHTML()}
-        </div>
-      </div>
-    `;
-    observeSubnavHeight();
-  }
+  // revamp1271: About/Terms no longer render a permanent grey ident bar here.
+  // The router calls renderPageNavBar('about'|'terms') after this, which gives
+  // them the same page-hero-then-sticky-grey-band behaviour as Topics, Prompts
+  // and Trending — the always-on bar was also what left the pages' first lines
+  // hidden underneath it.
 
   if (route.type === 'about' || route.type === 'terms') {
     setupResponsiveNav();
@@ -4143,13 +4126,17 @@ function renderPageNavBar(kind) {
     // Topics / Trending / Prompts, with a search glyph and one action.
     search: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.2" y2="16.2"/></svg>',
   };
-  const NAMES = { topics: 'Topics', trending: 'Trending', prompts: 'Prompts', search: 'Search' };
+  // revamp1271: About and Terms join the same band as every other page, so
+  // they get the hero-then-grey-nav behaviour instead of a permanent grey bar.
+  ICONS.about = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>';
+  ICONS.terms = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>';
+  const NAMES = { topics: 'Topics', trending: 'Trending', prompts: 'Prompts', search: 'Search', about: 'About', terms: 'Terms' };
   const name = NAMES[kind] || '';
   if (!name) return;
   document.body.classList.add('has-subnav', 'pagenav-mode');
   subHeader.className = 'is-subnav static-page pagenav';
   // revamp1010: Search's bar carries no action — the input IS the control.
-  const action = kind === 'search'
+  const action = (kind === 'search' || kind === 'about' || kind === 'terms')
     ? ''
     : kind === 'prompts'
     // revamp1082: Build lives inline at the bottom of the Prompts page now — the
