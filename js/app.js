@@ -538,6 +538,7 @@ function wireTopicHeroCondense() {
 // it changes, and read as a secondary action rather than as "this name is a
 // menu". The band's icon + title now open the picker, with a small chevron
 // after the name saying so. Shared by every subnav and by the page heroes.
+const TSP_X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 const TSP_IDENT_CHEV = '<svg class="tsp-ident-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 // icon + name + chevron, as the picker's trigger.
 function identTriggerHTML(iconSVG, name, { panelId, label, iconClass = '' }) {
@@ -572,7 +573,6 @@ function topicPickerPanelHTML(topic, panelId) {
   };
   const HOME_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>';
   const GRID_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
-  const X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   // Layout (#img71-74): actions row on TOP (View All Topics + Search Custom Topic,
   // left; ✕ right) over a faint separator, then a "{Parent} Topics" group label
   // (side-menu header style), then the grid with the PARENT PAGE FIRST followed by
@@ -584,7 +584,7 @@ function topicPickerPanelHTML(topic, panelId) {
           <div class="tsp-actions">
             <a href="#" class="tsp-foot-btn" data-tsp-all>${GRID_IC}<span>View All Topics</span></a>
             <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary" data-tsp-search><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
-            <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${X_IC}</button>
+            <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${TSP_X_IC}</button>
           </div>
           <div class="tsp-scroll">
             <div class="tsp-group-label">Related Topics</div>
@@ -617,7 +617,6 @@ function homeSubnavPickerHTML() {
   const featured = getFeaturedTopics() || [];
   const HOME_IC = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>';
   const GRID_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
-  const X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const cellHTML = (t) => `<a href="#/topic/${t.slug}" class="tsp-cell"${topicColorStyle(t)}>
       <span class="tsp-cell-ic">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span>
       <span class="tsp-cell-name">${escapeHTML(t.name)}</span>
@@ -636,7 +635,7 @@ function homeSubnavPickerHTML() {
             <div class="tsp-actions">
               <a href="#" class="tsp-foot-btn" data-tsp-all>${GRID_IC}<span>View All Topics</span></a>
               <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary" data-tsp-search><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
-              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${X_IC}</button>
+              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${TSP_X_IC}</button>
             </div>
             <div class="tsp-scroll">
               <div class="tsp-group-label">Featured Topics</div>
@@ -705,7 +704,7 @@ function pagePickerPanelOnlyHTML(activeKey, panelId) {
             <div class="tsp-actions">
               <a href="#/topics" class="tsp-foot-btn"${activeKey === 'topics' ? ' aria-current="page"' : ''}>${PAGE_PICKER_ICONS.topics || ''}<span>View All Topics</span></a>
               <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary"${activeKey === 'search' ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
-              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${X_IC}</button>
+              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${TSP_X_IC}</button>
             </div>
             <div class="tsp-scroll">
               <div class="tsp-group-label">Choose Page</div>
@@ -719,7 +718,6 @@ function pagePickerPanelOnlyHTML(activeKey, panelId) {
 
 function pagePickerHTML(activeKey, panelId = 'tsp-panel-page', identIcon = '', identName = '', identIconClass = '') {
   const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
-  const X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const cell = (p) => {
     const active = p.key === activeKey;
     return `<a href="${p.href}" class="tsp-cell${active ? ' is-active' : ''}"${active ? ' aria-current="page"' : ''}>
@@ -743,7 +741,7 @@ function pagePickerHTML(activeKey, panelId = 'tsp-panel-page', identIcon = '', i
             <div class="tsp-actions">
               <a href="#/topics" class="tsp-foot-btn"${activeKey === 'topics' ? ' aria-current="page"' : ''}>${PAGE_PICKER_ICONS.topics || ''}<span>View All Topics</span></a>
               <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary"${activeKey === 'search' ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
-              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${X_IC}</button>
+              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${TSP_X_IC}</button>
             </div>
             <div class="tsp-scroll">
               <div class="tsp-group-label">Choose Page</div>
