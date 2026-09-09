@@ -33679,3 +33679,29 @@ body.tt-on #content .dih .dih-group--featured[class] { margin-top: 12px !importa
 #content .aii-fi-sec:has(> .aii-fi-acclist > .aii-fi-acc:first-child.is-open) .aii-fi-sectitle[class] {
   border-bottom-color: transparent !important;
 }
+
+/* ═══ revamp1258 — kill the top scroll fade; let the bar be the edge ════════
+
+   `.pg-scroll-fade-top` is a 56px white gradient fixed under the chrome, and it
+   is what makes the scroll past a topic hero look broken: headings pass under a
+   translucent wash and read as half-erased, and because the fade is pinned to
+   #content's padding-top — which reserves the full chrome height whether or not
+   the bar is showing — it hangs over bare content during the window after the
+   hero scrolls away and before the condensed bar slides in. A gradient over
+   nothing, ghosting the page.
+
+   Nothing is needed in its place. The subnav is already an opaque band with a
+   1px bottom border and a 0 2px 8px shadow, and it already slides in on a 260ms
+   cubic-bezier. Content passing cleanly under an opaque bar with a real edge IS
+   the well-designed version; the fade was an extra layer fighting it.
+
+   The BOTTOM fade stays — it hints at content below the fold, which is a
+   different job and does not overlap any chrome. */
+.pg-scroll-fade-top { display: none !important; }
+
+/* With the wash gone the bar's own edge is doing all the work, so give it a
+   little more definition as content passes beneath: the shadow reads as
+   elevation rather than as a smudge. */
+#sub-header.is-subnav {
+  box-shadow: 0 1px 0 rgba(15, 26, 46, .06), 0 4px 12px -6px rgba(15, 26, 46, .16);
+}
