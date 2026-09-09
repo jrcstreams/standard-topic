@@ -34325,15 +34325,18 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 .is-hero-picker[class] {
   position: relative; display: inline-flex;
   max-width: 100%; min-width: 0;
-  margin-left: -10px;
+  /* revamp1281: the trigger's left padding IS the card's content inset, and
+     this pulls it back so the icon still sits on the page gutter when closed.
+     One number for both, so the title lands on the card's content edge with
+     the panel at left: 0 — no second offset to keep in step. */
+  margin-left: calc(-1 * var(--tsp-inset, 20px));
 }
-.is-pagehero-picker[class] { margin-left: -12px; }
 .tsp-btn--herotitle[class] {
   margin-left: 0 !important;
-  padding: 8px 16px 8px 10px !important;
+  padding: 8px 16px 8px var(--tsp-inset, 20px) !important;
   gap: 13px !important;
 }
-.tsp-btn--pagehero[class] { padding: 10px 20px 10px 12px !important; gap: 14px !important; }
+.tsp-btn--pagehero[class] { padding: 10px 20px 10px var(--tsp-inset, 20px) !important; gap: 14px !important; }
 .is-hero-picker .tsp-panelwrap[class] { left: 0 !important; }
 
 /* (c) — superseded by revamp1280 below. */
@@ -34456,7 +34459,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
    That strip is a ::before rather than the actions row pulled up under the
    title: .tsp-panel-inner clips its overflow, so a negative margin put the
    tint exactly where it could not be seen. */
-.tsp-panel[class] { --tsp-inset: 20px; }
+.topic-subnav-picker[class] { --tsp-inset: 20px; }
 .is-open .tsp-panel-inner[class] { padding: 0 var(--tsp-inset) 16px !important; }
 .is-open .tsp-actions[class] {
   margin: 0 calc(-1 * var(--tsp-inset)) 14px !important;
@@ -34482,7 +34485,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 
 /* The card sits one inset left of the title, so the title's icon lands on the
    card's own content edge instead of against its side. */
-.is-hero-picker.is-open .tsp-panelwrap[class] { left: -20px !important; }
+.is-hero-picker.is-open .tsp-panelwrap[class] { left: 0 !important; }
 body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
   left: -20px !important; right: -20px !important; width: auto !important;
 }
