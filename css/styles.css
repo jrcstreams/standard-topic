@@ -34109,3 +34109,18 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   margin-left: 16px !important;
   margin-right: 16px !important;
 }
+
+/* revamp1270 — supporting bits for the rewritten About / Terms copy. */
+.terms-updated {
+  font-size: 0.82rem; color: #7b879e; margin: -6px 0 4px;
+  font-family: var(--font-family);
+}
+/* An inline trigger for the AI-generated modal inside About's prose — a button
+   for the behaviour, styled as the link it reads as. */
+.about-inline-link[class] {
+  background: none !important; border: 0 !important; padding: 0 !important;
+  font: inherit !important; color: #2f5fd0 !important;
+  cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+  min-height: 0 !important;
+}
+@media (hover: hover) { .about-inline-link[class]:hover { color: #1b3f9e !important; } }

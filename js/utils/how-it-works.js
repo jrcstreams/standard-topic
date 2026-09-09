@@ -39,31 +39,31 @@ const HOW_IT_WORKS_HTML = `
   <div class="di-how-panel" role="dialog" aria-modal="true" aria-label="How our AI works">
     <button type="button" class="di-how-x" data-how-close aria-label="Close">&times;</button>
     <h2 class="di-how-title">${SPARK}<span>How our AI works</span></h2>
-    <p class="di-how-lede">Short version: we don't type a topic into a chatbot and paste back whatever it says. Every AI line here is built from real, current reporting, runs through a structured process, and keeps its sources attached.</p>
+    <p class="di-how-lede">Every AI summary here is written from news articles published that day — not from the model's own memory. Here is the whole process.</p>
 
     <ol class="di-how-steps">
-      <li><b>It starts with real reporting.</b> We pull live articles from ~100 publishers, refreshed all day. The model only ever works from real, dated headlines — never a blank page or its own memory.</li>
-      <li><b>The questions are engineered, not vague.</b> We never say "summarize this topic." Each surface runs a specific, structured prompt — the big picture, what changed, why it matters — so you get consistent, useful answers instead of rambling.</li>
-      <li><b>It checks itself against live search.</b> Generation runs <i>grounded</i>: the model can query Google Search mid-write to verify a claim or catch something breaking before it commits it to the page.</li>
-      <li><b>Every claim keeps its receipts.</b> Whatever the model actually consulted is stored and shown as sources under each section. If a section cites nothing, it found nothing — we don't hide sources.</li>
+      <li><b>We collect the articles first.</b> Around 100 publishers, refreshed through the day. Before the AI writes anything, it is handed the real headlines, publishers, and dates for that subject.</li>
+      <li><b>It answers set questions.</b> Not "summarise this" — each summary follows a fixed structure: what happened, what to take from it, why it matters. Same shape every time, so it stays useful instead of rambling.</li>
+      <li><b>It checks the live web where that matters.</b> On the daily briefings and on recent stories, the model can search mid-write to confirm a fact or catch something that broke in the last hour.</li>
+      <li><b>The sources stay attached.</b> What it drew on is shown underneath. If a section shows no sources, it had none — we would rather show that than pad it.</li>
     </ol>
 
     <div class="di-how-surfaces">
       <section class="di-how-surface">
-        <h3 class="di-how-surfacetitle">Topic &amp; daily briefings</h3>
-        <p>Written once a day on a fixed schedule (7pm ET) so everyone sees the same edition. Each pulls that topic's recent headlines plus live search, then writes the big picture, the things to know, and what matters today.</p>
+        <h3 class="di-how-surfacetitle">Daily briefings</h3>
+        <p>Written once each morning, around 5am ET, so everyone reads the same edition. Each one takes that topic's last 24 hours of headlines and live search, and gives you the three things in focus plus the day's main stories.</p>
       </section>
       <section class="di-how-surface">
-        <h3 class="di-how-surfacetitle">News AI insights</h3>
-        <p>Generated the first time you open a story, then cached. It reads the article and related coverage and adds context — background, why it matters, what to watch — instead of just restating the headline.</p>
+        <h3 class="di-how-surfacetitle">Story insights</h3>
+        <p>Written the first time someone opens a story, then saved — so it is generated once, not per reader. It works from the article plus other coverage of the same event, which is where the background and the timeline come from.</p>
       </section>
       <section class="di-how-surface">
         <h3 class="di-how-surfacetitle">Trend summaries</h3>
-        <p>Generated on demand and cached. Explains what a spiking search actually is and why it's moving right now — grounded in live search, so even a brand-new trend gets a real, sourced explanation.</p>
+        <p>Explains what a spiking search actually is and why it is moving now. Built from current articles about it rather than from a live web search, so a brand-new trend still gets a real, sourced answer.</p>
       </section>
     </div>
 
-    <p class="di-how-foot">It's still AI, and it can be wrong or out of date. Treat it as a fast, sourced orientation — and click through to the reporting for anything that matters.</p>
+    <p class="di-how-foot"><b>It can still get things wrong.</b> Dates, numbers, and anything fast-moving are worth checking against the source — that is what the links under each summary are for. Treat this as a quick way in, not the last word.</p>
   </div>`;
 
 let installed = false;

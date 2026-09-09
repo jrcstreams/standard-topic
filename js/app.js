@@ -7020,173 +7020,113 @@ function renderPage(route) {
   if (route.type === 'about') {
     content.innerHTML = `
       <div class="about-page">
-        <p class="about-lead">Standard Topic is a topic-first way to stay informed: live news, AI-generated briefings, and ready-to-run prompts for 100 curated topics — or any topic you search.</p>
+        <p class="about-lead">Standard Topic follows news by subject instead of by publisher. Pick a topic and you get the day's reporting from across the web, a short AI briefing on what actually happened, and prompts you can run in your own AI if you want to go deeper.</p>
+
+        <div class="about-section">
+          <h3>Why it works this way</h3>
+          <p>Most news sites want you to read them. This one wants you to understand a subject, which usually means reading several people on it. So the unit here is the topic, not the outlet — every page pulls from roughly 100 publishers and organises them around what they are about.</p>
+          <p>There are 100 topics, from World and Markets to NBA and Cryptocurrency. You can also search anything that isn't one of them and get the same treatment.</p>
+        </div>
 
         <div class="about-section">
           <h3>What's on a topic page</h3>
-          <p>Every topic page organizes coverage around the subject, not the outlet. Each one combines:</p>
           <ul>
-            <li><strong>News Feed</strong> — a live feed aggregated from established publishers, refreshed throughout the day and sorted newest-first.</li>
-            <li><strong>AI Insights</strong> — briefings generated for each topic (Get Caught Up, Deep Dive, Analysis, and 101 Resources), refreshed on a schedule so they stay current, with the sources they draw from listed alongside.</li>
-            <li><strong>Prompts</strong> — ready-made prompts that open in the AI model of your choice, plus a Prompt Builder for composing your own with topics, scope, output style, and citations.</li>
+            <li><b>News feed.</b> Current reporting on the subject, newest first, linking straight out to the publisher.</li>
+            <li><b>AI briefing.</b> A short daily read on what happened and why it matters, written from that day's headlines and updated every morning.</li>
+            <li><b>AI insights.</b> On any story, background and context on that specific piece — what led to it, what to watch next.</li>
+            <li><b>Prompts.</b> Questions worth asking about the subject, ready to send to ChatGPT, Claude, Gemini or whichever model you use.</li>
           </ul>
-          <p>If a subject isn't in the library, use Search to build a page around any term — news results, external searches, and prompts included.</p>
         </div>
 
         <div class="about-section">
-          <h3>How AI is used here</h3>
-          <p>Two kinds of AI appear on the site, and both are clearly labeled:</p>
-          <ul>
-            <li><strong>Generated on the site</strong> — AI Insights, the homepage news brief, and trending briefs are produced by Standard Topic using Google's Gemini models with live web grounding. Generated content carries a "✦ AI" label and lists its sources.</li>
-            <li><strong>Opens in your model</strong> — prompt cards and the Prompt Builder compose a prompt and open it in the platform you choose: ChatGPT, Claude, Gemini, Perplexity, Copilot, or Google AI Mode. Those responses come from that platform, not from this site.</li>
-          </ul>
-          <p>AI-generated content can be incomplete or inaccurate. Sources are listed on every generated briefing so you can verify — for anything that matters, click through to the reporting itself.</p>
+          <h3>About the AI</h3>
+          <p>The briefings and insights are written by AI, and they say so wherever they appear. They are built from real articles published that day rather than from the model's memory, and the sources sit underneath so you can check any of it.</p>
+          <p>It can still be wrong. It is a fast way in, not a replacement for the reporting — the links are there for a reason. The <button type="button" class="about-inline-link how-aigen" data-how-it-works>AI-generated content</button> label on any briefing explains how it is produced.</p>
         </div>
 
         <div class="about-section">
-          <h3>Your model, your choice</h3>
-          <p>Wherever a prompt leaves the site, you pick the destination. Your selected model and preferences are saved in your browser only — there are no accounts and no profiles.</p>
+          <h3>Your model, your account</h3>
+          <p>Prompts run wherever you already have an account. Nothing is generated on your behalf and no key of yours is stored — the prompt is handed to the model you picked, and you keep the conversation.</p>
         </div>
 
         <div class="about-section">
-          <h3>Open source</h3>
-          <p>The full source code is public. Read it, follow what's planned, or fork it.</p>
-          <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="about-cta-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-            <span>View on GitHub</span>
-          </a>
+          <h3>No account, no tracking</h3>
+          <p>There is nothing to sign up for. No profile, no email, no personalised feed. Settings like your preferred model live in your own browser and never reach a server.</p>
         </div>
 
-        <div class="about-section about-creator">
-          <h3>Created by</h3>
-          <p>Standard Topic was built by <strong>John Choudhari</strong>, a builder with over a decade in digital media and communications, focused on how AI is changing the way people read, search, and learn.</p>
-          <div class="about-cta-row">
-            <a href="https://johnchoud.com" target="_blank" rel="noopener noreferrer" class="about-cta-link">Portfolio</a>
-            <a href="https://www.linkedin.com/in/johnchoudhari/" target="_blank" rel="noopener noreferrer" class="about-cta-link">LinkedIn</a>
-          </div>
+        <div class="about-section">
+          <h3>Who made it</h3>
+          <p>Standard Topic is built and run by John Choudhari. The code is open source on <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+          <p>See the <a href="#/terms">Terms &amp; Conditions</a> for the legal detail.</p>
         </div>
-
-        <div class="about-section about-disclaimer">
-          <h3>Terms &amp; contact</h3>
-          <p>The <a href="#/terms">Terms &amp; Conditions</a> cover data practices, analytics, third-party services, and acceptable use. For questions, corrections, or feedback, reach out via <a href="https://johnchoud.com" target="_blank" rel="noopener noreferrer">johnchoud.com</a>.</p>
-        </div>
-      </div>
-    `;
+      </div>`;
     return;
   }
 
   if (route.type === 'terms') {
     content.innerHTML = `
-      <div class="about-page">
-        <p class="about-lead">The rules for using Standard Topic, written to be read.</p>
-        <p class="about-updated">Last updated: July 2026</p>
+      <div class="about-page terms-page">
+        <p class="about-lead">These terms cover your use of standardtopic.com. Using the site means you accept them. They are written to be readable — nothing here is hidden in the length.</p>
+        <p class="terms-updated">Last updated 9 September 2026</p>
 
         <div class="about-section">
-          <h3>1. Agreement</h3>
-          <p>By accessing or using Standard Topic (the "Site"), you agree to these Terms. If you do not agree with them, please do not use the Site.</p>
+          <h3>1. What this site is</h3>
+          <p>Standard Topic aggregates publicly available news headlines and links, and publishes AI-generated summaries alongside them. It is an information and discovery service. It is not a news publisher, not a licensed adviser of any kind, and nothing on it is financial, legal, medical, or professional advice.</p>
         </div>
 
         <div class="about-section">
-          <h3>2. What the Site Provides</h3>
-          <p>Standard Topic is a free, non-commercial, open-source service that organizes public information by topic:</p>
-          <ul>
-            <li><strong>Topic pages</strong> — curated pages combining news, AI-generated briefings, prompts, and reference links for a subject.</li>
-            <li><strong>News feeds</strong> — headlines aggregated server-side from publicly available RSS sources via the rss.app API. The Site stores headlines, summaries, and links in its own database to power feeds, search, and history; no rss.app widget or tracker loads in your browser.</li>
-            <li><strong>AI-generated briefings</strong> — topic briefings, news summaries, and trending summaries generated by the Site using Google's Gemini models with live web grounding. Generated content is labeled "✦ AI" and lists its sources.</li>
-            <li><strong>AI shortcuts and Prompt Builder</strong> — preset or custom prompts that open in a third-party AI platform of your choice (ChatGPT, Claude, Gemini, Perplexity, Copilot, Google AI Mode) in a new tab. Responses from those platforms come from the platform, not from the Site.</li>
-          </ul>
+          <h3>2. AI-generated content</h3>
+          <p>Briefings, story insights, and trend summaries are produced by large language models and are labelled as such wherever they appear. They are generated automatically without human review before publication.</p>
+          <p><b>They can be inaccurate, incomplete, or out of date.</b> Do not rely on them for any decision that matters. Where sources are shown, the underlying reporting is the authority — not our summary of it. If the two disagree, trust the source.</p>
         </div>
 
         <div class="about-section">
-          <h3>3. Accounts and Personal Data</h3>
-          <p>There is no sign-up. The Site does not ask for your name, email address, or other personal details, does not set advertising cookies, and does not sell or share data with ad networks.</p>
-          <p>Some features — news feeds, generated briefings, news search — are served by the Site's backend. Those requests are not tied to accounts or identity profiles. Vercel (the hosting provider) and any third-party platform you interact with may keep standard technical logs under their own policies.</p>
+          <h3>3. News content and third-party sources</h3>
+          <p>Headlines, excerpts, and links come from third-party publishers via public feeds. Those publishers own that content and are responsible for it. We do not endorse it, verify it, or control it, and links out are not endorsements. Full articles are read on the publisher's own site under their terms.</p>
+          <p>If you are a rights holder and want your content removed from the index, contact us and we will act on it.</p>
         </div>
 
         <div class="about-section">
-          <h3>4. Analytics</h3>
-          <p>The Site uses Google Analytics 4 for aggregate usage measurement — page views, feature usage, and which AI models are selected. It is configured with privacy defaults enabled: IP anonymization, Google Signals off, and ad personalization off. The Site does not log prompt text, Prompt Builder input, or anything else intended to identify you. Blocking analytics with a browser extension does not affect the Site's functionality.</p>
+          <h3>4. Prompts and third-party AI platforms</h3>
+          <p>Prompts open in an external AI service — ChatGPT, Claude, Gemini, or another provider — under your own account. Once a prompt leaves this site, that provider's terms and privacy policy govern what happens to it. We do not see, store, or control what those services return, and we are not responsible for it.</p>
         </div>
 
         <div class="about-section">
-          <h3>5. Local Browser Storage</h3>
-          <p>Your browser's <code>localStorage</code> holds a small number of interface preferences, such as your default AI model. This data stays on your device and can be cleared through your browser settings at any time.</p>
+          <h3>5. No accounts, and what we store</h3>
+          <p>There are no user accounts. We do not ask for or hold your name, email address, or payment details.</p>
+          <p>Preferences — your chosen AI model, saved settings — are stored in your browser's local storage on your own device and are never transmitted to us. Clearing your browser data removes them.</p>
+          <p>We use privacy-focused analytics that record aggregate page views without cookies and without profiling individual visitors. Our hosting provider keeps standard server logs, including IP addresses, for security and reliability.</p>
         </div>
 
         <div class="about-section">
-          <h3>6. Third-Party Services</h3>
-          <p>The Site relies on or links to services operated by third parties:</p>
-          <ul>
-            <li><strong>AI platforms</strong> — OpenAI (ChatGPT), Anthropic (Claude), Google (Gemini, Google AI Mode), Microsoft (Copilot), and Perplexity, for prompts you choose to send.</li>
-            <li><strong>AI generation</strong> — Google's Gemini API, used server-side to produce the Site's generated briefings.</li>
-            <li><strong>News aggregation</strong> — the rss.app API, used server-side to collect publisher headlines.</li>
-            <li><strong>Search and reference links</strong> — Google News, DuckDuckGo, Reddit, X, YouTube.</li>
-            <li><strong>Hosting</strong> — Vercel serves the Site; GitHub hosts the source code.</li>
-          </ul>
-          <p>Standard Topic is not affiliated with, endorsed by, or sponsored by any of these services. Trademarks belong to their owners. When you follow an external link or send a prompt to a third-party platform, that platform's terms and privacy policy apply.</p>
+          <h3>6. Acceptable use</h3>
+          <p>Use the site normally. Do not scrape it at scale, attempt to disrupt or overload it, probe it for vulnerabilities, misrepresent AI-generated text here as human-written journalism, or use it for anything unlawful.</p>
         </div>
 
         <div class="about-section">
-          <h3>7. AI-Generated Content on the Site</h3>
-          <p>Briefings and summaries generated by the Site are produced automatically, refreshed on a schedule, and labeled as AI-generated with their sources listed. Despite grounding in live sources, generated content can be incomplete, outdated, or inaccurate, and may not reflect every development on a topic.</p>
-          <p>Generated content is provided for general information only and is not professional advice. Do not rely on it for medical, legal, financial, safety-critical, or otherwise consequential decisions — verify significant claims against the listed sources or other primary reporting.</p>
+          <h3>7. Availability</h3>
+          <p>The site is provided as is, without warranty of any kind. We do not promise it will be available, uninterrupted, error-free, or current. Features may change or be withdrawn at any time. AI generation depends on third-party providers and may be unavailable or degraded.</p>
         </div>
 
         <div class="about-section">
-          <h3>8. AI Output from Third-Party Platforms</h3>
-          <p>Prompts you send through AI shortcuts or the Prompt Builder are processed by the third-party platform you select. The Site does not control and accepts no responsibility for the accuracy, completeness, or character of those responses, or for how the platform handles or stores your prompt. The same no-professional-advice caution in Section 7 applies.</p>
+          <h3>8. Limitation of liability</h3>
+          <p>To the fullest extent permitted by law, Standard Topic and its operator are not liable for any indirect, incidental, consequential, or punitive damages, or for any loss arising from your use of — or reliance on — the site or anything on it, including AI-generated content and third-party material.</p>
+          <p>Nothing in these terms excludes liability that cannot lawfully be excluded.</p>
         </div>
 
         <div class="about-section">
-          <h3>9. News Content</h3>
-          <p>Headlines, summaries, and articles belong to their originating publishers. The Site displays headlines and links and does not write, edit, or endorse individual stories. For corrections or copyright concerns about an article, contact the publisher; publishers or rights holders who want a feed removed from the Site can use the contact route in Section 16.</p>
+          <h3>9. Intellectual property</h3>
+          <p>The site's own design, code, and original text belong to its operator; the source is published on <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer">GitHub</a> under its stated licence. Third-party headlines, excerpts, and trademarks remain the property of their owners and appear here for identification and reference.</p>
         </div>
 
         <div class="about-section">
-          <h3>10. Intellectual Property</h3>
-          <p>The source code is open source at <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer">github.com/jrcstreams/standard-topic</a>; reuse is governed by the repository's license. The Standard Topic name, written copy, and original design belong to the Site's creator. Third-party names and marks appear for identification only.</p>
+          <h3>10. Changes and contact</h3>
+          <p>These terms may be updated; the date above shows the current version, and continuing to use the site means accepting the version in force. For questions, corrections, or removal requests, open an issue on the <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer">GitHub repository</a>.</p>
         </div>
-
-        <div class="about-section">
-          <h3>11. Acceptable Use</h3>
-          <p>Use the Site for lawful, personal, informational purposes. You agree not to:</p>
-          <ul>
-            <li>use the Site to violate the law or the rights of others;</li>
-            <li>disrupt, overload, or attempt to abuse the Site or its backend services;</li>
-            <li>scrape, mirror, or republish the Site as your own;</li>
-            <li>use AI shortcuts or the Prompt Builder to produce content that is illegal, harmful, or in violation of the receiving platform's terms.</li>
-          </ul>
-        </div>
-
-        <div class="about-section">
-          <h3>12. No Warranties</h3>
-          <p>The Site is provided "as is" and "as available," without warranties of any kind, express or implied — including merchantability, fitness for a particular purpose, accuracy, and non-infringement. Availability and features may change or be interrupted at any time.</p>
-        </div>
-
-        <div class="about-section">
-          <h3>13. Limitation of Liability</h3>
-          <p>To the fullest extent permitted by law, Standard Topic and its creator are not liable for indirect, incidental, special, consequential, or punitive damages, or for lost data, revenue, or profits, arising from use of the Site, any linked third-party service, or any content (including AI-generated content) obtained through it. Total direct liability is limited to the amount you paid to use the Site.</p>
-        </div>
-
-        <div class="about-section">
-          <h3>14. Changes to These Terms</h3>
-          <p>These Terms may be updated from time to time; the "Last updated" date above reflects the current version. Continued use of the Site after an update constitutes acceptance of the revised Terms.</p>
-        </div>
-
-        <div class="about-section">
-          <h3>15. Termination</h3>
-          <p>There are no accounts, so ending use simply means no longer visiting the Site. The Site may be modified, suspended, or discontinued at any time without notice.</p>
-        </div>
-
-        <div class="about-section">
-          <h3>16. Governing Law and Contact</h3>
-          <p>These Terms are governed by the laws applicable at the Site creator's place of residence, without regard to conflict-of-law rules. If any provision is found unenforceable, the remainder stays in effect.</p>
-          <p>Questions about these Terms, corrections, or removal requests: reach out via <a href="https://johnchoud.com" target="_blank" rel="noopener noreferrer">johnchoud.com</a>.</p>
-        </div>
-      </div>
-    `;
+      </div>`;
     return;
   }
+
 
   content.innerHTML = `
     <div class="not-found">
