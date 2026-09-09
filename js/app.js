@@ -1172,7 +1172,29 @@ function wirePromptDirectory(root, ctls) {
             wireCells();
             requestAnimationFrame(updateNavDdFades);
           });
-          requestAnimationFrame(updateNavDdFades);
+          // revamp1268: drilling into a topic replaces the card's body with a
+          // much taller prompt set, and whatever the mount does with focus or
+          // its own scrollIntoView can leave the reader somewhere in the middle
+          // of the new content — the "Topic-Specific Prompts" heading on screen
+          // with no indication of WHICH topic they opened. Anchor to the card's
+          // own header instead, just under the sticky chrome, so the topic name
+          // and the Back link are the first things visible.
+          requestAnimationFrame(() => {
+            updateNavDdFades();
+            const chrome = (() => {
+              const nav = document.querySelector('#main-nav, .main-nav');
+              const sub = document.getElementById('sub-header');
+              const h = (el) => (el && el.offsetParent !== null) ? Math.round(el.getBoundingClientRect().height) : 0;
+              return h(nav) + h(sub) + 12;
+            })();
+            const y = window.scrollY + card.getBoundingClientRect().top - chrome;
+            // Only pull the page UP to the card. Scrolling down to it would be
+            // the same jump-away this fixes, just in the other direction.
+            if (y < window.scrollY) {
+              try { window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' }); }
+              catch (_) { window.scrollTo(0, Math.max(0, y)); }
+            }
+          });
         });
       });
     };
