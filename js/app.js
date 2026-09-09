@@ -2923,14 +2923,23 @@ function wireSubnavPicker(root) {
       // Desktop body header: drop the full-width card so it overlays (covers) the
       // inline subtopics row — measured BEFORE the open class hides that row.
       if (on && isBodyHead && panelwrap) {
-        // Anchor to the strip's TOP RULE (revamp788) — measuring .tbh-subs left
-        // the panel floating a row below it, so its edges never met the subnav.
-        // revamp809: anchor at EVERY width. This was gated to >=900px, so on
-        // phones the panel fell back to CSS top:100% and opened below the
-        // strip with a dead band above it (#img175/176).
+        // revamp1280: the card opens FROM THE TITLE, not from the strip below
+        // it. Anchoring at the subtopics row (revamp788/809) left the topic
+        // name and its description stranded above the menu, so the two read as
+        // separate things; now the panel starts at the title's own top and
+        // pads its content past it, and the name becomes the card's header.
+        const titleRow = picker.querySelector('.tbh-titlerow');
         const subs = picker.querySelector('.tbh-subswrap') || picker.querySelector('.tbh-subs');
-        if (subs) panelwrap.style.top = subs.offsetTop + 'px';
+        const anchor = titleRow || subs;
+        if (anchor) panelwrap.style.top = anchor.offsetTop + 'px';
         else panelwrap.style.top = '';
+        if (titleRow) picker.style.setProperty('--tsp-head-h', (titleRow.offsetHeight + 12) + 'px');
+      }
+      // Same for the page titles: the panel needs the trigger's height to know
+      // how far to push its own content down. Measured per open, because the
+      // heading size tracks the breakpoint.
+      if (on && picker.classList.contains('is-hero-picker')) {
+        picker.style.setProperty('--tsp-head-h', (btn.offsetHeight + 10) + 'px');
       }
       picker.classList.toggle('is-open', on);
       btn.setAttribute('aria-expanded', on ? 'true' : 'false');

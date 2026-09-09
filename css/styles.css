@@ -34336,13 +34336,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 .tsp-btn--pagehero[class] { padding: 10px 20px 10px 12px !important; gap: 14px !important; }
 .is-hero-picker .tsp-panelwrap[class] { left: 0 !important; }
 
-/* (c) */
-.is-hero-picker.is-open .tsp-btn--herotitle[class] {
-  background: #fff !important;
-  border-radius: 14px 14px 0 0 !important;
-}
-.is-hero-picker.is-open .tsp-panelwrap[class] { top: 100% !important; }
-.is-hero-picker.is-open .tsp-panel[class] { border-top-left-radius: 0 !important; }
+/* (c) — superseded by revamp1280 below. */
 
 /* (d) */
 .aii-nav-dd-head[class] { position: relative; z-index: 60; }
@@ -34360,7 +34354,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   border-bottom: 1px solid #e4e9f2;
   border-radius: 0;
 }
-.is-hero-picker .tsp-actions[class] { border-radius: 0 14px 0 0; }
+
 .is-page-picker .tsp-actions .tsp-foot-btn[class] { background: #fff; border: 1px solid #dfe5f0; }
 .is-page-picker .tsp-actions .tsp-close--row[class] { background: #fff; border: 1px solid #dfe5f0; border-radius: 9px; }
 .is-page-picker .tsp-cell-ic[class] {
@@ -34409,4 +34403,45 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 }
 @media (prefers-reduced-motion: reduce) {
   .aii-pc .aii-pc-tools .aii-pc-btn.is-copied[class] svg { animation: none; }
+}
+
+/* ═══ revamp1280 — the menu opens as one card, headed by the page title ═════
+
+   1279 gave the open trigger a white tab that met the panel below it. Two
+   whites of different widths meeting at a step is a worse shape than either
+   piece, and it left the title looking bolted onto the menu rather than part
+   of it.
+
+   So the panel now starts at the TITLE's top rather than below it, and pads
+   its own content past the title's height (--tsp-head-h, measured on open
+   since the heading tracks the breakpoint). The title paints above it. One
+   white card: the page name is its header, the actions band sits under that,
+   the menu under that — and on the topic pages it covers the description and
+   subtopic strip the way a menu should. */
+.is-hero-picker.is-open .tsp-panelwrap[class] { top: 0 !important; left: 0 !important; }
+.is-hero-picker.is-open .tsp-panel[class] {
+  border-radius: 16px !important;
+  padding-top: var(--tsp-head-h, 62px) !important;
+}
+/* Above the panel's own z-index 70, or the card covers its own header. */
+.is-hero-picker.is-open .tsp-btn--herotitle[class] {
+  position: relative; z-index: 71;
+  background: none !important;
+  border-radius: 14px !important;
+}
+.is-page-picker .tsp-actions[class] { border-radius: 0; }
+
+/* The topic pages' header is the same control at a larger size. */
+.topic-bodyhead.is-open .tsp-panel[class] { padding-top: var(--tsp-head-h, 66px) !important; }
+.topic-bodyhead.is-open .tbh-titlebtn[class] { position: relative; z-index: 71; }
+
+/* A page name is never abbreviated in the grey band either. The clamp let the
+   name shrink a few pixels under its own width and ellipsise with the whole
+   band empty beside it — `overflow: hidden` also zeroes a flex item's
+   automatic minimum size, so min-width could not hold it open. It keeps the
+   ellipsis for a name that genuinely doesn't fit, and never shrinks below
+   its own width to reach for one. */
+.tsp-btn--ident[class] .subnav-ident-name {
+  flex: 0 0 auto;
+  max-width: 100%;
 }
