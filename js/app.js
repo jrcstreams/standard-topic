@@ -9,7 +9,6 @@ import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-re
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js?v=20260728-revamp668';
 import { installHowItWorks, howItWorksLinkHTML } from './utils/how-it-works.js?v=20260828-revamp1038';
 import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260817-revamp772';
-// prompt-generator (~127KB, Prompts flows only) is lazy-loaded via loadPromptGen() so it
 // splits out of the initial bundle — see B3.4. (prompt-builder-modal.js was a retired
 // no-op takeover; removed.)
 import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp574';
@@ -24,16 +23,8 @@ import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp574';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260716-revamp588';
 import { trackPageView, track } from './utils/analytics.js';
 
-// Lazy-load the prompt-generator wizard (~127KB) only when a Prompts flow first opens,
-// so esbuild splits it into its own chunk instead of the initial bundle (B3.4). The
-// module is a singleton, so the import promise is cached after the first load.
-let _promptGenModule = null;
-function loadPromptGen() {
-  return _promptGenModule || (_promptGenModule = import('./components/prompt-generator.js'));
-}
 
 // revamp867 — self-heal a stale cached bundle. In-app (SPA) navigation never
 // re-fetches app.js, so an old tab can keep running an old build indefinitely.
@@ -91,7 +82,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // All Topics modal retired — every "All Topics" entry (picker action, search)
   // now opens the single clean Topics nav dropdown (see the listener below).
   initRelatedTopicsModal();
-  initPromptPreviewModal();
   initSearchOverlay();
   initSearchPageModal();
   initAIIntelligenceModal();
@@ -157,20 +147,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Remember where we came from so sub-pages can offer a named "Back to …",
     // and keep an open panel's back bar in step with the fresh stack.
     try { recordBackTarget(route); refreshNavDdBackbar(); } catch (_) {}
-    // Nav dropdowns are transient overlays — close on any navigation. EXCEPTION:
-    // the Prompt Builder dropdown is route-driven (#/prompt-generator) and may
-    // re-fire the route from a child picker — keep it. Topics / Trending /
-    // Prompts dropdowns are route-driven too (#/topics, #/trending,
+    // Nav dropdowns are transient overlays — close on any navigation. Topics /
+    // Trending / Prompts dropdowns are route-driven (#/topics, #/trending,
     // #/prompts[/view]) — keep each open across its own route.
-    const keepPrompt = route.type === 'prompt-generator' && navDdOpen && navDdOpen.key === 'prompt';
     const keepDd = navDdOpen && route.type === navDdOpen.key && ['topics', 'trending', 'prompts'].includes(route.type);
-    if (!keepPrompt && !keepDd) closeNavDropdown();
+    if (!keepDd) closeNavDropdown();
     // Search (#/search) and Custom (#/custom/{term}) are REAL pages now
     // (revamp765): they render in #content like any other route. Term changes
     // re-fire the route while the page stays mounted — the live panel expands/
     // collapses in place instead of remounting.
     const isSearchRoute = route.type === 'search' || route.type === 'custom';
-    const isPromptRoute = route.type === 'prompt-generator';
     // revamp819: topics / trending / prompts render their OWN pages now, so
     // they no longer map to home-with-an-overlay. Only the prompt builder is
     // still an overlay route.
@@ -206,7 +192,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       try { if (t) searchPageCtl.expand(t); else searchPageCtl.collapse(); } catch (_) {}
     }
 
-    if (isPromptRoute) openPromptBuilderNavDropdown(); else closePromptBuilderNavDropdown();
     // Route-driven nav dropdowns (stale ones were already closed above).
     if (route.type === 'topics') renderPageNavBar('topics');
     else if (route.type === 'trending') renderPageNavBar('trending');
@@ -265,8 +250,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Search/Custom are real pages too (revamp765) — they re-render like any
         // route. Only the dropdown-backed routes still render home beneath and
         // re-open the overlay on top.
-        const isOverlay = route.type === 'prompt-generator';
-        const base = isOverlay ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
+        const base = route;
         // Preserve an OPEN subnav topic-picker across the breakpoint crossing — the
         // full re-render rebuilds the sub-header, which silently closed it (#img75).
         const pickerWasOpen = !!document.querySelector('#sub-header .topic-subnav-picker.is-open');
@@ -282,9 +266,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         else if (base.type === 'search' || base.type === 'custom') renderPageNavBar('search');
         if (pickerWasOpen) {
           requestAnimationFrame(() => document.querySelector('#sub-header .topic-subnav-picker .tsp-btn')?.click());
-        }
-        if (route.type === 'prompt-generator') {
-          openPromptBuilderNavDropdown();
         }
         if (openNews) {
           // Re-open after the fresh news feed settles; then restore the active tab.
@@ -933,12 +914,6 @@ function userCloseNavDropdown() {
     if (onSearchRoute) navigate('#/');
     return;
   }
-  if (navDdOpen && navDdOpen.key === 'prompt') {
-    const onPromptRoute = hash.startsWith('#/prompt-generator');
-    closeNavDropdown();
-    if (onPromptRoute) navigate('#/');
-    return;
-  }
   // Topics / Trending / Prompts are pages now — there's no ✕ to press, but Esc
   // still needs an exit. Send it to the same place the "Back to …" bar points, so
   // the keyboard and the visible affordance agree.
@@ -1352,40 +1327,7 @@ function wirePromptsDropdown(panel, initialView) {
           </div>
           <div class="ph-body" data-ph-body></div>
         </section>
-
-        <section class="ph-buildzone" data-ph-buildzone>
-          <div class="ph-buildpromo" data-ph-buildpromo>
-            <span class="ph-build-ic" aria-hidden="true">${PROMPTS_BUILD_HEAD_IC}</span>
-            <div class="ph-buildpromo-tx">
-              <h3 class="ph-build-title">Build a Prompt</h3>
-              <p class="ph-build-sub">Start from scratch and shape a prompt around any topic — every option laid out in one place, no digging through menus.</p>
-            </div>
-            <button type="button" class="ph-build-btn" data-cta-build>Start building${PH_ARROW_R}</button>
-          </div>
-          <div class="ph-buildhost" data-ph-build-host hidden></div>
-        </section>
       </div>`;
-
-    // The Build promo expands the builder INLINE at the bottom of the page
-    // (rather than swapping to a separate view), so the whole prompt form shows
-    // in one vertical scroll. Loaded lazily on first open.
-    {
-      const buildzone = root.querySelector('[data-ph-buildzone]');
-      const buildHost = root.querySelector('[data-ph-build-host]');
-      let buildLoaded = false;
-      root.querySelectorAll('[data-cta-build]').forEach((b) => b.addEventListener('click', () => {
-        buildzone.classList.add('is-building');
-        buildHost.hidden = false;
-        if (!buildLoaded) {
-          buildLoaded = true;
-          loadPromptGen()
-            .then((m) => m.renderPromptGenerator(buildHost, { inline: true }))
-            .catch(() => {});
-        }
-        requestAnimationFrame(() => buildzone.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-        syncViewHash('build');
-      }));
-    }
 
     // ── Featured rail ──────────────────────────────────────────────────────
     // A horizontally scrollable card row. Clicking a card turns THAT card into a
@@ -1453,16 +1395,6 @@ function wirePromptsDropdown(panel, initialView) {
     requestAnimationFrame(updateNavDdFades);
   };
 
-  const showBuild = () => {
-    destroyCtl();
-    setHead('Build a Prompt', 'Craft a knowledge prompt and send it to your AI model.');
-    setHeadBtns(false); setBack('Back to Prompts', showLanding);
-    root.innerHTML = `<div class="pb-navdd-host" data-pb-host></div>`;
-    loadPromptGen().then((m) => m.renderPromptGenerator(root.querySelector('[data-pb-host]'), { inline: true })).catch(() => {});
-    syncViewHash('build');
-    fades();
-  };
-
   const showLibrary = () => {
     destroyCtl();
     setHead('Prompt Library', 'Every topic and subtopic, with its full prompt set.');
@@ -1475,7 +1407,7 @@ function wirePromptsDropdown(panel, initialView) {
 
   // Expose the view switcher for route changes while mounted, then show the
   // requested initial view (a #/prompts/build|library deep-link) or the landing.
-  promptsDdShowView = (v) => { if (v === 'build') showBuild(); else if (v === 'library') showLibrary(); else showLanding(); };
+  promptsDdShowView = (v) => { if (v === 'library') showLibrary(); else showLanding(); };
   // Drill INTO the Prompt Library (revamp764 — the retired dedicated
   // single-topic view is gone): open the topic's parent card in the directory,
   // open that topic's prompt set in place, then expand the named prompt. The
@@ -1514,7 +1446,6 @@ function wirePromptsDropdown(panel, initialView) {
   promptsDdShowView(initialView || null);
 }
 
-const PROMPTS_BUILD_HEAD_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="m16.5 3.5 4 4L7 21l-4 1 1-4z"/></svg>';
 function promptsNavDdCfg(view) {
   return {
     key: 'prompts', triggerId: 'nav-prompts', className: 'aii-nav-dd-prompts',
@@ -1631,7 +1562,7 @@ function topicsTreeHTML() {
   const featItems = FEATURED_TOPIC_SLUGS.map((slug) => {
     const t = getTopicBySlug(slug);
     if (!t) return '';
-    return `<a href="#/topic/${t.slug}" class="tfeat-item" data-aiidd-link>
+    return `<a href="#/topic/${t.slug}" class="tfeat-item" data-aiidd-link${topicColorStyle(t)}>
       <span class="tfeat-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
       <span class="tfeat-name">${escapeHTML(t.name)}</span>
       <span class="tfeat-arrow" aria-hidden="true">${AIIDD_CHEV_R}</span>
@@ -1727,39 +1658,6 @@ function openTrendingNavDropdown(expandQuery) {
   openNavDropdown(trendingNavDdCfg(expandQuery));
 }
 let pendingTrendingExpand = null;
-
-// ── Phase 6: the Prompt Builder dropdown ─────────────────────────────────────
-// Route-driven (#/prompt-generator), like Search: hosts the existing
-// renderPromptGenerator wizard inside the shared full-width dropdown instead of
-// a centered takeover. No dedicated nav button — launched from the hamburger /
-// homepage links / the route.
-function isPromptBuilderOpen() {
-  const panel = document.getElementById('st-nav-panel');
-  return !!(panel && panel.classList.contains('is-open') && navDdOpen && navDdOpen.key === 'prompt');
-}
-function openPromptBuilderNavDropdown() {
-  // Route can re-fire while already open (a child picker navigates) — don't tear
-  // down the in-progress builder.
-  if (isPromptBuilderOpen()) return;
-  openNavDropdown({
-    key: 'prompt', triggerId: null, className: 'aii-nav-dd-prompt',
-    title: 'Prompt Builder', ariaLabel: 'Prompt Builder',
-    subtitle: 'Build a knowledge prompt and send it to your AI model.',
-    contentHTML: '<div class="pb-navdd-host" data-pb-host></div>',
-    onClose: userClosePromptBuilder,
-    wire: (panel) => {
-      loadPromptGen().then((m) => m.renderPromptGenerator(panel.querySelector('[data-pb-host]'), { inline: true }));
-      [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
-    },
-  });
-}
-function closePromptBuilderNavDropdown() { if (isPromptBuilderOpen()) closeNavDropdown(); }
-// ✕ / overlay / Esc: close and, on the #/prompt-generator deep-link, return home.
-function userClosePromptBuilder() {
-  const onRoute = (routeHash() || '').startsWith('#/prompt-generator');
-  closePromptBuilderNavDropdown();
-  if (onRoute) navigate('#/');
-}
 
 // The topic page's tabbed "Paths" package: News first, then the five AI tracks.
 // Topic page: a TWO-item control subnav (revamp453). "AI Insights & Resources"
@@ -3128,21 +3026,6 @@ function renderLayout(route) {
   }
 
   // Prompt generator: title-only subnav.
-  if (route.type === 'prompt-generator') {
-    document.body.classList.add('has-subnav');
-    subHeader.classList.add('is-subnav');
-    subHeader.innerHTML = `
-      <div class="topic-banner">
-        <div class="topic-banner-row">
-          ${titleGroup('sparkles', 'Prompt Builder')}
-        </div>
-      </div>
-    `;
-    observeSubnavHeight();
-    wireSubnavCompactMeasure();
-    return;
-  }
-
   // Topic pages get a subnav below the main nav. Custom-search
   // pages no longer use the subnav — their search lives at the top
   // of the page content instead so the input + dropdown can be
@@ -3165,8 +3048,8 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
         <div class="topic-subnav-inner">
-          <div class="subnav-ident">
-            <span class="subnav-ident-ico">${topicIconSVG(topic.icon || 'globe', '')}</span>
+          <div class="subnav-ident"${topicColorStyle(topic)}>
+            <span class="subnav-ident-ico subnav-ident-ico--chip">${topicIconSVG(topic.icon || 'globe', '')}</span>
             <span class="subnav-ident-name">${escapeHTML(topic.name)}</span>
           </div>
           <span class="subnav-ident-sep" aria-hidden="true"></span>
@@ -3243,7 +3126,7 @@ function renderLayout(route) {
       <div class="topic-subnav-title">
         <div class="topic-subnav-inner">
           <div class="subnav-ident">
-            <span class="subnav-ident-ico">${iconSvg}</span>
+            <span class="subnav-ident-ico subnav-ident-ico--chip">${iconSvg}</span>
             <span class="subnav-ident-name">${title}</span>
           </div>
           ${backBarHTML()}
@@ -3253,7 +3136,7 @@ function renderLayout(route) {
     observeSubnavHeight();
   }
 
-  if (route.type === 'prompt-generator' || route.type === 'about' || route.type === 'terms') {
+  if (route.type === 'about' || route.type === 'terms') {
     setupResponsiveNav();
   }
 }
@@ -4083,7 +3966,6 @@ function navEntryFor(route) {
     case 'topics': return { key: 'topics', label: 'Topics', hash: '#/topics' };
     case 'trending': return { key: 'trending', label: 'Trending', hash: '#/trending' };
     case 'prompts': return { key: 'prompts', label: 'Prompts', hash: '#/prompts' };
-    case 'prompt-generator': return { key: 'prompt-generator', label: 'Prompt Builder', hash: '#/prompt-generator' };
     // Search and every /custom/{term} refinement share ONE identity — refining
     // a search must not flood the stack with near-identical "Search" entries
     // (recordBackTarget updates the stored hash in place instead).
@@ -4266,8 +4148,7 @@ function renderPageNavBar(kind) {
   // revamp1169: Build a Prompt is the third tab. It used to be a promo card
   // pinned under whichever section was showing, which read as a stray footer on
   // Featured and was the ONLY thing on By Topic while that section was broken.
-  const pView = document.body.classList.contains('pview-topics') ? 'topics'
-    : document.body.classList.contains('pview-build') ? 'build' : 'featured';
+  const pView = document.body.classList.contains('pview-topics') ? 'topics' : 'featured';
   // revamp1179: the Featured Prompts TAB carries the same wand the section head
   // carries on the wide layout (PROMPTS_FEAT_HEAD_IC) — it was the one tab whose
   // glyph didn't match the thing it opens (#img1324/1325).
@@ -4275,7 +4156,7 @@ function renderPageNavBar(kind) {
   const pTab = (v, label) => `<button type="button" class="pst-tab${pView === v ? ' is-active' : ''}" data-pview="${v}" role="tab" aria-selected="${pView === v}"><span class="pst-ic" aria-hidden="true">${PV_IC[v]}</span>${label}</button>`;
   const promptsTabs = kind === 'prompts' ? `
     <div class="prompts-subnav-tabs" data-prompts-subnav-tabs role="tablist" aria-label="Prompts sections">
-      ${pTab('featured', 'Featured Prompts')}${pTab('topics', 'Prompts by Topic')}${pTab('build', 'Build a Prompt')}
+      ${pTab('featured', 'Featured Prompts')}${pTab('topics', 'Prompts by Topic')}
     </div>` : '';
   // revamp1172 gave the Topics page a Featured / All tab strip in tab mode;
   // revamp1205 removed it. Featured is six rows and All Topics is a closed
@@ -4303,7 +4184,6 @@ function renderPageNavBar(kind) {
     // Two booleans rather than one: 'featured' is the state where neither is set,
     // so it needs no class of its own and an older body keeps working.
     document.body.classList.toggle('pview-topics', v === 'topics');
-    document.body.classList.toggle('pview-build', v === 'build');
     subHeader.querySelectorAll('[data-prompts-subnav-tabs] [data-pview]').forEach((x) => {
       const on = x === b;
       x.classList.toggle('is-active', on);
@@ -4376,7 +4256,6 @@ function pageLabelFor(route) {
     case 'topic': { const t = getTopicBySlug(route.slug); return t ? t.name : ''; }
     case 'about': return 'About';
     case 'terms': return 'Terms';
-    case 'prompt-generator': return 'Prompt Builder';
     case 'search': return 'Search';
     case 'custom': return route.term ? `“${route.term}”` : 'Search';
     default: return '';
@@ -4410,7 +4289,6 @@ function documentTitleFor(route) {
     case 'trending': return `Trending | ${SITE_TITLE_SUFFIX}`;
     case 'topics': return `All Topics | ${SITE_TITLE_SUFFIX}`;
     case 'prompts': return `Prompts | ${SITE_TITLE_SUFFIX}`;
-    case 'prompt-generator': return `Prompt Builder | ${SITE_TITLE_SUFFIX}`;
     case 'about': return `About | ${SITE_TITLE_SUFFIX}`;
     case 'terms': return `Terms | ${SITE_TITLE_SUFFIX}`;
     default: return `${SITE_TITLE_SUFFIX} — News, Resources and AI Knowledge on Any Topic`;
@@ -4764,7 +4642,7 @@ function renderStickyHeroBar(container, route) {
     <div class="navmenu-featured-label navmenu-seclabel">Search</div>
     <button type="button" class="navmenu-searchbtn" id="navmenu-searchbtn" aria-label="Search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <span class="navmenu-searchbtn-label">Search for insights on anything…</span>
+      <span class="navmenu-searchbtn-label">Insights on any topic…</span>
     </button>
     <div class="navmenu-featured-label navmenu-seclabel">Navigate</div>
     <nav class="navmenu-quicklinks">
@@ -5123,9 +5001,6 @@ function renderHero(container, route) {
       <p class="hero-tagline">News, Resources and AI Knowledge. On any topic.</p>
       <div class="hero-actions">
         <div class="hero-search-wrap" id="search-bar-container"></div>
-        <a href="#/prompt-generator" class="hero-build-link">
-          Build a prompt +
-        </a>
       </div>
     </div>
   `;
@@ -5663,7 +5538,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // topic-intelligence-panel: scopes the banded control-panel
   // treatment (dark header band + tinted body) to this panel only.
   // .shortcuts-sidebar is also used by the discover modal, all-topics
-  // modal, and prompt-generator wizard topic picker — those should
+  // modal, and the shortcut topic picker — those should
   // not pick up the navy banded header.
   const cardClasses = ['sidebar-card', 'shortcuts-sidebar', 'topic-intelligence-panel'];
 
@@ -7113,11 +6988,6 @@ function renderPage(route) {
 
   if (route.type === 'search' || route.type === 'custom') {
     renderSearchPage(content, route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
-    return;
-  }
-
-  if (route.type === 'prompt-generator') {
-    loadPromptGen().then((m) => m.renderPromptGenerator(content));
     return;
   }
 

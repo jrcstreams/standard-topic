@@ -146,10 +146,6 @@ function parseRoute(pathname) {
     return { type: 'custom', term: decodeURIComponent(segments[1]), tab };
   }
 
-  if (segments[0] === 'prompt-generator') {
-    return { type: 'prompt-generator' };
-  }
-
   if (segments[0] === 'about') {
     return { type: 'about' };
   }

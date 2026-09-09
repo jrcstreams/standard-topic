@@ -2618,10 +2618,6 @@ export function renderDailyIntelligence(container, scope) {
         </article>`;
         }).join('')}
       </section>` : ''}
-      ${(unmatched && unmatched.length) ? `<section class="di-related">
-        <h3 class="di-lbl di-lbl--rule">Related Coverage</h3>
-        ${srcChips(unmatched.slice(0, 4), null)}
-      </section>` : ''}
 `;
   };
 

@@ -33510,3 +33510,86 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
 body.home-search #section-newsfeed .news-list .news-card.news-card--open[class][class] {
   border: 1.5px solid #b9c6e4 !important;
 }
+
+/* ═══ revamp1256 — nine fixes: arrows, seams, chips, spacing ════════════════ */
+
+/* ── (1) Prompts by Topic: the row arrow sat at the COLUMN edge ─────────────
+   The cells are grid tracks, and margin-left:auto pushed the chevron to the far
+   edge of its track — a long way from a short name like "Fintech", so the arrow
+   read as belonging to the next column rather than to its own row. Cap the row
+   at its content and let the arrow sit just past the name. */
+#content .ph-body .pdir .pdir-grid .pdir-cell[class] {
+  justify-content: flex-start;
+  gap: 10px;
+}
+#content .ph-body .pdir .pdir-grid .pdir-cell .pdir-cell-name[class] { flex: 0 1 auto; }
+#content .ph-body .pdir .pdir-grid .pdir-cell .pdir-cell-chev[class] {
+  margin-left: 0 !important;
+  flex: none;
+}
+
+/* ── (2) Featured Prompts: the open first row met the section rule ──────────
+   The list's first row carries a top border AND sits directly under the section
+   head's own rule, so an OPEN first prompt — which has its own tinted header —
+   pressed against a double line. Drop the row's border while it is open; the
+   section rule above it is already doing that job. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist > .aii-fi-acc:first-child.is-open,
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist > .aii-fi-acc:first-child.is-open > .aii-fi-accsum {
+  border-top: 0 !important;
+}
+#content .prompts-home--v2 .ph-featured:has(.aii-fi-acclist > .aii-fi-acc:first-child.is-open) .ph-sec-head {
+  border-bottom-color: transparent !important;
+}
+
+/* ── (5) The briefing: Today in Focus to Top Stories ────────────────────────
+   1238 set 8px on .di-focus, but the summary inside it carries its own bottom
+   margin, so the visible gap was the sum. Zero the last child's margin and let
+   the section's own spacing be the whole of it. */
+.di-focus[class][class][class][class][class][class] { margin-bottom: 4px !important; }
+.di-focus .di-summary[class][class] > *:last-child { margin-bottom: 0 !important; }
+.di-focus .di-summary[class][class][class] { margin-bottom: 0 !important; }
+
+/* ── (6) Featured Topics rows take their topic's colour ─────────────────────
+   These are the same control as the sidebar rows and the directory cells, and
+   were the one place still on the generic grey chip. Same 82% mix the sidebar
+   uses (revamp1218), white glyph. */
+#content .tfeat-grid .tfeat-item[style*="--tc"] .tfeat-ic[class] {
+  background: color-mix(in srgb, var(--tc) 82%, #fff) !important;
+  color: #fff !important;
+}
+
+/* ── (7) AI Briefings in tab mode: cards were touching ──────────────────────
+   `.dih-group--featured .dih-items { gap: 0 }` is right for the wide layout,
+   where the rows are separated by hairlines. In tab mode the same items render
+   as bordered cards, so zero gap left them edge-to-edge — and the first card
+   sat hard against the tab strip. */
+body.tt-on #content .dih .dih-group--featured .dih-items[class] {
+  gap: 10px !important;
+  row-gap: 10px !important;
+}
+body.tt-on #content .dih .dih-group--featured[class] { margin-top: 12px !important; }
+
+/* ── (9) The grey subnav ident gets the icon chip ───────────────────────────
+   Everywhere else the topic's glyph sits on a coloured square; in the grey
+   identity band it was a bare stroke. Topic pages take their own hue (the
+   ident carries --tc); every other page takes the shared section-header blue,
+   the same pair used by the page heads (revamp1207). */
+#sub-header .subnav-ident .subnav-ident-ico--chip[class] {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 9px !important;
+  background: #bcd0f5 !important;
+  color: #1e3a8a !important;
+  flex: none !important;
+}
+#sub-header .subnav-ident[style*="--tc"] .subnav-ident-ico--chip[class] {
+  background: color-mix(in srgb, var(--tc) 82%, #fff) !important;
+  color: #fff !important;
+}
+#sub-header .subnav-ident .subnav-ident-ico--chip[class] svg {
+  display: block !important;
+  width: 16px !important;
+  height: 16px !important;
+}
