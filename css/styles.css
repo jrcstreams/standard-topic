@@ -34567,17 +34567,15 @@ body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
   gap: 13px !important;
 }
 
-/* (c) */
+/* (c) — see revamp1283 for the vertical: these nudges were the error. */
 .tbh-titlebtn .tsp-ident-chev,
 .tsp-btn--herotitle .tsp-ident-chev {
   width: 28px !important; height: 28px !important;
   padding: 4px !important;
-  margin-top: -3px !important;
 }
 .tsp-btn--ident .tsp-ident-chev {
   width: 24px !important; height: 24px !important;
   padding: 4px !important;
-  margin-top: -1px !important;
 }
 @media (max-width: 900px) {
   .tsp-btn--ident .tsp-ident-chev { width: 22px !important; height: 22px !important; padding: 3px !important; }
@@ -34588,4 +34586,26 @@ body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
    — the row IS its top — so there it pads evenly. */
 .is-open:not(.is-hero-picker):not(.topic-bodyhead) .tsp-actions[class] {
   padding-top: 14px !important;
+}
+
+/* ═══ revamp1283 — the arrow's vertical, measured rather than guessed ═══════
+
+   1282 nudged these chips up off their box centre on the theory that the text
+   box carries descender space below the caps. Measured against the real
+   baseline — a zero-height inline-block reports it exactly — the correction
+   was already handled by the flex centring, and the nudge was the whole error:
+   -3px put the topic title's arrow 2.2px above the cap centre, and -1px put
+   the grey band's 1.3px above it on a phone.
+
+   With no nudge every chip lands within a pixel of the cap centre, which is as
+   close as a whole-pixel box can sit.
+
+   The other half of it is the mark itself: at the icon's native scale the
+   chevron drew 4px tall inside a 22px circle — 18% of it — so the circle read
+   as a blob that didn't sit on the line of anything. Scaling the mark inside
+   the chip (not the chip) gives it something to align by. */
+.tsp-ident-chev polyline {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1.45);
 }
