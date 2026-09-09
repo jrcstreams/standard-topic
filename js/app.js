@@ -685,7 +685,7 @@ function navDdTitleHTML(cfg) {
   const ic = cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : '';
   const spark = cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : '';
   const name = escapeHTML(cfg.title || '');
-  if (!cfg.pickerKey) return `${ic}${spark}${name}`;
+  if (!cfg.pickerKey) return `${ic}${spark}<span class="aii-nav-dd-titletx">${name}</span>`;
   const panelId = `tsp-panel-hero-${cfg.pickerKey}`;
   return `<span class="topic-subnav-picker is-page-picker is-ident-picker is-hero-picker" data-topic-picker>
       <button type="button" class="tsp-btn tsp-btn--herotitle" aria-expanded="false" aria-controls="${escapeAttr(panelId)}" aria-label="Change page">
@@ -1310,11 +1310,18 @@ function wirePromptsDropdown(panel, initialView) {
   const setHead = (title, sub) => {
     const t = panel.querySelector('.aii-nav-dd-title');
     if (t) {
-      // revamp1135 — preserve the page-title icon (textContent would wipe it,
-      // which is why the Prompts page showed no icon).
-      const ic = t.querySelector('.navdd-headic');
-      t.textContent = title;
-      if (ic) t.insertBefore(ic, t.firstChild);
+      // revamp1278e — write the NAME, not the head. Replacing the title's
+      // contents wiped whatever else the head carried: revamp1135 lost the
+      // page icon that way, and the page picker's chevron went the same way
+      // once the title started hosting it. Every title now renders its name in
+      // .aii-nav-dd-titletx, so switching views touches only that.
+      const tx = t.querySelector('.aii-nav-dd-titletx');
+      if (tx) tx.textContent = title;
+      else {
+        const ic = t.querySelector('.navdd-headic');
+        t.textContent = title;
+        if (ic) t.insertBefore(ic, t.firstChild);
+      }
     }
     const s = panel.querySelector('.aii-nav-dd-sub'); if (s) s.textContent = sub;
   };
