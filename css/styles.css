@@ -34097,12 +34097,9 @@ body.home-search .newsfeed-headrow[class] { min-height: 30px; display: flex; ali
    #section-newsfeed id and a body type selector put this above whatever was
    winning. The briefing head's 44px is its own stated height, so matching it
    is what makes both rules land on the same line. */
-body .topic-band #section-newsfeed .newsfeed-head[class][class],
-body.home-search #section-newsfeed .newsfeed-head[class][class] {
-  min-height: 44px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: flex-end !important;
+.topic-band #section-newsfeed .newsfeed-head,
+body.home-search #section-newsfeed .newsfeed-head {
+  padding-bottom: 15px !important;
 }
 
 /* (b) The Prompt Settings panel ran wider than the prompt text it belongs to.
