@@ -2992,7 +2992,7 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-banner"><div class="topic-banner-row home-ident-row">
         <div class="subnav-ident">
-          <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg></span>
+          <span class="subnav-ident-ico subnav-ident-ico--chip"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg></span>
           <span class="subnav-ident-name">Home</span>
         </div>
         ${pagePickerHTML('home', 'tsp-panel-page-home')}
@@ -3092,7 +3092,7 @@ function renderLayout(route) {
       <div class="topic-subnav-title">
         <div class="topic-subnav-inner">
           <div class="subnav-ident">
-            <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>
+            <span class="subnav-ident-ico subnav-ident-ico--chip"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>
             <span class="subnav-ident-name">AI Briefings</span>
           </div>
           ${pagePickerHTML('intelligence', 'tsp-panel-page-brief')}
@@ -4130,9 +4130,10 @@ function renderPageNavBar(kind) {
     // subnav no longer carries a Build Prompt action.
     ? ''
     : (kind === 'topics'
-      // revamp1047: Condensed/Expanded is now a single toggle (like "Include
-      // Sports Trends") — off = condensed, on = every subtopic list expanded.
-      ? '<button type="button" class="trend-sports-toggle pagenav-toggle" data-topics-expand role="switch" aria-checked="false" title="Expand every topic\'s subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>'
+      // revamp1259: no Expand all here. The All Topics section head carries the
+      // switch inline, and a second copy in the sticky band read as a separate
+      // setting rather than the same one.
+      ? ''
       // revamp1168: Trending's sports toggle rides in this band too. In tab mode
       // the page's blue hero is hidden, so the band IS the page title — and it's
       // sticky, which keeps the control reachable down the whole list. On the
@@ -4165,7 +4166,7 @@ function renderPageNavBar(kind) {
     <div class="topic-subnav-title">
       <div class="topic-subnav-inner">
         <div class="subnav-ident">
-          <span class="subnav-ident-ico${kind === 'trending' ? ' is-trend' : ''}">${ICONS[kind]}</span>
+          <span class="subnav-ident-ico subnav-ident-ico--chip${kind === 'trending' ? ' is-trend' : ''}">${ICONS[kind]}</span>
           <span class="subnav-ident-name">${name}</span>
         </div>
         ${action}

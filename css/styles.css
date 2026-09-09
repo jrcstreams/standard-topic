@@ -33707,3 +33707,67 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
 #sub-header.is-subnav {
   box-shadow: 0 1px 0 rgba(15, 26, 46, .06), 0 4px 12px -6px rgba(15, 26, 46, .16) !important;
 }
+
+/* ═══ revamp1259 — briefing grid rhythm, page-ident chips, Expand all ═══════
+
+   (1) Featured Briefings in tab mode: 10px between cards was still reading as
+   a stack rather than a set. */
+body.tt-on #content .dih .dih-group--featured .dih-items[class][class] {
+  gap: 16px !important;
+  row-gap: 16px !important;
+}
+
+/* (2) On the wide layout the grid's ROW gap comes from each card's own padding
+   while the COLUMN gap is a stated 1.6rem, so the two axes never matched — the
+   set read as three tall columns rather than a 3x2 grid. Both axes now use the
+   same measure, and the first row clears the section rule above it. */
+body:not(.tt-on) #content .dih .dih-group--featured .dih-items[class][class] {
+  gap: 18px !important;
+  column-gap: 18px !important;
+  row-gap: 18px !important;
+  padding-top: 6px !important;
+}
+/* Those cards are hairline-separated rows on the wide layout (revamp1106); with
+   a real gap between them the separator is what makes them look joined. */
+body:not(.tt-on) #content .dih .dih-group--featured .dih-item[class] {
+  border-bottom: 0 !important;
+  border: 1px solid #e6ebf3 !important;
+  border-radius: 12px !important;
+  padding: 15px 16px 16px !important;
+}
+
+/* (3) The page ident chip — Topics / Prompts / AI Briefings / Trending were the
+   bare-glyph half of revamp1256; only the topic pages had been converted. The
+   chip styling itself is already stated there; these just needed the class. */
+
+/* (4) "Expand all" beside its section head ────────────────────────────────
+   The head is a flex row with the toggle as the second child, so on a narrow
+   column the toggle wrapped ABOVE the subtext (it is a flex item, and the text
+   block wraps as a unit). Give the text block the whole row and let the toggle
+   fall beneath it, with real space either side; above 720px the two sit on one
+   line with the toggle aligned to the SUBTEXT's baseline rather than the block's
+   centre — which is what "vertically aligned with that subtext" means once the
+   title is twice the subtext's size. */
+.aiidd-pagehead[class] {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 16px;
+}
+.aiidd-pagehead[class] > .aiidd-pagehead-tx { flex: 1 1 100%; min-width: 0; }
+.aiidd-pagehead[class] > .aiidd-expandall { flex: 0 0 auto; margin-left: auto; }
+@media (min-width: 720px) {
+  /* One line while the subtext fits beside the toggle; the moment it needs two
+     lines the basis fails and the toggle drops — no width guessing. */
+  .aiidd-pagehead[class] > .aiidd-pagehead-tx { flex: 1 1 min(100%, 34rem); }
+}
+/* Same treatment for the Prompts-by-Topic head, which shares the pattern. */
+.ph-sec-head--hastoggle[class] { align-items: flex-end; gap: 10px 16px; flex-wrap: wrap; }
+.ph-sec-head--hastoggle[class] > .ph-sec-head-tx { flex: 1 1 min(100%, 34rem); min-width: 0; }
+.ph-sec-head--hastoggle[class] > .pdir-expandall { flex: 0 0 auto; margin-left: auto; }
+
+/* (5) A little air between a section head and its subtext — the title and the
+   line under it were tighter than the gap to the rule below, so the head read
+   as one dense block. */
+.aiidd-pagehead-sub[class] { margin-top: 7px !important; }
+.ph-sec-sub[class] { margin-top: 7px !important; }
