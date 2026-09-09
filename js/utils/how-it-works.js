@@ -39,31 +39,26 @@ const HOW_IT_WORKS_HTML = `
   <div class="di-how-panel" role="dialog" aria-modal="true" aria-label="How our AI works">
     <button type="button" class="di-how-x" data-how-close aria-label="Close">&times;</button>
     <h2 class="di-how-title">${SPARK}<span>How our AI works</span></h2>
-    <p class="di-how-lede">Every AI summary here is written from news articles published that day — not from the model's own memory. Here is the whole process.</p>
-
-    <ol class="di-how-steps">
-      <li><b>We collect the articles first.</b> Around 100 publishers, refreshed through the day. Before the AI writes anything, it is handed the real headlines, publishers, and dates for that subject.</li>
-      <li><b>It answers set questions.</b> Not "summarise this" — each summary follows a fixed structure: what happened, what to take from it, why it matters. Same shape every time, so it stays useful instead of rambling.</li>
-      <li><b>It checks the live web where that matters.</b> On the daily briefings and on recent stories, the model can search mid-write to confirm a fact or catch something that broke in the last hour.</li>
-      <li><b>The sources stay attached.</b> What it drew on is shown underneath. If a section shows no sources, it had none — we would rather show that than pad it.</li>
-    </ol>
+    <p class="di-how-lede">Three kinds of AI writing appear on this site. Each one is generated automatically, and each is written from real news articles rather than from whatever the model already knew.</p>
 
     <div class="di-how-surfaces">
       <section class="di-how-surface">
         <h3 class="di-how-surfacetitle">Daily briefings</h3>
-        <p>Written once each morning, around 5am ET, so everyone reads the same edition. Each one takes that topic's last 24 hours of headlines and live search, and gives you the three things in focus plus the day's main stories.</p>
+        <p>One per topic, written every morning at 5am ET. It reads the last day of coverage on that topic and gives you the three things in focus plus the main stories.</p>
       </section>
       <section class="di-how-surface">
         <h3 class="di-how-surfacetitle">Story insights</h3>
-        <p>Written the first time someone opens a story, then saved — so it is generated once, not per reader. It works from the article plus other coverage of the same event, which is where the background and the timeline come from.</p>
+        <p>Background on one specific headline: what led to it, what it means, what happens next. Written from that article plus other reporting on the same event.</p>
       </section>
       <section class="di-how-surface">
         <h3 class="di-how-surfacetitle">Trend summaries</h3>
-        <p>Explains what a spiking search actually is and why it is moving now. Built from current articles about it rather than from a live web search, so a brand-new trend still gets a real, sourced answer.</p>
+        <p>What a spiking search is actually about and why it is moving today. Written from current articles on the subject.</p>
       </section>
     </div>
 
-    <p class="di-how-foot"><b>It can still get things wrong.</b> Dates, numbers, and anything fast-moving are worth checking against the source — that is what the links under each summary are for. Treat this as a quick way in, not the last word.</p>
+    <p class="di-how-note">In all three, the sources sit underneath so you can check them. If a section lists none, none were found. We show that rather than filling the gap.</p>
+
+    <p class="di-how-foot"><b>It can get things wrong.</b> Check dates and figures against the linked reporting before relying on them.</p>
   </div>`;
 
 let installed = false;

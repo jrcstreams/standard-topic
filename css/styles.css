@@ -33728,7 +33728,10 @@ body:not(.tt-on) #content .dih .dih-group--featured .dih-items[class][class] {
   gap: 18px !important;
   column-gap: 18px !important;
   row-gap: 18px !important;
-  padding-top: 6px !important;
+  /* revamp1274: 6px read as the cards touching the section rule. 18px matches
+     the grid's own row gap, so the first row clears the rule by the same
+     measure that separates the rows from each other. */
+  padding-top: 18px !important;
 }
 /* Those cards are hairline-separated rows on the wide layout (revamp1106); with
    a real gap between them the separator is what makes them look joined. */
