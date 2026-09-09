@@ -34431,9 +34431,10 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 }
 .is-page-picker .tsp-actions[class] { border-radius: 0; }
 
-/* The topic pages' header is the same control at a larger size. */
+/* The topic pages' header is the same control at a larger size — but its panel
+   sits at z-index 400, not 70, so the title needs to clear that one instead. */
 .topic-bodyhead.is-open .tsp-panel[class] { padding-top: var(--tsp-head-h, 66px) !important; }
-.topic-bodyhead.is-open .tbh-titlebtn[class] { position: relative; z-index: 71; }
+.topic-bodyhead.is-open .tbh-titlebtn[class] { position: relative; z-index: 401; }
 
 /* A page name is never abbreviated in the grey band either. The clamp let the
    name shrink a few pixels under its own width and ellipsise with the whole
