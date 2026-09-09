@@ -34522,3 +34522,59 @@ body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
 
 /* Placeholder text, so it sits under the labels above it rather than level. */
 .navmenu-searchbtn-label[class] { font-size: 0.86rem; }
+
+/* ═══ revamp1282 — the close button, and the last of the two-cards drift ════
+
+   (a) The ✕ goes to the card's own top corner rather than riding the end of
+       the actions row, and reads as a control there: darker, bordered, on the
+       white it sits over.
+   (b) The topic title gets the page titles' padding. Its header measured its
+       title ROW where the page cards measure the trigger (fixed in app.js),
+       and the button itself was tighter — between them the topic card's
+       header sat noticeably shorter than every other card's.
+   (c) The arrow: a size down, and nudged up off the box centre. Centring it
+       on the text's box puts it low against the caps, because the box carries
+       the descender space under them. */
+
+/* (a) */
+.is-open .tsp-panel[class] { position: relative; }
+.is-open .tsp-close--row[class] {
+  position: absolute !important;
+  top: 13px !important; right: 14px !important;
+  margin: 0 !important;
+  width: 34px !important; height: 34px !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  border: 1px solid #c2cde0 !important;
+  color: #1f2d50 !important;
+  z-index: 72;
+}
+.is-open .tsp-close--row[class] svg { width: 18px !important; height: 18px !important; stroke-width: 2.2; }
+@media (hover: hover) {
+  .is-open .tsp-close--row[class]:hover {
+    background: #eef2f8 !important; border-color: #9fb0cd !important; color: #101d3b !important;
+  }
+}
+
+/* (b) */
+.tbh-titlebtn[class] {
+  padding: 8px 16px 8px var(--tsp-inset, 20px) !important;
+  margin-left: calc(-1 * var(--tsp-inset, 20px)) !important;
+  gap: 13px !important;
+}
+
+/* (c) */
+.tbh-titlebtn .tsp-ident-chev,
+.tsp-btn--herotitle .tsp-ident-chev {
+  width: 28px !important; height: 28px !important;
+  padding: 4px !important;
+  margin-top: -3px !important;
+}
+.tsp-btn--ident .tsp-ident-chev {
+  width: 24px !important; height: 24px !important;
+  padding: 4px !important;
+  margin-top: -1px !important;
+}
+@media (max-width: 900px) {
+  .tsp-btn--ident .tsp-ident-chev { width: 22px !important; height: 22px !important; padding: 3px !important; }
+}

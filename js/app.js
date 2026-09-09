@@ -2928,12 +2928,15 @@ function wireSubnavPicker(root) {
         // name and its description stranded above the menu, so the two read as
         // separate things; now the panel starts at the title's own top and
         // pads its content past it, and the name becomes the card's header.
-        const titleRow = picker.querySelector('.tbh-titlerow');
+        // revamp1282: measured off the TRIGGER, exactly as the page cards are
+        // below — the topic card was measuring its title ROW instead, which is
+        // why its header sat tighter than every other card's.
+        const titleBtn = picker.querySelector('.tbh-titlebtn');
         const subs = picker.querySelector('.tbh-subswrap') || picker.querySelector('.tbh-subs');
-        const anchor = titleRow || subs;
+        const anchor = titleBtn || subs;
         if (anchor) panelwrap.style.top = anchor.offsetTop + 'px';
         else panelwrap.style.top = '';
-        if (titleRow) picker.style.setProperty('--tsp-head-h', (titleRow.offsetHeight + 12) + 'px');
+        if (titleBtn) picker.style.setProperty('--tsp-head-h', (titleBtn.offsetHeight + 10) + 'px');
       }
       // Same for the page titles: the panel needs the trigger's height to know
       // how far to push its own content down. Measured per open, because the
