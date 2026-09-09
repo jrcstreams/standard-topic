@@ -33819,3 +33819,12 @@ body.tt-on #content .search-news-section .news-list > .news-card[class] {
   padding-left: 30px !important;
   padding-right: 30px !important;
 }
+
+/* revamp1261 — the open sidebar accordion's first row sat against its header.
+   The base padding is `0.05rem 0.5rem 0.4rem 1.9rem` — 0.05rem on top against
+   0.4rem at the bottom — so the last row cleared the card while the first was
+   pressed to the header band. Symmetric, so a hovered first row has the same
+   air above it that a hovered last row has below. */
+.navmenu-topic-acc[open] .navmenu-subtopics[class][class] {
+  padding-top: 0.4rem !important;
+}
