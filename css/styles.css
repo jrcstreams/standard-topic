@@ -33989,3 +33989,44 @@ body.home-search .newsfeed-head[class] { min-height: 44px; }
 body.home-search .newsfeed-head[class] > * { align-self: center; }
 .topic-band .newsfeed-headrow[class],
 body.home-search .newsfeed-headrow[class] { min-height: 30px; display: flex; align-items: center; }
+
+/* ═══ revamp1266 — measured fixes to the open prompt card and trend rows ════
+
+   Every value below came from reading the live page rather than inferring it.
+
+   (1) The open card's top border was rgb(45,55,72) while the other three were
+   rgba(47,77,158,.34). 1264 set border-top-WIDTH and STYLE but no colour, so
+   the top fell back to the element's `color` — a dark slate line across the top
+   of the card, which is the "header separated from the borders" in the report.
+   State the colour with the width. */
+#content .aii-fi-acclist > .aii-fi-acc.is-open[class][class],
+.home-side .aii-fi-acclist > .aii-fi-acc.is-open[class][class] {
+  border-top-color: rgba(47, 77, 158, .34) !important;
+}
+
+/* (2) The controls sat 16px LEFT of Edit: `.aii-pc-prevwrap` carries
+   `padding: 4px 16px 7px`, so Edit is inset 16px, while `.aii-pc-foot` is a
+   sibling outside that padding sitting flush to the card. Give the foot the
+   same inset so the whole control stack shares one left edge. */
+.aii-pc .aii-pc-foot[class][class][class] {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  margin-top: 0 !important;
+}
+
+/* (3) Edit to the controls measured 38px — they read as two unrelated blocks
+   rather than one control panel. 14px: enough that Edit still belongs to the
+   prompt above it, close enough that the row below is clearly its neighbour. */
+.aii-pc .aii-pc-prevwrap[class][class] { padding-bottom: 14px !important; }
+.aii-pc .aii-pc-tools[class][class][class] { padding-top: 0 !important; padding-bottom: 12px !important; }
+
+/* (4) The separator above an OPEN row, for the trend list too — the news
+   insight and the prompt accordions already do this, and the trend rows were
+   the one place still drawing a line into the top of an open card. */
+#home-trending .trend-card-grid > .trend-card:has(+ .trend-card.is-expanded),
+.aii-nav-dd-trending .trend-card-grid > .trend-card:has(+ .trend-card.is-expanded) {
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+}
+#home-trending .trend-card.is-expanded[class][class],
+.aii-nav-dd-trending .trend-card.is-expanded[class][class] { border-top-color: #b9c6e4 !important; }
