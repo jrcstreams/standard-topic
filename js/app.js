@@ -157,12 +157,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // re-fire the route while the page stays mounted — the live panel expands/
     // collapses in place instead of remounting.
     const isSearchRoute = route.type === 'search' || route.type === 'custom';
-    // revamp819: topics / trending / prompts render their OWN pages now, so
-    // they no longer map to home-with-an-overlay. Only the prompt builder is
-    // still an overlay route.
-    const isDdRoute = false;
-    const isOverlayRoute = isPromptRoute;
-    const baseRoute = isOverlayRoute ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
+    // revamp819: topics / trending / prompts render their OWN pages now.
+    // revamp1256: the prompt builder was the last overlay route — with it gone,
+    // no route maps to home-with-an-overlay and baseRoute is just the route.
+    const isOverlayRoute = false;
+    const baseRoute = route;
     const baseKey = baseRoute.type === 'home' ? 'home'
       : baseRoute.type === 'topic' ? 'topic:' + baseRoute.slug
       : isSearchRoute ? 'searchpage'
