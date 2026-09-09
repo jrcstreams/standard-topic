@@ -676,6 +676,28 @@ const PAGE_PICKER_ITEMS = [
   { key: 'trending', name: 'Trending', href: '#/trending' },
   { key: 'prompts', name: 'AI Prompts', href: '#/prompts' },
 ];
+// revamp1278: the panel on its own, so a hero can host a second instance of the
+// picker without duplicating the trigger markup.
+function pagePickerPanelOnlyHTML(activeKey, panelId) {
+  const ordered = PAGE_PICKER_ITEMS;
+  return `<div class="tsp-panelwrap">
+        <div class="tsp-panel" id="${escapeAttr(panelId)}" role="region" aria-label="Choose page">
+          <div class="tsp-panel-inner">
+            <div class="tsp-actions">
+              <a href="#/topics" class="tsp-foot-btn"${activeKey === 'topics' ? ' aria-current="page"' : ''}>${PAGE_PICKER_ICONS.topics || ''}<span>View All Topics</span></a>
+              <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary"${activeKey === 'search' ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
+              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${X_IC}</button>
+            </div>
+            <div class="tsp-scroll">
+              <div class="tsp-group-label">Choose Page</div>
+              <div class="tsp-grid">${ordered.map(cell).join('')}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
 function pagePickerHTML(activeKey, panelId = 'tsp-panel-page', identIcon = '', identName = '', identIconClass = '') {
   const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
   const X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
@@ -958,7 +980,15 @@ function openNavDropdown(cfg) {
     ? `<div class="aii-nav-dd-head aii-nav-dd-head-bare">${closeBtn}</div>`
     : `<div class="aii-nav-dd-head">
         <div class="aii-nav-dd-titles">
-          <div class="aii-nav-dd-title">${cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : ''}${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}${escapeHTML(cfg.title || '')}</div>
+          <div class="aii-nav-dd-title">${cfg.pickerKey
+            ? `<span class="topic-subnav-picker is-page-picker is-ident-picker is-hero-picker" data-topic-picker>
+                 <button type="button" class="tsp-btn tsp-btn--herotitle" aria-expanded="false" aria-controls="tsp-panel-hero-${escapeAttr(cfg.pickerKey)}" aria-label="Change page">
+                   ${cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : ''}${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}<span class="aii-nav-dd-titletx">${escapeHTML(cfg.title || '')}</span>
+                   ${TSP_IDENT_CHEV}
+                 </button>
+                 ${pagePickerPanelOnlyHTML(cfg.pickerKey, `tsp-panel-hero-${cfg.pickerKey}`)}
+               </span>`
+            : `${cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : ''}${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}${escapeHTML(cfg.title || '')}`}</div>
           ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
           ${cfg.headSearch ? `<form class="navdd-headsearch" data-navdd-headsearch role="search">
               <span class="navdd-headsearch-ic" aria-hidden="true">${NAVDD_SEARCH_IC}</span>
@@ -1007,6 +1037,9 @@ function openNavDropdown(cfg) {
     sc.addEventListener('scroll', updateNavDdFades, { passive: true });
   }
   wireNavDdCondense(panel);
+  // revamp1278: a hero picker rendered into the head needs the same wiring the
+  // subnav pickers get. Runs before cfg.wire so a caller can still override.
+  try { wireSubnavPicker(panel); } catch (_) {}
   if (typeof cfg.wire === 'function') cfg.wire(panel);
   panel.classList.add('is-open');
   overlay.classList.add('is-open');
@@ -1480,7 +1513,7 @@ function wirePromptsDropdown(panel, initialView) {
 
 function promptsNavDdCfg(view) {
   return {
-    key: 'prompts', triggerId: 'nav-prompts', className: 'aii-nav-dd-prompts',
+    key: 'prompts', pickerKey: 'prompts', triggerId: 'nav-prompts', className: 'aii-nav-dd-prompts',
     title: 'Prompts', ariaLabel: 'Prompts',
     subtitle: 'Ready-made prompts for every topic, or build your own.',
     icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
@@ -1621,7 +1654,7 @@ function topicsTreeHTML() {
 }
 function topicsNavDdCfg() {
   return {
-    key: 'topics', triggerId: 'nav-topics', className: 'aii-nav-dd-topics',
+    key: 'topics', pickerKey: 'topics', triggerId: 'nav-topics', className: 'aii-nav-dd-topics',
     title: 'Topics', ariaLabel: 'All topics',
     // The glyph the condensed bar shows beside the name (revamp810).
     icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
@@ -1667,7 +1700,7 @@ function openTopicsNavDropdown() { if (!(navDdOpen && navDdOpen.key === 'topics'
 function trendingNavDdCfg(expandQuery) {
   if (!expandQuery && pendingTrendingExpand) { expandQuery = pendingTrendingExpand; pendingTrendingExpand = null; }
   return {
-    key: 'trending', triggerId: 'nav-trending', className: 'aii-nav-dd-trending',
+    key: 'trending', pickerKey: 'trending', triggerId: 'nav-trending', className: 'aii-nav-dd-trending',
     title: 'Trending', ariaLabel: 'Trending now',
     icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
     subtitle: "What's being searched for right now.",

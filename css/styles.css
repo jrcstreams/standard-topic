@@ -34216,3 +34216,63 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 
 /* The retired separator between the ident and the old control. */
 .subnav-ident-sep { display: none !important; }
+
+/* ═══ revamp1278 — the hero title carries the picker too ════════════════════
+
+   The grey band got the control in 1277; this is the other half, so the same
+   affordance is there before you scroll. The picker wraps the existing title
+   markup, so the icon chip and type are untouched — it only adds the chevron
+   and a hit area. */
+.aii-nav-dd-title .is-hero-picker[class] {
+  display: inline-flex;
+  position: relative;
+  max-width: 100%;
+  min-width: 0;
+}
+.tsp-btn--herotitle[class] {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 5px 12px 5px 5px !important;
+  margin-left: -5px;
+  background: none !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  cursor: pointer;
+  min-width: 0; max-width: 100%;
+  /* inherit the title's own type rather than restating it — the heading size
+     varies across breakpoints and this must track it */
+  font: inherit !important;
+  color: inherit !important;
+  text-align: left;
+  transition: background .14s ease;
+}
+.tsp-btn--herotitle .aii-nav-dd-titletx {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.tsp-btn--herotitle .tsp-ident-chev {
+  flex: none; width: 20px; height: 20px; margin-top: 3px;
+  color: #7d8aa5;
+  transition: transform .18s cubic-bezier(.4, 0, .2, 1), color .14s ease;
+}
+@media (hover: hover) {
+  .tsp-btn--herotitle[class]:hover { background: rgba(15, 26, 46, .05) !important; }
+  .tsp-btn--herotitle[class]:hover .tsp-ident-chev { color: #2f4d9e; }
+}
+.tsp-btn--herotitle[class]:focus-visible { outline: 2px solid #2f4d9e; outline-offset: 3px; }
+.is-hero-picker.is-open .tsp-btn--herotitle .tsp-ident-chev { transform: rotate(180deg); }
+
+/* The hero panel drops from the title rather than spanning the band, so it
+   anchors to the trigger and stays inside the page's own column. */
+.is-hero-picker .tsp-panelwrap[class] {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  left: 0 !important;
+  right: auto !important;
+  width: min(760px, calc(100vw - 48px)) !important;
+  z-index: 70 !important;
+}
+.is-hero-picker .tsp-panel[class] {
+  box-shadow: 0 20px 44px -20px rgba(15, 23, 42, .34), 0 6px 14px -8px rgba(15, 23, 42, .2) !important;
+  border-radius: 14px !important;
+}
