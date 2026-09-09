@@ -7007,6 +7007,15 @@ function renderPage(route) {
   if (route.type === 'about') {
     content.innerHTML = `
       <div class="about-page">
+        <section class="page-hero page-hero--about">
+          <div class="page-hero-inner">
+            <div class="page-hero-headrow">
+              <span class="page-hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></span>
+              <h1 class="page-hero-title">About</h1>
+            </div>
+            <p class="page-hero-sub">What Standard Topic is, and how it works.</p>
+          </div>
+        </section>
         <p class="about-lead">Standard Topic follows news by subject instead of by publisher. Pick a topic and you get the day's reporting from across the web, a short AI briefing on what actually happened, and prompts you can run in your own AI if you want to go deeper.</p>
 
         <div class="about-section">
@@ -7053,6 +7062,15 @@ function renderPage(route) {
   if (route.type === 'terms') {
     content.innerHTML = `
       <div class="about-page terms-page">
+        <section class="page-hero page-hero--terms">
+          <div class="page-hero-inner">
+            <div class="page-hero-headrow">
+              <span class="page-hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></span>
+              <h1 class="page-hero-title">Terms &amp; Conditions</h1>
+            </div>
+            <p class="page-hero-sub">The rules for using this site, in plain language.</p>
+          </div>
+        </section>
         <p class="about-lead">These terms cover your use of standardtopic.com. Using the site means you accept them. They are written to be readable — nothing here is hidden in the length.</p>
         <p class="terms-updated">Last updated 9 September 2026</p>
 
