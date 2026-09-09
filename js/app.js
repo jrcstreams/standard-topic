@@ -678,6 +678,25 @@ const PAGE_PICKER_ITEMS = [
 ];
 // revamp1278: the panel on its own, so a hero can host a second instance of the
 // picker without duplicating the trigger markup.
+// revamp1278b: the head title, shared by the overlay dropdown and the real
+// page. A cfg with a pickerKey wraps its own title in a picker, so the name in
+// the hero opens the same menu the grey band's chevron does; without one it is
+// the plain title it always was.
+function navDdTitleHTML(cfg) {
+  const ic = cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : '';
+  const spark = cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : '';
+  const name = escapeHTML(cfg.title || '');
+  if (!cfg.pickerKey) return `${ic}${spark}${name}`;
+  const panelId = `tsp-panel-hero-${cfg.pickerKey}`;
+  return `<span class="topic-subnav-picker is-page-picker is-ident-picker is-hero-picker" data-topic-picker>
+      <button type="button" class="tsp-btn tsp-btn--herotitle" aria-expanded="false" aria-controls="${escapeAttr(panelId)}" aria-label="Change page">
+        ${ic}${spark}<span class="aii-nav-dd-titletx">${name}</span>
+        ${TSP_IDENT_CHEV}
+      </button>
+      ${pagePickerPanelOnlyHTML(cfg.pickerKey, panelId)}
+    </span>`;
+}
+
 function pagePickerPanelOnlyHTML(activeKey, panelId) {
   const ordered = PAGE_PICKER_ITEMS;
   return `<div class="tsp-panelwrap">
@@ -980,15 +999,7 @@ function openNavDropdown(cfg) {
     ? `<div class="aii-nav-dd-head aii-nav-dd-head-bare">${closeBtn}</div>`
     : `<div class="aii-nav-dd-head">
         <div class="aii-nav-dd-titles">
-          <div class="aii-nav-dd-title">${cfg.pickerKey
-            ? `<span class="topic-subnav-picker is-page-picker is-ident-picker is-hero-picker" data-topic-picker>
-                 <button type="button" class="tsp-btn tsp-btn--herotitle" aria-expanded="false" aria-controls="tsp-panel-hero-${escapeAttr(cfg.pickerKey)}" aria-label="Change page">
-                   ${cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : ''}${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}<span class="aii-nav-dd-titletx">${escapeHTML(cfg.title || '')}</span>
-                   ${TSP_IDENT_CHEV}
-                 </button>
-                 ${pagePickerPanelOnlyHTML(cfg.pickerKey, `tsp-panel-hero-${cfg.pickerKey}`)}
-               </span>`
-            : `${cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : ''}${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}${escapeHTML(cfg.title || '')}`}</div>
+          <div class="aii-nav-dd-title">${navDdTitleHTML(cfg)}</div>
           ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
           ${cfg.headSearch ? `<form class="navdd-headsearch" data-navdd-headsearch role="search">
               <span class="navdd-headsearch-ic" aria-hidden="true">${NAVDD_SEARCH_IC}</span>
@@ -1971,7 +1982,7 @@ function renderNavDdPage(container, cfg) {
         ${backBarHTML()}
         <div class="aii-nav-dd-head">
           <div class="aii-nav-dd-titles">
-            <div class="aii-nav-dd-title">${cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : ''}${escapeHTML(cfg.title || '')}</div>
+            <div class="aii-nav-dd-title">${navDdTitleHTML(cfg)}</div>
             ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
             ${Array.isArray(cfg.headButtons) && cfg.headButtons.length
               ? `<div class="aii-nav-dd-headbtns">${cfg.headButtonsLabel ? `<span class="aii-nav-dd-headbtns-label">${escapeHTML(cfg.headButtonsLabel)}</span>` : ''}${cfg.headButtons.map((b, i) => `<a href="${escapeAttr(b.href || '#')}" class="aii-nav-dd-headbtn${b.primary ? ' is-primary' : ''}" data-navdd-headbtn="${i}">${b.icon || ''}<span>${escapeHTML(b.label)}</span></a>`).join('')}</div>`
@@ -1985,6 +1996,7 @@ function renderNavDdPage(container, cfg) {
       </div>
     </div>`;
   const root = container.querySelector('.ndp');
+  try { wireSubnavPicker(root); } catch (_) {}
   try { if (typeof cfg.wire === 'function') cfg.wire(root); } catch (err) { console.error('page wire failed', cfg.key, err); }
   return root;
 }
@@ -2884,6 +2896,11 @@ function wireSubnavPicker(root) {
   root.querySelectorAll('[data-topic-picker]').forEach((picker, pickerIdx) => {
     const btn = picker.querySelector('.tsp-btn');
     if (!btn) return;
+    // revamp1278b: idempotent. Both the page shell and the cfg's own wire() may
+    // reach the same picker; without this the second pass adds a second click
+    // listener, the two toggles cancel, and the panel never opens.
+    if (picker.dataset.tspWired === '1') return;
+    picker.dataset.tspWired = '1';
     const isBodyHead = picker.classList.contains('topic-bodyhead');
     const panelwrap = picker.querySelector('.tsp-panelwrap');
     const setOpen = (on) => {
