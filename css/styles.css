@@ -34536,8 +34536,12 @@ body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
        on the text's box puts it low against the caps, because the box carries
        the descender space under them. */
 
-/* (a) */
+/* (a) — the ✕ measures from the CARD, so the card has to be its containing
+   block. .tsp-panel-inner was both positioned and clipping, which put the
+   button below the header and would have cut it off up there anyway; nothing
+   else inside the inner was positioned against it. */
 .is-open .tsp-panel[class] { position: relative; }
+.is-open .tsp-panel-inner[class] { position: static !important; overflow: visible !important; }
 .is-open .tsp-close--row[class] {
   position: absolute !important;
   top: 13px !important; right: 14px !important;
