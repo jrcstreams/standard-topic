@@ -697,27 +697,13 @@ function navDdTitleHTML(cfg) {
 }
 
 function pagePickerPanelOnlyHTML(activeKey, panelId) {
-  const ordered = PAGE_PICKER_ITEMS;
-  return `<div class="tsp-panelwrap">
-        <div class="tsp-panel" id="${escapeAttr(panelId)}" role="region" aria-label="Choose page">
-          <div class="tsp-panel-inner">
-            <div class="tsp-actions">
-              <a href="#/topics" class="tsp-foot-btn"${activeKey === 'topics' ? ' aria-current="page"' : ''}>${PAGE_PICKER_ICONS.topics || ''}<span>View All Topics</span></a>
-              <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary"${activeKey === 'search' ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
-              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${TSP_X_IC}</button>
-            </div>
-            <div class="tsp-scroll">
-              <div class="tsp-group-label">Choose Page</div>
-              <div class="tsp-grid">${ordered.map(cell).join('')}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>`;
-}
-
-function pagePickerHTML(activeKey, panelId = 'tsp-panel-page', identIcon = '', identName = '', identIconClass = '') {
   const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  const SEARCH_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+  // revamp1182: the topic picker leads with the topic you're on, because that
+  // list is a family of ~100 and the current one is the anchor you read the
+  // rest against. This list is four fixed destinations, so a stable order is
+  // worth more than an active-first one — Home always leads, and the checkmark
+  // still says where you are.
   const cell = (p) => {
     const active = p.key === activeKey;
     return `<a href="${p.href}" class="tsp-cell${active ? ' is-active' : ''}"${active ? ' aria-current="page"' : ''}>
@@ -726,30 +712,28 @@ function pagePickerHTML(activeKey, panelId = 'tsp-panel-page', identIcon = '', i
         ${active ? `<span class="tsp-cell-check" aria-hidden="true">${CHECK}</span>` : ''}
       </a>`;
   };
-  // revamp1182: the topic picker leads with the topic you're on, because that
-  // list is a family of ~100 and the current one is the anchor you read the
-  // rest against. This list is four fixed destinations, so a stable order is
-  // worth more than an active-first one — Home always leads, and the checkmark
-  // still says where you are.
-  const ordered = PAGE_PICKER_ITEMS;
-  return `
-    <div class="topic-subnav-picker is-page-picker is-ident-picker" data-topic-picker>
-      ${identTriggerHTML(identIcon, identName, { panelId, label: 'Change page', iconClass: identIconClass })}
-      <div class="tsp-panelwrap">
+  return `<div class="tsp-panelwrap">
         <div class="tsp-panel" id="${escapeAttr(panelId)}" role="region" aria-label="Choose page">
           <div class="tsp-panel-inner">
             <div class="tsp-actions">
               <a href="#/topics" class="tsp-foot-btn"${activeKey === 'topics' ? ' aria-current="page"' : ''}>${PAGE_PICKER_ICONS.topics || ''}<span>View All Topics</span></a>
-              <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary"${activeKey === 'search' ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
+              <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary"${activeKey === 'search' ? ' aria-current="page"' : ''}>${SEARCH_IC}<span>Search Custom Topic</span></a>
               <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${TSP_X_IC}</button>
             </div>
             <div class="tsp-scroll">
               <div class="tsp-group-label">Choose Page</div>
-              <div class="tsp-grid">${ordered.map(cell).join('')}</div>
+              <div class="tsp-grid">${PAGE_PICKER_ITEMS.map(cell).join('')}</div>
             </div>
           </div>
         </div>
-      </div>
+      </div>`;
+}
+
+function pagePickerHTML(activeKey, panelId = 'tsp-panel-page', identIcon = '', identName = '', identIconClass = '') {
+  return `
+    <div class="topic-subnav-picker is-page-picker is-ident-picker" data-topic-picker>
+      ${identTriggerHTML(identIcon, identName, { panelId, label: 'Change page', iconClass: identIconClass })}
+      ${pagePickerPanelOnlyHTML(activeKey, panelId)}
     </div>`;
 }
 
