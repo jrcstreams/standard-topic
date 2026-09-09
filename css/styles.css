@@ -34136,11 +34136,12 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
    picker: icon, name, and a small chevron that says so.
 
    Same control in both states — the grey band and, on topic pages, the hero. */
-#sub-header .topic-subnav-picker.is-ident-picker[class] {
+#sub-header .topic-subnav-picker.is-ident-picker[class][class] {
   display: flex;
   align-items: center;
   min-width: 0;
-  margin-right: auto;      /* the ident leads the row; actions sit after it */
+  margin-left: 0 !important;
+  margin-right: auto !important;
 }
 .tsp-btn--ident[class] {
   display: inline-flex !important;
