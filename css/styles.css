@@ -33964,6 +33964,7 @@ body.tt-on #content .search-news-section .news-list > .news-card > * { position:
    as a DIRECT child. In the topic-page prompt host it is nested deeper, so the
    rule matched nothing there — which is why the separator kept showing above
    the first Topic-Specific and Evergreen prompts. Drop the child combinators. */
+#content .aii-fi-sec:has(.aii-fi-acclist > .aii-fi-acc:first-child.is-open) .aii-fi-sechead[class][class],
 #content .aii-fi-sec:has(.aii-fi-acclist > .aii-fi-acc:first-child.is-open) .aii-fi-sectitle[class][class] {
   border-bottom-color: transparent !important;
 }
