@@ -1320,9 +1320,11 @@ function wirePromptsDropdown(panel, initialView) {
                 <span class="ph-sec-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
                 <h3 class="ph-sec-title">Prompts by Topic</h3>
               </div>
-              <p class="ph-sec-sub">Explore by category. Open one to run any prompt right here.</p>
+              <div class="ph-sec-subrow">
+                <p class="ph-sec-sub">Explore by category. Open one to run any prompt right here.</p>
+                <button type="button" class="trend-sports-toggle pdir-expandall" data-pdir-expandall role="switch" aria-checked="false" title="Expand every category"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
+              </div>
             </div>
-            <button type="button" class="trend-sports-toggle pdir-expandall" data-pdir-expandall role="switch" aria-checked="false" title="Expand every category"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
           </div>
           <div class="ph-body" data-ph-body></div>
         </section>
@@ -1547,9 +1549,11 @@ function topicsTreeHTML() {
         <span class="aiidd-head-ic" aria-hidden="true">${GRID_HEAD_IC}</span>
         <h2 class="aiidd-pagehead-title">All Topics</h2>
       </div>
-      <p class="aiidd-pagehead-sub">Expand a topic section to reach its parent topic and subtopic pages.</p>
+      <div class="aiidd-pagehead-subrow">
+        <p class="aiidd-pagehead-sub">Expand a topic section to reach its parent topic and subtopic pages.</p>
+        <button type="button" class="trend-sports-toggle aiidd-expandall" data-topics-expandall role="switch" aria-checked="false" title="Expand every topic's subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
+      </div>
     </div>
-    <button type="button" class="trend-sports-toggle aiidd-expandall" data-topics-expandall role="switch" aria-checked="false" title="Expand every topic's subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
   </header>`;
   // revamp1122 — Featured Topics: a handpicked set above All Topics.
   // revamp1205: exactly SIX, in a fixed order, so the grid fills its rows at

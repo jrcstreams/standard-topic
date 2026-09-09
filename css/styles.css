@@ -33579,8 +33579,13 @@ body.tt-on #content .dih .dih-group--featured[class] { margin-top: 12px !importa
   width: 28px !important;
   height: 28px !important;
   border-radius: 9px !important;
-  background: #bcd0f5 !important;
-  color: #1e3a8a !important;
+  /* The page hero shows this glyph on the navy chip with a white mark; the band
+     is the same identity, so it takes the same chip. #bcd0f5/#1e3a8a is the
+     SECTION-header pair (revamp1207) and reading it as a page identity was the
+     mistake — a topic page's band shows the topic's own colour, not a section
+     colour, and these pages should be consistent with that. */
+  background: #1e3a8a !important;
+  color: #fff !important;
   flex: none !important;
 }
 #sub-header .subnav-ident[style*="--tc"] .subnav-ident-ico--chip[class] {
@@ -33671,7 +33676,10 @@ body.tt-on #content .dih .dih-group--featured[class] { margin-top: 12px !importa
    card, poking out both sides. Hide the separator; keep the card's own edge.
    1256 removed both, which left the open card topless. */
 #content .aii-fi-acclist > .aii-fi-acc.is-open[class] {
-  border-top: 1px solid #cdd8ec !important;
+  border-top-width: 1px !important;
+  border-top-style: solid !important;
+  /* NO colour here on purpose: the card states its own border-color, and a
+     literal made the top edge a different shade from the other three. */
 }
 #content .aii-fi-acclist > .aii-fi-acc.is-open[class] > .aii-fi-accsum { border-top: 0 !important; }
 /* the separator that belongs to the row ABOVE the open one */
@@ -33771,3 +33779,43 @@ body:not(.tt-on) #content .dih .dih-group--featured .dih-item[class] {
    as one dense block. */
 .aiidd-pagehead-sub[class] { margin-top: 7px !important; }
 .ph-sec-sub[class] { margin-top: 7px !important; }
+
+/* ═══ revamp1260 — Expand all placement, and the row-mode hover bleed ═══════
+
+   (a) The toggle is now a SIBLING of the subtext inside one wrapping row
+   (markup in app.js), which is what makes both behaviours fall out of the
+   layout instead of being fought for:
+     - sharing a line, the subtext grows and pushes the toggle to the right,
+       and `align-items: baseline` sits it on the subtext's own baseline;
+     - out of room, the toggle wraps to the next line and starts at the LEFT,
+       because that is simply where a flex item begins its line.
+   No media query and no margin-left:auto — the previous version used both, and
+   auto is exactly what kept the toggle pinned right on its own line. */
+.aiidd-pagehead-subrow,
+.ph-sec-subrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 18px;
+}
+.aiidd-pagehead-subrow > .aiidd-pagehead-sub,
+.ph-sec-subrow > .ph-sec-sub { flex: 1 1 auto; min-width: 0; margin-bottom: 0 !important; }
+.aiidd-pagehead-subrow > .trend-sports-toggle,
+.ph-sec-subrow > .trend-sports-toggle { flex: 0 0 auto; margin-left: 0 !important; }
+/* The header itself goes back to a plain block — the row above handles it. */
+.aiidd-pagehead[class] { display: block !important; }
+.ph-sec-head--hastoggle[class] { display: block !important; }
+
+/* (b) In row mode a news card carries no border, so its hover fill is the only
+   thing marking the row — and it stopped 16px short on each side, exactly the
+   content gutter, leaving the fill floating inside the column. Bleed it out by
+   the gutter and put the padding back, so the text stays put and the fill runs
+   the full width of the feed. Scoped to the borderless row layout: the bordered
+   card wants its fill inside its own edges. */
+body.tt-on #content #section-newsfeed .news-list > .news-card[class],
+body.tt-on #content .search-news-section .news-list > .news-card[class] {
+  margin-left: -16px !important;
+  margin-right: -16px !important;
+  padding-left: 30px !important;
+  padding-right: 30px !important;
+}
