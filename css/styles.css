@@ -33533,7 +33533,6 @@ body.home-search #section-newsfeed .news-list .news-card.news-card--open[class][
    head's own rule, so an OPEN first prompt — which has its own tinted header —
    pressed against a double line. Drop the row's border while it is open; the
    section rule above it is already doing that job. */
-#content .prompts-home--v2 .ph-featured .aii-fi-acclist > .aii-fi-acc:first-child.is-open,
 #content .prompts-home--v2 .ph-featured .aii-fi-acclist > .aii-fi-acc:first-child.is-open > .aii-fi-accsum {
   border-top: 0 !important;
 }
