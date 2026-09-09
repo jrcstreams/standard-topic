@@ -1851,7 +1851,8 @@ ${Y}`,name:`${O.length} Selected Shortcuts`,iconKey:"",count:O.length}};e.queryS
           <h3>5. No accounts, and what we store</h3>
           <p>There are no user accounts. We do not ask for or hold your name, email address, or payment details.</p>
           <p>Preferences \u2014 your chosen AI model, saved settings \u2014 are stored in your browser's local storage on your own device and are never transmitted to us. Clearing your browser data removes them.</p>
-          <p>We use privacy-focused analytics that record aggregate page views without cookies and without profiling individual visitors. Our hosting provider keeps standard server logs, including IP addresses, for security and reliability.</p>
+          <p>We use Google Analytics to count page views and see which topics are read. It is configured with IP anonymisation on, and with Google Signals and ad personalisation turned off, so it is not used to build advertising profiles. It does set cookies in your browser, and Google acts as a data processor for that information under its own terms. You can block it with any standard content blocker or browser privacy setting without affecting how the site works.</p>
+          <p>Our hosting provider keeps standard server logs, including IP addresses, for security and reliability.</p>
         </div>
 
         <div class="about-section">
