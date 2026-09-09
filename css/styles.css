@@ -33593,3 +33593,90 @@ body.tt-on #content .dih .dih-group--featured[class] { margin-top: 12px !importa
   width: 16px !important;
   height: 16px !important;
 }
+
+/* ═══ revamp1257 — the prompt card's controls, and the seam above an open row ═
+
+   (a) The footer was a tinted strip carrying four buttons of equal weight, so
+   "Run Prompt" — the only one that leaves the page — competed with three
+   utilities. Now: the three utilities are one line of quiet links separated by
+   hairlines, then a rule, then Run alone. No tinted strip, so the whole card is
+   one surface instead of a panel with a tray bolted under it. */
+.aii-pc .aii-pc-foot[class] {
+  display: block !important;
+  background: none !important;
+  border-top: 0 !important;
+  padding: 0 !important;
+  margin: 14px 0 0 !important;
+}
+.aii-pc .aii-pc-tools[class] {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 0;
+  padding-bottom: 12px;
+}
+/* Hairlines BETWEEN the links, not around them — a ::before on each item after
+   the first, so the row reads as one group however it wraps. */
+.aii-pc .aii-pc-tools > * + * { position: relative; padding-left: 13px; margin-left: 13px; }
+.aii-pc .aii-pc-tools > * + *::before {
+  content: ""; position: absolute; left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 1px; height: 13px; background: #d7dEe9;
+}
+.aii-pc .aii-pc-tools .aii-pc-btn[class] {
+  background: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  color: #2f5fd0 !important;
+  gap: 6px !important;
+}
+.aii-pc .aii-pc-tools .aii-pc-btn[class] svg { width: 14px !important; height: 14px !important; }
+@media (hover: hover) {
+  .aii-pc .aii-pc-tools .aii-pc-btn[class]:hover { color: #1b3f9e !important; text-decoration: underline; background: none !important; }
+}
+/* "Model: Gemini" -> "Gemini". The row is a set of verbs; the label is implied
+   by the sparkle and by the menu it opens. */
+.aii-pc .aii-pc-tools .aii-pc-model-pre { display: none !important; }
+
+/* Run sits under its own rule, sized to its text — not a full-width bar, and no
+   play glyph: the arrow already says "this goes somewhere". */
+.aii-pc .aii-pc-runrow[class] {
+  border-top: 1px solid #e3e8f1;
+  padding-top: 12px;
+  display: flex;
+}
+.aii-pc .aii-pc-runrow .aii-pc-submit[class] {
+  width: auto !important;
+  flex: 0 0 auto !important;
+  padding: 8px 16px !important;
+  font-size: 0.83rem !important;
+  border-radius: 8px !important;
+  min-height: 0 !important;
+}
+.aii-pc .aii-pc-runrow .aii-pc-submit[class] svg { width: 14px !important; height: 14px !important; }
+
+/* (b) Edit reads as part of the prompt it edits, not as a fourth action —
+   off-grey, so it recedes until looked for. */
+.aii-pc .aii-pc-edit[class] {
+  color: #6b7688 !important;
+  font-weight: 550 !important;
+}
+@media (hover: hover) { .aii-pc .aii-pc-edit[class]:hover { color: #2f5fd0 !important; } }
+
+/* ── (c) The rule above an OPEN row ─────────────────────────────────────────
+   An open accordion is a card: it has its own border on all four sides. The
+   list's own separator above it then reads as a second line, wider than the
+   card, poking out both sides. Hide the separator; keep the card's own edge.
+   1256 removed both, which left the open card topless. */
+#content .aii-fi-acclist > .aii-fi-acc.is-open[class] {
+  border-top: 1px solid #cdd8ec !important;
+}
+#content .aii-fi-acclist > .aii-fi-acc.is-open[class] > .aii-fi-accsum { border-top: 0 !important; }
+/* the separator that belongs to the row ABOVE the open one */
+#content .aii-fi-acclist > .aii-fi-acc:has(+ .aii-fi-acc.is-open) { border-bottom-color: transparent !important; }
+#content .aii-fi-sec:has(> .aii-fi-acclist > .aii-fi-acc:first-child.is-open) .aii-fi-sectitle[class] {
+  border-bottom-color: transparent !important;
+}

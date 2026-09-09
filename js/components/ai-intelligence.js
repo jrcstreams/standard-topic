@@ -1888,13 +1888,17 @@ export function renderAIIntelligence(container, scope) {
         <button type="button" class="aii-pc-edit" data-pc-edit>${ICON_PENCIL}<span data-pc-edit-tx>Edit</span></button>
       </div>
       <div class="aii-pc-foot">
-        <span class="aii-pc-modelwrap">
-          <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${SPARK_MINI}<span><span class="aii-pc-model-pre">Model: </span><span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
-          <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${modelOpts}</div>
-        </span>
-        <button type="button" class="aii-pc-btn" data-pc-copy>${ICON_COPY_MINI}<span data-pc-copy-tx>Copy</span></button>
-        <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${ICON_GEAR}<span>Settings</span></button>
-        <button type="button" class="aii-pc-submit" data-pc-submit${m ? '' : ' disabled'} title="${escAttr(pcNoteText(m))}"><span>Run Prompt</span>${ICON_ARROW_R}</button>
+        <div class="aii-pc-tools">
+          <span class="aii-pc-modelwrap">
+            <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${SPARK_MINI}<span><span class="aii-pc-model-pre">Model: </span><span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
+            <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${modelOpts}</div>
+          </span>
+          <button type="button" class="aii-pc-btn" data-pc-copy>${ICON_COPY_MINI}<span data-pc-copy-tx>Copy</span></button>
+          <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${ICON_GEAR}<span>Settings</span></button>
+        </div>
+        <div class="aii-pc-runrow">
+          <button type="button" class="aii-pc-submit" data-pc-submit${m ? '' : ' disabled'} title="${escAttr(pcNoteText(m))}"><span>Run Prompt</span>${ICON_ARROW_R}</button>
+        </div>
       </div>
       <div class="aii-pc-set" data-pc-set hidden>
         <div class="aii-pc-sethead">

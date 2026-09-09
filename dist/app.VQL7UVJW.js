@@ -764,13 +764,17 @@ ${S}`),L.length?L.join(`
         <button type="button" class="aii-pc-edit" data-pc-edit>${Wc}<span data-pc-edit-tx>Edit</span></button>
       </div>
       <div class="aii-pc-foot">
-        <span class="aii-pc-modelwrap">
-          <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${Pd}<span><span class="aii-pc-model-pre">Model: </span><span data-pc-mn>${V(m?m.name:"AI")}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${Ee}</span></button>
-          <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${L}</div>
-        </span>
-        <button type="button" class="aii-pc-btn" data-pc-copy>${$o}<span data-pc-copy-tx>Copy</span></button>
-        <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${Ws}<span>Settings</span></button>
-        <button type="button" class="aii-pc-submit" data-pc-submit${m?"":" disabled"} title="${Q(ts(m))}"><span>Run Prompt</span>${Gc}</button>
+        <div class="aii-pc-tools">
+          <span class="aii-pc-modelwrap">
+            <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${Pd}<span><span class="aii-pc-model-pre">Model: </span><span data-pc-mn>${V(m?m.name:"AI")}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${Ee}</span></button>
+            <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${L}</div>
+          </span>
+          <button type="button" class="aii-pc-btn" data-pc-copy>${$o}<span data-pc-copy-tx>Copy</span></button>
+          <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${Ws}<span>Settings</span></button>
+        </div>
+        <div class="aii-pc-runrow">
+          <button type="button" class="aii-pc-submit" data-pc-submit${m?"":" disabled"} title="${Q(ts(m))}"><span>Run Prompt</span>${Gc}</button>
+        </div>
       </div>
       <div class="aii-pc-set" data-pc-set hidden>
         <div class="aii-pc-sethead">
