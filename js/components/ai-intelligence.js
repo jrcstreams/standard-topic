@@ -1953,18 +1953,27 @@ export function renderAIIntelligence(container, scope) {
       openModel(m, prompt);
       copyPrompt(prompt);
     });
-    // Copy Prompt — clipboard only, with a brief "Copied!" confirmation.
+    // Copy — clipboard only. revamp1279: the confirmation is the ICON turning
+    // into a tick, not the label. Swapping the text to "Copied!" changed the
+    // button's width mid-row and, on the way back, restored a longer label than
+    // the one that was there ("Copy" became "Copy Prompt"), so a copy left the
+    // control renamed.
     const copyBtn = host.querySelector('[data-pc-copy]');
+    let copyTimer = null;
     copyBtn && copyBtn.addEventListener('click', () => {
       copyPrompt(getPrompt());
-      const tx = copyBtn.querySelector('[data-pc-copy-tx]');
-      if (tx) {
-        tx.textContent = 'Copied!';
-        copyBtn.classList.add('is-copied');
-        // Restore the label WITH its responsive " Prompt" span so the ≤380px
-        // "Copy" collapse still works after a copy (#img646).
-        setTimeout(() => { tx.innerHTML = 'Copy<span class="aii-pc-btn-word"> Prompt</span>'; copyBtn.classList.remove('is-copied'); }, 1400);
-      }
+      const ico = copyBtn.querySelector('svg');
+      if (!ico) return;
+      if (copyTimer) { clearTimeout(copyTimer); }
+      else { copyBtn.dataset.pcCopyIco = ico.outerHTML; }
+      ico.outerHTML = ICON_CHECK_MINI;
+      copyBtn.classList.add('is-copied');
+      copyTimer = setTimeout(() => {
+        const now = copyBtn.querySelector('svg');
+        if (now && copyBtn.dataset.pcCopyIco) now.outerHTML = copyBtn.dataset.pcCopyIco;
+        copyBtn.classList.remove('is-copied');
+        copyTimer = null;
+      }, 1300);
     });
     // Edit — make the preview directly editable (toggle "Edit" ↔ "Done").
     const editBtn = host.querySelector('[data-pc-edit]');

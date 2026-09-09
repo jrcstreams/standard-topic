@@ -34247,17 +34247,15 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   text-align: left;
   transition: background .14s ease;
 }
-.tsp-btn--herotitle .aii-nav-dd-titletx {
-  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
+.tsp-btn--herotitle .aii-nav-dd-titletx { white-space: normal; }
 .tsp-btn--herotitle .tsp-ident-chev {
   flex: none; width: 20px; height: 20px; margin-top: 3px;
   color: #7d8aa5;
   transition: transform .18s cubic-bezier(.4, 0, .2, 1), color .14s ease;
 }
 @media (hover: hover) {
-  .tsp-btn--herotitle[class]:hover { background: rgba(15, 26, 46, .05) !important; }
-  .tsp-btn--herotitle[class]:hover .tsp-ident-chev { color: #2f4d9e; }
+  .tsp-btn--herotitle[class]:hover { background: rgba(15, 26, 46, .028) !important; }
+  .tsp-btn--herotitle[class]:hover .tsp-ident-chev { color: #1e3a8a; }
 }
 .tsp-btn--herotitle[class]:focus-visible { outline: 2px solid #2f4d9e; outline-offset: 3px; }
 .is-hero-picker.is-open .tsp-btn--herotitle .tsp-ident-chev { transform: rotate(180deg); }
@@ -34295,3 +34293,120 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 /* The hero title is the largest type on the page, so its panel can afford to
    sit a touch lower without the two reading as detached. */
 .is-pagehero-picker .tsp-panelwrap[class] { top: calc(100% + 10px) !important; }
+
+/* ═══ revamp1279 — the title picker, finished ═══════════════════════════════
+
+   1278 got the control onto every page title; this is the design work on it.
+   Six things, all one control:
+
+   (a) A page title is never abbreviated. The ellipsis came in with the trigger,
+       copied from the grey band where the name shares a narrow strip — but the
+       hero has the whole column, and "AI Briefin…" is not a page name.
+   (b) Room around it. The tint sat hard against the icon chip.
+   (c) Open, the trigger and the panel are ONE surface: same left edge, no gap,
+       and the corner between them squared off, so the menu reads as dropping
+       out of the name rather than floating near it.
+   (d) The panel overlays the page. It was painting under the feed because the
+       head's own stacking context sat at z-index 1.
+   (e) The page menu is styled like the topic menu it sits beside — the same
+       header band over the actions, the same weight, and the icon chips the
+       rest of the site uses.
+   (f) The grey band's identity keeps its coloured chip: 1277 moved the icon
+       into the button, and the chip rule was scoped to the wrapper it left. */
+
+/* (a) */
+.tsp-btn--herotitle .aii-nav-dd-titletx[class] {
+  white-space: nowrap; overflow: visible; text-overflow: clip;
+  flex: 0 0 auto; min-width: max-content;
+}
+/* (b) The compensating offset lives on the PICKER, not the button, so the
+   button's left edge, the panel's left edge and the page gutter are all one
+   line — that is what makes (c) land. */
+.is-hero-picker[class] {
+  position: relative; display: inline-flex;
+  max-width: 100%; min-width: 0;
+  margin-left: -10px;
+}
+.is-pagehero-picker[class] { margin-left: -12px; }
+.tsp-btn--herotitle[class] {
+  margin-left: 0 !important;
+  padding: 8px 16px 8px 10px !important;
+  gap: 13px !important;
+}
+.tsp-btn--pagehero[class] { padding: 10px 20px 10px 12px !important; gap: 14px !important; }
+.is-hero-picker .tsp-panelwrap[class] { left: 0 !important; }
+
+/* (c) */
+.is-hero-picker.is-open .tsp-btn--herotitle[class] {
+  background: #fff !important;
+  border-radius: 14px 14px 0 0 !important;
+}
+.is-hero-picker.is-open .tsp-panelwrap[class] { top: 100% !important; }
+.is-hero-picker.is-open .tsp-panel[class] { border-top-left-radius: 0 !important; }
+
+/* (d) */
+.aii-nav-dd-head[class] { position: relative; z-index: 60; }
+.aii-nav-dd-titles[class] { z-index: 3; }
+.page-hero[class] { position: relative; z-index: 60; }
+
+/* (e) The band full-bleeds by cancelling .tsp-panel-inner's own padding
+   (17px/32px), the way the topic sheet's does. Its top corners follow the
+   panel it caps: square where the panel hangs off the grey bar, rounded on
+   the hero — where the left one squares off again to meet the trigger. */
+.is-page-picker .tsp-actions[class] {
+  margin: -17px -32px 14px;
+  padding: 13px 32px;
+  background: #f3f5f9;
+  border-bottom: 1px solid #e4e9f2;
+  border-radius: 0;
+}
+.is-hero-picker .tsp-actions[class] { border-radius: 0 14px 0 0; }
+.is-page-picker .tsp-actions .tsp-foot-btn[class] { background: #fff; border: 1px solid #dfe5f0; }
+.is-page-picker .tsp-actions .tsp-close--row[class] { background: #fff; border: 1px solid #dfe5f0; border-radius: 9px; }
+.is-page-picker .tsp-cell-ic[class] {
+  width: 28px; height: 28px; border-radius: 9px;
+  background: color-mix(in srgb, #2f4d9e 12%, #fff);
+  color: #1e3a8a;
+}
+.is-page-picker .tsp-cell-ic svg { width: 16px; height: 16px; }
+.is-page-picker .tsp-cell-name[class] { font-weight: 600; color: #16224a; }
+/* The page you're on takes the solid chip, the same one its own hero shows. */
+.is-page-picker .tsp-cell.is-active .tsp-cell-ic[class] { background: #1e3a8a; color: #fff; }
+
+/* (f) */
+#sub-header .tsp-btn--ident .subnav-ident-ico--chip[class] {
+  display: inline-grid !important; place-items: center !important;
+  width: 28px !important; height: 28px !important;
+  border-radius: 9px !important;
+  background: #1e3a8a !important; color: #fff !important;
+  flex: none !important;
+}
+#sub-header .topic-subnav-picker[style*="--tc"] .tsp-btn--ident .subnav-ident-ico--chip[class] {
+  background: color-mix(in srgb, var(--tc) 82%, #fff) !important;
+}
+#sub-header .tsp-btn--ident .subnav-ident-ico--chip[class] svg {
+  display: block !important; width: 16px !important; height: 16px !important;
+}
+
+/* The briefings spark is drawn 2 units high in its own 24-unit box, so it
+   hangs above centre on the chip that the other page glyphs sit level in. */
+.page-hero--dih .page-hero-ic svg { transform: translateY(1.8px); }
+
+/* ── The prompt controls row ─────────────────────────────────────────────────
+   The divider after Copy was already written, and lost: the rule that strips
+   these buttons back to plain links sets `border: 0 !important`, which beat an
+   un-flagged border-right at equal specificity. */
+.aii-pc .aii-pc-tools[class] > [data-pc-copy][class] {
+  border-right: 1px solid #d9e0ea !important;
+}
+/* Copy confirms with its icon, not its label — a tick that settles in place,
+   so the row keeps its width and the button keeps its name. */
+.aii-pc .aii-pc-tools .aii-pc-btn.is-copied[class] { color: #15803d !important; }
+.aii-pc .aii-pc-tools .aii-pc-btn.is-copied[class] svg { animation: pc-copied .34s cubic-bezier(.2, .9, .3, 1.2); }
+@keyframes pc-copied {
+  from { transform: scale(.55); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aii-pc .aii-pc-tools .aii-pc-btn.is-copied[class] svg { animation: none; }
+}
