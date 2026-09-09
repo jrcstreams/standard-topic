@@ -33975,3 +33975,17 @@ body.tt-on #content .search-news-section .news-list > .news-card > * { position:
   border-radius: 12px !important;
   overflow: hidden !important;
 }
+
+/* revamp1265 — the two column heads land their rules on the same line.
+   Measured: both start at the same y, but "AI Briefing" carries a 30px icon
+   chip and "News Feed" is a bare title, so the briefing head came out 44px to
+   the news head's 41 and the two rules sat 3px apart down the whole page. Give
+   the news head's row the icon's own height as a floor — matching the tallest
+   content rather than hard-coding 44px, so both track together if the chip or
+   the type ever changes. */
+.topic-band .newsfeed-head[class],
+body.home-search .newsfeed-head[class] { min-height: 44px; }
+.topic-band .newsfeed-head[class] > *,
+body.home-search .newsfeed-head[class] > * { align-self: center; }
+.topic-band .newsfeed-headrow[class],
+body.home-search .newsfeed-headrow[class] { min-height: 30px; display: flex; align-items: center; }
