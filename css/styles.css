@@ -33619,12 +33619,7 @@ body.tt-on #content .dih .dih-group--featured[class] { margin-top: 12px !importa
 }
 /* Hairlines BETWEEN the links, not around them — a ::before on each item after
    the first, so the row reads as one group however it wraps. */
-.aii-pc .aii-pc-tools > * + * { position: relative; padding-left: 13px; margin-left: 13px; }
-.aii-pc .aii-pc-tools > * + *::before {
-  content: ""; position: absolute; left: 0; top: 50%;
-  transform: translateY(-50%);
-  width: 1px; height: 13px; background: #d7dEe9;
-}
+/* superseded by revamp1264 — see the end of this file */
 .aii-pc .aii-pc-tools .aii-pc-btn[class] {
   background: none !important;
   border: 0 !important;
@@ -33909,4 +33904,73 @@ body.tt-on #content .search-news-section .news-list > .news-card > * { position:
     z-index: 0;
     pointer-events: none;
   }
+}
+
+/* ═══ revamp1264 — the prompt tools row, made deterministic ════════════════
+
+   The dividers were drawn with `.aii-pc-tools > * + *::before`, and that
+   matched the model MENU as well — a hidden sibling that sits in the same row —
+   so a pipe appeared for an item with nothing after it, and on a narrow column
+   the row wrapped into the scrambled state (Settings alone, model and Copy
+   stacked beside it, two orphan pipes on the left).
+
+   Named controls instead of a positional selector: exactly the two items that
+   need a divider get a border, so nothing else in the row can acquire one, and
+   the row cannot reorder because it no longer wraps. */
+.aii-pc .aii-pc-tools[class][class] {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 0 !important;
+  padding-bottom: 11px !important;
+  min-width: 0;
+}
+.aii-pc .aii-pc-tools[class] > .aii-pc-modelwrap,
+.aii-pc .aii-pc-tools[class] > [data-pc-copy] {
+  border-right: 1px solid #d9e0ea;
+  padding-right: 12px !important;
+  margin-right: 12px !important;
+}
+.aii-pc .aii-pc-tools[class] > * { position: static !important; margin-left: 0 !important; padding-left: 0 !important; }
+.aii-pc .aii-pc-tools[class] > .aii-pc-modelwrap { position: relative !important; }  /* the menu anchors here */
+.aii-pc .aii-pc-tools[class] > *::before { content: none !important; }
+/* Let the labels shrink before the row ever has to wrap. */
+.aii-pc .aii-pc-tools[class] .aii-pc-btn { min-width: 0 !important; }
+.aii-pc .aii-pc-tools[class] .aii-pc-btn > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* The tools belong to the prompt above them, so they sit close to Edit rather
+   than floating midway between it and the rule. */
+.aii-pc .aii-pc-foot[class][class] { margin-top: 10px !important; }
+.aii-pc .aii-pc-edit[class][class][class] {
+  margin-top: 8px !important;
+  margin-bottom: 0 !important;
+}
+
+/* Edit stays off-grey. The rule shipped in 1257 is (0,3,0); something later
+   was repainting it accent blue, so this states it at (0,5,0). */
+.aii-pc .aii-pc-prevwrap .aii-pc-edit[class][class][class],
+.aii-pc .aii-pc-prevwrap .aii-pc-edit[class][class][class] span {
+  color: #6b7688 !important;
+}
+.aii-pc .aii-pc-prevwrap .aii-pc-edit[class][class][class] svg { color: #8b95a6 !important; }
+@media (hover: hover) {
+  .aii-pc .aii-pc-prevwrap .aii-pc-edit[class][class][class]:hover,
+  .aii-pc .aii-pc-prevwrap .aii-pc-edit[class][class][class]:hover span,
+  .aii-pc .aii-pc-prevwrap .aii-pc-edit[class][class][class]:hover svg { color: #2f5fd0 !important; }
+}
+
+/* ── The section rule above an OPEN first prompt ──────────────────────────
+   1257 scoped this with `.aii-fi-sec:has(> .aii-fi-acclist > …)`, i.e. the list
+   as a DIRECT child. In the topic-page prompt host it is nested deeper, so the
+   rule matched nothing there — which is why the separator kept showing above
+   the first Topic-Specific and Evergreen prompts. Drop the child combinators. */
+#content .aii-fi-sec:has(.aii-fi-acclist > .aii-fi-acc:first-child.is-open) .aii-fi-sectitle[class][class] {
+  border-bottom-color: transparent !important;
+}
+/* …and the open card keeps a full, even border on all four sides. */
+#content .aii-fi-acclist > .aii-fi-acc.is-open[class][class] {
+  border-top-width: 1px !important;
+  border-top-style: solid !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
 }
