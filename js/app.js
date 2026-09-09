@@ -533,6 +533,20 @@ function wireTopicHeroCondense() {
 // sibling/subtopic list with the active topic highlighted. Used in two places:
 //   • the mobile subnav button (default <900),
 //   • the DESKTOP body topic-header chevron + the on-scroll sticky bar (#70).
+// revamp1277: the identity IS the control. The old "Change Page" / "Change
+// Topic" button sat at the far right of the band, a long way from the page name
+// it changes, and read as a secondary action rather than as "this name is a
+// menu". The band's icon + title now open the picker, with a small chevron
+// after the name saying so. Shared by every subnav and by the page heroes.
+const TSP_IDENT_CHEV = '<svg class="tsp-ident-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+// icon + name + chevron, as the picker's trigger.
+function identTriggerHTML(iconSVG, name, { panelId, label, iconClass = '' }) {
+  return `<button type="button" class="tsp-btn tsp-btn--ident" aria-expanded="false" aria-controls="${escapeAttr(panelId)}" aria-label="${escapeAttr(label)}">
+      <span class="subnav-ident-ico subnav-ident-ico--chip${iconClass ? ' ' + iconClass : ''}" aria-hidden="true">${iconSVG}</span>
+      <span class="subnav-ident-name">${name}</span>
+      ${TSP_IDENT_CHEV}
+    </button>`;
+}
 const TSP_CHEV = '<svg class="tsp-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 // Small chevron for the "Change Topic" control (distinct class so it isn't hidden
 // by the topic-name chevron's ≤560 rule).
@@ -590,13 +604,8 @@ function topicPickerPanelHTML(topic, panelId) {
 // Mobile subnav button + desktop on-scroll sticky bar trigger (icon + name + chevron).
 function subnavPickerHTML(topic) {
   return `
-    <div class="topic-subnav-picker" data-topic-picker>
-      <button type="button" class="tsp-btn tsp-btn-browse" aria-expanded="false" aria-controls="tsp-panel-nav" aria-label="Change topic">
-        <span class="tsp-btn-lead">
-          <span class="tsp-btn-name">Change Topic</span>
-        </span>
-        ${TSP_CHEV}
-      </button>
+    <div class="topic-subnav-picker is-ident-picker" data-topic-picker${topicColorStyle(topic)}>
+      ${identTriggerHTML(topicIconSVG(topic.icon || 'globe', ''), escapeHTML(topic.name), { panelId: 'tsp-panel-nav', label: 'Change topic' })}
       ${topicPickerPanelHTML(topic, 'tsp-panel-nav')}
     </div>`;
 }
@@ -667,7 +676,7 @@ const PAGE_PICKER_ITEMS = [
   { key: 'trending', name: 'Trending', href: '#/trending' },
   { key: 'prompts', name: 'AI Prompts', href: '#/prompts' },
 ];
-function pagePickerHTML(activeKey, panelId = 'tsp-panel-page') {
+function pagePickerHTML(activeKey, panelId = 'tsp-panel-page', identIcon = '', identName = '', identIconClass = '') {
   const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
   const X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const cell = (p) => {
@@ -685,13 +694,8 @@ function pagePickerHTML(activeKey, panelId = 'tsp-panel-page') {
   // still says where you are.
   const ordered = PAGE_PICKER_ITEMS;
   return `
-    <div class="topic-subnav-picker is-page-picker" data-topic-picker>
-      <button type="button" class="tsp-btn tsp-btn-browse" aria-expanded="false" aria-controls="${escapeAttr(panelId)}" aria-label="Change page">
-        <span class="tsp-btn-lead">
-          <span class="tsp-btn-name">Change Page</span>
-        </span>
-        ${TSP_CHEV}
-      </button>
+    <div class="topic-subnav-picker is-page-picker is-ident-picker" data-topic-picker>
+      ${identTriggerHTML(identIcon, identName, { panelId, label: 'Change page', iconClass: identIconClass })}
       <div class="tsp-panelwrap">
         <div class="tsp-panel" id="${escapeAttr(panelId)}" role="region" aria-label="Choose page">
           <div class="tsp-panel-inner">
@@ -748,8 +752,11 @@ function topicBodyHeadHTML(topic) {
     <header class="topic-bodyhead topic-subnav-picker" data-topic-picker${topicColorStyle(topic)}>
       <a class="tbh-back" href="#/topics">${TBH_BACK_CHEV}<span>Topics</span></a>
       <div class="tbh-titlerow">
-        <span class="tbh-titleic" aria-hidden="true"${topicColorStyle(topic)}>${topicIconSVG(topic.icon || 'globe', '')}</span>
-        <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
+        <button type="button" class="tbh-titlebtn tsp-btn" aria-expanded="false" aria-controls="tsp-panel-body" aria-label="Change topic">
+          <span class="tbh-titleic" aria-hidden="true"${topicColorStyle(topic)}>${topicIconSVG(topic.icon || 'globe', '')}</span>
+          <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
+          ${TSP_IDENT_CHEV}
+        </button>
       </div>
       ${desc ? `<p class="tbh-desc">${escapeHTML(desc)}</p>` : ''}
       <div class="tbh-subswrap">
@@ -2892,9 +2899,14 @@ function wireSubnavPicker(root) {
     // replace the first.
     onResize(`subnav-picker-grid:${isBodyHead ? 'body' : 'subnav'}:${pickerIdx}`,
       () => { if (picker.classList.contains('is-open')) fitGridCols(); });
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      setOpen(!picker.classList.contains('is-open'));
+    picker.querySelectorAll('.tsp-btn').forEach((trigger) => {
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const on = !picker.classList.contains('is-open');
+        setOpen(on);
+        // every trigger reflects the state, not just the one that was clicked
+        picker.querySelectorAll('.tsp-btn').forEach((t) => t.setAttribute('aria-expanded', on ? 'true' : 'false'));
+      });
     });
     picker.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { setOpen(false); btn.focus(); }
@@ -3019,11 +3031,7 @@ function renderLayout(route) {
     subHeader.classList.add('is-subnav', 'is-home-ident', 'home-mode');
     subHeader.innerHTML = `
       <div class="topic-banner"><div class="topic-banner-row home-ident-row">
-        <div class="subnav-ident">
-          <span class="subnav-ident-ico subnav-ident-ico--chip"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg></span>
-          <span class="subnav-ident-name">Home</span>
-        </div>
-        ${pagePickerHTML('home', 'tsp-panel-page-home')}
+        ${pagePickerHTML('home', 'tsp-panel-page-home', `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>`, 'Home')}
       </div></div>
       <!-- revamp1025: the tab rows live INSIDE the subnav, not in #content.
            In #content they inherited four levels of padding, were clipped by
@@ -3075,11 +3083,6 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
         <div class="topic-subnav-inner">
-          <div class="subnav-ident"${topicColorStyle(topic)}>
-            <span class="subnav-ident-ico subnav-ident-ico--chip">${topicIconSVG(topic.icon || 'globe', '')}</span>
-            <span class="subnav-ident-name">${escapeHTML(topic.name)}</span>
-          </div>
-          <span class="subnav-ident-sep" aria-hidden="true"></span>
           ${subnavPickerHTML(topic)}
         </div>
       </div>
@@ -3119,11 +3122,7 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
         <div class="topic-subnav-inner">
-          <div class="subnav-ident">
-            <span class="subnav-ident-ico subnav-ident-ico--chip"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>
-            <span class="subnav-ident-name">AI Briefings</span>
-          </div>
-          ${pagePickerHTML('intelligence', 'tsp-panel-page-brief')}
+          ${pagePickerHTML('intelligence', 'tsp-panel-page-brief', `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg>`, 'AI Briefings')}
         </div>
       </div>${briefTabs}`;
     subHeader.querySelectorAll('[data-brief-subnav-tabs] [data-bview]').forEach((b) => b.addEventListener('click', () => {
@@ -4178,12 +4177,8 @@ function renderPageNavBar(kind) {
   subHeader.innerHTML = `
     <div class="topic-subnav-title">
       <div class="topic-subnav-inner">
-        <div class="subnav-ident">
-          <span class="subnav-ident-ico subnav-ident-ico--chip${kind === 'trending' ? ' is-trend' : ''}">${ICONS[kind]}</span>
-          <span class="subnav-ident-name">${name}</span>
-        </div>
+        ${pagePickerHTML(kind === 'topics' ? 'topics' : kind, `tsp-panel-page-${kind}`, ICONS[kind], name, kind === 'trending' ? 'is-trend' : '')}
         ${action}
-        ${pagePickerHTML(kind === 'topics' ? 'topics' : kind, `tsp-panel-page-${kind}`)}
       </div>
     </div>${promptsTabs}`;
   wireSubnavPicker(subHeader);

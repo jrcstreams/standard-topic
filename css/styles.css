@@ -34127,3 +34127,91 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   min-height: 0 !important;
 }
 @media (hover: hover) { .about-inline-link[class]:hover { color: #1b3f9e !important; } }
+
+/* ═══ revamp1277 — the page name IS the picker ══════════════════════════════
+
+   The old "Change Page" / "Change Topic" control sat at the far right of the
+   grey band, a long way from the name it changes, and read as a secondary
+   action rather than as "this name is a menu". The identity now opens the
+   picker: icon, name, and a small chevron that says so.
+
+   Same control in both states — the grey band and, on topic pages, the hero. */
+#sub-header .topic-subnav-picker.is-ident-picker[class] {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  margin-right: auto;      /* the ident leads the row; actions sit after it */
+}
+.tsp-btn--ident[class] {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 4px 8px 4px 4px !important;
+  margin-left: -4px;       /* the chip's own inset, so the row still starts flush */
+  background: none !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  cursor: pointer;
+  min-width: 0;
+  max-width: 100%;
+  font-family: var(--font-family);
+  transition: background .14s ease;
+}
+.tsp-btn--ident[class] .subnav-ident-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The chevron sits with the NAME, not at the end of the row, so it reads as
+   part of the title rather than as a separate control. */
+.tsp-btn--ident .tsp-ident-chev {
+  flex: none;
+  color: #6b7a96;
+  margin-left: -2px;
+  transition: transform .18s cubic-bezier(.4, 0, .2, 1), color .14s ease;
+}
+@media (hover: hover) {
+  .tsp-btn--ident[class]:hover { background: rgba(15, 26, 46, .055) !important; }
+  .tsp-btn--ident[class]:hover .tsp-ident-chev { color: #2f4d9e; }
+}
+.tsp-btn--ident[class]:focus-visible {
+  outline: 2px solid #2f4d9e; outline-offset: 2px;
+}
+.topic-subnav-picker.is-open .tsp-btn--ident .tsp-ident-chev { transform: rotate(180deg); }
+
+/* ── The hero on a topic page carries the same control ───────────────────── */
+.tbh-titlebtn[class] {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 4px 10px 4px 4px !important;
+  margin-left: -4px;
+  background: none !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  cursor: pointer;
+  text-align: left;
+  max-width: 100%;
+  min-width: 0;
+  transition: background .14s ease;
+}
+.tbh-titlebtn[class] .tbh-title { margin: 0 !important; min-width: 0; }
+.tbh-titlebtn .tsp-ident-chev {
+  flex: none;
+  color: #7d8aa5;
+  /* the hero title is large, so the chevron scales with it and sits on the
+     title's optical centre rather than its box centre */
+  width: 20px; height: 20px;
+  margin-top: 2px;
+  transition: transform .18s cubic-bezier(.4, 0, .2, 1), color .14s ease;
+}
+@media (hover: hover) {
+  .tbh-titlebtn[class]:hover { background: rgba(15, 26, 46, .05) !important; }
+  .tbh-titlebtn[class]:hover .tsp-ident-chev { color: #2f4d9e; }
+}
+.tbh-titlebtn[class]:focus-visible { outline: 2px solid #2f4d9e; outline-offset: 3px; }
+.topic-bodyhead.is-open .tbh-titlebtn .tsp-ident-chev { transform: rotate(180deg); }
+
+/* The retired separator between the ident and the old control. */
+.subnav-ident-sep { display: none !important; }
