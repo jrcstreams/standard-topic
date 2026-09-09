@@ -681,6 +681,33 @@ const PAGE_PICKER_ITEMS = [
 // page. A cfg with a pickerKey wraps its own title in a picker, so the name in
 // the hero opens the same menu the grey band's chevron does; without one it is
 // the plain title it always was.
+// revamp1278f: the .page-hero head. AI Briefings, About and Terms use this hero
+// rather than the nav-dd head, so they need their own version of the same
+// control — the title opens the page picker, and the icon rides inside the
+// button so the two move together.
+function pageHeroHeadHTML(iconSVG, title, pickerKey) {
+  const ic = `<span class="page-hero-ic" aria-hidden="true">${iconSVG}</span>`;
+  if (!pickerKey) {
+    return `<div class="page-hero-headrow">
+            ${ic}
+            <h1 class="page-hero-title">${escapeHTML(title)}</h1>
+          </div>`;
+  }
+  const panelId = `tsp-panel-hero-${pickerKey}`;
+  return `<div class="page-hero-headrow">
+            <span class="topic-subnav-picker is-page-picker is-ident-picker is-hero-picker is-pagehero-picker" data-topic-picker>
+              <h1 class="page-hero-title">
+                <button type="button" class="tsp-btn tsp-btn--herotitle tsp-btn--pagehero" aria-expanded="false" aria-controls="${escapeAttr(panelId)}" aria-label="Change page">
+                  ${ic}
+                  <span class="aii-nav-dd-titletx">${escapeHTML(title)}</span>
+                  ${TSP_IDENT_CHEV}
+                </button>
+              </h1>
+              ${pagePickerPanelOnlyHTML(pickerKey, panelId)}
+            </span>
+          </div>`;
+}
+
 function navDdTitleHTML(cfg) {
   const ic = cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : '';
   const spark = cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : '';
@@ -2240,10 +2267,7 @@ function renderIntelligenceHub(container) {
       ${backBarHTML()}
       <section class="page-hero page-hero--dih">
         <div class="page-hero-inner">
-          <div class="page-hero-headrow">
-            <span class="page-hero-ic" aria-hidden="true">${AIB_HERO_IC}</span>
-            <h1 class="page-hero-title">AI Briefings</h1>
-          </div>
+          ${pageHeroHeadHTML(AIB_HERO_IC, 'AI Briefings', 'intelligence')}
           <p class="page-hero-sub">A daily briefing on every topic: the big picture, what changed, and why it matters.</p>
         </div>
       </section>
@@ -2327,6 +2351,8 @@ function renderIntelligenceHub(container) {
         <a class="dih-foot-cta" href="#/topics">Explore all topics${SUBPAGE_ARROW}</a>
       </aside>
     </div>`;
+
+  try { wireSubnavPicker(container); } catch (_) {}
 
   // revamp824 — the legend jumps for real. A bare "#dih-slug" anchor left the
   // scroll to the browser, which puts the heading UNDER the fixed nav + sticky
@@ -7043,10 +7069,7 @@ function renderPage(route) {
       <div class="about-page">
         <section class="page-hero page-hero--about">
           <div class="page-hero-inner">
-            <div class="page-hero-headrow">
-              <span class="page-hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></span>
-              <h1 class="page-hero-title">About</h1>
-            </div>
+            ${pageHeroHeadHTML('<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>', 'About', 'about')}
             <p class="page-hero-sub">What Standard Topic is, and how it works.</p>
           </div>
         </section>
@@ -7090,6 +7113,7 @@ function renderPage(route) {
           <p>See the <a href="#/terms">Terms &amp; Conditions</a> for the legal detail.</p>
         </div>
       </div>`;
+    try { wireSubnavPicker(content); } catch (_) {}
     return;
   }
 
@@ -7098,10 +7122,7 @@ function renderPage(route) {
       <div class="about-page terms-page">
         <section class="page-hero page-hero--terms">
           <div class="page-hero-inner">
-            <div class="page-hero-headrow">
-              <span class="page-hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></span>
-              <h1 class="page-hero-title">Terms &amp; Conditions</h1>
-            </div>
+            ${pageHeroHeadHTML('<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>', 'Terms & Conditions', 'terms')}
             <p class="page-hero-sub">The rules for using this site, in plain language.</p>
           </div>
         </section>
@@ -7164,6 +7185,7 @@ function renderPage(route) {
           <p>These terms may be updated; the date above shows the current version, and continuing to use the site means accepting the version in force. For questions, corrections, or removal requests, open an issue on the <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer">GitHub repository</a>.</p>
         </div>
       </div>`;
+    try { wireSubnavPicker(content); } catch (_) {}
     return;
   }
 

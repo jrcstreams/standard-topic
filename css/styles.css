@@ -34223,7 +34223,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
    affordance is there before you scroll. The picker wraps the existing title
    markup, so the icon chip and type are untouched — it only adds the chevron
    and a hit area. */
-.aii-nav-dd-title .is-hero-picker[class] {
+.is-hero-picker[class] {
   display: inline-flex;
   position: relative;
   max-width: 100%;
@@ -34276,3 +34276,22 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   box-shadow: 0 20px 44px -20px rgba(15, 23, 42, .34), 0 6px 14px -8px rgba(15, 23, 42, .2) !important;
   border-radius: 14px !important;
 }
+
+/* ═══ revamp1278f — the picker on the .page-hero pages ══════════════════════
+   AI Briefings, About and Terms build their title from .page-hero rather than
+   the nav-dd head. Same control, one size up: the icon now sits inside the
+   button, so the button has to carry the headrow's own gap. */
+.is-pagehero-picker .page-hero-title[class] { margin: 0; }
+.tsp-btn--pagehero[class] {
+  gap: 12px !important;
+  padding: 4px 10px 4px 4px !important;
+  margin-left: -4px;
+  border-radius: 14px !important;
+}
+.tsp-btn--pagehero .tsp-ident-chev {
+  width: 22px; height: 22px; margin-top: 2px;
+  stroke-width: 2.4;
+}
+/* The hero title is the largest type on the page, so its panel can afford to
+   sit a touch lower without the two reading as detached. */
+.is-pagehero-picker .tsp-panelwrap[class] { top: calc(100% + 10px) !important; }
