@@ -33828,3 +33828,53 @@ body.tt-on #content .search-news-section .news-list > .news-card[class] {
 .navmenu-topic-acc[open] .navmenu-subtopics[class][class] {
   padding-top: 0.4rem !important;
 }
+
+/* ═══ revamp1262 — Expand all alignment, and a real transition on the band ══
+
+   (a) The toggle carries `padding: 4px 6px`, so even with its BOX flush to the
+   row (which it measured as), its LABEL started 6px in — and the eye aligns
+   text to text, not boxes. Zero the horizontal padding inside these rows so the
+   label's left edge is the subtext's left edge when it wraps.
+
+   The 4px of vertical padding was also what threw the shared-line case off:
+   `align-items: baseline` aligns the button's baseline, and that padding sits
+   above it. Removed, with the hit area restored by the row's own gap. */
+.aiidd-pagehead-subrow > .trend-sports-toggle[class],
+.ph-sec-subrow > .trend-sports-toggle[class] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+/* Keep the label and its track on the subtext's own line box. */
+.aiidd-pagehead-subrow,
+.ph-sec-subrow { align-items: baseline; }
+.aiidd-pagehead-subrow > .trend-sports-toggle[class] .trend-sports-toggle-track,
+.ph-sec-subrow > .trend-sports-toggle[class] .trend-sports-toggle-track { align-self: center; }
+
+/* ── (b) The sticky band fades in ─────────────────────────────────────────
+   The fade rule that exists lives in `@media (hover:hover) and
+   (max-width:1023.98px)` — so on the desktop layout the band had NO transition
+   at all: measured `transition: none`, opacity pinned at 1, and only
+   `visibility` flipping. A binary switch, which is exactly "it just appears".
+
+   Give it the same treatment at every width: fade and a short rise. visibility
+   is transitioned too so it can't cut the fade off — going out it holds until
+   the opacity has finished, coming in it flips immediately. */
+@media (min-width: 900px) {
+  body.app-mode:not(.home-mode) #sub-header.is-subnav[class][class] {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity .22s ease, transform .26s cubic-bezier(.4, 0, .2, 1), visibility 0s linear .22s;
+  }
+  body.app-mode:not(.home-mode).topic-hero-condensed #sub-header.is-subnav[class][class] {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity .22s ease, transform .26s cubic-bezier(.4, 0, .2, 1), visibility 0s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.app-mode:not(.home-mode) #sub-header.is-subnav[class][class] { transition: none !important; transform: none !important; }
+}
