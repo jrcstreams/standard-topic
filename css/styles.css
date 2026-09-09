@@ -34582,3 +34582,10 @@ body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
 @media (max-width: 900px) {
   .tsp-btn--ident .tsp-ident-chev { width: 22px !important; height: 22px !important; padding: 3px !important; }
 }
+
+/* revamp1282c: the actions row's 4px top belongs to the cards where a title
+   strip sits above it and supplies the gap. The grey band's card has no strip
+   — the row IS its top — so there it pads evenly. */
+.is-open:not(.is-hero-picker):not(.topic-bodyhead) .tsp-actions[class] {
+  padding-top: 14px !important;
+}
