@@ -33812,13 +33812,8 @@ body:not(.tt-on) #content .dih .dih-group--featured .dih-item[class] {
    the gutter and put the padding back, so the text stays put and the fill runs
    the full width of the feed. Scoped to the borderless row layout: the bordered
    card wants its fill inside its own edges. */
-body.tt-on #content #section-newsfeed .news-list > .news-card[class],
-body.tt-on #content .search-news-section .news-list > .news-card[class] {
-  margin-left: -16px !important;
-  margin-right: -16px !important;
-  padding-left: 30px !important;
-  padding-right: 30px !important;
-}
+/* revamp1263 — replaced below: a ::before paints the bleed instead, so the
+   card's own box (and therefore the open insight panel) never moves. */
 
 /* revamp1261 — the open sidebar accordion's first row sat against its header.
    The base padding is `0.05rem 0.5rem 0.4rem 1.9rem` — 0.05rem on top against
@@ -33877,4 +33872,41 @@ body.tt-on #content .search-news-section .news-list > .news-card[class] {
 }
 @media (prefers-reduced-motion: reduce) {
   body.app-mode:not(.home-mode) #sub-header.is-subnav[class][class] { transition: none !important; transform: none !important; }
+}
+
+/* ═══ revamp1263 — the row hover bleeds; the CARD does not ═════════════════
+
+   1260 got this wrong by moving the card's own box: negative margins plus
+   +30px padding. That made the OPEN card full-bleed too, and the extra padding
+   pushed the insight panel's content inward — the stray white gutter inside the
+   panel was that padding, not a missing border.
+
+   The fill is the only thing that should extend. A ::before painted 16px past
+   each edge does that while the box, its content and the open panel stay
+   exactly where they were. Same mechanism the homepage trending rows use
+   (revamp1169), and for the same reason.
+
+   Scoped to :not(.news-card--open): once a card is open it is a bordered panel
+   at content width, and a fill running past its border would be wrong. */
+body.tt-on #content #section-newsfeed .news-list > .news-card,
+body.tt-on #content .search-news-section .news-list > .news-card { position: relative; }
+body.tt-on #content #section-newsfeed .news-list > .news-card > *,
+body.tt-on #content .search-news-section .news-list > .news-card > * { position: relative; z-index: 1; }
+
+@media (hover: hover) {
+  /* The card paints nothing itself — the pseudo-element carries the whole fill,
+     so there is no seam where the two would meet. */
+  body.tt-on #content #section-newsfeed .news-list > .news-card:not(.news-card--open):hover[class][class],
+  body.tt-on #content .search-news-section .news-list > .news-card:not(.news-card--open):hover[class][class] {
+    background: transparent !important;
+  }
+  body.tt-on #content #section-newsfeed .news-list > .news-card:not(.news-card--open):hover::before,
+  body.tt-on #content .search-news-section .news-list > .news-card:not(.news-card--open):hover::before {
+    content: '';
+    position: absolute;
+    inset: 0 -16px;
+    background: color-mix(in srgb, var(--color-primary) 4%, #fff);
+    z-index: 0;
+    pointer-events: none;
+  }
 }
