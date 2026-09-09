@@ -34097,8 +34097,7 @@ body.home-search .newsfeed-headrow[class] { min-height: 30px; display: flex; ali
    #section-newsfeed id and a body type selector put this above whatever was
    winning. The briefing head's 44px is its own stated height, so matching it
    is what makes both rules land on the same line. */
-.topic-band #section-newsfeed .newsfeed-head,
-body.home-search #section-newsfeed .newsfeed-head {
+body:not(.tt-on) .topic-band .topic-home .newsfeed-head[class] {
   padding-bottom: 15px !important;
 }
 
