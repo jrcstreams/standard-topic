@@ -34849,3 +34849,16 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
 @media (hover: hover) {
   .trending-topics-viewall:hover { color: #1b3f9e; text-decoration: underline; }
 }
+
+/* revamp1292b: five, not three. Three older caps trimmed this list to 3 for a
+   rail stacked under the feed; above the feed it is a section of its own and
+   five is the number the layout was drawn for. Restated at every width those
+   caps used so none of them wins on a technicality. */
+@media (max-width: 1023.98px) {
+  body.home-search #home-trending .trend-card-grid .trend-card:nth-child(n+4),
+  .home-trending .trend-card-grid > .trend-card:nth-child(n+4),
+  .home-v2 #home-trending .trend-card:nth-of-type(n+4) { display: block !important; }
+  body.home-search #home-trending .trend-card-grid .trend-card:nth-child(n+6),
+  .home-trending .trend-card-grid > .trend-card:nth-child(n+6),
+  .home-v2 #home-trending .trend-card:nth-of-type(n+6) { display: none !important; }
+}
