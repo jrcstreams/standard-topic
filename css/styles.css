@@ -34862,3 +34862,42 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
   .home-trending .trend-card-grid > .trend-card:nth-child(n+6),
   .home-v2 #home-trending .trend-card:nth-of-type(n+6) { display: none !important; }
 }
+
+/* ═══ revamp1293 — topic pages lead with the briefing ═══════════════════════
+
+   The briefing and the prompts card shared a row above the feed, which made
+   the briefing half a page wide and pushed the news — the thing most people
+   came for — below both. Now the briefing runs the full width, and the feed
+   and prompts share the row under it: news in the main column, prompts in the
+   rail, the way the topic pages already read on the wide layout.
+
+   And the tab strip is down to two. AI Briefing was a tab of its own for a
+   card that now leads the Feed tab, so there was nothing behind that tab the
+   Feed tab didn't already show. */
+.topic-top--lead { display: block !important; }
+.topic-top--lead > .topic-top-main { width: 100% !important; max-width: none !important; }
+
+.topic-body-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 28px;
+  align-items: start;
+}
+.topic-body-cols > .topic-news-wrap { min-width: 0; }
+.topic-body-cols > .topic-top-side { min-width: 0; }
+@media (max-width: 1159px) {
+  .topic-body-cols { grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; }
+}
+/* One column: feed, then prompts under it. */
+@media (max-width: 1023px) {
+  .topic-body-cols { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+}
+
+/* ── tab mode: Feed carries the briefing, Prompts is the rail ───────────── */
+/* Feed (no tview class): briefing + feed, no prompts. */
+body.tt-on .topic-band .topic-home:not(.tview-tools) > .topic-body-cols > .topic-top-side { display: none !important; }
+body.tt-on .topic-band .topic-home:not(.tview-tools) > .topic-top--lead { display: block !important; }
+/* Prompts: the rail alone. */
+body.tt-on .topic-band .topic-home.tview-tools > .topic-top--lead { display: none !important; }
+body.tt-on .topic-band .topic-home.tview-tools > .topic-body-cols > .topic-news-wrap { display: none !important; }
+body.tt-on .topic-band .topic-home.tview-tools > .topic-body-cols > .topic-top-side { display: block !important; }

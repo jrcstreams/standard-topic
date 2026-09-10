@@ -2744,16 +2744,20 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
       <div class="topic-viewtabs" data-topic-viewtabs role="tablist" aria-label="Topic sections">
-        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-tview="news">${pageTabIcon('news')}<span class="tvt-tx"><span class="tvt-long">News Feed</span><span class="tvt-short">News</span></span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="brief">${pageTabIcon('brief')}<span class="tvt-tx">AI Briefing</span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="tools">${pageTabIcon('tools')}<span class="tvt-tx"><span class="tvt-long">AI Prompts</span><span class="tvt-short">Prompts</span></span></button>
+        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-tview="news">${pageTabIcon('news')}<span class="tvt-tx">Feed</span></button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="tools">${pageTabIcon('tools')}<span class="tvt-tx">Prompts</span></button>
       </div>
-      <div class="topic-top">
+      <div class="topic-top topic-top--lead">
         <section class="topic-top-main">
           <h3 class="trail-head"><span class="trail-head-ic trail-head-ic--brief" aria-hidden="true">${DI_SPARK_TWO}</span>AI Briefing</h3>
           <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
           </div>
         </section>
+      </div>
+      <div class="topic-body-cols">
+        <div class="topic-news-wrap">
+          <section id="section-newsfeed" class="layout-section"></section>
+        </div>
         <section class="topic-top-side">
           <h3 class="trail-head"><span class="trail-head-ic trail-head-ic--prompts" aria-hidden="true">${PROMPTS_HEAD_ICON}</span>AI Prompts</h3>
           <div class="tpr-card" data-tpr>
@@ -2762,9 +2766,6 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
             <div class="tpr-inline" data-pr-host></div>
           </div>
         </section>
-      </div>
-      <div class="topic-news-wrap">
-        <section id="section-newsfeed" class="layout-section"></section>
       </div>
     </div>`;
     // The page-title header carries the second topic picker (revamp774) and the

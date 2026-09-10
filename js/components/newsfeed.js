@@ -1356,7 +1356,7 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '', variant
   // News" variant still carries topic tabs.
   const tabbed = variant === 'latest';
   const tabSet = HOME_TABS;
-  const feedTitle = variant === 'homev2' ? "Today's News" : (variant === 'latest' ? 'Latest News' : "Today's News");
+  const feedTitle = variant === 'homev2' ? 'News Feed' : (variant === 'latest' ? 'Latest News' : "Today's News");
   const headHTML = isHome
     ? `
     <div class="newsfeed-head section-card-head newsfeed-head--home${tabbed ? ' newsfeed-head--latest' : ''}">
