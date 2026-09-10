@@ -36136,3 +36136,13 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
        the list itself, so it was never reached. The strip's rule is the only
        line the head needs. */
 .search-panel-results .xf-list[class] { border-top: 0 !important; }
+
+/* revamp1324b: .search-stickzone is a column-flex item, and an auto margin on
+   the cross axis cancels `align-items: stretch` — so max-width + auto margins
+   shrank it to its buttons (394px) instead of centring a 1120 column. An
+   explicit width restores the stretch the auto margins took away.
+
+   And with the echo gone the strip kept the 24px that had been spacing it FROM
+   the echo, leaving it 56px under the field; it belongs directly under it. */
+.search-stickzone[class][class] { width: 100% !important; }
+.search-topzone-tabs[class][class][class][class] { margin-top: 0 !important; }
