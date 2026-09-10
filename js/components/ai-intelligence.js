@@ -2598,8 +2598,12 @@ export function renderDailyIntelligence(container, scope) {
     const isHome = scope.slug === 'home' || scope.topic === 'home';
     // revamp1209: the masthead is set in TWO weights of one family — the topic
     // heavy, the word "Briefing" light — so the two halves need their own spans.
-    const briefName = mastLabel ? String(mastLabel).replace(/\s*briefing$/i, '') : '';
-    const briefTitle = `${briefName ? `<span class="di-title-name">${esc(briefName)}</span> ` : ''}<span class="di-title-kind">Briefing</span>`;
+    // revamp1306: the open briefing carries the preview card's identity —
+    // "Today's AI Briefing" everywhere, with the topic as an eyebrow above it
+    // on the topic pages — rather than "<Topic> Briefing" in a lighter face.
+    // Opening a card should not rename it.
+    const briefTitle = `<span class="di-title-kind di-title--today">Today's AI Briefing</span>`;
+    const mastEyebrow = isHome ? '' : `<div class="di-eyebrow">${esc(name)}</div>`;
     const pillLabel = isHome ? 'All Topics' : mastLabel;
     const SEP = '<span class="di-metasep" aria-hidden="true"></span>';
     const provBtn = `<button type="button" class="di-prov2 how-aigen" data-how-it-works>${LOGO}<span>AI-generated content included</span>${DI_INFO_ICON}</button>`;
@@ -2607,6 +2611,7 @@ export function renderDailyIntelligence(container, scope) {
 
     body.innerHTML = `
       <div class="di-mast di-mast--v2">
+        ${mastEyebrow}
         <h2 class="di-title">${briefTitle}</h2>
         <div class="di-metaline">
           ${whenHTML ? `<span class="di-metagrp">${whenHTML}</span><span class="di-metasep di-metasep--prov" aria-hidden="true"></span>` : ''}

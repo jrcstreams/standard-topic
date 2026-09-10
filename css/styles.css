@@ -35566,3 +35566,35 @@ body.home-search .home-hero[class][class][class] { padding-top: 14px !important;
 
 .tdi-cardeyebrow[class][class] { margin-bottom: 0 !important; line-height: 1.2 !important; }
 .tdi-cardeyebrow + .tdi-cardhead[class][class][class] { margin-top: 2px !important; }
+
+/* ═══ revamp1306 — the open briefing keeps the preview's identity ═══════════
+
+   Opening a card renamed it: "Today's AI Briefing" became "Today's Briefing"
+   on home and "<Topic> Briefing" on a topic page, in a lighter face, and the
+   In Focus list dropped the preview's colour and weight. The open masthead
+   now carries the same title, the same eyebrow above it on topic pages, and
+   the same In Focus treatment — one card, open or closed. */
+.di-mast--v2 .di-eyebrow {
+  margin: 0 0 2px;
+  font-family: var(--font-family);
+  font-size: 0.74rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: #5b6b8f;
+}
+.di-mast--v2 .di-title[class][class][class] {
+  font-family: var(--font-brief-title, 'Libre Franklin', sans-serif) !important;
+  font-weight: 800 !important;
+  color: #1a2c66 !important;
+  letter-spacing: -0.015em !important;
+}
+.di-mast--v2 .di-title .di-title--today[class] { font-weight: 800 !important; color: #1a2c66 !important; }
+
+.di-focus-list[class][class][class][class] li {
+  font-family: var(--font-family) !important;
+  font-size: 0.88rem !important;
+  font-weight: 560 !important;
+  color: #2f4590 !important;
+  line-height: 1.38 !important;
+}
+.di-focus-list[class][class][class][class] li::before { background: #7d93c4 !important; }
+.di-focus-list[class][class][class][class] { row-gap: 8px !important; margin: 12px 0 !important; }
