@@ -35109,3 +35109,18 @@ body.tt-on #topic-tab-body .topic-body-cols .newsfeed-list > *:first-child {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
+
+/* revamp1297: the trending head stacks its children in a column, so the title
+   row shrank to its own content — the rule stopped short of the column and
+   "View all trending" sat against the title instead of the far edge. */
+.trending-topics-head > .trending-topics-titlerow[class] {
+  width: 100%;
+  align-self: stretch;
+}
+
+/* On home the grey band holds nothing until the page is scrolled, but it was
+   still reserving its full 56px — the empty stripe between the header and the
+   headline on a phone. It takes its height from whatever it holds. */
+@media (max-width: 1023px) {
+  body.home-search #sub-header[class] { min-height: 0 !important; }
+}
