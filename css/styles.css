@@ -36023,3 +36023,18 @@ html body.nav-docked #content {
   padding-bottom: 12px !important;
   margin-top: 0 !important;
 }
+
+/* revamp1322b: 1322 was written at (0,4,0) and lost to two incumbents —
+   `body:not(.tt-on).home-search .home-v2 .newsfeed-head` (0,5,1) held the
+   44px head, and .home-side's padding-top had an !important of its own.
+   Same rules, at a level neither can reach. */
+html body[class][class] .home-sections.home-v2 .home-side[class][class] {
+  padding-top: 0 !important;
+}
+html body[class][class] .home-sections.home-v2 .newsfeed-head[class][class],
+html body[class][class] .home-sections.home-v2 .trending-topics-head[class][class] {
+  box-sizing: border-box !important;
+  min-height: 46px !important;
+  padding-bottom: 12px !important;
+  margin-top: 0 !important;
+}
