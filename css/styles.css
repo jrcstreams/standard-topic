@@ -35679,3 +35679,21 @@ body:not(.nav-docked) #content { margin-left: auto !important; margin-right: aut
   html body.home-search.app-mode.home-mode:not(.nav-docked) #content { padding-top: calc(var(--nav-h, 56px) + 30px) !important; }
   body.home-search.nav-docked .home-hero[class][class][class] { padding-top: 22px !important; }
 }
+
+/* revamp1310b: the head-spacing rules lost to `body:not(.tt-on) .ndp …`, one
+   class more specific. Matched at that level. */
+body:not(.tt-on) .ndp .aii-nav-dd-head[class] {
+  padding-top: 10px !important;
+  padding-bottom: 6px !important;
+}
+body:not(.tt-on) .ndp .aii-nav-dd-sub[class] { margin-top: 2px !important; }
+body:not(.tt-on) .ndp .aii-nav-dd-subbar[class] {
+  margin-top: 8px !important;
+  margin-bottom: 10px !important;
+  padding-bottom: 10px !important;
+  /* The hero's gradient overlay paints after the sub-bar and carries
+     pointer-events:none — so the sports toggle was hit-testable, reported
+     visible by getComputedStyle, and painted over. It sits above it now. */
+  z-index: 12 !important;
+}
+body:not(.tt-on) .ndp .aii-nav-dd-scrollwrap[class] { padding-top: 0 !important; margin-top: 0 !important; }
