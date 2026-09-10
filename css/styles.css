@@ -34914,3 +34914,72 @@ body.tt-on .topic-band .topic-home:not(.tview-tools) > .topic-top--lead[class][c
 body.tt-on .topic-band .topic-home.tview-tools > .topic-top--lead { display: none !important; }
 body.tt-on .topic-band .topic-home.tview-tools > .topic-body-cols > .topic-news-wrap { display: none !important; }
 body.tt-on .topic-band .topic-home.tview-tools > .topic-body-cols > .topic-top-side { display: block !important; }
+
+/* ═══ revamp1294 — the briefing card names itself ═══════════════════════════
+
+   The section header and its rule sat above a card that already had a frame,
+   and on the homepage a third frame wrapped both. The card carries its own
+   identity now: the chip and title move inside it, the topic goes on a pill
+   beneath, and the frames around it go.
+
+   Sidebar, again: a faint light BLUE, which is what the mock has been showing
+   this whole time — I'd twice read it as a neutral. Rows read a size up with
+   slightly larger, slightly darker glyphs. */
+
+/* ── sidebar rows ───────────────────────────────────────────────────────── */
+.navmenu-quicklink[class] { font-size: 1rem !important; padding: 10px 11px !important; }
+.navmenu-quicklink[class] .navmenu-cta-icon {
+  width: 19px !important; height: 19px !important;
+  color: #5a6580 !important;
+}
+.navmenu-quicklink.is-current[class] .navmenu-cta-icon { color: #1c4ed8 !important; }
+
+/* ── the card's own header ──────────────────────────────────────────────── */
+.tdi-cardhead {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0 0 10px;
+}
+.tdi-cardhead-ic {
+  flex: none;
+  display: inline-grid; place-items: center;
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  background: #dbe4fb;
+  color: #1e3a8a;
+}
+.tdi-cardhead-ic svg { width: 17px; height: 17px; display: block; }
+.tdi-mast2 .tdi-brieftitle[class] {
+  margin: 0 !important;
+  font-family: var(--font-display, var(--font-family)) !important;
+  font-size: 1.42rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.015em !important;
+  color: #16265c !important;
+}
+/* The topic the briefing is about, stated once, under its title. */
+.tdi-cardpill {
+  display: inline-flex; align-items: center;
+  margin: 0 0 12px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #d8e0f0;
+  font-family: var(--font-family);
+  font-size: 0.76rem; font-weight: 700;
+  letter-spacing: .01em;
+  color: #2b3c66;
+}
+
+/* ── no frame around the frame ──────────────────────────────────────────── */
+.home-featbriefs--lead[class] {
+  background: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+/* At full width the brief column was still sized for a rail. */
+.home-featbriefs--lead .tdi-briefcol[class],
+.topic-top--lead .tdi-briefcol[class] { max-width: none !important; }

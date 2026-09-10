@@ -1889,7 +1889,14 @@ function diHeroCardHTML(o) {
                AI-generated on one piped line — the same lockup the open
                briefing carries, scaled to the card. -->
           <div class="tdi-mast2">
-            <h3 class="tdi-brieftitle">${briefTitle}</h3>
+            <!-- revamp1294: the section header moved INSIDE the card — chip,
+                 title, and the topic on a pill beneath. Outside it, the header
+                 and its rule framed a card that already had a frame. -->
+            <div class="tdi-cardhead">
+              <span class="tdi-cardhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
+              <h3 class="tdi-brieftitle">${escapeHTML(o.cardTitle || '') || briefTitle}</h3>
+            </div>
+            ${o.cardPill ? `<div class="tdi-cardpill">${escapeHTML(o.cardPill)}</div>` : ''}
             <div class="tdi-metaline">
               <span class="tdi-date" data-tdi-date></span>
               <span class="tdi-metasep tdi-metasep--prov" aria-hidden="true"></span>
@@ -2089,12 +2096,10 @@ function renderFeaturedBriefings(host, opts) {
   // cross-topic briefing card, no 4-up topic grid (that lives on /intelligence).
   if (o.compact) {
     host.innerHTML = `
-      <div class="hb-head hf-labelhead">
-        <h3 class="hb-title"><span class="hb-head-ic hb-head-ic--brief" aria-hidden="true">${DI_SPARK_TWO}</span>${escapeHTML(o.title || "Today's AI Briefing")}</h3>
-      </div>
       <div class="hb-hero hb-hero--side" data-home-briefing>
         <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
           noHeader: true, hubLink: false, art: true, topicLabel: "Today's Briefing", pillLabel: 'All Topics',
+          cardTitle: "Today's AI Briefing",
           sublabel: 'Your daily briefing across every topic we cover.',
           allBriefingsCta: true,
         })}</div>
@@ -2749,8 +2754,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       </div>
       <div class="topic-top topic-top--lead">
         <section class="topic-top-main">
-          <h3 class="trail-head"><span class="trail-head-ic trail-head-ic--brief" aria-hidden="true">${DI_SPARK_TWO}</span>AI Briefing</h3>
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, cardTitle: 'AI Briefing', cardPill: topic.name, noHeader: true, art: true })}
           </div>
         </section>
       </div>
