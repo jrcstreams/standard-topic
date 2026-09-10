@@ -2874,8 +2874,8 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       const sEl = body.querySelector('[data-tdi-summary]');
       const dEl = body.querySelector('[data-tdi-date]');
       if (sEl && d.summary) sEl.textContent = d.summary;
-    fillBriefFocus(body, d);
       else if (sEl && d.content) sEl.textContent = String(d.content).replace(/^##.+$/gm, '').replace(/\*\*/g, '').trim().split(/(?<=[.!?])\s/)[0] || '';
+      fillBriefFocus(body, d);
       // Two stamps, one datum: the compact one rides the title line while the
       // card is closed; the larger one leads the brief when it's open.
       if (d.generatedAt) {
