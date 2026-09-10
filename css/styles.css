@@ -34983,3 +34983,63 @@ body.tt-on .topic-band .topic-home.tview-tools > .topic-body-cols > .topic-top-s
 /* At full width the brief column was still sized for a rail. */
 .home-featbriefs--lead .tdi-briefcol[class],
 .topic-top--lead .tdi-briefcol[class] { max-width: none !important; }
+
+/* ═══ revamp1295 — trending reads as a section, not a rail card ═════════════
+
+   Beside the feed it is one of two columns, so its heading matches the feed's:
+   same size, same weight, same 2px rule. "View all trending" sits on that
+   heading's baseline at the right, which is where a section link belongs.
+
+   Counts by layout, because the same list is doing three jobs: a tall rail
+   beside the feed can carry plenty, a two-column spread shows six, and stacked
+   above the feed on a phone it shows four — enough to be worth a look without
+   burying the news under it. */
+.trending-topics-title[class] {
+  font-size: 1.55rem !important;
+  font-weight: 800 !important;
+  color: #14213d !important;
+  letter-spacing: -0.02em !important;
+}
+.trending-topics-titlerow[class] {
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e0e5ee;
+  margin-bottom: 14px;
+}
+/* The head's own rule would double it. */
+.trending-topics-head[class] { border-bottom: 0 !important; padding-bottom: 0 !important; margin-bottom: 0 !important; }
+.trending-topics-viewall[class] { font-size: 0.86rem; align-self: center; }
+
+/* The first row sat lower than the rest — its card padding stacked on the
+   head's margin. */
+.trending-topics .trend-card-grid > .trend-card:first-child[class] { padding-top: 2px !important; }
+
+/* Counts. */
+@media (max-width: 1023px) {
+  .home-trending .trend-card-grid > .trend-card:nth-child(n + 5),
+  body.home-search #home-trending .trend-card-grid .trend-card:nth-child(n + 5),
+  .home-v2 #home-trending .trend-card:nth-of-type(n + 5) { display: none !important; }
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .home-trending .trend-card-grid > .trend-card:nth-child(n + 7),
+  body.home-search #home-trending .trend-card-grid .trend-card:nth-child(n + 7) { display: none !important; }
+}
+
+/* revamp1295b: the phone header's Search glyph was being squeezed — the button
+   went to 40px wide but its svg kept flex-shrinking inside it. */
+@media (max-width: 560px) {
+  #site-header #nav-search svg,
+  .sticky-hero-inner #nav-search svg {
+    flex: none !important;
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+/* revamp1295c: the phone hero. Ten chips wrapped to three rows before the page
+   had started, and the headline sat under a band of empty space. */
+@media (max-width: 640px) {
+  .home-hero-chips > .home-hero-chip:nth-child(n + 7) { display: none !important; }
+  .home-hero[class] { padding-top: 14px !important; }
+  .home-hero-inner[class] { padding-top: 0 !important; }
+}

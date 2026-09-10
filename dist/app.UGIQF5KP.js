@@ -359,7 +359,7 @@ ${d.body}`).join(`
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
           <h3 class="trending-topics-title"><span>Trending</span><span class="trending-topics-title-ic" aria-hidden="true">${U1}</span></h3>
-          <button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all${Z1}</button>
+          <button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending${Z1}</button>
         </div>
       </div>`}function d(){return""}function h(){let v=e.querySelector("#trend-home-grid");if(!v)return;if(a.loading){v.innerHTML=Array.from({length:6},()=>'<div class="trend-card trend-card-skel"></div>').join("");return}let f=a.items;a.category!=="all"&&(f=f.filter(T=>T._cat===a.category));let k=new Set,b=[],x=[];for(let T of f){let I=T._cat||"";I&&k.has(I)?x.push(T):(k.add(I),b.push(T))}let B=b.concat(x),y=B.filter(T=>T.summary&&String(T.summary).trim()),E=B.filter(T=>!(T.summary&&String(T.summary).trim()));if(f=y.concat(E).slice(0,t),!f.length){v.innerHTML=`<p class="trending-empty">No trends ${a.mode==="over"?"in this window yet":"right now"}.</p>`;return}v.innerHTML=f.map((T,I)=>bn(T,I)).join(""),Kr(v)}function u(){e.innerHTML=`
       <div class="trending-topics trending-home">
@@ -1555,9 +1555,9 @@ ${$}`),L.length?L.join(`
       <section class="home-hero home-hero--noic" data-home-hero>
         <div class="home-hero-inner">
           <div class="home-hero-headrow">
-            <h1 class="home-hero-title">Real news and AI insights on any topic</h1>
+            <h1 class="home-hero-title">Real news. AI insights. On any topic.</h1>
           </div>
-          <p class="home-hero-sub">Daily AI briefings, live trends, and ready-made prompts across every topic.</p>
+          <p class="home-hero-sub">Briefed daily on everything you follow.</p>
           ${d.length?`<div class="home-hero-chips">${d.map(v=>`<a href="#/topic/${ee(v.slug)}" class="home-hero-chip"${at(v)}><span class="home-hero-chip-ic" aria-hidden="true">${le(v.icon||"globe","")}</span>${O(v.name)}</a>`).join("")}</div>`:""}
         </div>
       </section>`;e.innerHTML=`

@@ -675,7 +675,7 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
           <h3 class="trending-topics-title"><span>Trending</span><span class="trending-topics-title-ic" aria-hidden="true">${TREND_CARD_ICON}</span></h3>
-          <button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all${TREND_HEAD_ARROW}</button>
+          <button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending${TREND_HEAD_ARROW}</button>
         </div>
       </div>`;
     // revamp1291: no legend on the list itself. Every row here is a headline
