@@ -35629,3 +35629,14 @@ body .navmenu-head[class][class] {
    crowded between the bar and the tab strip. 18 above, 16 below. */
 .search-echo[class][class][class] { margin-top: -14px !important; }
 .search-topzone-tabs[class][class][class] { margin-top: 16px !important; }
+
+/* ═══ revamp1309 — In Focus, measured in ink rather than boxes ══════════════
+
+   Box-to-box the block was symmetric; the eye reads ink. The first bullet's
+   cap-top sits inside its line box's leading, and the summary's larger
+   line-height adds its own leading above ITS first line — so the preview read
+   ~16px above the bullets against ~22 below, and the open briefing ~28 above
+   against ~22. Both now land on the 22 the reader liked. Same classes on
+   home and the topic pages. */
+.tdi-focus[class][class] { margin-top: 6px !important; }
+.di-focus-list[class][class][class][class][class] { margin-top: 7px !important; }
