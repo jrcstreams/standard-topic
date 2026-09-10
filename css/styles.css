@@ -36038,3 +36038,15 @@ html body[class][class] .home-sections.home-v2 .trending-topics-head[class][clas
   padding-bottom: 12px !important;
   margin-top: 0 !important;
 }
+
+/* revamp1322c: and the News Feed head's 44px is held by a selector carrying an
+   ID — `body:not(.tt-on).home-search .home-v2 #section-newsfeed .newsfeed-head`
+   — which no number of stacked classes can outrank. Same rule, with the id. */
+html body[class][class] .home-sections.home-v2 #section-newsfeed .newsfeed-head[class][class],
+html body[class][class] .home-sections.home-v2 #home-trending .trending-topics-head[class][class] {
+  box-sizing: border-box !important;
+  min-height: 46px !important;
+  height: auto !important;
+  padding-bottom: 12px !important;
+  margin-top: 0 !important;
+}
