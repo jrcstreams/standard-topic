@@ -34815,3 +34815,37 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
     border-radius: 11px !important;
   }
 }
+
+/* ═══ revamp1292 — home on a phone: briefing, trending, then the feed ═══════
+
+   The rail stacked under the feed, which put trending below a hundred stories
+   — findable only by scrolling past the thing it was meant to sit beside. On
+   one column it goes above: the briefing says what happened, trending says
+   what people are looking at, then the feed. Five rows is the whole point of
+   it there; the rest is one tap away in the header. */
+@media (max-width: 1023px) {
+  .home-v2 .home-side { order: 1; }
+  .home-v2 .home-main { order: 2; }
+  /* Five, then the header link carries the rest. */
+  .home-trending .trend-card-grid > .trend-card:nth-child(n + 6) { display: none !important; }
+}
+/* "View all" sits with the heading, right-aligned on its rule. */
+.trending-topics-titlerow {
+  display: flex !important;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.trending-topics-viewall {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 5px;
+  background: none; border: 0; padding: 0;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: 0.82rem; font-weight: 650;
+  color: #2f5fd0;
+}
+.trending-topics-viewall svg { width: 13px; height: 13px; }
+@media (hover: hover) {
+  .trending-topics-viewall:hover { color: #1b3f9e; text-decoration: underline; }
+}

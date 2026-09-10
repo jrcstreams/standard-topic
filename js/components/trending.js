@@ -667,10 +667,15 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
     // revamp1055: the head is just the title + its rule. The AI-generated legend
     // moves BELOW the rule (above the first trend), and "View more trending" is a
     // centered link at the foot of the list rather than in the header row.
+    // revamp1292: "View all" rides the header rather than sitting under the
+    // list. On a phone the list is five rows between the briefing and the feed,
+    // so a foot link lands mid-page with no section to close; in the header it
+    // reads as part of the heading, and the foot link goes.
     return `
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
           <h3 class="trending-topics-title"><span>Trending</span><span class="trending-topics-title-ic" aria-hidden="true">${TREND_CARD_ICON}</span></h3>
+          <button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all${TREND_HEAD_ARROW}</button>
         </div>
       </div>`;
     // revamp1291: no legend on the list itself. Every row here is a headline
@@ -715,7 +720,6 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
         ${headHTML()}
         ${controlsHTML()}
         <div class="trend-card-grid" id="trend-home-grid"></div>
-        <div class="hs-morefoot"><button type="button" class="hs-morelink" data-action="view-all-trending">View more trending${TREND_HEAD_ARROW}</button></div>
       </div>`;
     container.querySelector('.trend-cat-select')?.addEventListener('change', (e) => {
       state.category = e.target.value; renderGrid();
