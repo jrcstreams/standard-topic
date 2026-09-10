@@ -36175,3 +36175,23 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
 .search-panel-results .search-news-section .news-list > .news-card:first-child[class][class] {
   padding-top: 15px !important;
 }
+
+/* ═══ revamp1326 — one hairline per prompt row, and one title size ══════════
+
+   The separators were never a colour problem: every row draws TWO borders,
+   one on .aii-fi-acc (1px #eef1f6) and another on the .aii-fi-accsum inside it
+   (1px rgba(47,77,158,.1)), stacked back to back. That is a 2px line built out
+   of two 1px rules, which is why 1325's colour change didn't touch it and why
+   it reads heaviest on mobile, where the rows are taller and the lines longer.
+   The outer border stays; the inner one goes. */
+.search-panel-results .aii-fi-acc .aii-fi-accsum[class][class] {
+  border-bottom: 0 !important;
+}
+
+/* And the two-column desktop list set its titles at 13.28px where the single
+   column on a phone sets the same titles at 15.52px — the narrower measure was
+   getting the LARGER type. Desktop takes the phone's size; at that size the
+   phone's 26px icon is already in proportion, so it stays as it is. */
+.search-panel-results .aii-fi-acclist .aii-fi-acc-name[class][class] {
+  font-size: 0.97rem !important;
+}
