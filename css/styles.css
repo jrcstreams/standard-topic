@@ -35176,3 +35176,28 @@ body.tt-on #topic-tab-body .topic-body-cols .newsfeed-list > *:first-child {
   /* …and the card sits closer to the rule under the chips. */
   .home-featbriefs--lead[class] { margin-top: 14px !important; }
 }
+
+/* ═══ revamp1299 — trending: one rule under the heading, and it IS the first
+       row's top border ═════════════════════════════════════════════════════
+
+   There were two: a 1px rule on the head spanning the section, and the 2px one
+   I put on the title row, which is inset by the head's padding and so drew
+   short. Then the first row padded itself 12px where every other row pads 0,
+   so it sat lower than the rest as well.
+
+   One 2px rule, on the head, full width — the same rule the News Feed heading
+   draws — and the first row is a row like any other beneath it. */
+.trending-topics-head[class][class] {
+  border-bottom: 2px solid #e0e5ee !important;
+  padding-bottom: 12px !important;
+  margin-bottom: 0 !important;
+}
+.trending-topics-titlerow[class][class] {
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+.trending-topics .trend-card-grid > .trend-card:first-child[class][class] {
+  padding-top: 0 !important;
+  border-top: 0 !important;
+}
