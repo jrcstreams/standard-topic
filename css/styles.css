@@ -36101,3 +36101,38 @@ html body:not(.tt-on):not(.nav-docked).pagenav-mode.sticky-always.has-subnav[cla
   padding-top: 54px !important;
 }
 html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -2px !important; }
+
+/* ═══ revamp1324 — the search results head, measured against its own column ══
+
+   (1) The echoed query goes. With the term sitting in the field right above it,
+       it restated what the reader had just typed and pushed the tabs down; the
+       tab strip now follows the input directly. */
+.search-echo[class][class][class][class][class] { display: none !important; }
+
+/* (2) The tab strip was indented past the input and the results below it. It
+       had been given a flat 48px inset to "match the results' inset" — but the
+       results carry no fixed inset at all: they are `max-width: 1120px` with
+       auto margins, so their 48 is whatever centring leaves at 1920 and 0 by
+       1100. The strip takes the same measure instead of copying one width's
+       arithmetic, and the rule it draws now spans exactly the results' column. */
+.search-stickzone[class][class] {
+  max-width: 1120px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+/* (3) The buttons sat 22px off their own rule — 1320 overcorrected a 2px gap.
+       12 reads as one unit without the strip sitting on the line. */
+.search-topzone-tabs[class][class][class][class] { padding-bottom: 10px !important; }
+
+/* (4) And the first row of every tab was 18px under that rule, which put the
+       rule with the strip rather than at the head of the list. 10. */
+.search-panel-results[class][class] { padding-top: 10px !important; }
+
+/* (5) Web Resources drew a SECOND line: .xf-list's own top border, under the
+       strip's. The reset beside it covers first-children, and this border is on
+       the list itself, so it was never reached. The strip's rule is the only
+       line the head needs. */
+.search-panel-results .xf-list[class] { border-top: 0 !important; }
