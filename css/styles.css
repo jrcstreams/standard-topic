@@ -34671,3 +34671,96 @@ body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
   border: 1px solid #a9b7d8 !important;
   border-radius: 12px !important;
 }
+
+/* ═══ revamp1289 — the sidebar, flattened and warmed ════════════════════════
+
+   Five bordered white cards stacked under two bold section headings was a lot
+   of chrome for what is a list of five pages. The rows lose the card, the
+   border and the trailing arrow and become what they are — a list — with the
+   page you're on filled in, which is the only marker a flat list needs.
+
+   The ground warms off the cool blue-grey it shared with the page chrome, so
+   the sidebar reads as a surface the content sits beside rather than more of
+   the same panel; the header joins it instead of being a dark bar over it.
+   Section headings go, except Topics, which stays as a quiet label because a
+   hundred topics under five pages does need naming. */
+
+/* ── the ground ─────────────────────────────────────────────────────────── */
+.navmenu-panel[class] {
+  background: #f4f2ef !important;
+  border-right: 1px solid #e4e0da !important;
+}
+.navmenu-head[class] {
+  background: #f4f2ef !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+.navmenu-title[class] { color: #16233f !important; }
+.navmenu-collapse[class] {
+  color: #7d8598 !important;
+  background: none !important;
+  border: 0 !important;
+}
+@media (hover: hover) {
+  .navmenu-collapse[class]:hover { color: #16233f !important; background: rgba(22, 35, 63, .06) !important; }
+}
+
+/* ── search ─────────────────────────────────────────────────────────────── */
+.navmenu-searchbtn[class] {
+  background: #fff !important;
+  border: 1px solid #e2ddd5 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 1px 2px rgba(22, 35, 63, .04) !important;
+  margin-bottom: 14px !important;
+}
+@media (hover: hover) {
+  .navmenu-searchbtn[class]:hover { border-color: #cfc7bb !important; }
+}
+
+/* ── the five pages ─────────────────────────────────────────────────────── */
+.navmenu-quicklinks[class] { display: flex; flex-direction: column; gap: 1px; }
+.navmenu-quicklink[class] {
+  background: none !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  padding: 9px 11px !important;
+  min-height: 0 !important;
+  gap: 12px !important;
+  font-size: 0.94rem !important;
+  font-weight: 600 !important;
+  color: #26324d !important;
+  box-shadow: none !important;
+}
+.navmenu-quicklink[class] .navmenu-cta-icon { color: #6b7488; flex: none; }
+.navmenu-quicklink[class] .navmenu-cta-label { flex: 1 1 auto; text-align: left; }
+@media (hover: hover) {
+  .navmenu-quicklink[class]:hover { background: rgba(22, 35, 63, .055) !important; }
+}
+/* The page you're on. */
+.navmenu-quicklink.is-current[class] {
+  background: #dde8fb !important;
+  color: #1c4ed8 !important;
+}
+.navmenu-quicklink.is-current[class] .navmenu-cta-icon { color: #1c4ed8; }
+
+/* ── the rule, and the one heading that earns its place ─────────────────── */
+.navmenu-topics-label {
+  margin: 16px 0 8px;
+  padding: 14px 11px 0;
+  border-top: 1px solid #e4e0da;
+  font-family: var(--font-family);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: #9a9287;
+}
+
+/* The topic rows sit on the warm ground, so their hover warms with it. */
+@media (hover: hover) {
+  .navmenu-subtopic-link[class]:hover { background: rgba(22, 35, 63, .055) !important; }
+}
+.navmenu-footer-sticky[class] {
+  background: #f4f2ef !important;
+  border-top: 1px solid #e4e0da !important;
+}

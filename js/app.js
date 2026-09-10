@@ -192,6 +192,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Route-driven nav dropdowns (stale ones were already closed above).
+    try { syncNavmenuActive(route); } catch (_) {}
+
     if (route.type === 'topics') renderPageNavBar('topics');
     else if (route.type === 'trending') renderPageNavBar('trending');
     else if (route.type === 'prompts') renderPageNavBar('prompts');
@@ -4517,6 +4519,20 @@ function updateTopicViewMode() {
   }
 }
 
+// revamp1289: mark the sidebar row for the page you're on. The flat list needs
+// it — without the button chrome, an unmarked list is just five labels.
+function syncNavmenuActive(route) {
+  const panel = document.getElementById('navmenu-panel');
+  if (!panel || !route) return;
+  const key = ['home', 'topics', 'intelligence', 'trending', 'prompts'].includes(route.type) ? route.type : '';
+  panel.querySelectorAll('[data-nav-key]').forEach((el) => {
+    const on = !!key && el.dataset.navKey === key;
+    el.classList.toggle('is-current', on);
+    if (on) el.setAttribute('aria-current', 'page');
+    else el.removeAttribute('aria-current');
+  });
+}
+
 function renderStickyHeroBar(container, route) {
   const featured = getFeaturedTopics();
   const NAVMENU_CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -4724,25 +4740,19 @@ function renderStickyHeroBar(container, route) {
     <!-- revamp1047: the sidebar search is a button (matching the collapsed-nav
          Search button and the quicklink CTAs below), not an input — it opens the
          search page/overlay. -->
-    <div class="navmenu-featured-label navmenu-seclabel">Search</div>
     <button type="button" class="navmenu-searchbtn" id="navmenu-searchbtn" aria-label="Search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <span class="navmenu-searchbtn-label">Insights on any topic…</span>
+      <span class="navmenu-searchbtn-label">Search any topic…</span>
     </button>
-    <div class="navmenu-featured-label navmenu-seclabel">Navigate</div>
     <nav class="navmenu-quicklinks">
-      <a href="#/" class="navmenu-quicklink navmenu-cta" id="navmenu-home-link">
+      <a href="#/" class="navmenu-quicklink navmenu-cta" id="navmenu-home-link" data-nav-key="home">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
           <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
         </svg>
         <span class="navmenu-cta-label">Home</span>
-        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
       </a>
-      <a href="#/topics" class="navmenu-quicklink navmenu-cta" id="navmenu-topics-link">
+      <a href="#/topics" class="navmenu-quicklink navmenu-cta" id="navmenu-topics-link" data-nav-key="topics">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7" rx="1.4"/>
           <rect x="14" y="3" width="7" height="7" rx="1.4"/>
@@ -4750,45 +4760,29 @@ function renderStickyHeroBar(container, route) {
           <rect x="14" y="14" width="7" height="7" rx="1.4"/>
         </svg>
         <span class="navmenu-cta-label">Topics</span>
-        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
       </a>
-      <a href="#/intelligence" class="navmenu-quicklink navmenu-cta" id="navmenu-daily-link">
+      <a href="#/intelligence" class="navmenu-quicklink navmenu-cta" id="navmenu-daily-link" data-nav-key="intelligence">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/>
         </svg>
         <span class="navmenu-cta-label">AI Briefings</span>
-        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
       </a>
-      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-trending">
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-trending" data-nav-key="trending">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <polyline points="3 17 9 11 13 15 21 7"/>
           <polyline points="15 7 21 7 21 13"/>
         </svg>
         <span class="navmenu-cta-label">Trending</span>
-        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
       </button>
-      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-prompts">
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-prompts" data-nav-key="prompts">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/>
         </svg>
         <span class="navmenu-cta-label">Prompts</span>
-        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
       </button>
     </nav>
     <div class="navmenu-scroll">
-      <div class="navmenu-featured-label navmenu-seclabel">Topics</div>
+      <div class="navmenu-topics-label">Topics</div>
       <div class="navmenu-topics">${featuredLinksHTML}</div>
     </div>
     <div class="navmenu-footer-sticky">
@@ -4802,6 +4796,10 @@ function renderStickyHeroBar(container, route) {
       </div>
     </div>
   `;
+
+  // The panel re-renders on data loads and layout changes, so re-mark the
+  // current row each time rather than only on navigation.
+  try { syncNavmenuActive(getCurrentRoute()); } catch (_) {}
 
   const scrollEl = navPanel.querySelector('.navmenu-scroll');
   const updateScrollOverflow = () => {
