@@ -112,6 +112,14 @@ CREATE TABLE IF NOT EXISTS ai_usage (
 -- that no read path ever queried, so it was dropped (#storage-trim 2026-07-22).
 -- Dim MUST match lib/gemini.js GEMINI_EMBED_DIM default (256).
 -- ---------------------------------------------------------------------------
+-- revamp1285: trigram matching, so a misspelled query still finds the story.
+-- Full-text search is exact — "millenium problem" matched nothing while
+-- "millennium problem" matched five — and news-search falls back to
+-- word_similarity() when a query has no literal hit at all.
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX IF NOT EXISTS news_title_trgm_idx
+  ON news_stories USING GIN (title gin_trgm_ops);
+
 CREATE EXTENSION IF NOT EXISTS vector;
 ALTER TABLE news_stories ADD COLUMN IF NOT EXISTS embedding vector(256);
 CREATE INDEX IF NOT EXISTS news_embedding_idx

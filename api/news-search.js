@@ -45,6 +45,20 @@ function cacheSet(k, v) {
   if (EMBED_CACHE.size > EMBED_CACHE_MAX) EMBED_CACHE.delete(EMBED_CACHE.keys().next().value);
 }
 
+// Same story, two topic rows: match on the URL with the tracking noise and
+// trailing slash taken off, and fall back to title+source for the feeds that
+// hand out a different URL per section.
+function dedupeKey(r) {
+  const u = (r.url || '').trim().toLowerCase();
+  if (u) {
+    try {
+      const parsed = new URL(u);
+      return parsed.host.replace(/^www\./, '') + parsed.pathname.replace(/\/+$/, '');
+    } catch (_) { return u.split('?')[0].replace(/\/+$/, ''); }
+  }
+  return (r.title || '').trim().toLowerCase() + '|' + (r.source_name || '').trim().toLowerCase();
+}
+
 const CACHE_HEADER = 'public, s-maxage=120, stale-while-revalidate=3600';
 const COLS = `n.id, n.url, n.title, n.description, n.source_name, n.source_url,
               n.image_url, n.published_at, n.fetched_at,
@@ -79,12 +93,35 @@ module.exports = async function handler(req, res) {
     // ---- Search (query) — hybrid keyword + vector -----------------------
     const pool = Math.max(limit * 3, 30);
 
+    // revamp1285: ranked by RELEVANCE, then recency. Ordering the keyword hits
+    // by date alone meant a passing mention in today's story outranked the
+    // story the search was about.
     const keyword = await sql.query(
-      `SELECT ${COLS} FROM news_stories n JOIN topics t ON t.id = n.topic_id
-        WHERE n.search_vector @@ websearch_to_tsquery('english', $1)
-        ORDER BY n.published_at DESC NULLS LAST LIMIT $2`,
+      `SELECT ${COLS}, ts_rank_cd(n.search_vector, q) AS _rank
+         FROM news_stories n JOIN topics t ON t.id = n.topic_id,
+              websearch_to_tsquery('english', $1) q
+        WHERE n.search_vector @@ q
+        ORDER BY _rank DESC, n.published_at DESC NULLS LAST LIMIT $2`,
       [q, pool]
     );
+
+    // No literal hit at all? Before giving up, try it as a MISSPELLING. Full
+    // text search has no fuzziness, so "millenium problem" matched nothing
+    // while "millennium problem" matched five stories. Trigram word-similarity
+    // finds the near-miss inside the title. Needs pg_trgm (db/schema.sql); if
+    // the extension isn't there this throws and we carry on without it.
+    let fuzzy = [];
+    if (!keyword.length && q.length >= 5) {
+      try {
+        fuzzy = await sql.query(
+          `SELECT ${COLS}, word_similarity($1, n.title) AS _sim
+             FROM news_stories n JOIN topics t ON t.id = n.topic_id
+            WHERE $1 <% n.title
+            ORDER BY _sim DESC, n.published_at DESC NULLS LAST LIMIT $2`,
+          [q, pool]
+        );
+      } catch (_) { fuzzy = []; }
+    }
 
     let vector = [];
     let qvec = null;
@@ -103,6 +140,13 @@ module.exports = async function handler(req, res) {
     // hits to avoid garbage. Literal queries still ride the keyword list.
     const cap = Number(process.env.AI_SEMANTIC_CAP || 0.50);
     const gate = Number(process.env.AI_SEMANTIC_GATE || 0.47);
+    // revamp1285: measured on production, the distances do NOT separate a real
+    // query from nonsense — "dog adoption" scores 0.383, "rocket launch" 0.380
+    // and the mashed keys "asdkjhasd qweqw" score 0.371. So one gate can never
+    // do this job alone: the vector list is a SUPPLEMENT to a lexical hit, and
+    // with no lexical hit at all it has to clear a bar well under that band or
+    // the answer is honestly nothing.
+    const soloGate = Number(process.env.AI_SEMANTIC_GATE_SOLO || 0.30);
     let best = null;
     if (qvec) {
       try {
@@ -118,28 +162,48 @@ module.exports = async function handler(req, res) {
       }
       if (vector.length) {
         best = Math.min(...vector.map(v => Number(v._dist)));
-        if (best >= gate) vector = [];
+        const anchored = keyword.length > 0 || fuzzy.length > 0;
+        if (best >= (anchored ? gate : soloGate)) vector = [];
       }
     }
 
-    // Reciprocal-rank fusion across the two ranked lists.
+    // Weighted reciprocal-rank fusion. Unweighted, a vector hit at rank 0
+    // (1/60) beat a keyword hit at rank 2 (1/62), which is how a search for
+    // "horse" led with an Etobicoke shooting: the semantic list outranked the
+    // stories that literally say horse. A literal match is evidence; a nearby
+    // embedding is a suggestion, and is weighted as one.
+    const W_KEYWORD = 1;
+    const W_FUZZY = 0.9;
+    const W_VECTOR = 0.5;
     const score = new Map();
     const byId = new Map();
-    const add = (rows) => rows.forEach((r, i) => {
+    const add = (rows, w) => rows.forEach((r, i) => {
       byId.set(r.id, r);
-      score.set(r.id, (score.get(r.id) || 0) + 1 / (60 + i));
+      score.set(r.id, (score.get(r.id) || 0) + w / (60 + i));
     });
-    add(keyword);
-    add(vector);
+    add(keyword, W_KEYWORD);
+    add(fuzzy, W_FUZZY);
+    add(vector, W_VECTOR);
 
-    const stories = [...byId.values()]
-      .sort((a, b) => (score.get(b.id) - score.get(a.id)))
-      .slice(0, limit);
+    // One story, one row. A story that belongs to two topics is two rows in
+    // news_stories by design (the archive is keyed per topic), so an archive-
+    // wide search showed the same NYT piece twice — once under Artificial
+    // Intelligence, once under Science. Keep whichever ranked higher.
+    const seen = new Map();
+    for (const r of [...byId.values()].sort((a, b) => score.get(b.id) - score.get(a.id))) {
+      const key = dedupeKey(r);
+      if (!seen.has(key)) seen.set(key, r);
+    }
+    const stories = [...seen.values()].slice(0, limit);
 
     res.setHeader('Cache-Control', CACHE_HEADER);
     const body = { count: stories.length, q, stories, nextBefore: null, semantic: !!qvec };
     if (req.query.debug) {
-      body._debug = { keyword: keyword.length, vector: vector.length, gate, cap, best };
+      body._debug = {
+        keyword: keyword.length, fuzzy: fuzzy.length, vector: vector.length,
+        anchored: keyword.length > 0 || fuzzy.length > 0,
+        gate, soloGate, cap, best, deduped: byId.size - seen.size,
+      };
     }
     return res.status(200).json(body);
   } catch (err) {
