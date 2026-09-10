@@ -7091,6 +7091,19 @@ function renderSearchPage(container, term) {
     if (routeHash() !== target) navigate(target);
   };
   searchPageCtl.onCollapse = () => {
+    // revamp1325: a ?q= link is a route source in its own right — /search?q=hi
+    // resolves to the same place #/custom/hi does. Leaving it in the bar meant
+    // clearing the field navigated to #/search and the query param immediately
+    // resolved the term straight back, so the panel re-expanded and the strip
+    // never went. Drop the param first; nothing downstream reads it once the
+    // term is gone.
+    try {
+      const u = new URL(window.location.href);
+      if (u.searchParams.has('q')) {
+        u.searchParams.delete('q');
+        window.history.replaceState(window.history.state, '', u.pathname + u.search + u.hash);
+      }
+    } catch (_) { /* URL is best-effort; the navigate below still runs */ }
     if ((routeHash() || '').startsWith('#/custom/')) navigate('#/search');
   };
   if (!term || !term.trim()) setTimeout(() => { try { searchPageCtl.focus(); } catch (_) {} }, 80);
