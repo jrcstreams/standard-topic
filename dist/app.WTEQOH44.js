@@ -801,7 +801,7 @@ ${$}`),L.length?L.join(`
       </div>
       ${E.length||x?`<section class="di-focus">
         ${E.length?`<h3 class="di-lbl di-focus-lbl">In Focus</h3>
-        <ul class="di-focus-list">${E.map(O=>`<li>${V(O)}</li>`).join("")}</ul>`:""}
+        <ul class="di-focus-list">${E.map(O=>`<li class="tdi-focus-li">${V(O)}</li>`).join("")}</ul>`:""}
         ${x?`<div class="di-summary aii-sec-body">${Ce(x,null)}</div>`:""}
       </section>`:""}
       ${I.length?`<section class="di-briefs di-briefs--v2">

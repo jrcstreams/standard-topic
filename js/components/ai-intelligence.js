@@ -2620,7 +2620,7 @@ export function renderDailyIntelligence(container, scope) {
       </div>
       ${(thingsList.length || overview) ? `<section class="di-focus">
         ${thingsList.length ? `<h3 class="di-lbl di-focus-lbl">In Focus</h3>
-        <ul class="di-focus-list">${thingsList.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+        <ul class="di-focus-list">${thingsList.map((t) => `<li class="tdi-focus-li">${esc(t)}</li>`).join('')}</ul>` : ''}
         ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
       </section>` : ''}
       ${items.length ? `<section class="di-briefs di-briefs--v2">

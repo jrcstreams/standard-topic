@@ -35871,3 +35871,49 @@ body:not(.tt-on) .ndp .aii-nav-dd-subbar[class][class] { z-index: 65 !important;
   color: #7b879e;
 }
 .dih-item .dih-item-stamp:empty { display: none !important; }
+
+/* ═══ revamp1317 — one rule for the numbered list, preview and open alike ═══
+
+   Giving the items a class in 1314b re-enabled every older `li[class]` rule —
+   including the blue text those rules set — which is why the numbers landed
+   but the copy stayed blue. Both lists now carry the same class and this is
+   the single rule that dresses them, at a specificity those older ones can't
+   beat: off-black copy, one circle treatment, same alignment open or closed. */
+.tdi-focus > li.tdi-focus-li,
+.di-focus-list > li.tdi-focus-li {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  color: #1c2333 !important;
+  font-family: var(--font-family) !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+.tdi-focus > li.tdi-focus-li::before,
+.di-focus-list > li.tdi-focus-li::before {
+  content: counter(stfocus) !important;
+  position: static !important;
+  flex: none !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 24px !important;
+  height: 24px !important;
+  margin: -1px 0 0 !important;
+  border-radius: 50% !important;
+  background: color-mix(in srgb, var(--tc, #2f5fd0) 15%, #fff) !important;
+  color: color-mix(in srgb, var(--tc, #2f5fd0) 82%, #14213d) !important;
+  font-size: 0.78rem !important;
+  font-weight: 750 !important;
+  line-height: 1 !important;
+  border: 0 !important;
+}
+/* The open briefing's list sits on the section's own left edge, like its
+   heading and the paragraph beneath it. */
+.di-focus-list[class] { padding-left: 0 !important; margin-left: 0 !important; list-style: none !important; }
+
+/* The topic label sits nearer its title. */
+.tdi-cardeyebrow[class][class][class] { margin-bottom: -2px !important; }
