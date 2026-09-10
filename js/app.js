@@ -1910,7 +1910,7 @@ function diHeroCardHTML(o) {
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
               <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
             </button>
-            ${o.allBriefingsCta ? `<a class="tdi-go tdi-go--all" href="#/intelligence">All Briefings${SUBPAGE_ARROW}</a>` : ''}
+            ${o.allBriefingsCta ? `<a class="tdi-go tdi-go--all" href="#/intelligence">By Topic${SUBPAGE_ARROW}</a>` : ''}
           </div>
         </div>
         ${hubCard}
@@ -2094,7 +2094,7 @@ function renderFeaturedBriefings(host, opts) {
       </div>
       <div class="hb-hero hb-hero--side" data-home-briefing>
         <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-          noHeader: true, hubLink: false, art: true, topicLabel: 'Global Briefing', pillLabel: 'All Topics',
+          noHeader: true, hubLink: false, art: true, topicLabel: "Today's Briefing", pillLabel: 'All Topics',
           sublabel: 'Your daily briefing across every topic we cover.',
           allBriefingsCta: true,
         })}</div>
@@ -2142,7 +2142,7 @@ function renderFeaturedBriefings(host, opts) {
       <div class="hb-grid">
         <div class="hb-hero" data-home-briefing>
           <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-            noHeader: true, hubLink: false, art: true, topicLabel: 'Global Briefing', pillLabel: 'All Topics',
+            noHeader: true, hubLink: false, art: true, topicLabel: "Today's Briefing", pillLabel: 'All Topics',
             sublabel: 'Your daily briefing across every topic we cover.',
           })}</div>
         </div>
@@ -4503,7 +4503,11 @@ function updateTopicViewMode() {
   // for and the tabs already solve. Home goes to tab mode at the same width its
   // second column stops fitting, so the stacked state no longer exists.
   const isHome = document.body.classList.contains('home-search');
-  const isTt = cw < 900;
+  // revamp1290: home has no tabs any more — the briefing card links out to
+  // briefings by topic and trending links to its own page, so there is nothing
+  // for a tab strip to switch between. It stacks instead: briefing, trending,
+  // feed. Everywhere else still goes tabbed under 900.
+  const isTt = !isHome && cw < 900;
   document.body.classList.toggle('tt-on', isTt);
   document.body.classList.toggle('tnews-1col', cw < 1160);
   // revamp1087: leaving tab mode → desktop shows every section at once, so an
@@ -5175,7 +5179,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     container.innerHTML = `
       <div class="topic-layout home-grid" id="topic-layout">
         ${homeHeroHTML}
-        ${bodyTabsRow({ showSearchTrends: true })}
+        <!-- revamp1290: the briefing leads the page at full width. In the
+             sidebar it sat beside the feed as one card among several; it is
+             the thing the site opens with, so it gets the width to say so.
+             Home no longer has a tab strip either — the briefing card links
+             out to briefings by topic and trending links to its own page, so
+             there is nothing left for tabs to switch between. -->
+        <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Today's AI Briefing"></section>
         <div class="home-sections home-v2">
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
@@ -5185,15 +5195,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <section class="layout-section" id="section-newsfeed"></section>
           </div>
           <aside class="home-side">
-            <section class="home-featbriefs hs-block" data-home-featbriefs aria-label="Today's AI Briefing"></section>
             <section class="home-trending hs-block" id="home-trending"></section>
-            <section class="hf-card hf-card--prompts hf-card--labelled hs-block" data-hf="prompts">
-              <div class="hb-head hf-labelhead">
-                <h3 class="hb-title"><span class="hb-head-ic hb-head-ic--prompts" aria-hidden="true">${PROMPTS_HEAD_ICON}</span>AI Prompts</h3>
-              </div>
-              <div class="hf-chips" data-hq-prompts></div>
-              <div class="hs-morefoot"><button type="button" class="hs-morelink" data-explore-prompts>View more prompts${SUBPAGE_ARROW}</button></div>
-            </section>
           </aside>
         </div>
       </div>

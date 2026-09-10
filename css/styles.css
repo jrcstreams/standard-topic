@@ -34770,3 +34770,26 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
   background: #eff1f6 !important;
   border-top: 1px solid #e0e5ee !important;
 }
+
+/* ═══ revamp1290 — home leads with the briefing ═════════════════════════════
+
+   The briefing was one card in a sidebar stack. It is the thing the site opens
+   with, so it takes the full width above the feed, and the rail keeps trending
+   alone. Prompts leave the homepage entirely — they have their own page, and
+   the rail was carrying three cards nobody asked it to rank.
+
+   Home also stops going tabbed at narrow widths: with the briefing leading and
+   trending linking out to its own page, a tab strip had nothing to switch
+   between. It stacks — briefing, trending, feed. */
+.home-featbriefs--lead {
+  grid-column: 1 / -1;
+  margin: 0 0 22px;
+}
+.home-featbriefs--lead .hb-hero--side {
+  /* The sidebar version constrains itself to a rail; at full width it fills. */
+  max-width: none !important;
+}
+/* One column under the briefing: feed, then trending beside it. */
+@media (max-width: 1023px) {
+  .home-featbriefs--lead { margin-bottom: 16px; }
+}

@@ -2475,7 +2475,7 @@ export function renderDailyIntelligence(container, scope) {
   // revamp1037: the masthead leads with the topic as a pill. The site-wide
   // briefing is labelled "Global Briefing" here to match the homepage card —
   // its scope label is "Today", which reads as a date beside a date.
-  const mastLabel = (scope.slug === 'home' || scope.topic === 'home') ? 'Global Briefing' : name;
+  const mastLabel = (scope.slug === 'home' || scope.topic === 'home') ? "Today's Briefing" : name;
   container.innerHTML = `
     <section class="di-page${inline ? ' di-page--inline' : ''}">
       ${inline ? '' : `<header class="di-head">
