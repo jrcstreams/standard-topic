@@ -5185,8 +5185,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
              Home no longer has a tab strip either — the briefing card links
              out to briefings by topic and trending links to its own page, so
              there is nothing left for tabs to switch between. -->
-        <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Today's AI Briefing"></section>
         <div class="home-sections home-v2">
+          <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Today's AI Briefing"></section>
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
                is Today's News. Column 2 stacks the briefing, trending, AI

@@ -34781,7 +34781,11 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
    Home also stops going tabbed at narrow widths: with the briefing leading and
    trending linking out to its own page, a tab strip had nothing to switch
    between. It stacks — briefing, trending, feed. */
-.home-featbriefs--lead {
+/* .topic-layout places its children by named grid areas, so a new child there
+   auto-placed into an implicit row AFTER them — the briefing rendered 4000px
+   down the page, under the feed. It lives inside .home-sections instead, whose
+   two columns are auto-placed, spanning both in the first row. */
+.home-featbriefs--lead[class] {
   grid-column: 1 / -1;
   margin: 0 0 22px;
 }
