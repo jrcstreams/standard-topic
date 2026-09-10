@@ -34687,14 +34687,14 @@ body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
 
 /* ── the ground ─────────────────────────────────────────────────────────── */
 .navmenu-panel[class] {
-  background: #f4f2ef !important;
-  border-right: 1px solid #e4e0da !important;
+  background: #eff1f6 !important;
+  border-right: 1px solid #e0e5ee !important;
 }
 /* The dark bar is set by `.navmenu-head, body.nav-docked .navmenu-head` — a
    (0,3,0) selector with !important — so joining the head to the panel needs to
    clear that, not just restate it. */
 body .navmenu-head[class][class] {
-  background: #f4f2ef !important;
+  background: #eff1f6 !important;
   border-bottom: 0 !important;
   box-shadow: none !important;
 }
@@ -34714,13 +34714,13 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
 /* ── search ─────────────────────────────────────────────────────────────── */
 .navmenu-searchbtn[class] {
   background: #fff !important;
-  border: 1px solid #e2ddd5 !important;
+  border: 1px solid #dfe4ed !important;
   border-radius: 10px !important;
   box-shadow: 0 1px 2px rgba(22, 35, 63, .04) !important;
   margin-bottom: 14px !important;
 }
 @media (hover: hover) {
-  .navmenu-searchbtn[class]:hover { border-color: #cfc7bb !important; }
+  .navmenu-searchbtn[class]:hover { border-color: #c7d0e0 !important; }
 }
 
 /* ── the five pages ─────────────────────────────────────────────────────── */
@@ -34753,13 +34753,13 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
 .navmenu-topics-label {
   margin: 16px 0 8px;
   padding: 14px 11px 0;
-  border-top: 1px solid #e4e0da;
+  border-top: 1px solid #e0e5ee;
   font-family: var(--font-family);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: .07em;
   text-transform: uppercase;
-  color: #9a9287;
+  color: #8d97a9;
 }
 
 /* The topic rows sit on the warm ground, so their hover warms with it. */
@@ -34767,6 +34767,6 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
   .navmenu-subtopic-link[class]:hover { background: rgba(22, 35, 63, .055) !important; }
 }
 .navmenu-footer-sticky[class] {
-  background: #f4f2ef !important;
-  border-top: 1px solid #e4e0da !important;
+  background: #eff1f6 !important;
+  border-top: 1px solid #e0e5ee !important;
 }
