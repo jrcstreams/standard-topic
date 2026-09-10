@@ -34874,8 +34874,14 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
    And the tab strip is down to two. AI Briefing was a tab of its own for a
    card that now leads the Feed tab, so there was nothing behind that tab the
    Feed tab didn't already show. */
-.topic-top--lead { display: block !important; }
-.topic-top--lead > .topic-top-main { width: 100% !important; max-width: none !important; }
+/* .topic-home is itself a two-column grid (640/384), so a new child of it
+   auto-places into ONE of those columns — the briefing landed in the 384px
+   rail and the body grid subdivided the 640px main. Both span the full width;
+   the split that matters is the one inside .topic-body-cols. */
+.topic-home > .topic-top--lead[class],
+.topic-home > .topic-body-cols[class] { grid-column: 1 / -1 !important; }
+.topic-home > .topic-top--lead[class][class] { display: block !important; }
+.topic-top--lead > .topic-top-main[class] { width: 100% !important; max-width: none !important; }
 
 .topic-body-cols {
   display: grid;
