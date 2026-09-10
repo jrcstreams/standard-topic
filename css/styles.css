@@ -35430,8 +35430,11 @@ body.home-search .home-hero[class][class] { padding-bottom: 14px !important; }
 /* revamp1303c: the reserving rule is `html body.home-search.app-mode.sticky-always
    … #content` — html + four body classes + an id, !important. Matched at that
    level; nothing shorter could take it. */
-html body.home-search.app-mode:not(.nav-docked) #content[class][class][class],
-html body.home-search:not(.nav-docked) #content[class][class][class] {
+/* revamp1303d: and `[class]` never matched — #content carries no class
+   attribute, so every selector I'd hung on it was inert. Specificity comes
+   from the body classes it actually has. */
+html body.home-search.app-mode.sticky-always.home-mode:not(.nav-docked) #content,
+html body.home-search.app-mode.home-mode:not(.nav-docked) #content {
   padding-top: calc(var(--nav-h, 56px) + 10px) !important;
 }
 
@@ -35481,8 +35484,10 @@ html body.home-search:not(.nav-docked) #content[class][class][class] {
 .tdi-focus[hidden] { display: none !important; }
 
 /* The rail: twenty, then a button for the rest. */
-body:not(.tt-on) #home-trending .trend-card-grid > .trend-card:nth-child(n+13) { display: block !important; }
-body:not(.tt-on) #home-trending .trending-topics:not(.is-all) .trend-card-grid > .trend-card:nth-child(n+21) { display: none !important; }
+@media (min-width: 1024px) {
+  body:not(.tt-on) #home-trending .trend-card-grid > .trend-card:nth-child(n+13) { display: block !important; }
+  body:not(.tt-on) #home-trending .trending-topics:not(.is-all) .trend-card-grid > .trend-card:nth-child(n+21) { display: none !important; }
+}
 .trend-rail-foot { padding: 12px 0 2px; text-align: center; }
 .trend-rail-more {
   display: inline-flex; align-items: center; gap: 6px;
