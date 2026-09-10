@@ -99,8 +99,14 @@ module.exports = async function handler(req, res) {
     // Two stages, because search_vector is title and description concatenated
     // at equal weight — so "horse" in a motor-oil story's body scored like
     // "horse" in a headline about horses. Stage one takes the best few hundred
-    // on the indexed vector (cheap); stage two re-ranks just those with the
-    // title counted three times, which is the signal a reader means.
+    // on the indexed vector (cheap); stage two re-ranks just those.
+    //
+    // revamp1285c: a title hit outranks a body hit outright, rather than by a
+    // multiplier. ts_rank_cd doesn't normalise for length, so a long story
+    // repeating a word in its body kept beating a headline that is about it —
+    // weighting the title x3 wasn't enough to close that gap. Which story a
+    // reader means is not a matter of degree: it's the one whose headline says
+    // it. Body matches still follow, in their own rank order.
     const keyword = await sql.query(
       `WITH tq AS (SELECT websearch_to_tsquery('english', $1) AS q),
             hits AS (
@@ -111,12 +117,13 @@ module.exports = async function handler(req, res) {
                LIMIT 300
             )
        SELECT ${COLS},
-              ts_rank_cd(to_tsvector('english', coalesce(n.title, '')), (SELECT q FROM tq)) * 3
-                + h.r0 AS _rank
+              ts_rank_cd(to_tsvector('english', coalesce(n.title, '')), (SELECT q FROM tq)) AS _tr,
+              h.r0 AS _br
          FROM hits h
          JOIN news_stories n ON n.id = h.id
          JOIN topics t ON t.id = n.topic_id
-        ORDER BY _rank DESC, n.published_at DESC NULLS LAST
+        ORDER BY (ts_rank_cd(to_tsvector('english', coalesce(n.title, '')), (SELECT q FROM tq)) > 0) DESC,
+                 _tr DESC, _br DESC, n.published_at DESC NULLS LAST
         LIMIT $2`,
       [q, pool]
     );
