@@ -35598,3 +35598,29 @@ body.home-search .home-hero[class][class][class] { padding-top: 14px !important;
 }
 .di-focus-list[class][class][class][class] li::before { background: #7d93c4 !important; }
 .di-focus-list[class][class][class][class] { row-gap: 8px !important; margin: 12px 0 !important; }
+
+/* ═══ revamp1307 — one border on the home card; the sidebar's head rule ═════
+
+   The home card looked thicker-bordered than the topic card's. It wasn't:
+   both cards draw 1px #dfe3ea. The SECTION around the home card was still
+   drawing its own 1px navy-tinted border and a drop shadow one pixel outside
+   the card's — two hairlines a pixel apart read as one heavy edge. The
+   earlier zeroing lost to the section's own rule; stated at the level that
+   wins. */
+body.home-search .home-v2 > .home-featbriefs--lead[class][class],
+body.home-search .home-featbriefs--lead.hs-block[class][class] {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: none !important;
+  outline: 0 !important;
+}
+
+/* Sidebar: a faint rule under the head, so the title area reads as the
+   sidebar's own header the way TOPICS reads as its own section; the gap from
+   Prompts down to that TOPICS rule closes a little; and the inactive glyphs
+   go a shade darker so the five pages read before you look for them. */
+body .navmenu-head[class][class] {
+  border-bottom: 1px solid #dbe3f2 !important;
+}
+.navmenu-topics-label[class] { margin-top: 8px !important; }
+.navmenu-quicklink:not(.is-current)[class] .navmenu-cta-icon { color: #454f66 !important; }
