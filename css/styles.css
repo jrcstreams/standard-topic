@@ -35663,14 +35663,14 @@ body:not(.tt-on) .ndp .aii-nav-dd-scrollwrap[class] { padding-top: 0 !important;
    edges of whatever the sidebar leaves, while the text inside stays measured. */
 .ndp .aii-nav-dd-head::before,
 .page-hero::before {
-  left: calc(-1 * (max(0px, (100vw - var(--sbw, 0px) - var(--max-width)) / 2) + 2rem)) !important;
-  right: calc(-1 * (max(0px, (100vw - var(--sbw, 0px) - var(--max-width)) / 2) + 2rem)) !important;
+  left: calc(-1 * (var(--col-l) - var(--sbw, 0px) + 2rem)) !important;
+  right: calc(-1 * (var(--col-r) + 2rem)) !important;
 }
 @media (max-width: 560px) {
   .ndp .aii-nav-dd-head::before,
   .page-hero::before {
-    left: calc(-1 * (max(0px, (100vw - var(--sbw, 0px) - var(--max-width)) / 2) + 1rem)) !important;
-    right: calc(-1 * (max(0px, (100vw - var(--sbw, 0px) - var(--max-width)) / 2) + 1rem)) !important;
+    left: calc(-1 * (var(--col-l) - var(--sbw, 0px) + 1rem)) !important;
+    right: calc(-1 * (var(--col-r) + 1rem)) !important;
   }
 }
 
@@ -35929,9 +35929,8 @@ html body:not(.tt-on):not(.nav-docked).pagenav-mode.sticky-always.has-subnav[cla
    at 1920, which is exactly `sbw + gutter` → `100% - gutter`. --sbw resolves
    to 320/0 on body, and .tsp-panelwrap inherits it. */
 #sub-header.is-subnav .tsp-panelwrap[class][class] {
-  --tsp-gutter: max(0px, (100% - var(--sbw, 0px) - var(--max-width)) / 2);
-  left: calc(var(--sbw, 0px) + var(--tsp-gutter)) !important;
-  right: var(--tsp-gutter) !important;
+  left: var(--col-l) !important;
+  right: var(--col-r) !important;
   width: auto !important;
 }
 
@@ -35981,3 +35980,46 @@ html body.nav-docked[class][class][class][class] #content:has(.search-panel--mod
 /* (f) The rule → the first result: 0. It IS the first story's top border, and
        a border with no padding behind it puts the headline against the line. */
 .search-panel-results[class] { padding-top: 18px !important; }
+
+/* ═══ revamp1321 — the docked page hangs off the sidebar ════════════════════
+
+   1310 centred the measured column in whatever the sidebar left, which put a
+   gap between the sidebar and the page it belongs to and made the two read as
+   one floating block. Docked, the column starts ON the sidebar's edge and the
+   slack all falls to the right — the page is clearly the thing beside the
+   sidebar. Undocked there is no sidebar to belong to, so it centres.
+
+   Both edges of that column are tokens now, because five things have to agree
+   on them: #content, the hero's full-bleed fade, the grey-nav dropdown, and
+   anything else that escapes the column to paint. */
+body {
+  --col-l: max(0px, (100vw - var(--max-width)) / 2);
+  --col-r: var(--col-l);
+}
+body.nav-docked {
+  --col-l: var(--sbw);
+  --col-r: max(0px, 100vw - var(--sbw) - var(--max-width));
+}
+html body.nav-docked #content {
+  margin-left: var(--col-l) !important;
+  margin-right: 0 !important;
+}
+
+/* ═══ revamp1322 — the home page's two section rules sit on one line ════════
+
+   Measured: both columns start at y=534, but .home-side carried a 19.2px
+   padding-top the News Feed column has none of, so Trending's head began at
+   554 and its rule landed at 599 against the News Feed's 578 — two headers
+   at two heights across one page.
+
+   The columns share a top now, and the two heads share a height, so their
+   rules land on the same line whatever the two titles measure (they don't
+   match: 24.8px/18 tall against 16px/31 tall in a row with a link). */
+.home-sections.home-v2 .home-side[class] { padding-top: 0 !important; }
+.home-sections.home-v2 .newsfeed-head[class][class],
+.home-sections.home-v2 .trending-topics-head[class][class] {
+  box-sizing: border-box !important;
+  min-height: 46px !important;
+  padding-bottom: 12px !important;
+  margin-top: 0 !important;
+}
