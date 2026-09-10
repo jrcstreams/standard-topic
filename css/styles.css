@@ -35098,7 +35098,6 @@ body.tt-on #topic-tab-body .topic-body-cols .newsfeed-list > *:first-child {
   margin-bottom: 14px !important;
   border-bottom: 2px solid #e0e5ee !important;
 }
-@media (min-width: 1200px) {
-  .topic-body-cols > .topic-top-side .trail-head[class][class],
-  .topic-body-cols #section-newsfeed .newsfeed-title[class][class] { font-size: 1.32rem !important; }
-}
+/* No wide-screen bump here: the feed's title is pinned at 1.24rem by a
+   two-ID rule, so bumping the pair only moved the one that wasn't pinned —
+   which is how they ended up 1.32 against 1.24. Both stay at 1.24. */
