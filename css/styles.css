@@ -36050,3 +36050,19 @@ html body[class][class] .home-sections.home-v2 #home-trending .trending-topics-h
   padding-bottom: 12px !important;
   margin-top: 0 !important;
 }
+
+/* revamp1320b: four of 1320's six missed.
+
+   The white seam is .search-page's own 6.4px padding-top, not #content's —
+   #content already computes 0 here, so (a) was correcting the wrong box.
+
+   The other three lost on specificity to incumbents written at three and four
+   stacked [class]: the echo's -14px margin at (0,4,0), the tab strip's 16px
+   top at (0,4,0) and its 10px bottom at (0,3,0), against rules of mine at
+   (0,2,0). Same values, one level clear of all of them. */
+.search-page[class][class] { padding-top: 0 !important; }
+.search-echo[class][class][class][class] { margin-top: 0 !important; }
+.search-topzone-tabs[class][class][class][class] {
+  margin-top: 24px !important;
+  padding-bottom: 20px !important;
+}
