@@ -35930,6 +35930,6 @@ body:not(.tt-on) .ndp .aii-nav-dd-subbar[class][class] { z-index: 65 !important;
 html body.nav-docked:not(.tt-on):not(.home-search)[class][class][class] #content:has(> .ndp) {
   padding-top: 6px !important;
 }
-html body:not(.tt-on).pagenav-mode.sticky-always.has-subnav[class][class] #content:has(> .ndp) {
+html body:not(.tt-on):not(.nav-docked).pagenav-mode.sticky-always.has-subnav[class][class] #content:has(> .ndp) {
   padding-top: 62px !important;
 }
