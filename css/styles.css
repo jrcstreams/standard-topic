@@ -35793,3 +35793,24 @@ body.tt-on #topic-tab-body .aii-fi-sec:first-child[class] { margin-top: 18px !im
 .search-panel-results .aii-fi-acclist > .aii-fi-acc:nth-last-child(2)[class] {
   border-bottom: 1px solid #e8eaef !important;
 }
+
+/* revamp1313b: the featured briefing card's glyph takes its topic's colour —
+   the bare mark, as the accordions below use it, not a filled chip — and the
+   edition stamp sits under the name. */
+.dih-item-ic--tc[class] {
+  background: none !important;
+  color: var(--tc, #2f5fd0) !important;
+}
+.dih-item-ic--tc[class] svg { width: 17px; height: 17px; }
+.dih-item-stamp {
+  display: block;
+  margin: 2px 0 8px;
+  font-family: var(--font-family);
+  font-size: 0.74rem;
+  font-weight: 550;
+  color: #7b879e;
+}
+.dih-item-stamp:empty { display: none; }
+.dih-item-stamp svg { width: 12px; height: 12px; vertical-align: -1px; margin-right: 3px; }
+/* Squarer cards, closer to the briefing card they open into. */
+.dih-item[class] { border-radius: 6px !important; }
