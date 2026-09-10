@@ -35502,3 +35502,51 @@ html body.home-search.app-mode.home-mode:not(.nav-docked) #content {
 /* Stacked or two-column, the counts are 4 and 6 and the foot has no job. */
 body.tt-on .trend-rail-foot { display: none !important; }
 @media (max-width: 1023px) { .trend-rail-foot { display: none !important; } }
+
+/* ═══ revamp1304 — the briefing card, pass three ════════════════════════════
+
+   (a) The preview's In Focus lines were staying on screen after Read Briefing
+       — so the open briefing showed them twice, once from the preview and
+       once from itself. The preview's copy goes with the rest of the preview.
+   (b) A faint rule under the dateline, the width of the body copy.
+   (c) In Focus: no rules over the columns; bullets in every layout, including
+       the three-across one; a size down, a weight down, and a deeper blue so
+       they stay distinct from the sentence beneath without shouting.
+   (d) No chip beside the title, and the title closer to the card's top.
+   (e) The buttons a weight lighter. */
+.tdi-card.is-open .tdi-focus,
+.topic-top.is-di-open .tdi-focus,
+.tdi-card[data-di-open] .tdi-focus,
+.tdi-card.is-di-open .tdi-focus { display: none !important; }
+
+.tdi-mast2 .tdi-metaline[class][class][class][class][class] {
+  padding-bottom: 10px !important;
+  margin-bottom: 12px !important;
+  border-bottom: 1px solid #e1e6ef;
+}
+
+.tdi-focus > li[class], .tdi-focus > li {
+  font-size: 0.88rem !important;
+  font-weight: 560 !important;
+  color: #2f4590 !important;
+  line-height: 1.38 !important;
+}
+@media (min-width: 900px) {
+  .tdi-focus > li { padding-left: 14px !important; padding-top: 0 !important; border-top: 0 !important; }
+  .tdi-focus > li::before { display: block !important; background: #7d93c4; }
+  .tdi-focus { gap: 8px 28px; }
+}
+
+.tdi-cardhead-ic[class] { display: none !important; }
+.tdi-cardhead[class][class][class][class][class] { margin-top: 0 !important; }
+.home-featbriefs--lead .tdi-card .tdi-hero-body[class][class][class],
+.topic-top--lead .tdi-card .tdi-hero-body[class][class][class] { padding-top: 14px !important; }
+.tdi-cardeyebrow[class] { margin-bottom: 4px !important; }
+
+.tdi-briefcol .tdi-actions .tdi-go[class][class][class] { font-weight: 600 !important; }
+
+/* ── the hero: room above the tagline, less under it ───────────────────── */
+html body.home-search.app-mode.home-mode:not(.nav-docked) #content { padding-top: calc(var(--nav-h, 56px) + 22px) !important; }
+body.home-search .home-hero[class][class][class] { padding-top: 14px !important; }
+.home-hero-title[class] { margin-bottom: 4px !important; }
+.home-hero-sub[class] { margin-top: 0 !important; }
