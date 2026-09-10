@@ -36146,3 +36146,19 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
    the echo, leaving it 56px under the field; it belongs directly under it. */
 .search-stickzone[class][class] { width: 100% !important; }
 .search-topzone-tabs[class][class][class][class] { margin-top: 0 !important; }
+
+/* ═══ revamp1325 — the tab rule IS the first row's top border ═══════════════
+
+   1324 left 10px under the rule, which still read as a line belonging to the
+   strip with the list starting below it. At 0 the rule sits on the first row
+   exactly as each row's own hairline sits on the next, and the row's internal
+   padding supplies the breathing room — same for all three tabs, one column or
+   two. */
+.search-panel-results[class][class][class] { padding-top: 0 !important; }
+
+/* The Prompts rows drew their separators in #e8eaef where Web Resources and the
+   Prompts page both use #eef1f6 — a darker line at the same 1px, which is what
+   reads as heavier. One hairline colour across the surface. */
+.search-panel-results .aii-fi-acclist > .aii-fi-acc[class] {
+  border-bottom-color: #eef1f6 !important;
+}

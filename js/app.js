@@ -6911,6 +6911,19 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     syncClear();
     if (panelEl.dataset.state === 'expanded') {
       const v = input.value.trim();
+      // revamp1325: emptying the field is the same as pressing the ✕. The tab
+      // strip names three ways to read ONE term, so with no term there is
+      // nothing to tab between — it was staying up over the last search's
+      // results after the field had been cleared. No debounce: an empty field
+      // is unambiguous in a way a mid-typing string is not.
+      if (!v) {
+        clearTimeout(liveTimer);
+        currentTerm = '';
+        collapse();
+        hideSuggest();
+        syncEcho();
+        return;
+      }
       const sub = resultsInner.querySelector('[data-role="search-term-sub"]');
       if (sub) sub.textContent = v;
       clearTimeout(liveTimer);
