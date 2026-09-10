@@ -35043,3 +35043,41 @@ body.tt-on .topic-band .topic-home.tview-tools > .topic-body-cols > .topic-top-s
   .home-hero[class] { padding-top: 14px !important; }
   .home-hero-inner[class] { padding-top: 0 !important; }
 }
+
+/* ═══ revamp1296 — the topic page's two columns line up ═════════════════════
+
+   The prompts heading and the feed heading are the two column heads of the
+   same row, so they take the same type and the same rule — they were 21.1px
+   against 19.8px, and their rules landed 32px apart.
+
+   The briefing needed air on both sides: it ran straight into the related
+   topics above it and straight into the columns below. */
+.topic-body-cols > .topic-top-side .trail-head[class] {
+  font-size: 1.24rem !important;
+  font-weight: 800 !important;
+  color: #14204a !important;
+  padding-bottom: 15px !important;
+  margin-bottom: 14px !important;
+}
+.topic-home > .topic-top--lead[class][class] {
+  margin-top: 26px !important;
+  margin-bottom: 30px !important;
+}
+/* On a phone the card sat against the tab strip. */
+body.tt-on .topic-home > .topic-top--lead[class][class] {
+  margin-top: 18px !important;
+  margin-bottom: 0 !important;
+}
+/* …and the feed below it opens with a rule, so the briefing reads as the first
+   thing in one continuous list rather than a card cut off above the news. */
+body.tt-on #topic-tab-body .topic-body-cols .news-card:first-child,
+body.tt-on #topic-tab-body .topic-body-cols .newsfeed-list > *:first-child {
+  border-top: 1px solid #e8ebef;
+  padding-top: 18px;
+}
+
+/* ═══ revamp1296b — the story card's actions sit with its summary ═══════════
+   On the wide card layout the buttons drifted from the text they belong to. */
+@media (min-width: 1024px) {
+  .news-card .news-card-actions[class] { margin-top: -6px !important; }
+}
