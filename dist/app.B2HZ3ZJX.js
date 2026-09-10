@@ -1079,10 +1079,11 @@ ${$}`),L.length?L.join(`
               <h3 class="tdi-brieftitle">${O(e.cardTitle||"")||i}</h3>
             </div>
             ${e.cardPill?`<div class="tdi-cardpill">${O(e.cardPill)}</div>`:""}
+            <!-- revamp1298: no AI-generated mark on the PREVIEW. The card is a
+                 date, a sentence and a way in; the mark belongs on the briefing
+                 itself, which carries its own once opened. -->
             <div class="tdi-metaline">
               <span class="tdi-date" data-tdi-date></span>
-              <span class="tdi-metasep tdi-metasep--prov" aria-hidden="true"></span>
-              ${c}
             </div>
           </div>`:`
           <div class="tdi-todayhead">

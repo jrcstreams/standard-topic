@@ -35124,3 +35124,55 @@ body.tt-on #topic-tab-body .topic-body-cols .newsfeed-list > *:first-child {
 @media (max-width: 1023px) {
   body.home-search #sub-header[class] { min-height: 0 !important; }
 }
+
+/* ═══ revamp1298 — the briefing card, sharpened ═════════════════════════════
+
+   Square corners and one grey hairline. The card was carrying a rounded frame
+   inside another frame's border; with the outer one gone the rounding was the
+   only soft thing left on a page of straight rules, and a square edge reads as
+   deliberate rather than left over.
+
+   Everything inside moves up: header to dateline, dateline to summary, summary
+   to buttons. The AI-generated mark left the preview (it's on the briefing
+   itself), which is most of the air that was in there. */
+.tdi-card--v3.tdi-card--hero2[class],
+.home-featbriefs--lead .hb-hero[class],
+.topic-top--lead .tdi-card[class] {
+  border-radius: 0 !important;
+}
+.home-featbriefs--lead .hb-hero[class] {
+  border: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+}
+.home-featbriefs--lead .tdi-card[class],
+.topic-top--lead .tdi-card[class] {
+  border: 1px solid #dfe3ea !important;
+  box-shadow: none !important;
+}
+
+/* the header: the topic pages' dark blue, and heavier */
+.tdi-mast2 .tdi-brieftitle[class] {
+  color: #1a2c66 !important;
+  font-weight: 850 !important;
+}
+/* the chip's glyph was lost inside it */
+.tdi-cardhead-ic { width: 34px; height: 34px; border-radius: 10px; }
+.tdi-cardhead-ic svg { width: 21px; height: 21px; }
+
+/* the stack, tightened */
+.tdi-cardhead[class] { margin-bottom: 7px !important; }
+.tdi-mast2 .tdi-metaline[class] { margin: 0 0 9px !important; }
+.tdi-mast2 + .tdi-summary[class],
+.tdi-briefcol .tdi-summary[class] { margin-top: 0 !important; margin-bottom: 14px !important; }
+.tdi-briefcol .tdi-actions[class] { margin-top: 0 !important; }
+
+/* ── the phone hero sits closer to the header ───────────────────────────── */
+@media (max-width: 1023px) {
+  body.home-search #sub-header .topic-banner[class] { padding-top: 5px !important; padding-bottom: 5px !important; }
+}
+@media (max-width: 640px) {
+  .home-hero[class] { padding-top: 6px !important; }
+  /* …and the card sits closer to the rule under the chips. */
+  .home-featbriefs--lead[class] { margin-top: 14px !important; }
+}

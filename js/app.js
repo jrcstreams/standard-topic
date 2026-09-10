@@ -1897,10 +1897,11 @@ function diHeroCardHTML(o) {
               <h3 class="tdi-brieftitle">${escapeHTML(o.cardTitle || '') || briefTitle}</h3>
             </div>
             ${o.cardPill ? `<div class="tdi-cardpill">${escapeHTML(o.cardPill)}</div>` : ''}
+            <!-- revamp1298: no AI-generated mark on the PREVIEW. The card is a
+                 date, a sentence and a way in; the mark belongs on the briefing
+                 itself, which carries its own once opened. -->
             <div class="tdi-metaline">
               <span class="tdi-date" data-tdi-date></span>
-              <span class="tdi-metasep tdi-metasep--prov" aria-hidden="true"></span>
-              ${provBtn}
             </div>
           </div>` : `
           <div class="tdi-todayhead">
