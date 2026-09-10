@@ -35850,3 +35850,24 @@ body:not(.tt-on) .ndp .aii-nav-dd-subbar[class][class] { z-index: 65 !important;
 /* The prompt grid's rows end on a rule in both columns — the last row in the
    shorter column had none, so the two columns finished unevenly. */
 .aii-fi-acclist > .aii-fi-acc[class] { border-bottom: 1px solid #e8eaef !important; }
+
+/* ═══ revamp1316 — the briefings page's cards carry their edition stamp ═════
+
+   The stamp was populated all along ("Sep 10 · 5:40 AM ET") and hidden twice
+   over: revamp922 dropped the date because every card on the page carries the
+   same day, then revamp932 dropped the rest because they carry the same
+   edition. Both reversed — a card that says when its briefing was written is
+   worth the repetition, and the times do differ card to card. */
+.dih-item .dih-item-stamp[class] { display: inline-flex !important; }
+.dih-item .dih-item-stamp .tdi-stamp-val[class],
+.dih-item .dih-item-stamp .tdi-stamp-sep[class] { display: inline !important; }
+.dih-item .dih-item-stamp[class] {
+  padding-left: 0 !important;
+  margin: 4px 0 8px !important;
+  gap: 6px;
+  font-family: var(--font-family);
+  font-size: 0.74rem;
+  font-weight: 550;
+  color: #7b879e;
+}
+.dih-item .dih-item-stamp:empty { display: none !important; }
