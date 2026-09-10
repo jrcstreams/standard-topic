@@ -35910,7 +35910,7 @@ html body:not(.tt-on):not(.nav-docked).pagenav-mode.sticky-always.has-subnav[cla
    start on one edge by construction, at any width. The 6px above the link is
    padding there too — as a margin it collapsed through the wrapper and did
    nothing. */
-.pdir-card.is-topicview .pdir-topicview[class] { padding: 6px 0 0 16px !important; }
+.pdir-card.is-topicview .pdir-topicview[class] { padding: 12px 0 0 16px !important; }
 .pdir-card.is-topicview .pdir-topichost[class][class] { padding-left: 0 !important; }
 .pdir-card.is-topicview .pdir-bodyback[class][class] {
   padding-left: 2px !important;
