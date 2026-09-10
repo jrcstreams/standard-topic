@@ -1846,7 +1846,7 @@ function fillBriefFocus(root, d) {
   if (ul) {
     const lines = briefFocusLines(d);
     if (!lines.length) ul.hidden = true;
-    else { ul.innerHTML = lines.map((t) => `<li>${escapeHTML(t)}</li>`).join(''); ul.hidden = false; }
+    else { ul.innerHTML = lines.map((t) => `<li class="tdi-focus-li">${escapeHTML(t)}</li>`).join(''); ul.hidden = false; }
   }
   // revamp1314: the card carries the briefing's OWN overview, not the one-line
   // teaser. Three numbered hits followed by a single sentence restating them

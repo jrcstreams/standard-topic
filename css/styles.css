@@ -35727,7 +35727,7 @@ body:not(.tt-on) .ndp .aii-nav-dd-scrollwrap[class] { padding-top: 0 !important;
    The circle carries the colour, so the text goes off-black rather than blue
    — two coloured things side by side was the reason it read as decoration. */
 .tdi-focus, .di-focus-list { counter-reset: stfocus; }
-.tdi-focus > li[class], .di-focus-list > li[class] {
+.tdi-focus > li, .di-focus-list > li {
   counter-increment: stfocus;
   display: flex !important;
   align-items: flex-start !important;
