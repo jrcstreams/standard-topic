@@ -35101,3 +35101,11 @@ body.tt-on #topic-tab-body .topic-body-cols .newsfeed-list > *:first-child {
 /* No wide-screen bump here: the feed's title is pinned at 1.24rem by a
    two-ID rule, so bumping the pair only moved the one that wasn't pinned —
    which is how they ended up 1.32 against 1.24. Both stay at 1.24. */
+
+/* revamp1296e: .topic-news-wrap carried 25.6px of top margin and 6px of
+   padding from when it sat BELOW the two cards rather than beside one. As a
+   column it starts where its neighbour starts. */
+.topic-body-cols > .topic-news-wrap[class] {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
