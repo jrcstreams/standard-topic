@@ -35830,3 +35830,23 @@ body.tt-on #topic-tab-body #section-newsfeed .newsfeed-list[class] {
   grid-template-columns: minmax(0, 1fr) !important;
 }
 body.tt-on #topic-tab-body #section-newsfeed .news-card[class] { width: 100% !important; max-width: none !important; }
+
+/* ═══ revamp1315 — the sports toggle, finally ═══════════════════════════════
+
+   It was never hidden. The head's gradient ::before is absolutely positioned
+   with `bottom: -44px`, so it hangs 44px BELOW the head — straight over the
+   sub-bar at y120 — and the head carries z-index 60 against the sub-bar's 12.
+   The control was painted over by a decorative pseudo-element, which is why
+   every check said "visible" and a yellow test fill still didn't render.
+   The sub-bar sits above the fade now. */
+body:not(.tt-on) .ndp .aii-nav-dd-subbar[class][class] { z-index: 65 !important; }
+
+/* ═══ revamp1315b — In Focus keeps a measure ════════════════════════════════
+   Three columns across a 1280 card gave each line more width than it needs;
+   they read as a row of headlines at a tighter measure, closer together. */
+.tdi-focus[class] { gap: 8px 20px !important; max-width: 1040px; }
+.tdi-focus > li { max-width: 34ch; }
+
+/* The prompt grid's rows end on a rule in both columns — the last row in the
+   shorter column had none, so the two columns finished unevenly. */
+.aii-fi-acclist > .aii-fi-acc[class] { border-bottom: 1px solid #e8eaef !important; }
