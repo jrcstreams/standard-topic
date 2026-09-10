@@ -9,6 +9,23 @@
 
 const fs = require('fs');
 const path = require('path');
+
+// Read .env.local before anything touches process.env, so the connection
+// string can live in the gitignored file rather than being typed onto a
+// command line (where it lands in shell history). Deliberately tiny — the
+// serverless functions get their env from Vercel and must not read files.
+(function loadEnvLocal() {
+  const file = path.join(__dirname, '..', '.env.local');
+  if (!fs.existsSync(file)) return;
+  for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+    const m = line.match(/^\s*(?:export\s+)?([A-Z0-9_]+)\s*=\s*(.*)\s*$/i);
+    if (!m) continue;
+    const key = m[1];
+    let val = m[2].trim().replace(/^['"]|['"]$/g, '');
+    if (val && !process.env[key]) process.env[key] = val;
+  }
+})();
+
 const { getSql } = require('../lib/db');
 
 async function main() {
