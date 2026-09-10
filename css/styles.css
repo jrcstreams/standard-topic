@@ -35717,40 +35717,45 @@ body:not(.tt-on) .ndp .aii-nav-dd-scrollwrap[class] { padding-top: 0 !important;
   }
 }
 
-/* ═══ revamp1311b — In Focus is 1, 2, 3, not a bullet list ══════════════════
+/* ═══ revamp1314 — In Focus, numbered properly ═════════════════════════════
 
-   Dots read as a list of related things. These are three separate hits, so
-   they're numbered — a small circle in the page's own colour, on the preview
-   card and the open briefing alike. Counters, so no markup carries the
-   numbers and they can never fall out of step with the list. */
+   The first pass positioned the numbers absolutely against a padding the
+   list's own rules kept resetting, so each circle sat ON its first word. The
+   row is a flex line now: the marker is a flex item and cannot overlap the
+   text whatever the padding does.
+
+   The circle carries the colour, so the text goes off-black rather than blue
+   — two coloured things side by side was the reason it read as decoration. */
 .tdi-focus, .di-focus-list { counter-reset: stfocus; }
-.tdi-focus > li, .di-focus-list > li { counter-increment: stfocus; }
 .tdi-focus > li[class], .di-focus-list > li[class] {
-  position: relative;
-  padding-left: 30px !important;
-  border-top: 0 !important;
+  counter-increment: stfocus;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  position: static !important;
+  padding-left: 0 !important;
   padding-top: 0 !important;
+  border-top: 0 !important;
+  color: #1c2333 !important;
+  font-weight: 600 !important;
 }
 .tdi-focus > li::before,
 .di-focus-list > li::before {
   content: counter(stfocus) !important;
-  position: absolute !important;
-  left: 0 !important;
-  top: 0 !important;
+  position: static !important;
+  flex: none !important;
   display: grid !important;
   place-items: center !important;
-  width: 21px !important;
-  height: 21px !important;
+  width: 24px !important;
+  height: 24px !important;
+  margin-top: -1px !important;
   border-radius: 50% !important;
-  background: color-mix(in srgb, var(--tc, #2f5fd0) 13%, #fff) !important;
-  color: color-mix(in srgb, var(--tc, #2f5fd0) 78%, #14213d) !important;
+  background: color-mix(in srgb, var(--tc, #2f5fd0) 15%, #fff) !important;
+  color: color-mix(in srgb, var(--tc, #2f5fd0) 82%, #14213d) !important;
   font-family: var(--font-family) !important;
-  font-size: 0.72rem !important;
+  font-size: 0.78rem !important;
   font-weight: 750 !important;
   line-height: 1 !important;
-}
-@media (min-width: 900px) {
-  .tdi-focus > li[class] { padding-left: 30px !important; }
 }
 
 /* ═══ revamp1311c — the prompts tab, on a phone ═════════════════════════════
@@ -35814,3 +35819,14 @@ body.tt-on #topic-tab-body .aii-fi-sec:first-child[class] { margin-top: 18px !im
 .dih-item-stamp svg { width: 12px; height: 12px; vertical-align: -1px; margin-right: 3px; }
 /* Squarer cards, closer to the briefing card they open into. */
 .dih-item[class] { border-radius: 6px !important; }
+
+/* revamp1314b: in tab mode the feed kept the wide layout's column count, so a
+   roomy tab-width screen showed one column of cards with the other column's
+   width standing empty beside it. One column, full width. */
+body.tt-on #topic-tab-body .topic-body-cols > .topic-news-wrap[class],
+body.tt-on #topic-tab-body #section-newsfeed[class] { width: 100% !important; max-width: none !important; }
+body.tt-on #topic-tab-body #section-newsfeed .news-list[class],
+body.tt-on #topic-tab-body #section-newsfeed .newsfeed-list[class] {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+body.tt-on #topic-tab-body #section-newsfeed .news-card[class] { width: 100% !important; max-width: none !important; }

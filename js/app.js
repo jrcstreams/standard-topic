@@ -1843,11 +1843,35 @@ function briefFocusLines(d) {
 }
 function fillBriefFocus(root, d) {
   const ul = root && root.querySelector('[data-tdi-focus]');
-  if (!ul) return;
-  const lines = briefFocusLines(d);
-  if (!lines.length) { ul.hidden = true; return; }
-  ul.innerHTML = lines.map((t) => `<li>${escapeHTML(t)}</li>`).join('');
-  ul.hidden = false;
+  if (ul) {
+    const lines = briefFocusLines(d);
+    if (!lines.length) ul.hidden = true;
+    else { ul.innerHTML = lines.map((t) => `<li>${escapeHTML(t)}</li>`).join(''); ul.hidden = false; }
+  }
+  // revamp1314: the card carries the briefing's OWN overview, not the one-line
+  // teaser. Three numbered hits followed by a single sentence restating them
+  // was the same information twice; the overview goes further, and opening the
+  // card is then for Top Stories rather than for a longer summary. The AI
+  // Briefings page keeps the teaser — its cards are a directory, and fill a
+  // different element ([data-fb-sum]).
+  const sEl = root && root.querySelector('[data-tdi-summary]');
+  if (sEl) {
+    const overview = briefOverview(d);
+    if (overview) sEl.textContent = overview;
+  }
+}
+// The briefing's overview section as plain text.
+function briefOverview(d) {
+  try {
+    const parts = splitSections((d && d.content) || '');
+    const sec = parts.find((p) => /overview|rundown/i.test(p.name || ''));
+    if (!sec || !sec.body) return '';
+    return String(sec.body)
+      .replace(/^\s*[-*\u2022]\s*/gm, '')
+      .replace(/\*\*/g, '')
+      .replace(/\s*\n\s*/g, ' ')
+      .trim();
+  } catch (_) { return ''; }
 }
 
 function diHeroCardHTML(o) {
