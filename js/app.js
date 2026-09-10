@@ -1892,11 +1892,11 @@ function diHeroCardHTML(o) {
             <!-- revamp1294: the section header moved INSIDE the card — chip,
                  title, and the topic on a pill beneath. Outside it, the header
                  and its rule framed a card that already had a frame. -->
+            ${o.cardPill ? `<div class="tdi-cardeyebrow">${escapeHTML(o.cardPill)}</div>` : ''}
             <div class="tdi-cardhead">
               <span class="tdi-cardhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
               <h3 class="tdi-brieftitle">${escapeHTML(o.cardTitle || '') || briefTitle}</h3>
             </div>
-            ${o.cardPill ? `<div class="tdi-cardpill">${escapeHTML(o.cardPill)}</div>` : ''}
             <!-- revamp1298: no AI-generated mark on the PREVIEW. The card is a
                  date, a sentence and a way in; the mark belongs on the briefing
                  itself, which carries its own once opened. -->

@@ -64,6 +64,16 @@
   font-display: swap;
   src: url('/assets/fonts/libre-franklin-600.woff2') format('woff2');
 }
+@font-face {
+  /* revamp1301: the ExtraBold face. Every "make the title bolder" pass had set
+     a heavier weight, and every one rendered at 600 — because 600 was the only
+     face loaded, and a weight the font doesn't have can't be shown. 11KB. */
+  font-family: 'Libre Franklin';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/assets/fonts/libre-franklin-800.woff2') format('woff2');
+}
 /* === Reset & Base === */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -35259,4 +35269,77 @@ body.tt-on #topic-tab-body #section-newsfeed .newsrow:first-child {
   border-top: 1px solid #e8ebef !important;
   padding-top: 16px !important;
   margin-top: 16px !important;
+}
+
+/* ═══ revamp1301 — the briefing card, weighted and re-ordered ═══════════════
+
+   The title finally has weight: the only face of Libre Franklin ever loaded
+   was 600, so every heavier value set on it was silently shown at 600. The
+   800 face is loaded now, and the title uses it — heavier than it was, still
+   a step under the feed heading's 800 General Sans, which is the wider face.
+
+   The topic moves ABOVE the title as an eyebrow label, so "AI Briefing" and
+   its chip sit directly on the dateline and the card reads top-down: what
+   it's about, what it is, when, the sentence, the way in. The Read Briefing
+   button comes down a size and everything closes up another notch. */
+.tdi-card .tdi-mast2 .tdi-brieftitle[class][class] {
+  font-weight: 800 !important;
+  color: #1a2c66 !important;
+}
+.tdi-cardeyebrow {
+  margin: 0 0 8px;
+  font-family: var(--font-family);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #5b6b8f;
+}
+.tdi-cardhead[class][class][class] { margin-bottom: 4px !important; }
+.tdi-mast2 .tdi-metaline[class][class][class] { margin-bottom: 6px !important; }
+.tdi-briefcol .tdi-summary[class][class][class] { margin-bottom: 10px !important; }
+.tdi-briefcol .tdi-actions .tdi-go[class][class] {
+  padding: 9px 15px !important;
+  font-size: 0.9rem !important;
+  min-height: 0 !important;
+}
+.tdi-briefcol .tdi-actions .tdi-go svg { width: 14px; height: 14px; }
+
+/* revamp1301b: on a phone the card body kept its 18px top padding and lost
+   its sides entirely — a full-bleed rail rule from before the card had a
+   border. Content sat 1px off the edge. It gets its sides back at every
+   width the card is bordered. */
+body.tt-on .topic-top--lead .tdi-card .tdi-hero-body[class][class],
+body.tt-on .home-featbriefs--lead .tdi-card .tdi-hero-body[class][class],
+.topic-top--lead .tdi-card .tdi-hero-body[class][class],
+.home-featbriefs--lead .tdi-card .tdi-hero-body[class][class] {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+@media (max-width: 640px) {
+  .topic-top--lead .tdi-card .tdi-hero-body[class][class],
+  .home-featbriefs--lead .tdi-card .tdi-hero-body[class][class] {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+}
+
+/* revamp1301c: the two column heads, pinned at id level so no later rule can
+   move one without the other — the split before came from a two-id rule that
+   only a two-id rule can meet. */
+#topic-tab-body .topic-body-cols > .topic-top-side .trail-head[class],
+#topic-tab-body .topic-body-cols #section-newsfeed .newsfeed-title[class] {
+  font-size: 1.24rem !important;
+  line-height: 1.3 !important;
+  font-weight: 800 !important;
+  color: #14204a !important;
+  margin-top: 0 !important;
+}
+#topic-tab-body .topic-body-cols > .topic-top-side .trail-head[class],
+#topic-tab-body .topic-body-cols #section-newsfeed .newsfeed-head[class] {
+  padding-top: 0 !important;
+  padding-bottom: 15px !important;
+  margin-top: 0 !important;
+  margin-bottom: 14px !important;
+  border-bottom: 2px solid #e0e5ee !important;
 }

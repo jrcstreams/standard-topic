@@ -1074,11 +1074,11 @@ ${$}`),L.length?L.join(`
             <!-- revamp1294: the section header moved INSIDE the card \u2014 chip,
                  title, and the topic on a pill beneath. Outside it, the header
                  and its rule framed a card that already had a frame. -->
+            ${e.cardPill?`<div class="tdi-cardeyebrow">${O(e.cardPill)}</div>`:""}
             <div class="tdi-cardhead">
               <span class="tdi-cardhead-ic" aria-hidden="true">${Aa}</span>
               <h3 class="tdi-brieftitle">${O(e.cardTitle||"")||i}</h3>
             </div>
-            ${e.cardPill?`<div class="tdi-cardpill">${O(e.cardPill)}</div>`:""}
             <!-- revamp1298: no AI-generated mark on the PREVIEW. The card is a
                  date, a sentence and a way in; the mark belongs on the briefing
                  itself, which carries its own once opened. -->
