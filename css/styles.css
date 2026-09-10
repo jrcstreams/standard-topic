@@ -36073,3 +36073,31 @@ html body[class][class] .home-sections.home-v2 #home-trending .trending-topics-h
   margin-top: 24px !important;
   padding-bottom: 20px !important;
 }
+
+/* ═══ revamp1323 — the briefing card's stamp, and the one page 1318 missed ══
+
+   (1) The stamp wore a pill — white fill, hairline border, 7px radius, 4px of
+       padding — that nothing else on the site wears. The topic and home preview
+       cards set the same date and time as plain grey type with its two glyphs,
+       and this is the same stamp at preview scale, so it reads the same way.
+       Losing the pill's padding and its 4/8 margins leaves the card's own 6px
+       flex gap doing the spacing, which is what closes it up to the title above
+       and the summary below (both were 14px, and 18px of ink). */
+.dih-item .dih-item-stamp[class][class][class] {
+  background: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* (2) 1318 levelled the page heads on `#content:has(> .ndp)`. AI Briefings
+       builds its title from .page-hero inside a .dih, not a .ndp, so it kept
+       the old 78px and its icon sat 56px under the header against everyone
+       else's 32. Same lever, same target: 54px of padding puts it at 32.
+       Docked it needs the other 2px, and #content is already at 0 there, so
+       that one comes off the .dih itself. */
+html body:not(.tt-on):not(.nav-docked).pagenav-mode.sticky-always.has-subnav[class][class] #content:has(> .dih) {
+  padding-top: 54px !important;
+}
+html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -2px !important; }
