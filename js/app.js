@@ -17,7 +17,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief } from './components/ai-intelligence.js?v=20260817-revamp772';
+import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief, splitSections } from './components/ai-intelligence.js?v=20260817-revamp772';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -1828,6 +1828,28 @@ const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="
 // Hub" access-link riding right of the title; the light body below holds the
 // sublabel, the Today's Briefing header + edition stamp, a "Topic: X" data
 // label, the summary, and the "View briefing" control.
+// revamp1303: the three "things to know" lines from a briefing payload — the
+// same parse the open briefing runs, so the preview shows exactly the bullets
+// the reader gets on opening it. Capped at three; a stray fourth must not
+// reshape the card.
+function briefFocusLines(d) {
+  try {
+    const parts = splitSections((d && d.content) || '');
+    const sec = parts.find((p) => /things to know/i.test(p.name || ''));
+    return String((sec && sec.body) || '').split('\n')
+      .map((l) => l.replace(/^\s*[-*\u2022]\s*/, '').trim())
+      .filter(Boolean).slice(0, 3);
+  } catch (_) { return []; }
+}
+function fillBriefFocus(root, d) {
+  const ul = root && root.querySelector('[data-tdi-focus]');
+  if (!ul) return;
+  const lines = briefFocusLines(d);
+  if (!lines.length) { ul.hidden = true; return; }
+  ul.innerHTML = lines.map((t) => `<li>${escapeHTML(t)}</li>`).join('');
+  ul.hidden = false;
+}
+
 function diHeroCardHTML(o) {
   o = o || {};
   const X_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
@@ -1913,6 +1935,10 @@ function diHeroCardHTML(o) {
                used to live inside .tdi-todayhead alongside the title. -->
           <div class="tdi-stamprow"><span class="tdi-date" data-tdi-date></span></div>
           ${provBtn}`}
+          <!-- revamp1303: the briefing's three In Focus lines, on the preview.
+               They are the briefing's own bullets, so the card shows what the
+               day is about before the sentence that sums it up. -->
+          <ul class="tdi-focus" data-tdi-focus hidden></ul>
           <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
           <div class="tdi-actions">
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
@@ -2437,6 +2463,7 @@ function renderIntelligenceHub(container) {
       if (!d || !todayCard.isConnected) return;
       const sEl = todayCard.querySelector('[data-tdi-summary]');
       if (sEl && d.summary) sEl.textContent = d.summary;
+      fillBriefFocus(todayCard, d);
       if (d.generatedAt) {
         const stampHTML = diEditionStampHTML(d.generatedAt);
         todayCard.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow]').forEach((el) => { el.innerHTML = stampHTML; });
@@ -2640,6 +2667,7 @@ function wireHomeDailyIntelligence(root) {
     if (!d || !card.isConnected) return;
     const sEl = card.querySelector('[data-tdi-summary]');
     if (sEl && d.summary) sEl.textContent = d.summary;
+    fillBriefFocus(card, d);
     if (d.generatedAt) {
       const stamp = diEditionStampHTML(d.generatedAt);
       card.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow], [data-tdi-date-lg]').forEach((el) => { el.innerHTML = stamp; });
@@ -2846,6 +2874,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       const sEl = body.querySelector('[data-tdi-summary]');
       const dEl = body.querySelector('[data-tdi-date]');
       if (sEl && d.summary) sEl.textContent = d.summary;
+    fillBriefFocus(body, d);
       else if (sEl && d.content) sEl.textContent = String(d.content).replace(/^##.+$/gm, '').replace(/\*\*/g, '').trim().split(/(?<=[.!?])\s/)[0] || '';
       // Two stamps, one datum: the compact one rides the title line while the
       // card is closed; the larger one leads the brief when it's open.

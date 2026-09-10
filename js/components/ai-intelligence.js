@@ -37,7 +37,7 @@ function relTime(iso) {
   if (h < 24) return `${h}h ago`;
   return `${Math.round(h / 24)}d ago`;
 }
-function splitSections(content) {
+export function splitSections(content) {
   const text = String(content || '');
   // Tolerate header drift: the model sometimes wraps headers in bold
   // (**## Name**), uses ### , or trailing **. Match all and clean the name.
@@ -2614,7 +2614,7 @@ export function renderDailyIntelligence(container, scope) {
         </div>
       </div>
       ${(thingsList.length || overview) ? `<section class="di-focus">
-        ${thingsList.length ? `<h3 class="di-lbl di-focus-lbl">Today in Focus</h3>
+        ${thingsList.length ? `<h3 class="di-lbl di-focus-lbl">In Focus</h3>
         <ul class="di-focus-list">${thingsList.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
         ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
       </section>` : ''}

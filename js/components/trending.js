@@ -712,6 +712,21 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
     grid.innerHTML = items.map((t, i) => trendCardHTML(t, i)).join('');
     // Homepage trends expand their brief inline (Phase 5), no modal.
     wireTrendCardsInline(grid);
+    // revamp1303: the desktop rail shows twenty. Past that, one button under
+    // the list reveals the rest in place — only rendered when there IS a rest,
+    // so a short day doesn't end on a button that does nothing.
+    const RAIL_CAP = 20;
+    container.querySelector('[data-trend-more]')?.remove();
+    if (items.length > RAIL_CAP) {
+      const foot = document.createElement('div');
+      foot.className = 'trend-rail-foot';
+      foot.innerHTML = `<button type="button" class="trend-rail-more" data-trend-more>View more trending<span class="trend-rail-more-n">(${items.length - RAIL_CAP} more)</span></button>`;
+      grid.insertAdjacentElement('afterend', foot);
+      foot.querySelector('[data-trend-more]').addEventListener('click', () => {
+        container.querySelector('.trending-topics')?.classList.add('is-all');
+        foot.remove();
+      });
+    }
   }
 
   function renderShell() {
