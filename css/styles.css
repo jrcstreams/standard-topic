@@ -35343,3 +35343,79 @@ body.tt-on .home-featbriefs--lead .tdi-card .tdi-hero-body[class][class],
   margin-bottom: 14px !important;
   border-bottom: 2px solid #e0e5ee !important;
 }
+
+/* revamp1302: home — the card sits on the hero's rule and the sections sit on
+   the card. The lead carried 25.6px above and 24 below from rules a class
+   deeper than mine; under that the grid's 32px row gap and the main column's
+   19px top padding stacked to 75px before the feed heading. */
+body.home-search .home-v2 > .home-featbriefs--lead[class][class] {
+  margin-top: 10px !important;
+  margin-bottom: 0 !important;
+}
+body.home-search .home-sections.home-v2[class][class] { row-gap: 22px !important; }
+body.home-search .home-v2 > .home-main[class][class] { padding-top: 0 !important; }
+body.home-search .home-hero[class][class] { padding-bottom: 14px !important; }
+
+/* ═══ revamp1302 — the search page ══════════════════════════════════════════
+
+   The kind-tabs sit left with the bar and the results, and the active one is
+   navy with white type — the light-blue pill it had was the same tint as the
+   rows beneath it, so the list read as continuous with the tab. Inactive tabs
+   are buttons, not bare text, so the strip reads as three choices.
+
+   The echoed query stops being a small grey italic centred under the bar: it
+   sits on the same left edge as the bar and the tabs, closer to the bar, a
+   size up and heavier — it's the thing you searched for.
+
+   Web Resources rows take the prompts rows' chip icon and lose their subtext.
+   And in the two-column prompt grid the second column's first row drew its
+   own top border on the strip's rule, which is the "thicker line". */
+.search-topzone-tabs[class][class] {
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  margin-top: 10px !important;
+}
+.stz-tab[class] {
+  border: 1px solid #cfd8e8 !important;
+  background: #fff !important;
+  color: #2b3c66 !important;
+  padding: 8px 14px !important;
+  border-radius: 9px !important;
+}
+.stz-tab[class] svg { color: #5a6b90; }
+.stz-tab.is-active[class] {
+  background: #1e2d5a !important;
+  border-color: #1e2d5a !important;
+  color: #fff !important;
+}
+.stz-tab.is-active[class] svg { color: #fff; }
+@media (hover: hover) {
+  .stz-tab:not(.is-active)[class]:hover { background: #f1f4fa !important; border-color: #b9c6dd !important; color: #1e2d5a !important; }
+}
+
+.search-echo[class][class] {
+  margin: -22px 0 0 !important;
+  text-align: left !important;
+  font-style: normal !important;
+  font-size: 1.08rem !important;
+  font-weight: 700 !important;
+  color: #1a2c66 !important;
+}
+
+/* Web Resources rows: chip icon, no subtext, icon centred on the title. */
+.search-xf .xf-sum[class] { align-items: center !important; }
+.search-xf .xf-sum-ic[class] {
+  flex: none;
+  display: inline-grid !important; place-items: center !important;
+  width: 34px !important; height: 34px !important;
+  border-radius: 9px !important;
+  background: #eef2fa !important;
+  color: #3a4a70 !important;
+}
+.search-xf .xf-sum-ic[class] svg { width: 17px !important; height: 17px !important; }
+.search-xf .xf-sum-desc[class] { display: none !important; }
+
+/* Two columns: both column heads sit on the strip's rule. */
+@media (min-width: 900px) {
+  .search-panel-results .aii-fi-acclist > .aii-fi-acc:nth-child(2)[class] { border-top: 0 !important; }
+}

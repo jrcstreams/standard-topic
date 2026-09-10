@@ -196,7 +196,8 @@ export function exploreFurtherHTML(opts = {}) {
       const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(webTerm || ''));
       return `<a class="xf-web-row" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="xf-web-tx"><span class="xf-web-name">${esc(s.name)}</span>${s.description ? `<span class="xf-web-desc">${esc(s.description)}</span>` : ''}</span>${EXT}</a>`;
     }).join('');
-    const desc = CAT_DESC[cat.key] || '';
+    // revamp1302: no subtext on the row — the name says it, as the prompts list's rows do.
+    const desc = '';
     const icon = CAT_ICON[cat.key] || CAT_ICON.__other;
     // The category blurb rides in the SUMMARY as row subtext (matching the topic
     // page's AI Insights rows) rather than hiding inside the open panel — so a
