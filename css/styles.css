@@ -32668,10 +32668,6 @@ body:not(.tt-on) .topic-bodyhead .tbh-sub .tbh-sub-ic {
 
 /* The focus headlines were set at the size of body copy in bold, so three of
    them read as a wall rather than three scannable lines. */
-.di-focus-list[class][class] li {
-  font-size: 0.88rem !important;
-  line-height: 1.4 !important;
-}
 
 /* revamp1214 — the masthead drops to Franklin's Bold. ExtraBold at 1.35–1.9rem
    closed the counters up: the word read as a block and lost the face's own
@@ -33221,23 +33217,6 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
 /* The three items: smaller, and marked as a list. They were body-copy size in
    bold, which made three of them read as three headlines competing with the
    Top Stories headlines below. */
-.di-focus-list[class][class][class] li {
-  position: relative;
-  padding-left: 15px !important;
-  font-size: 0.83rem !important;
-  line-height: 1.45 !important;
-}
-.di-focus-list[class][class][class] li::before {
-  content: "";
-  position: absolute; left: 2px; top: 0.62em;
-  width: 5px; height: 5px; border-radius: 50%;
-  background: #8f9dba;
-}
-@container (min-width: 640px) {
-  .di-focus-list[class][class][class] li { padding-left: 15px !important; border-left: 0 !important; }
-  .di-focus-list[class][class][class] li:first-child { padding-left: 15px !important; }
-  .di-focus-list[class][class][class] li::before { left: 2px; }
-}
 
 /* (5) "Top Stories" becomes a section header rather than a labelled rule ─────
    The trailing hairline made it a caption stretched across the column. Drop the
@@ -33454,20 +33433,6 @@ body .topic-band #section-newsfeed .news-list .news-card.news-card--open[class][
    borders gone the padding goes too, spacing moves to the grid's row-gap, and
    one offset is then correct for every item. */
 .di-focus-list[class][class][class] { row-gap: 10px !important; }
-.di-focus-list[class][class][class] li {
-  border-top: 0 !important;
-  border-left: 0 !important;
-  padding: 0 0 0 15px !important;
-  margin: 0 !important;
-}
-.di-focus-list[class][class][class] li::before { top: 0.56em !important; }
-@container (min-width: 640px) {
-  .di-focus-list[class][class][class] li,
-  .di-focus-list[class][class][class] li:first-child {
-    padding: 0 0 0 15px !important;
-    border-left: 0 !important;
-  }
-}
 
 /* revamp1240 — the trend card's ✕ centres on BOTH surfaces. The Trending page
    never centred it either (measured: it sits at the trigger's top edge, like
@@ -35593,14 +35558,6 @@ body.home-search .home-hero[class][class][class] { padding-top: 14px !important;
 }
 .di-mast--v2 .di-title .di-title--today[class] { font-weight: 800 !important; color: #1a2c66 !important; }
 
-.di-focus-list[class][class][class][class] li {
-  font-family: var(--font-family) !important;
-  font-size: 0.88rem !important;
-  font-weight: 560 !important;
-  color: #2f4590 !important;
-  line-height: 1.38 !important;
-}
-.di-focus-list[class][class][class][class] li::before { background: #7d93c4 !important; }
 .di-focus-list[class][class][class][class] { row-gap: 8px !important; margin: 12px 0 !important; }
 
 /* ═══ revamp1307 — one border on the home card; the sidebar's head rule ═════
@@ -35932,4 +35889,62 @@ html body.nav-docked:not(.tt-on):not(.home-search)[class][class][class] #content
 }
 html body:not(.tt-on):not(.nav-docked).pagenav-mode.sticky-always.has-subnav[class][class] #content:has(> .ndp) {
   padding-top: 62px !important;
+}
+
+/* ═══ revamp1319 — the prompt accordion's head, and the dropdown at width ═══
+
+   ── (1) The drilled-in topic's head ────────────────────────────────────────
+   Measured on the two-column view: the Back link's chevron started at 523 and
+   the "Topic-Specific Prompts" heading at 557, so the link hung 34px left of
+   the heading it belongs to — the card body's own 6px inset, where the prompt
+   host adds 32 more. It also sat 18px under the accordion's header rule and
+   35px above the heading, which read as attached to the wrong one.
+
+   The link now starts on the heading's edge, and the two gaps around it match
+   (24 / 23), so it sits between the header and the heading rather than under
+   the header. */
+@media (min-width: 720px) {
+  .pdir-card.is-topicview .pdir-bodyback[class] { padding-left: 34px !important; }
+}
+.pdir-card.is-topicview .pdir-bodyback[class] {
+  margin-top: 6px !important;
+  margin-bottom: 2px !important;
+}
+
+/* ── (2) The rule above a section IS the first prompt's top border ──────────
+   Both lists opened 11px under their heading's rule, so the rule read as
+   punctuation after the heading rather than as the top edge of the rows. */
+.pdir-topichost .aii-fi-sec .aii-fi-sechead[class][class] { margin-bottom: 0 !important; }
+
+/* ═══ (3) The grey-nav dropdown, inside the page's own column ═══════════════
+
+   The panel was anchored `left: var(--sbw); right: 0`, i.e. the whole width
+   beside the sidebar — 1600px at 1920 — while everything in it was capped at
+   --max-width and centred. The result at width: a grey header band floating
+   1280px wide inside a 1600px white card, cut off well short of its edges,
+   with the ✕ stranded on the white outside it.
+
+   The card is the page's content column now, so the band fills it and the ✕
+   lands in it. Measured: #content runs 480→1760 docked and 320→1600 undocked
+   at 1920, which is exactly `sbw + gutter` → `100% - gutter`. --sbw resolves
+   to 320/0 on body, and .tsp-panelwrap inherits it. */
+#sub-header.is-subnav .tsp-panelwrap[class][class] {
+  --tsp-gutter: max(0px, (100% - var(--sbw, 0px) - var(--max-width)) / 2);
+  left: calc(var(--sbw, 0px) + var(--tsp-gutter)) !important;
+  right: var(--tsp-gutter) !important;
+  width: auto !important;
+}
+
+/* And its contents start where the page's do. The grey band's own title sits
+   32px inside #content (the page wrapper's gutter), where the panel's inset
+   put "View All Topics" and the grid 12px left of it. Desktop only — a phone's
+   page gutter is smaller and the 20px inset already matches it. */
+@media (min-width: 900px) {
+  #sub-header.is-subnav .topic-subnav-picker[class][class] { --tsp-inset: 32px; }
+}
+
+/* The ✕ closes the menu from inside the header, on the column's right edge —
+   the same edge the grid's last cell ends on. */
+#sub-header.is-subnav .is-open .tsp-close--row[class][class] {
+  right: var(--tsp-inset, 20px) !important;
 }
