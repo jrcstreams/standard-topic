@@ -34690,19 +34690,25 @@ body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
   background: #f4f2ef !important;
   border-right: 1px solid #e4e0da !important;
 }
-.navmenu-head[class] {
+/* The dark bar is set by `.navmenu-head, body.nav-docked .navmenu-head` — a
+   (0,3,0) selector with !important — so joining the head to the panel needs to
+   clear that, not just restate it. */
+body .navmenu-head[class][class] {
   background: #f4f2ef !important;
   border-bottom: 0 !important;
   box-shadow: none !important;
 }
-.navmenu-title[class] { color: #16233f !important; }
-.navmenu-collapse[class] {
+body .navmenu-head[class][class] .navmenu-brand[class],
+body .navmenu-head[class][class] .navmenu-title[class] { color: #16233f !important; }
+body .navmenu-head[class][class] .navmenu-collapse[class] {
   color: #7d8598 !important;
   background: none !important;
   border: 0 !important;
 }
 @media (hover: hover) {
-  .navmenu-collapse[class]:hover { color: #16233f !important; background: rgba(22, 35, 63, .06) !important; }
+  body .navmenu-head[class][class] .navmenu-collapse[class]:hover {
+    color: #16233f !important; background: rgba(22, 35, 63, .06) !important;
+  }
 }
 
 /* ── search ─────────────────────────────────────────────────────────────── */
