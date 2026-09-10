@@ -34650,3 +34650,24 @@ body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
     color: #2b3a5c !important;
   }
 }
+
+/* ═══ revamp1287 — the open prompt card's outline, stated once ══════════════
+
+   Reported as "no top border when expanded". It was there: painting a test
+   border red proved it rendered. It just could not be SEEN. The other three
+   sides have the card's white body on one side of them; the top edge has the
+   header's tint (#eef2fa) directly beneath it, and a 34%-opacity navy hairline
+   has almost nothing to hold against there.
+
+   So this is contrast, not a missing edge — and the outline goes a shade
+   deeper on all four sides rather than the top alone, which is the trap the
+   last few passes fell into: revamp1256 removed the top, another put it back
+   without a colour, another gave it a colour of its own, and by now four
+   !important rules were setting this one border between them. One rule, four
+   sides, one value. */
+#content .aii-fi-acclist > .aii-fi-acc.is-open[class][class][class],
+.home-side .aii-fi-acclist > .aii-fi-acc.is-open[class][class][class],
+.search-panel-results .aii-fi-acclist > .aii-fi-acc.is-open[class][class][class] {
+  border: 1px solid #a9b7d8 !important;
+  border-radius: 12px !important;
+}
