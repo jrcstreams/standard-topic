@@ -35427,8 +35427,13 @@ body.home-search .home-hero[class][class] { padding-bottom: 14px !important; }
    width where the sidebar isn't docked. That is the empty stripe between the
    header and the tagline on a phone and on an undocked desktop. A fixed band
    overlays; it never needed the room. */
-body.home-search:not(.nav-docked) #content[class],
-body.home-search:not(.nav-docked) #content { padding-top: calc(var(--nav-h, 56px) + 10px) !important; }
+/* revamp1303c: the reserving rule is `html body.home-search.app-mode.sticky-always
+   … #content` — html + four body classes + an id, !important. Matched at that
+   level; nothing shorter could take it. */
+html body.home-search.app-mode:not(.nav-docked) #content[class][class][class],
+html body.home-search:not(.nav-docked) #content[class][class][class] {
+  padding-top: calc(var(--nav-h, 56px) + 10px) !important;
+}
 
 /* The card's stack, tightened one more notch — home and topic alike. */
 .tdi-cardhead[class][class][class][class] { margin-bottom: 0 !important; }
