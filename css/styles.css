@@ -36162,3 +36162,16 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
 .search-panel-results .aii-fi-acclist > .aii-fi-acc[class] {
   border-bottom-color: #eef1f6 !important;
 }
+
+/* revamp1325c: the first News card keeps the lead its siblings have.
+
+   Measured under the tab rule: a prompt row puts its title 16px down (the row
+   centres its content, so every row including the first reads the same), and
+   every News card puts its headline 15px down — every card except the first,
+   which `.news-list > .news-card:first-child` trims to 3px. That trim was right
+   when the list opened under other chrome; now that the rule sits directly on
+   the card it reads as the headline touching the line. 15px, like the rest. */
+.search-panel-results .news-list > .news-card:first-child[class][class],
+.search-panel-results .search-news-section .news-list > .news-card:first-child[class][class] {
+  padding-top: 15px !important;
+}
