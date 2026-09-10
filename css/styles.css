@@ -121,7 +121,11 @@
   /* revamp904: 1440 -> 1760. On 1920+ monitors the old cap left ~240px of dead
      gutter each side; 1760 uses that space while keeping text at a readable
      measure. One token drives all 18 consumers, so every page moves together. */
-  --max-width: 1760px;
+  /* revamp1310: 1760 -> 1280. At 1760 a full-width briefing on a 1920 monitor
+     ran a single sentence the whole way across — far past the ~90-character
+     measure prose stays readable at. 1280 is the column the nav's own inner
+     already uses, so content, nav and grey band share one edge. */
+  --max-width: 1280px;
   --header-height: 60px;
   /* Main-nav (sticky hero) height. Desktop 64px; mobile shrinks it (#1) — every
      fixed-layout offset that reserves the nav reads this var instead of a literal
@@ -35640,3 +35644,38 @@ body .navmenu-head[class][class] {
    home and the topic pages. */
 .tdi-focus[class][class] { margin-top: 6px !important; }
 .di-focus-list[class][class][class][class][class] { margin-top: 7px !important; }
+
+/* ═══ revamp1310 — the site gets a measure ══════════════════════════════════
+
+   Content is capped at 1280 and centred in whatever the sidebar leaves. The
+   docked rule pinned margin-left to the sidebar width and let margin-right
+   absorb the rest, so a capped column sat hard against the sidebar with all
+   the slack on the right; it centres in the post-sidebar area now, on the
+   same axis the nav's inner already used. The nav bar itself still spans the
+   full width — only what's inside it is measured. */
+body.nav-docked #content {
+  margin-left: calc(var(--sbw) + max(0px, (100% - var(--sbw) - var(--max-width)) / 2)) !important;
+  margin-right: 0 !important;
+}
+body:not(.nav-docked) #content { margin-left: auto !important; margin-right: auto !important; }
+
+/* ── the page heads: title to nav, title to subtext, subtext to content ──── */
+.aii-nav-dd-pagelike .aii-nav-dd-head[class] {
+  padding-top: 10px !important;
+  padding-bottom: 6px !important;
+}
+.aii-nav-dd-pagelike .aii-nav-dd-sub[class] { margin-top: 2px !important; }
+.aii-nav-dd-pagelike .aii-nav-dd-subbar[class] { margin-top: 6px !important; margin-bottom: 8px !important; padding-bottom: 8px !important; }
+.aii-nav-dd-pagelike .aii-nav-dd-scrollwrap[class] { padding-top: 0 !important; margin-top: 0 !important; }
+.aii-nav-dd-pagelike .aii-nav-dd-scroll[class] { padding-top: 0 !important; }
+
+/* ── the arrow sits on the title's cap centre, everywhere ───────────────── */
+.tbh-titlebtn .tsp-ident-chev,
+.tsp-btn--herotitle .tsp-ident-chev,
+.tsp-btn--ident .tsp-ident-chev { margin-top: 1px !important; }
+
+/* ── home: a touch more room above the tagline, desktop only ────────────── */
+@media (min-width: 1024px) {
+  html body.home-search.app-mode.home-mode:not(.nav-docked) #content { padding-top: calc(var(--nav-h, 56px) + 30px) !important; }
+  body.home-search.nav-docked .home-hero[class][class][class] { padding-top: 22px !important; }
+}
