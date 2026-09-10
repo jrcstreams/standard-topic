@@ -35697,3 +35697,70 @@ body:not(.tt-on) .ndp .aii-nav-dd-subbar[class] {
   z-index: 12 !important;
 }
 body:not(.tt-on) .ndp .aii-nav-dd-scrollwrap[class] { padding-top: 0 !important; margin-top: 0 !important; }
+
+/* ═══ revamp1311 — the hero fade spans the page again ═══════════════════════
+
+   Capping content at 1280 cut the head's gradient to the column, so Topics,
+   Trending, Prompts and AI Briefings ended with a band that stopped mid-page.
+   The fade is a ::before on the head; it now reaches past the column to the
+   edges of whatever the sidebar leaves, while the text inside stays measured. */
+.ndp .aii-nav-dd-head::before,
+.page-hero::before {
+  left: calc(-1 * (max(0px, (100vw - var(--sbw, 0px) - var(--max-width)) / 2) + 2rem)) !important;
+  right: calc(-1 * (max(0px, (100vw - var(--sbw, 0px) - var(--max-width)) / 2) + 2rem)) !important;
+}
+@media (max-width: 560px) {
+  .ndp .aii-nav-dd-head::before,
+  .page-hero::before {
+    left: calc(-1 * (max(0px, (100vw - var(--sbw, 0px) - var(--max-width)) / 2) + 1rem)) !important;
+    right: calc(-1 * (max(0px, (100vw - var(--sbw, 0px) - var(--max-width)) / 2) + 1rem)) !important;
+  }
+}
+
+/* ═══ revamp1311b — In Focus is 1, 2, 3, not a bullet list ══════════════════
+
+   Dots read as a list of related things. These are three separate hits, so
+   they're numbered — a small circle in the page's own colour, on the preview
+   card and the open briefing alike. Counters, so no markup carries the
+   numbers and they can never fall out of step with the list. */
+.tdi-focus, .di-focus-list { counter-reset: stfocus; }
+.tdi-focus > li, .di-focus-list > li { counter-increment: stfocus; }
+.tdi-focus > li[class], .di-focus-list > li[class] {
+  position: relative;
+  padding-left: 30px !important;
+  border-top: 0 !important;
+  padding-top: 0 !important;
+}
+.tdi-focus > li::before,
+.di-focus-list > li::before {
+  content: counter(stfocus) !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 21px !important;
+  height: 21px !important;
+  border-radius: 50% !important;
+  background: color-mix(in srgb, var(--tc, #2f5fd0) 13%, #fff) !important;
+  color: color-mix(in srgb, var(--tc, #2f5fd0) 78%, #14213d) !important;
+  font-family: var(--font-family) !important;
+  font-size: 0.72rem !important;
+  font-weight: 750 !important;
+  line-height: 1 !important;
+}
+@media (min-width: 900px) {
+  .tdi-focus > li[class] { padding-left: 30px !important; }
+}
+
+/* ═══ revamp1311c — the prompts tab, on a phone ═════════════════════════════
+   The first section head sat against the tab strip, and its rule was the thin
+   one — on the wide layout the section header's own 2px rule does that job,
+   but in tab mode there is no section header above it. */
+body.tt-on #topic-tab-body .aii-fi-sec:first-child .aii-fi-sectitle[class],
+body.tt-on #topic-tab-body .aii-fi-sectitle[class] {
+  border-bottom: 2px solid #e0e5ee !important;
+  padding-bottom: 11px !important;
+}
+body.tt-on #topic-tab-body .topic-viewtabs + * { margin-top: 18px !important; }
+body.tt-on #topic-tab-body .aii-fi-sec:first-child[class] { margin-top: 18px !important; }
