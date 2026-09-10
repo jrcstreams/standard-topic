@@ -35201,3 +35201,19 @@ body.tt-on #topic-tab-body .topic-body-cols .newsfeed-list > *:first-child {
   padding-top: 0 !important;
   border-top: 0 !important;
 }
+
+/* revamp1299b: the two that held out. `body.home-search #home-trending …` sets
+   the head's rule to 1px and the first row's padding to 12px, both !important
+   and both carrying an id — so a class-only selector could never take them,
+   however many [class] it stacked. Matched at the same level here. */
+body.home-search #home-trending .trending-topics-head[class],
+.home-v2 #home-trending .trending-topics-head[class] {
+  border-bottom: 2px solid #e0e5ee !important;
+  padding-bottom: 12px !important;
+  margin-bottom: 0 !important;
+}
+body.home-search #home-trending .trend-card-grid > .trend-card:first-child[class],
+.home-v2 #home-trending .trend-card-grid > .trend-card:first-child[class] {
+  padding-top: 0 !important;
+  border-top: 0 !important;
+}
