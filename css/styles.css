@@ -35764,3 +35764,32 @@ body.tt-on #topic-tab-body .aii-fi-sectitle[class] {
 }
 body.tt-on #topic-tab-body .topic-viewtabs + * { margin-top: 18px !important; }
 body.tt-on #topic-tab-body .aii-fi-sec:first-child[class] { margin-top: 18px !important; }
+
+/* ═══ revamp1313 — the search page's top zone ═══════════════════════════════
+
+   The echo and the rule under the tabs sat on the panel's edge (512) while
+   the tabs and results sat at 560 — 48px out, which is why the query looked
+   shoved left and the rule ran wider than everything under it. They share the
+   results' inset now.
+
+   With no term there is nothing to tab between, so the strip and its rule go
+   entirely rather than leaving a rule over an empty page. */
+.search-stickzone[class] {
+  padding-left: 48px !important;
+  padding-right: 48px !important;
+}
+.search-panel[data-state="collapsed"] .search-stickzone[class] { display: none !important; }
+
+/* Title, subtext and bar close up; the panel starts at the top of the page. */
+.search-panel-title[class] { margin-bottom: 4px !important; }
+.search-panel-sublede[class] { margin-bottom: 0 !important; }
+.search-panel-barrow[class] { margin-top: 18px !important; }
+.search-panel-topfold[class] { margin-top: 0 !important; }
+.search-panel[class] { padding-top: 0 !important; margin-top: 0 !important; }
+
+/* The last row in each column carries the rule the others do — the grid ends
+   on a border everywhere except its final cell. */
+.search-panel-results .aii-fi-acclist > .aii-fi-acc:last-child[class],
+.search-panel-results .aii-fi-acclist > .aii-fi-acc:nth-last-child(2)[class] {
+  border-bottom: 1px solid #e8eaef !important;
+}

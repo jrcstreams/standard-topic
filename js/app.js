@@ -2138,12 +2138,17 @@ function renderFeaturedBriefings(host, opts) {
     return;
   }
 
+  // revamp1312: the card carries the topic's own colour on its glyph (the bare
+  // icon, as the accordions below use it — not the filled chip), and the
+  // edition stamp under the name, so a card says when its briefing was written
+  // before you open it.
   const card = (t) => `
-    <button type="button" class="dih-item" data-fb-item="${escapeAttr(t.name)}" data-fb-slug="${escapeAttr(t.slug)}">
+    <button type="button" class="dih-item" data-fb-item="${escapeAttr(t.name)}" data-fb-slug="${escapeAttr(t.slug)}"${topicColorStyle(t)}>
       <span class="dih-item-head">
-        <span class="dih-item-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
+        <span class="dih-item-ic dih-item-ic--tc" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
         <span class="dih-item-name">${escapeHTML(t.name)}</span>
       </span>
+      <span class="dih-item-stamp" data-fb-stamp></span>
       <span class="dih-item-sum" data-fb-sum>Loading your briefing…</span>
       <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
     </button>`;
@@ -2214,6 +2219,8 @@ function renderFeaturedBriefings(host, opts) {
       if (!btn.isConnected) return;
       const sum = btn.querySelector('[data-fb-sum]');
       if (sum) setClampedSummary(sum, (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.');
+      const stamp = btn.querySelector('[data-fb-stamp]');
+      if (stamp && d && d.generatedAt) stamp.innerHTML = diEditionStampHTML(d.generatedAt);
     }).catch(() => {});
   });
 
@@ -2376,14 +2383,6 @@ function renderIntelligenceHub(container) {
           </section>`).join('')}
       </div>
 
-      <aside class="dih-foot">
-        <span class="dih-foot-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-        <div class="dih-foot-tx">
-          <p class="dih-foot-title">New briefings every morning and evening.</p>
-          <p class="dih-foot-sub">Stay informed with AI-powered insights across every topic.</p>
-        </div>
-        <a class="dih-foot-cta" href="#/topics">Explore all topics${SUBPAGE_ARROW}</a>
-      </aside>
     </div>`;
 
   try { wireSubnavPicker(container); } catch (_) {}
