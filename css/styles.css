@@ -35081,3 +35081,24 @@ body.tt-on #topic-tab-body .topic-body-cols .newsfeed-list > *:first-child {
 @media (min-width: 1024px) {
   .news-card .news-card-actions[class] { margin-top: -6px !important; }
 }
+
+/* revamp1296c: state BOTH column heads together, at both sizes, so nothing can
+   move one without the other. A `min-width: 1200px` rule was taking the
+   prompts head to 1.32rem while the feed's title stayed at 1.24rem, which is
+   the 32px their rules were out by. */
+.topic-body-cols > .topic-top-side .trail-head[class][class],
+.topic-body-cols #section-newsfeed .newsfeed-title[class][class] {
+  font-size: 1.24rem !important;
+  font-weight: 800 !important;
+  color: #14204a !important;
+}
+.topic-body-cols > .topic-top-side .trail-head[class][class],
+.topic-body-cols #section-newsfeed .newsfeed-head[class][class] {
+  padding-bottom: 15px !important;
+  margin-bottom: 14px !important;
+  border-bottom: 2px solid #e0e5ee !important;
+}
+@media (min-width: 1200px) {
+  .topic-body-cols > .topic-top-side .trail-head[class][class],
+  .topic-body-cols #section-newsfeed .newsfeed-title[class][class] { font-size: 1.32rem !important; }
+}
