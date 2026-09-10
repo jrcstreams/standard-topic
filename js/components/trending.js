@@ -370,20 +370,6 @@ function trendCardsHead(fetched) {
       </div>
     </div>`;
 }
-// Legend pill (upper-left of the card body): defines the two card glyphs — the
-// blue sparkle (AI-generated text) and the trend up-arrow (via Google Trends).
-// The two items sit side by side and wrap as whole units when space is tight.
-function trendLegendRow() {
-  // Just the "✦ = AI-generated text" marker (the trend-icon "via Google Trends"
-  // reference was noise) — sized between the card and the modal legend (#166).
-  return `<div class="trend-legend-row">
-    <button type="button" class="trend-legend trend-legend--solo how-aigen" data-how-it-works aria-label="Trend summaries are AI-generated — how our AI works">
-      <span class="trend-legend-item">${aiSparkInline()}<span>AI-generated content included</span></span>
-      ${howInfoIconHTML()}
-    </button>
-  </div>`;
-}
-
 function trendCardsShell(topics, { fetched, viewAll }) {
   return `
     <div class="trending-topics">
@@ -686,8 +672,10 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
         <div class="trending-topics-titlerow">
           <h3 class="trending-topics-title"><span>Trending</span><span class="trending-topics-title-ic" aria-hidden="true">${TREND_CARD_ICON}</span></h3>
         </div>
-      </div>
-      ${trendLegendRow()}`;
+      </div>`;
+    // revamp1291: no legend on the list itself. Every row here is a headline
+    // and a one-line summary; the AI mark belongs where the AI writing is,
+    // which is the expanded trend — and that already carries its own.
   }
 
   // Homepage trending has no controls now — category filtering lives in the

@@ -34797,3 +34797,21 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
 @media (max-width: 1023px) {
   .home-featbriefs--lead { margin-bottom: 16px; }
 }
+
+/* revamp1291: on a phone the header's Search is the glyph alone. The word cost
+   ~60px of a 430px bar that also carries the menu, the wordmark and Topics —
+   and a magnifier needs no caption. */
+@media (max-width: 560px) {
+  #site-header #nav-search .nav-searchbar-ph,
+  .sticky-hero-inner #nav-search .nav-searchbar-ph { display: none !important; }
+  #site-header #nav-search,
+  .sticky-hero-inner #nav-search {
+    width: 40px !important;
+    min-width: 0 !important;
+    flex: none !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    justify-content: center !important;
+    border-radius: 11px !important;
+  }
+}
