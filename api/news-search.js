@@ -96,12 +96,28 @@ module.exports = async function handler(req, res) {
     // revamp1285: ranked by RELEVANCE, then recency. Ordering the keyword hits
     // by date alone meant a passing mention in today's story outranked the
     // story the search was about.
+    // Two stages, because search_vector is title and description concatenated
+    // at equal weight — so "horse" in a motor-oil story's body scored like
+    // "horse" in a headline about horses. Stage one takes the best few hundred
+    // on the indexed vector (cheap); stage two re-ranks just those with the
+    // title counted three times, which is the signal a reader means.
     const keyword = await sql.query(
-      `SELECT ${COLS}, ts_rank_cd(n.search_vector, q) AS _rank
-         FROM news_stories n JOIN topics t ON t.id = n.topic_id,
-              websearch_to_tsquery('english', $1) q
-        WHERE n.search_vector @@ q
-        ORDER BY _rank DESC, n.published_at DESC NULLS LAST LIMIT $2`,
+      `WITH tq AS (SELECT websearch_to_tsquery('english', $1) AS q),
+            hits AS (
+              SELECT n.id, ts_rank_cd(n.search_vector, (SELECT q FROM tq)) AS r0
+                FROM news_stories n
+               WHERE n.search_vector @@ (SELECT q FROM tq)
+               ORDER BY r0 DESC, n.published_at DESC NULLS LAST
+               LIMIT 300
+            )
+       SELECT ${COLS},
+              ts_rank_cd(to_tsvector('english', coalesce(n.title, '')), (SELECT q FROM tq)) * 3
+                + h.r0 AS _rank
+         FROM hits h
+         JOIN news_stories n ON n.id = h.id
+         JOIN topics t ON t.id = n.topic_id
+        ORDER BY _rank DESC, n.published_at DESC NULLS LAST
+        LIMIT $2`,
       [q, pool]
     );
 
@@ -147,6 +163,7 @@ module.exports = async function handler(req, res) {
     // with no lexical hit at all it has to clear a bar well under that band or
     // the answer is honestly nothing.
     const soloGate = Number(process.env.AI_SEMANTIC_GATE_SOLO || 0.30);
+    const keep = Number(process.env.AI_SEMANTIC_KEEP || 0.35);
     let best = null;
     if (qvec) {
       try {
@@ -164,6 +181,11 @@ module.exports = async function handler(req, res) {
         best = Math.min(...vector.map(v => Number(v._dist)));
         const anchored = keyword.length > 0 || fuzzy.length > 0;
         if (best >= (anchored ? gate : soloGate)) vector = [];
+        // And a neighbour only counts if it is actually near. Without this the
+        // list ran to its limit whatever the query, so "dog adoption" filled
+        // its last places with a quarry search and a road collision — rows at
+        // 0.38, i.e. no closer than nonsense gets.
+        else vector = vector.filter((v) => Number(v._dist) < keep);
       }
     }
 
@@ -202,7 +224,7 @@ module.exports = async function handler(req, res) {
       body._debug = {
         keyword: keyword.length, fuzzy: fuzzy.length, vector: vector.length,
         anchored: keyword.length > 0 || fuzzy.length > 0,
-        gate, soloGate, cap, best, deduped: byId.size - seen.size,
+        gate, soloGate, keep, cap, best, deduped: byId.size - seen.size,
       };
     }
     return res.status(200).json(body);
