@@ -35217,3 +35217,46 @@ body.home-search #home-trending .trend-card-grid > .trend-card:first-child[class
   padding-top: 0 !important;
   border-top: 0 !important;
 }
+
+/* ═══ revamp1300 — the briefing card closes up ══════════════════════════════
+
+   Title → pill → dateline → summary → button were 19/24/21/14 apart, which
+   reads as five separate things rather than one card. They're one block now.
+   Same rules serve home and the topic pages, so the two can't drift. */
+.tdi-cardhead[class][class] { margin-bottom: 2px !important; }
+.tdi-cardpill[class][class] { margin-top: 0 !important; margin-bottom: 2px !important; }
+.tdi-mast2 .tdi-metaline[class][class] { margin-top: 0 !important; margin-bottom: 2px !important; }
+.tdi-briefcol .tdi-summary[class][class] { margin-top: 0 !important; margin-bottom: 8px !important; }
+.tdi-briefcol .tdi-actions[class][class] { margin-top: 0 !important; }
+
+/* the card sits closer to the rule above it and to what follows */
+.home-featbriefs--lead[class][class] { margin-top: 14px !important; margin-bottom: 16px !important; }
+.topic-home > .topic-top--lead[class][class] { margin-top: 18px !important; margin-bottom: 22px !important; }
+body.tt-on .topic-home > .topic-top--lead[class][class] { margin-top: 14px !important; margin-bottom: 0 !important; }
+
+/* The phone header's Search matches Topics' height — the icon-only button had
+   taken its height from a padding I zeroed, so it sat at 20px beside a 34. */
+@media (max-width: 560px) {
+  #site-header #nav-search,
+  .sticky-hero-inner #nav-search {
+    height: 34px !important;
+    min-height: 34px !important;
+    align-items: center !important;
+  }
+}
+
+/* In tab mode the card's column was still sized for a rail, which bunched its
+   content to the left of a full-width card. */
+body.tt-on .topic-top--lead .tdi-briefcol[class],
+body.tt-on .home-featbriefs--lead .tdi-briefcol[class] { max-width: none !important; width: 100% !important; }
+
+/* The first story under the briefing carries the rule the others do, so the
+   card reads as the feed's opening item rather than something cut off above
+   it. Stated for the row shapes the feed uses at this width. */
+body.tt-on #topic-tab-body #section-newsfeed .news-card:first-child,
+body.tt-on #topic-tab-body #section-newsfeed .newsfeed-list > *:first-child,
+body.tt-on #topic-tab-body #section-newsfeed .newsrow:first-child {
+  border-top: 1px solid #e8ebef !important;
+  padding-top: 16px !important;
+  margin-top: 16px !important;
+}
