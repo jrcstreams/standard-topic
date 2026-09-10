@@ -26,6 +26,12 @@ const path = require('path');
   }
 })();
 
+// DDL prefers the direct connection: CREATE EXTENSION and CREATE INDEX are
+// session-level work, and pgbouncer's transaction pooling is the wrong shape
+// for it. The serverless functions keep using the pooled URL — this swap is
+// for the length of this script only.
+if (process.env.DATABASE_URL_UNPOOLED) process.env.DATABASE_URL = process.env.DATABASE_URL_UNPOOLED;
+
 const { getSql } = require('../lib/db');
 
 async function main() {
