@@ -35903,11 +35903,18 @@ html body:not(.tt-on):not(.nav-docked).pagenav-mode.sticky-always.has-subnav[cla
    The link now starts on the heading's edge, and the two gaps around it match
    (24 / 23), so it sits between the header and the heading rather than under
    the header. */
-@media (min-width: 720px) {
-  .pdir-card.is-topicview .pdir-bodyback[class] { padding-left: 34px !important; }
-}
-.pdir-card.is-topicview .pdir-bodyback[class] {
-  margin-top: 6px !important;
+/* 1319b: the first pass paid 34px of padding, measured off a wider layout. The
+   inset is really .pdir-topichost's own 16px (+ the section head's 2px), and
+   hard-coding either number invites the same drift back. The inset moves to the
+   parent BOTH children share instead, so the Back link and the prompt sections
+   start on one edge by construction, at any width. The 6px above the link is
+   padding there too — as a margin it collapsed through the wrapper and did
+   nothing. */
+.pdir-card.is-topicview .pdir-topicview[class] { padding: 6px 0 0 16px !important; }
+.pdir-card.is-topicview .pdir-topichost[class][class] { padding-left: 0 !important; }
+.pdir-card.is-topicview .pdir-bodyback[class][class] {
+  padding-left: 2px !important;
+  margin-top: 0 !important;
   margin-bottom: 2px !important;
 }
 
