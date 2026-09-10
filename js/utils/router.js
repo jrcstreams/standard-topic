@@ -96,6 +96,15 @@ function handleRoute() {
   }
 }
 
+// The ?q= on a search URL, trimmed and length-capped so a hand-edited address
+// can't push an essay into the box.
+function searchQueryParam() {
+  try {
+    const raw = new URLSearchParams(window.location.search).get('q');
+    return raw ? raw.trim().slice(0, 120) : '';
+  } catch (_) { return ''; }
+}
+
 function parseRoute(pathname) {
   const segments = String(pathname || '/').split('/').filter(Boolean);
 
@@ -109,7 +118,15 @@ function parseRoute(pathname) {
   }
 
   // Search modal (empty state). /custom/{term} below opens it prefilled.
+  //
+  // revamp1286: ?q= is the shape people type and the shape the app itself
+  // hangs off a search URL, but only the path was ever read — so a shared
+  // /search?q=whatever opened an empty box. It resolves to the same route
+  // /custom/{term} does, and app.js rewrites the URL to that canonical form
+  // so one search has one address.
   if (segments.length === 1 && segments[0] === 'search') {
+    const q = searchQueryParam();
+    if (q) return { type: 'custom', term: q, tab: 'newsfeed', fromQueryParam: true };
     return { type: 'search' };
   }
 

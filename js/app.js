@@ -1,4 +1,4 @@
-import { initRouter, onRoute, getCurrentRoute, navigate as routerNavigate, routeHash, replaceRoute } from './utils/router.js?v=20260815-revamp763';
+import { initRouter, onRoute, getCurrentRoute, navigate as routerNavigate, routeHash, replaceRoute } from './utils/router.js?v=20260909-revamp1286';
 import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById, fetchWithTimeout, topicColorStyle } from './utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, openModel, copyPrompt } from './utils/ai-models.js?v=20260605-polish30';
 import { assemblePrompt } from './utils/prompt-assembly.js';
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     } else if (staySearch) {
       // Same search page, new term → drive the live panel.
-      const t = route.type === 'custom' ? decodeURIComponent(route.term || '') : '';
+      const t = route.type === 'custom' ? routeTerm(route) : '';
       try { if (t) searchPageCtl.expand(t); else searchPageCtl.collapse(); } catch (_) {}
     }
 
@@ -7018,6 +7018,14 @@ function openSearchFromNav() {
 
 // The search page body: back bar + the shared search panel (modal-mode markup:
 // hero fold + input + results) in normal page flow — one document scroll.
+// revamp1286: the route's term, decoded safely. decodeURIComponent throws on a
+// bare percent sign — "100% cotton" is a search someone will type — and this
+// runs on the render path, so an exception here blanks the page.
+function routeTerm(route) {
+  const raw = (route && route.term) || '';
+  try { return decodeURIComponent(raw); } catch (_) { return raw; }
+}
+
 function renderSearchPage(container, term) {
   container.innerHTML = `<div class="search-page">
     ${backBarHTML()}
@@ -7072,7 +7080,13 @@ function renderPage(route) {
   if (route.type === 'prompts') { renderNavDdPage(content, promptsNavDdCfg(route.view)); return; }
 
   if (route.type === 'search' || route.type === 'custom') {
-    renderSearchPage(content, route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
+    const term = route.type === 'custom' ? routeTerm(route) : '';
+    // Arrived via /search?q= — settle the URL on the canonical /custom/{term}
+    // so a search has one address however it was reached.
+    if (route.fromQueryParam && term) {
+      try { replaceRoute('#/custom/' + encodeURIComponent(term)); } catch (_) {}
+    }
+    renderSearchPage(content, term);
     return;
   }
 
