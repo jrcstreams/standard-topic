@@ -34607,5 +34607,46 @@ body .topic-bodyhead.is-open .tsp-panelwrap[class][class] {
 .tsp-ident-chev polyline {
   transform-box: fill-box;
   transform-origin: center;
-  transform: scale(1.45);
+  /* revamp1284: 1.45 scaled the STROKE with the mark — 2.6 units became a
+     3.1px line, which is what made this read as a heavy arrow rather than a
+     quiet control. The mark still opens up, but the line is set thinner to
+     land near 1.8px on screen. */
+  transform: scale(1.2);
+  stroke-width: 2;
+}
+
+/* ═══ revamp1284 — the arrow, quieter ═══════════════════════════════════════
+
+   1283 went too far the other way: a big mark in a mid-grey chip pulls the eye
+   off the title it belongs to. It comes down a size and several shades — a
+   control you find when you look for it, not one that competes with the page
+   name beside it.
+
+   The vertical stays put. Measured against the title's real ink (rendered to a
+   canvas and scanned for the topmost row, rather than trusted from the font's
+   metrics), the chip sits 0.3px off the cap centre and exactly level with the
+   icon chip on the other side of the title. */
+.tbh-titlebtn .tsp-ident-chev,
+.tsp-btn--herotitle .tsp-ident-chev {
+  width: 26px !important; height: 26px !important;
+  padding: 4px !important;
+  background: rgba(15, 26, 46, .055) !important;
+  color: #61708d !important;
+}
+.tsp-btn--ident .tsp-ident-chev {
+  width: 22px !important; height: 22px !important;
+  padding: 4px !important;
+  background: rgba(15, 26, 46, .055) !important;
+  color: #61708d !important;
+}
+@media (max-width: 900px) {
+  .tsp-btn--ident .tsp-ident-chev { width: 20px !important; height: 20px !important; padding: 3px !important; }
+}
+@media (hover: hover) {
+  .tbh-titlebtn:hover .tsp-ident-chev,
+  .tsp-btn--herotitle:hover .tsp-ident-chev,
+  .tsp-btn--ident:hover .tsp-ident-chev {
+    background: rgba(15, 26, 46, .11) !important;
+    color: #2b3a5c !important;
+  }
 }
