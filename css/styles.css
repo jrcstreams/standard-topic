@@ -35917,3 +35917,19 @@ body:not(.tt-on) .ndp .aii-nav-dd-subbar[class][class] { z-index: 65 !important;
 
 /* The topic label sits nearer its title. */
 .tdi-cardeyebrow[class][class][class] { margin-bottom: -2px !important; }
+
+/* ═══ revamp1318 — the page heads start where a topic page's head starts ════
+
+   Measured against a topic page at the same width: its icon sits 32px under
+   the header in both dock states. Topics / AI Briefings / Trending / Prompts
+   sat at 26 docked and 48 undocked, because #content carries a different
+   top padding on those routes (0 and 78) than on a topic page (0 and 56).
+   Levelled on the only lever that matters, at the specificity the existing
+   rules hold: `…:not(.tt-on):not(.home-search)[class][class] #content` is
+   (1,5,2), so these carry one class more. */
+html body.nav-docked:not(.tt-on):not(.home-search)[class][class][class] #content:has(> .ndp) {
+  padding-top: 6px !important;
+}
+html body:not(.tt-on).pagenav-mode.sticky-always.has-subnav[class][class] #content:has(> .ndp) {
+  padding-top: 62px !important;
+}
