@@ -2783,7 +2783,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       </div>
       <div class="topic-top topic-top--lead">
         <section class="topic-top-main">
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, cardTitle: 'AI Briefing', cardPill: topic.name, noHeader: true, art: true })}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, cardTitle: "Today's AI Briefing", cardPill: topic.name, noHeader: true, art: true })}
           </div>
         </section>
       </div>

@@ -1298,7 +1298,7 @@ ${$}`),L.length?L.join(`
       </div>
       <div class="topic-top topic-top--lead">
         <section class="topic-top-main">
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${ri({sublabel:"A fresh briefing on this topic, every day.",hubLink:!1,topicLabel:t.name,cardTitle:"AI Briefing",cardPill:t.name,noHeader:!0,art:!0})}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${ri({sublabel:"A fresh briefing on this topic, every day.",hubLink:!1,topicLabel:t.name,cardTitle:"Today's AI Briefing",cardPill:t.name,noHeader:!0,art:!0})}
           </div>
         </section>
       </div>
