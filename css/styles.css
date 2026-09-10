@@ -34881,6 +34881,10 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
 .topic-home > .topic-top--lead[class],
 .topic-home > .topic-body-cols[class] { grid-column: 1 / -1 !important; }
 .topic-home > .topic-top--lead[class][class] { display: block !important; }
+/* .topic-top carried an explicit `grid-row: 4` from the old layout, where it
+   was the fourth thing on the page. As the lead it is the third, and the body
+   grid auto-placed above it — the briefing rendered below the entire feed. */
+.topic-home > .topic-top--lead[class][class] { grid-row: auto !important; }
 .topic-top--lead > .topic-top-main[class] { width: 100% !important; max-width: none !important; }
 
 .topic-body-cols {
