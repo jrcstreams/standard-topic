@@ -34906,7 +34906,10 @@ body .navmenu-head[class][class] .navmenu-collapse[class] {
 /* ── tab mode: Feed carries the briefing, Prompts is the rail ───────────── */
 /* Feed (no tview class): briefing + feed, no prompts. */
 body.tt-on .topic-band .topic-home:not(.tview-tools) > .topic-body-cols > .topic-top-side { display: none !important; }
-body.tt-on .topic-band .topic-home:not(.tview-tools) > .topic-top--lead { display: block !important; }
+/* revamp1293d: the old strip hid every .topic-top on the news view — the
+   briefing was a tab of its own then. It leads the Feed tab now, and that rule
+   is a class more specific, so this has to outrank it rather than restate it. */
+body.tt-on .topic-band .topic-home:not(.tview-tools) > .topic-top--lead[class][class] { display: block !important; }
 /* Prompts: the rail alone. */
 body.tt-on .topic-band .topic-home.tview-tools > .topic-top--lead { display: none !important; }
 body.tt-on .topic-band .topic-home.tview-tools > .topic-body-cols > .topic-news-wrap { display: none !important; }
