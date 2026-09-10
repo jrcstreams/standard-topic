@@ -35948,3 +35948,36 @@ html body:not(.tt-on):not(.nav-docked).pagenav-mode.sticky-always.has-subnav[cla
 #sub-header.is-subnav .is-open .tsp-close--row[class][class] {
   right: var(--tsp-inset, 20px) !important;
 }
+
+/* ═══ revamp1320 — the search page's vertical rhythm ════════════════════════
+
+   Measured top to bottom at 1920, docked. Every number below is the gap that
+   was there, then the one it becomes.
+
+   (a) The white strip above the tinted band — 6px — is 1318's own docked
+       #content padding. On a topic page it sits over white and is invisible;
+       here the band starts under it, so it reads as a seam under the nav. The
+       search page's title lives inside the band well below the header, so it
+       has nothing to lose by starting at 0. */
+html body.nav-docked[class][class][class][class] #content:has(.search-panel--modal) {
+  padding-top: 0 !important;
+}
+
+/* (b) Sublede → input: 48px. The lede and the field are one unit and were
+       reading as two. 48 → 30. */
+.search-panel-barrow[class] { margin-top: 0 !important; }
+
+/* (c) Input → "query": 18px, and the echo was pulled 14px up INTO the field's
+       space to get there. 18 → 32, with the echo on its own baseline. */
+.search-echo[class] { margin-top: 0 !important; }
+
+/* (d) "query" → the tabs: 16 → 24. */
+.search-topzone-tabs[class] { margin-top: 24px !important; }
+
+/* (e) The tabs → the rule under them: 2px, which read as the buttons sitting
+       ON the line. 2 → 12. */
+.search-topzone-tabs[class] { padding-bottom: 20px !important; }
+
+/* (f) The rule → the first result: 0. It IS the first story's top border, and
+       a border with no padding behind it puts the headline against the line. */
+.search-panel-results[class] { padding-top: 18px !important; }
