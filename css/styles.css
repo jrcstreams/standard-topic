@@ -35550,3 +35550,19 @@ html body.home-search.app-mode.home-mode:not(.nav-docked) #content { padding-top
 body.home-search .home-hero[class][class][class] { padding-top: 14px !important; }
 .home-hero-title[class] { margin-bottom: 4px !important; }
 .home-hero-sub[class] { margin-top: 0 !important; }
+
+/* ═══ revamp1305 — the In Focus block sits centred between its rule and the
+       summary, at every width ═══════════════════════════════════════════════
+
+   Measured: 24px from the dateline's rule down to the bullets, 12px from the
+   bullets to the sentence — in BOTH dock states. Not a docked-vs-undocked
+   thing; it was always off by the masthead's own bottom margin stacking on
+   the dateline's. The masthead gives up its margin; the dateline's 12 is the
+   gap, above and below. And on the topic pages the eyebrow sits on its title. */
+.tdi-card .tdi-mast2[class][class] { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+.tdi-mast2 .tdi-metaline[class][class][class][class][class][class] { margin-bottom: 12px !important; }
+.tdi-focus[class] { margin-top: 0 !important; margin-bottom: 12px !important; }
+.tdi-briefcol .tdi-summary[class][class][class][class][class] { margin-top: 0 !important; }
+
+.tdi-cardeyebrow[class][class] { margin-bottom: 0 !important; line-height: 1.2 !important; }
+.tdi-cardeyebrow + .tdi-cardhead[class][class][class] { margin-top: 2px !important; }
