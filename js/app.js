@@ -4749,7 +4749,7 @@ function renderStickyHeroBar(container, route) {
           <rect x="3" y="14" width="7" height="7" rx="1.4"/>
           <rect x="14" y="14" width="7" height="7" rx="1.4"/>
         </svg>
-        <span class="navmenu-cta-label">Topic Pages</span>
+        <span class="navmenu-cta-label">Topics</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="13 6 19 12 13 18"/>
@@ -4789,19 +4789,6 @@ function renderStickyHeroBar(container, route) {
     </nav>
     <div class="navmenu-scroll">
       <div class="navmenu-featured-label navmenu-seclabel">Topics</div>
-      <a href="#" class="navmenu-viewall" id="navmenu-all-topics">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="3" y="3" width="7" height="7" rx="1"/>
-          <rect x="14" y="3" width="7" height="7" rx="1"/>
-          <rect x="3" y="14" width="7" height="7" rx="1"/>
-          <rect x="14" y="14" width="7" height="7" rx="1"/>
-        </svg>
-        <span>View All Topics</span>
-        <svg class="navmenu-viewall-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
-      </a>
       <div class="navmenu-topics">${featuredLinksHTML}</div>
     </div>
     <div class="navmenu-footer-sticky">
@@ -4943,18 +4930,12 @@ function renderStickyHeroBar(container, route) {
   // Docked = the site is usable ALONGSIDE the nav, so navigating must not
   // close it; the overlay drawer still dismisses on any link.
   const closeUnlessDocked = () => { if (!document.body.classList.contains('nav-docked')) closeMenu(); };
-  navPanel.querySelectorAll('a, #navmenu-all-topics').forEach(link => {
+  navPanel.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', closeUnlessDocked);
   });
   // revamp1176: the sidebar's Home CTA is a plain #/ link, so clicking it while
   // already home never reaches the router — land it on the News Feed tab too.
   navPanel.querySelector('#navmenu-home-link')?.addEventListener('click', showHomeNewsTab);
-  navPanel.querySelector('#navmenu-all-topics')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    closeUnlessDocked();
-    toggleTopicsNavDropdown();
-  });
-
   navPanel.querySelector('#navmenu-trending')?.addEventListener('click', () => {
     closeUnlessDocked();
     toggleTrendingNavDropdown();
