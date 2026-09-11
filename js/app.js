@@ -879,9 +879,13 @@ function wireSubtopicsMore(root) {
   const more = subs.querySelector('[data-tbh-more]');
   if (!more) return;
   const links = [...subs.querySelectorAll('.tbh-sub')];
-  // When "More" IS the picker's trigger (revamp774) wireSubnavPicker already owns
-  // its click — re-firing .tsp-btn here would recurse into itself.
-  if (more !== picker.querySelector('.tsp-btn')) {
+  // When "More" is one of the picker's triggers (revamp774) wireSubnavPicker
+  // already owns its click — re-firing here toggles the panel a SECOND time and
+  // the two cancel out, which is a button that visibly does nothing. The test
+  // compared More against only the FIRST .tsp-btn (the title), so it never
+  // matched and always bound. Ask whether More is among them.
+  const pickerTriggers = [...picker.querySelectorAll('.tsp-btn')];
+  if (!pickerTriggers.includes(more)) {
     more.addEventListener('click', (e) => {
       e.stopPropagation();
       picker.querySelector('.tsp-btn')?.click();
