@@ -36214,3 +36214,64 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
     border-color: #334d8a !important;
   }
 }
+
+/* ═══ revamp1328 — the briefing card's type, sized for a phone ══════════════
+
+   Measured on a 390px screen. The card was carrying desktop type into a 358px
+   column: a 21.6px masthead, a 16px date line (the size of body copy), 14.08px
+   focus items that took two lines each where one would do, and a 14.72px
+   summary at 22.8px leading. Everything comes down a step. The scale still
+   descends — masthead, items, summary, stamp — it just starts lower.
+
+   Applies to the topic card and the home card alike: both are .tdi-card. */
+@media (max-width: 899.98px) {
+  .tdi-card .tdi-brieftitle[class][class][class] {
+    font-size: 1.1rem !important;
+    line-height: 1.2 !important;
+  }
+  .tdi-card .tdi-metaline[class][class][class][class][class][class][class] {
+    font-size: 0.8rem !important;
+    line-height: 1.3 !important;
+  }
+  .tdi-card .tdi-focus > li.tdi-focus-li[class][class] {
+    font-size: 0.8rem !important;
+    line-height: 1.35 !important;
+  }
+  .tdi-card [data-tdi-summary][class][class] {
+    font-size: 0.83rem !important;
+    line-height: 1.55 !important;
+  }
+  .tdi-card .tdi-go[class][class] {
+    font-size: 0.81rem !important;
+    padding: 8px 13px !important;
+  }
+
+  /* The numbered circles come down with the text they number. */
+  .tdi-card .tdi-focus > li.tdi-focus-li[class][class]::before {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* The preview summary was clipped by a fixed height with overflow:hidden, so
+     the last line was sliced through the middle with nothing to say it
+     continued — that is the "cut off at the bottom". A clamp ends it on a whole
+     line with an ellipsis, and twelve lines is a preview rather than the wall
+     of nineteen it was running to. */
+  .tdi-card [data-tdi-summary][class][class] {
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 12 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+}
+
+/* The focus items are capped at `max-width: 34ch` — a measure that does nothing
+   in the three-column desktop grid (the columns are narrower than the cap) but
+   holds each item to ~316px the moment the grid drops to ONE column, wrapping
+   the text early with the rest of the card empty beside it. In one column the
+   column IS the measure. */
+@media (max-width: 899.98px) {
+  .tdi-focus > li[class] { max-width: none !important; }
+}
