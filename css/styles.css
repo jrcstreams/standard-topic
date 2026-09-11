@@ -36195,3 +36195,22 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
 .search-panel-results .aii-fi-acclist .aii-fi-acc-name[class][class] {
   font-size: 0.97rem !important;
 }
+
+/* ═══ revamp1327 — the search tabs, closer together and a shade up ══════════
+
+   The three read as one control, so 8px between them was more air than the
+   grouping wanted. And the active state was #1e2d5a — near the nav bar's own
+   navy, dark enough that the selected tab sat heavier on the page than the
+   results it was heading. #3a5698 is the same hue a few steps up: still
+   unmistakably the selected one, white on it at ~7.5:1. */
+.search-topzone-tabs[class][class][class][class][class] { gap: 5px !important; }
+.stz-tab.is-active[class][class] {
+  background: #3a5698 !important;
+  border-color: #3a5698 !important;
+}
+@media (hover: hover) {
+  .stz-tab.is-active[class][class]:hover {
+    background: #334d8a !important;
+    border-color: #334d8a !important;
+  }
+}
