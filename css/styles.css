@@ -36711,3 +36711,16 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head-ic
   background: #eef2fb !important;
   color: #3a5698 !important;
 }
+
+/* revamp1339b: the rail head is held by `#topic-tab-body … .trail-head[class]`
+   (1,4,0) with !important — the rail is inside #topic-tab-body on desktop too,
+   not only in tab mode — and 1339's (0,6,2) could never reach it. Same rule,
+   carrying the id. */
+body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class] .trail-head[class][class] {
+  font-size: 1.1rem !important;
+  font-weight: 750 !important;
+  color: #1a2c66 !important;
+  padding-bottom: 12px !important;
+  margin-bottom: 12px !important;
+  border-bottom: 1px solid #e0e5ee !important;
+}
