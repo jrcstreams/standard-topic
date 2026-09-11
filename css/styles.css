@@ -36292,3 +36292,16 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
     padding: 8px 13px !important;
   }
 }
+
+/* ═══ revamp1330 — the directory section heads take the blue ════════════════
+
+   Featured Topics / All Topics, Featured Prompts / Prompts by Topic, and
+   Featured Briefings / Briefings by Topic were all set in #16233f — the same
+   near-black the body copy uses, so a section head read as just larger text.
+   The home page's Trending head and the topic pages' AI Prompts head are
+   #1a2c66, and that blue is what marks a section head as one; these are the
+   same size already (19.84px), so the colour is the whole change. */
+.aiidd-pagehead-title[class],
+.ph-sec-title[class] {
+  color: #1a2c66 !important;
+}
