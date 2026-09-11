@@ -36432,3 +36432,45 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
 
 /* (3) And it was set at 10.56px, small enough to read as a caption on a caption. */
 .dih-item .dih-item-stamp[class][class] { font-size: 0.75rem !important; }
+
+/* ═══ revamp1336 — the topic dropdown closes as one movement ════════════════
+
+   Sampled frame by frame on close, the panel was doing three things at three
+   speeds:
+
+     t=76ms   rows 187px, opacity 0.46
+     t=142ms  rows  22px, opacity 0.05   ← gone, with 22px of box still closing
+     t=209ms  rows   2px, opacity 0
+
+   The opacity ran at .16s against the row collapse's .26s, so the content
+   blinked out while an empty box carried on shrinking under it. And the wrap
+   is overflow:visible, so the content never clipped to the collapsing row —
+   at t=142 the row measured 22px while the wrap still rendered 73. Content
+   that neither clips nor fades in step with its container reads as a pop.
+
+   One duration and one easing for both, and the panel lifts as it goes, so the
+   close is a single movement instead of three overlapping ones. The lift also
+   covers the un-clipped overflow: the content is travelling up and out as it
+   fades, which is what the collapse looks like it should be doing. */
+.topic-subnav-picker .tsp-panelwrap[class][class] {
+  transition:
+    grid-template-rows .26s cubic-bezier(.4, 0, .2, 1),
+    opacity .26s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.topic-subnav-picker .tsp-panel[class][class] {
+  transform-origin: top center;
+  transition:
+    opacity .24s cubic-bezier(.4, 0, .2, 1),
+    transform .26s cubic-bezier(.4, 0, .2, 1) !important;
+  transform: translateY(-8px);
+  opacity: .35;
+}
+.topic-subnav-picker.is-open .tsp-panel[class][class] {
+  transform: translateY(0);
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .topic-subnav-picker .tsp-panelwrap[class][class],
+  .topic-subnav-picker .tsp-panel[class][class] { transition: none !important; }
+  .topic-subnav-picker .tsp-panel[class][class] { transform: none; }
+}
