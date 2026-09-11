@@ -36474,3 +36474,75 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
   .topic-subnav-picker .tsp-panel[class][class] { transition: none !important; }
   .topic-subnav-picker .tsp-panel[class][class] { transform: none; }
 }
+
+/* ═══ revamp1337 — the search results: underlined tabs, carded results ══════
+
+   (1) The three tabs were filled pills, which made the active one a button
+       sitting on the page rather than a place in a navigation. Underlined tabs
+       say "you are here" without competing with the results they head. The
+       strip already draws a 2px rule; the active tab's underline lands ON that
+       rule (a -2px bottom margin), so the mark and the baseline are one line.
+
+   This supersedes the pill treatment from 1327 and the tab-rule-as-top-border
+   work that went with it: with the results carded below, the rule is a baseline
+   for the tabs again, not the first card's top edge. */
+.search-topzone-tabs[class][class][class][class][class] {
+  gap: 2px !important;
+  padding-bottom: 0 !important;
+}
+.stz-tab[class][class][class] {
+  background: none !important;
+  border: 0 !important;
+  border-bottom: 3px solid transparent !important;
+  border-radius: 0 !important;
+  margin-bottom: -2px !important;
+  padding: 6px 14px 9px !important;
+  color: #5a6b90 !important;
+  font-weight: 600 !important;
+}
+.stz-tab[class][class][class] svg { color: #8494b4 !important; }
+.stz-tab.is-active[class][class][class] {
+  color: #1a2c66 !important;
+  border-bottom-color: #3a5698 !important;
+  font-weight: 700 !important;
+}
+.stz-tab.is-active[class][class][class] svg { color: #3a5698 !important; }
+@media (hover: hover) {
+  .stz-tab[class][class][class]:not(.is-active):hover {
+    background: none !important;
+    color: #1a2c66 !important;
+    border-bottom-color: #cfd8e8 !important;
+  }
+}
+
+/* (2) Every result becomes its own card, the way Prompts by Topic and the
+       topic directory present theirs — 1px #dfe5ef, 12px radius, white, spaced
+       — instead of rows divided by hairlines. Same card for the Prompts list
+       and the Web Resources list, so the two tabs read as one surface. */
+.search-panel-results[class][class][class] { padding-top: 14px !important; }
+
+.search-panel-results .aii-fi-acclist[class][class],
+.search-panel-results .xf-list[class][class] {
+  row-gap: 10px !important;
+  column-gap: 12px !important;
+  border-top: 0 !important;
+}
+.search-panel-results .aii-fi-acclist > .aii-fi-acc[class][class],
+.search-panel-results .xf-list > .xf-acc[class][class] {
+  border: 1px solid #dfe5ef !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  overflow: hidden !important;
+}
+/* The hairline each row used to carry as its divider is the card's own edge
+   now — a second one inside it would read as a rule across the card. */
+.search-panel-results .aii-fi-acclist > .aii-fi-acc[class][class] > .aii-fi-accsum,
+.search-panel-results .xf-list > .xf-acc[class][class] > .xf-sum {
+  border-bottom: 0 !important;
+}
+/* An OPEN card keeps its border on all four sides and shows its divider under
+   the head, where it separates the head from the body it opened. */
+.search-panel-results .aii-fi-acclist > .aii-fi-acc.is-open[class][class] > .aii-fi-accsum,
+.search-panel-results .xf-list > .xf-acc[open][class][class] > .xf-sum {
+  border-bottom: 1px solid #eef1f6 !important;
+}
