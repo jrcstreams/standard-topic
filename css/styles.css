@@ -36275,3 +36275,20 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
 @media (max-width: 899.98px) {
   .tdi-focus > li[class] { max-width: none !important; }
 }
+
+/* revamp1329: Trending — the sub-bar's rule is the first card's top border.
+
+   Measured at 1600: the sub-bar (Include Sports Trends) draws the rule at its
+   own bottom edge and then adds 10px of margin under it, so the first card in
+   each column opened 10px below the line while every card after it sits hard
+   against the one above. The margin goes; each card's own 13px trigger padding
+   is the lead, exactly as it is for every other row in the list. */
+.ndp .aii-nav-dd-trend .aii-nav-dd-subbar[class][class][class] { margin-bottom: 0 !important; }
+
+/* And the phone briefing's button, which 1328 wrote at (0,4,0) and lost. */
+@media (max-width: 899.98px) {
+  .tdi-card .tdi-go[class][class][class][class] {
+    font-size: 0.81rem !important;
+    padding: 8px 13px !important;
+  }
+}
