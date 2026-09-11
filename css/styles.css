@@ -36425,6 +36425,9 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
   align-self: center !important;
   line-height: 1 !important;
   overflow: visible !important;
+  /* a 3px left margin from when this was pinned at 1px wide — with the row's
+     6px gap it measured 9 before the separator against 6 after. */
+  margin: 0 !important;
 }
 
 /* (3) And it was set at 10.56px, small enough to read as a caption on a caption. */
