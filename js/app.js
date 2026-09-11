@@ -866,7 +866,15 @@ function wireRailDots(list) {
 
 function wireSubtopicsMore(root) {
   const subs = root.querySelector('.tbh-subs');
-  const picker = root.querySelector('[data-topic-picker]');
+  // revamp1332: nothing on this surface carries [data-topic-picker] — the body
+  // header itself is the picker (.topic-bodyhead.topic-subnav-picker). So this
+  // lookup returned null, the guard below bailed, and More's click was never
+  // bound: the button rendered, sized and hovered like a control and did
+  // nothing. Fall back to the header's own picker, then to the header.
+  const picker = root.querySelector('[data-topic-picker]')
+    || root.querySelector('.topic-subnav-picker')
+    || ((root.matches && root.matches('.topic-subnav-picker')) ? root : null)
+    || root;
   if (!subs || !picker) return;
   const more = subs.querySelector('[data-tbh-more]');
   if (!more) return;

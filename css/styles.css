@@ -36316,3 +36316,15 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
    so the correction is negative. */
 .tdi-card .tdi-cardeyebrow[class][class][class][class] { margin-bottom: -9px !important; }
 .tdi-card .tdi-brieftitle[class][class][class][class] { margin-bottom: -7px !important; }
+
+/* revamp1332: "More" is one of the subtopic pills, so it measures like one.
+
+   It sat 4px taller than the pills beside it (36 vs 32) at a larger type size
+   (13.92 vs 13.12) with a wider left inset (15 vs 13) — three small differences
+   that together made the last chip in the row read as a different kind of
+   control. */
+.tbh-subs .tbh-more[class][class] {
+  height: 32px !important;
+  font-size: 0.82rem !important;
+  padding: 0 12px 0 13px !important;
+}
