@@ -36359,3 +36359,27 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
     margin-bottom: -4px !important;
   }
 }
+
+/* ═══ revamp1334 — In Focus keeps its three columns further down ════════════
+
+   The three-up grid switched off at 900px and the list stacked — but a card at
+   760–900 still has room for three columns (each ~200–240px, two to three lines
+   of a headline at 12.8px), and stacking there left most of the card's width
+   empty beside three short lines. The grid holds to 720px now, which is the
+   width at which a third column stops being a column and starts being a
+   hyphenation problem; below that it stacks, which is right on a phone.
+
+   The columns carry the three-up treatment with them: no dot, no indent — the
+   numbered circle is the marker at every width. */
+@media (min-width: 720px) and (max-width: 899.98px) {
+  .tdi-focus[class] {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px 22px !important;
+  }
+  .tdi-focus > li[class] { padding-left: 0 !important; max-width: none !important; }
+  .tdi-focus > li[class]::before { content: counter(stfocus) !important; display: grid !important; }
+}
+/* The 34ch measure cap only makes sense once the list is genuinely one column. */
+@media (max-width: 719.98px) {
+  .tdi-focus > li[class][class] { max-width: none !important; }
+}
