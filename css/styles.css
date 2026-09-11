@@ -36305,3 +36305,14 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
 .ph-sec-title[class] {
   color: #1a2c66 !important;
 }
+
+/* ═══ revamp1331 — the briefing card's masthead, tightened ══════════════════
+
+   Measured at 1600 and at 390, the two gaps are the same at both widths:
+   11px from the topic eyebrow to "Today's AI Briefing" and 12px from that to
+   the date line. So they were already consistent — just loose, which is what
+   made three related lines read as three separate ones. 4 and 5 binds them
+   into one masthead. Most of both gaps is line-box leading rather than margin,
+   so the correction is negative. */
+.tdi-card .tdi-cardeyebrow[class][class][class][class] { margin-bottom: -9px !important; }
+.tdi-card .tdi-brieftitle[class][class][class][class] { margin-bottom: -7px !important; }
