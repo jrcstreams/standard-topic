@@ -36349,7 +36349,9 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
   background: color-mix(in srgb, var(--tc, #2f5fd0) 10%, #fff) !important;
   padding: 4px 10px !important;
   border-radius: 999px !important;
-  margin-bottom: 1px !important;
+  /* the pill's own 4px of padding sits inside the gap, so the margin carries
+     the difference: measured 14px to the title, wanted 8. */
+  margin-bottom: -5px !important;
 }
 @media (min-width: 900px) {
   .tdi-card .tdi-brieftitle[class][class][class][class][class] {
