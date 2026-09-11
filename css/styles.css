@@ -36328,3 +36328,32 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
   font-size: 0.82rem !important;
   padding: 0 12px 0 13px !important;
 }
+
+/* ═══ revamp1333 — the topic name becomes a label ═══════════════════════════
+
+   It was set as a tiny tracked-out grey all-cap line, which reads as a caption
+   for the card rather than as the topic it names. As a pill in the topic's own
+   tint — mixed case, the way the reference has it, in a grey dark enough to
+   read as type rather than as part of the chip — it's a label on the briefing.
+
+   And 1331 pulled the three masthead lines to 4/5, which went a step past
+   "concise" into tight. 8/8 with the title a touch smaller on desktop. */
+.tdi-card .tdi-cardeyebrow[class][class][class][class][class] {
+  display: inline-block !important;
+  width: auto !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-size: 0.78rem !important;
+  font-weight: 650 !important;
+  color: #4d5a77 !important;
+  background: color-mix(in srgb, var(--tc, #2f5fd0) 10%, #fff) !important;
+  padding: 4px 10px !important;
+  border-radius: 999px !important;
+  margin-bottom: 1px !important;
+}
+@media (min-width: 900px) {
+  .tdi-card .tdi-brieftitle[class][class][class][class][class] {
+    font-size: 1.25rem !important;
+    margin-bottom: -4px !important;
+  }
+}
