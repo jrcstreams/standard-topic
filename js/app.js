@@ -2314,7 +2314,7 @@ function renderIntelligenceHub(container) {
     return f;
   })();
   const item = (t, i = 0) => `
-    <button type="button" class="dih-item${i >= FEATURED_LEAD ? ' dih-item--extra' : ''}" data-dih-item="${escapeAttr(t.name)}" data-dih-slug="${escapeAttr(t.slug)}">
+    <button type="button" class="dih-item${i >= FEATURED_LEAD ? ' dih-item--extra' : ''}" data-dih-item="${escapeAttr(t.name)}" data-dih-slug="${escapeAttr(t.slug)}"${topicColorStyle(t)}>
       <span class="dih-item-head">
         <span class="dih-item-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
         <span class="dih-item-name">${escapeHTML(t.name)}</span>

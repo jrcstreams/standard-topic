@@ -36383,3 +36383,49 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
 @media (max-width: 719.98px) {
   .tdi-focus > li[class][class] { max-width: none !important; }
 }
+
+/* ═══ revamp1335 — the briefing cards' icons and date line ══════════════════
+
+   (1) The topic icon sat in a grey rounded box with every glyph drawn in the
+       same navy, so eight cards read as eight of the same thing. The card
+       carries its topic's colour now (topicColorStyle in app.js), and the glyph
+       takes it with no box behind it — the way the by-topic rows use colour to
+       tell the topics apart. */
+.dih-item .dih-item-ic[class][class] {
+  background: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: var(--tc, #2f4d9e) !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+.dih-item .dih-item-ic[class][class] svg { width: 20px !important; height: 20px !important; }
+
+/* (2) The date line. Three faults, all from the same cause: .tdi-stamp-val was
+       a BLOCK, so its glyph and its text were aligned on the text baseline with
+       a -1px nudge rather than to each other, and the separator between them
+       was pinned to a 1px box with its "·" hanging outside it — which is why it
+       sat low, why it read as a mark plus a stray dot, and why the space either
+       side of it came out 9 and 6 instead of even.
+
+       Each half is its own inline flex now, centred on its own glyph; the
+       separator is a real flex item, so the row's 6px gap spaces it evenly. */
+.dih-item .dih-item-stamp[class][class] .tdi-stamp-val {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+.dih-item .dih-item-stamp[class][class] svg {
+  vertical-align: baseline !important;
+  margin-right: 0 !important;
+  flex: none !important;
+}
+.dih-item .dih-item-stamp[class][class] .tdi-stamp-sep {
+  width: auto !important;
+  align-self: center !important;
+  line-height: 1 !important;
+  overflow: visible !important;
+}
+
+/* (3) And it was set at 10.56px, small enough to read as a caption on a caption. */
+.dih-item .dih-item-stamp[class][class] { font-size: 0.75rem !important; }
