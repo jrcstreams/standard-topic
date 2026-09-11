@@ -1188,7 +1188,8 @@ function wirePromptDirectory(root, ctls) {
           const slug = cellBtn.dataset.slug; const name = cellBtn.dataset.name;
           bodyEl.classList.add('is-topic');
           const parentName = card.querySelector('.pdir-card-name').textContent;
-          let tIcon = ''; try { const tt = getTopicBySlug(slug); tIcon = topicIconSVG((tt && tt.icon) || 'globe', ''); } catch (_) {}
+          let tIcon = ''; let tStyle = '';
+          try { const tt = getTopicBySlug(slug); tIcon = topicIconSVG((tt && tt.icon) || 'globe', ''); tStyle = topicColorStyle(tt) || ''; } catch (_) {}
           card.classList.add('is-topicview');
           // revamp926: the drilled-in topic TAKES OVER the card header — its
           // name and icon replace the parent's, and a "Back to {parent}" link
@@ -1208,7 +1209,7 @@ function wirePromptDirectory(root, ctls) {
           card.classList.remove('is-headback');
           bodyEl.innerHTML = `<div class="pdir-topicview">
             <button type="button" class="pdir-bodyback">${BACKBAR_CHEV}<span>Back to ${escapeHTML(parentName)}</span></button>
-            <div class="pdir-topichost prompts-topic-host"></div>
+            <div class="pdir-topichost prompts-topic-host"${tStyle}></div>
           </div>`;
           const host = bodyEl.querySelector('.pdir-topichost');
           let shortcuts = [];
@@ -2826,7 +2827,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         <div class="topic-news-wrap">
           <section id="section-newsfeed" class="layout-section"></section>
         </div>
-        <section class="topic-top-side">
+        <section class="topic-top-side"${topicColorStyle(topic)}>
           <h3 class="trail-head"><span class="trail-head-ic trail-head-ic--prompts" aria-hidden="true">${PROMPTS_HEAD_ICON}</span>AI Prompts</h3>
           <div class="tpr-card" data-tpr>
             <div class="tpr-head">

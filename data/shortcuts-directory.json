@@ -1967,7 +1967,7 @@
       "name": "Key Bills to Watch",
       "icon": "key-bills-to-watch",
       "prompt": "What are the most important bills currently moving (or stalled) in Congress? For each: what it would do, the political dynamics around it, the realistic probability of passage, and timing.",
-      "description": "Signals worth tracking in key bills to",
+      "description": "The bills moving now, and what they'd change",
       "group": "topic-specific"
     },
     {
@@ -2079,7 +2079,7 @@
       "name": "Global Power Shifts to Watch",
       "icon": "power-shifts-to-watch",
       "prompt": "What are the most important shifts in global power dynamics happening right now? Cover great power competition, regional realignments, alliance changes, and emerging powers' influence.",
-      "description": "Signals worth tracking in global power shifts to",
+      "description": "Where global power is moving, and why",
       "group": "topic-specific"
     },
     {
@@ -2111,7 +2111,7 @@
       "name": "Polling and Public Opinion",
       "icon": "polling-public-opinion",
       "prompt": "What does current US public opinion polling tell us? Cover presidential approval, congressional approval, party generic ballot, and views on the issues currently dominating coverage.",
-      "description": "Current US public opinion polling tell us",
+      "description": "What current US polling actually shows",
       "group": "topic-specific"
     },
     {

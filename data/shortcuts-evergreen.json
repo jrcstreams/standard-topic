@@ -4,49 +4,57 @@
       "id": "latest-news",
       "name": "Latest News",
       "icon": "newspaper",
-      "prompt": "What are the latest news stories about {topic}? Summarize the top 5 most recent developments with dates and key details."
+      "prompt": "What are the latest news stories about {topic}? Summarize the top 5 most recent developments with dates and key details.",
+      "description": "The top recent stories, with dates"
     },
     {
       "id": "overview",
       "name": "Overview",
       "icon": "compass",
-      "prompt": "Give me a clear, current overview of {topic}. What's happening, why it matters, and what the current landscape looks like."
+      "prompt": "Give me a clear, current overview of {topic}. What's happening, why it matters, and what the current landscape looks like.",
+      "description": "What it is and where things stand now"
     },
     {
       "id": "recent-developments",
       "name": "Recent Developments",
       "icon": "calendar",
-      "prompt": "What are the most important recent developments in {topic}? Focus on the past 30 days. Include context and implications."
+      "prompt": "What are the most important recent developments in {topic}? Focus on the past 30 days. Include context and implications.",
+      "description": "What's changed in the past month"
     },
     {
       "id": "explain-simply",
       "name": "Explain It Simply",
       "icon": "lightbulb",
-      "prompt": "Explain {topic} in simple, everyday terms. Assume I know nothing. Cover what it is, why it matters, and what I should know."
+      "prompt": "Explain {topic} in simple, everyday terms. Assume I know nothing. Cover what it is, why it matters, and what I should know.",
+      "description": "The whole thing in plain language"
     },
     {
       "id": "why-it-matters",
       "name": "Why It Matters",
       "icon": "target",
-      "prompt": "Why does {topic} matter right now? Explain its significance, who it affects, and what's at stake."
+      "prompt": "Why does {topic} matter right now? Explain its significance, who it affects, and what's at stake.",
+      "description": "What makes this consequential"
     },
     {
       "id": "what-to-watch",
       "name": "What to Watch",
       "icon": "mag-glass",
-      "prompt": "What should I be watching for next in {topic}? Cover upcoming events, expected announcements, and things likely to change soon."
+      "prompt": "What should I be watching for next in {topic}? Cover upcoming events, expected announcements, and things likely to change soon.",
+      "description": "What to keep an eye on next"
     },
     {
       "id": "key-facts-stats",
       "name": "Key Facts & Stats",
       "icon": "bar-chart",
-      "prompt": "What are the most important facts, figures, and statistics about {topic}? Provide current data with sources where possible."
+      "prompt": "What are the most important facts, figures, and statistics about {topic}? Provide current data with sources where possible.",
+      "description": "The numbers and facts worth knowing"
     },
     {
       "id": "history-background",
       "name": "History & Background",
       "icon": "book",
-      "prompt": "What is the history and background of {topic}? Cover origins, major milestones, and how it evolved to where it is today."
+      "prompt": "What is the history and background of {topic}? Cover origins, major milestones, and how it evolved to where it is today.",
+      "description": "How it got here, and what came before"
     }
   ]
 }

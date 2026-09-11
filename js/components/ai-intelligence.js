@@ -1250,11 +1250,13 @@ export function renderAIIntelligence(container, scope) {
     // with the real topic name so evergreen prompts read naturally in the preview
     // AND when submitted/copied.
     const fiPrompt = (s) => String(s.prompt || `Give me a thorough, current briefing on "${s.name}" for ${topicName}. Be specific and cite sources.`).replace(/\{topic\}/gi, topicName);
+    // revamp1338: each row says which group it belongs to, so the topic-specific
+    // prompts can take the topic's colour while the evergreen ones stay neutral.
     const rows = list.map((s) => `
-      <div class="aii-fi-acc">
+      <div class="aii-fi-acc${s.evergreen ? ' is-evergreen' : ' is-specific'}" data-group="${escAttr(s.group || (s.evergreen ? 'evergreen' : 'specific'))}">
         <button type="button" class="aii-fi-accsum" aria-expanded="false">
           <span class="aii-fi-acc-ic" aria-hidden="true">${sectionIcon(s.name)}</span>
-          <span class="aii-fi-acc-tx"><span class="aii-fi-acc-name">${esc(s.name)}</span>${scope.promptsPage && s.description ? `<span class="aii-fi-acc-desc">${esc(s.description)}</span>` : ''}</span>
+          <span class="aii-fi-acc-tx"><span class="aii-fi-acc-name">${esc(s.name)}</span>${s.description ? `<span class="aii-fi-acc-desc">${esc(s.description)}</span>` : ''}</span>
           <span class="aii-fi-acc-chev">${CHEV}</span>
         </button>
         <div class="aii-emenu-host" data-explore-prompt="${escAttr(fiPrompt(s))}" data-explore-name="${escAttr(s.name)}" data-explore-desc="${escAttr(s.description || '')}"></div>

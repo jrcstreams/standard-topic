@@ -36546,3 +36546,104 @@ html body.nav-docked[class][class][class] #content > .dih[class] { margin-top: -
 .search-panel-results .xf-list > .xf-acc[open][class][class] > .xf-sum {
   border-bottom: 1px solid #eef1f6 !important;
 }
+
+/* ═══ revamp1338 — prompts as accordions with a line of context ════════════
+
+   Every prompt list on the site — the topic rail, the topic page's Prompts tab
+   on a phone, the custom-search Prompts tab, and the Prompts directory's
+   featured set and by-topic drill-ins — renders through one builder, and that
+   builder was hiding each prompt's one-line description everywhere but the
+   directory. A row that says "Trends to Watch" and nothing else asks the reader
+   to guess what forty words are about to do; the description answers before
+   they open it. All 565 prompts carry one now (8 evergreen ones were written).
+
+   (1) The row: icon top-aligned to a two-line stack — name, then description.
+       The description leaves when the row opens: the prompt itself is the
+       context then, and the name stays above it. */
+.aii-fi-acclist > .aii-fi-acc[class][class] > .aii-fi-accsum {
+  align-items: flex-start !important;
+  padding: 11px 14px 11px 12px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  gap: 11px !important;
+}
+.aii-fi-acclist > .aii-fi-acc[class][class] .aii-fi-acc-tx {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+.aii-fi-acclist > .aii-fi-acc[class][class] .aii-fi-acc-name {
+  font-size: 0.92rem !important;
+  font-weight: 650 !important;
+  line-height: 1.3 !important;
+  color: #1e2d44 !important;
+}
+.aii-fi-acclist > .aii-fi-acc[class][class] .aii-fi-acc-desc {
+  display: block !important;
+  font-size: 0.8rem !important;
+  font-weight: 450 !important;
+  line-height: 1.38 !important;
+  color: #6b7690 !important;
+  margin: 0 !important;
+}
+.aii-fi-acclist > .aii-fi-acc.is-open[class][class] .aii-fi-acc-desc { display: none !important; }
+.aii-fi-acclist > .aii-fi-acc[class][class] .aii-fi-acc-chev {
+  align-self: center !important;
+  margin-left: auto !important;
+}
+
+/* (2) Every row is its own card, on every surface — the treatment the search
+       redesign (1337) gave the custom-search list, made site-wide so a prompt
+       looks like the same object wherever it appears. */
+.aii-fi-acclist[class][class] { row-gap: 8px !important; column-gap: 12px !important; }
+.aii-fi-acclist > .aii-fi-acc[class][class] {
+  border: 1px solid #dfe5ef !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  overflow: hidden !important;
+}
+.aii-fi-acclist > .aii-fi-acc[class][class] > .aii-fi-accsum { border-bottom: 0 !important; }
+.aii-fi-acclist > .aii-fi-acc.is-open[class][class] > .aii-fi-accsum { border-bottom: 1px solid #eef1f6 !important; }
+/* The section rule above a list is a heading's rule again, not a card edge. */
+.aii-fi-sec > .aii-fi-sechead[class][class] { margin-bottom: 10px !important; }
+
+/* (3) The icon: topic-specific prompts take the topic's colour on a faint
+       tint of it; evergreen prompts — the same eight on every topic — keep the
+       neutral ground, so colour means "this one is about THIS topic". The
+       colour arrives as --tc from the rail (topic page), the by-topic card or
+       its drill-in host (directory), and is simply absent on a custom search,
+       where every prompt is evergreen anyway. */
+.aii-fi-acclist > .aii-fi-acc[class][class] .aii-fi-acc-ic {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 9px !important;
+  flex: none !important;
+  margin-top: 1px !important;
+}
+.aii-fi-acclist > .aii-fi-acc.is-specific[class][class] .aii-fi-acc-ic {
+  background: color-mix(in srgb, var(--tc, #2f4d9e) 12%, #fff) !important;
+  color: var(--tc, #2f4d9e) !important;
+}
+.aii-fi-acclist > .aii-fi-acc.is-specific.is-open[class][class] .aii-fi-acc-ic {
+  background: color-mix(in srgb, var(--tc, #2f4d9e) 18%, #fff) !important;
+  color: var(--tc, #2f4d9e) !important;
+}
+@media (hover: hover) {
+  .aii-fi-acclist > .aii-fi-acc.is-specific[class][class] .aii-fi-accsum:not([aria-expanded="true"]):hover .aii-fi-acc-ic {
+    background: color-mix(in srgb, var(--tc, #2f4d9e) 18%, #fff) !important;
+  }
+}
+
+/* (4) The topic rail sits in a faint grey container on desktop — a ground that
+       sets the prompts apart from the news feed beside them. The cards inside
+       stay white, which is the differentiation. In tab mode on a phone the
+       list has the whole screen and no feed beside it, so no container. */
+body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] {
+  background: #f5f6f9 !important;
+  border: 1px solid #e5e9f0 !important;
+  border-radius: 14px !important;
+  padding: 16px 16px 18px !important;
+}
+body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head { margin-top: 0 !important; }
+body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .aii-fi-sectitle { color: #1a2c66 !important; }
