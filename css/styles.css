@@ -36842,3 +36842,9 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   font-weight: 500 !important;
   color: #2b3c66 !important;
 }
+
+/* revamp1341c: the stacked list runs the full column. An older rule caps each
+   item at 34ch and only lifts the cap below 900px, so on a topic page at
+   desktop widths every line wrapped at ~309px with the rest of the card empty
+   beside it. In one column the column is the measure. */
+.tdi-focus:not(.tdi-focus--row) > li.tdi-focus-li[class][class] { max-width: none !important; width: 100%; }
