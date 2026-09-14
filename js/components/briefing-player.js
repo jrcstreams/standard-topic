@@ -29,10 +29,10 @@ const RATES = [1, 1.25, 1.5, 0.9];
 
 // Shared across mounts: the fetch happens once per page life per query.
 const episodeCache = new Map();
-export function loadEpisode({ date = null, edition = null } = {}) {
-  const key = `${date || 'latest'}|${edition || ''}`;
+export function loadEpisode({ date = null, edition = null, full = false } = {}) {
+  const key = `${date || 'latest'}|${edition || ''}|${full ? 1 : 0}`;
   if (!episodeCache.has(key)) {
-    const qs = date ? `?date=${encodeURIComponent(date)}${edition ? `&edition=${edition}` : ''}` : '';
+    const qs = date ? `?date=${encodeURIComponent(date)}${edition ? `&edition=${edition}` : ''}${full ? '&full=1' : ''}` : (full ? '?full=1' : '');
     episodeCache.set(key, fetch(`/api/episodes${qs}`).then((r) => (r.ok ? r.json() : null)).then((d) => (d && d.episode) || null).catch(() => null));
   }
   return episodeCache.get(key);

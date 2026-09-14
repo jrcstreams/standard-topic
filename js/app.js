@@ -18,7 +18,7 @@ import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } 
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
 import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief, splitSections } from './components/ai-intelligence.js?v=20260914-revamp1340c';
-import { mountLatestBriefingPlayer } from './components/briefing-player.js?v=20260914-revamp1340';
+import { mountLatestBriefingPlayer, mountBriefingPlayer, loadEpisode, loadEpisodeList } from './components/briefing-player.js?v=20260914-revamp1341';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -1846,6 +1846,35 @@ const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="
 // wave lands at 5pm ET); until the evening text is actually published this
 // stays on the morning name rather than promising an edition that is not there.
 function homeEditionTitle() { return 'Global AI Morning Briefing'; }
+// An archived edition's briefing, rendered from the episode row: the written
+// item per story, the sources the desk used for it, and a play-from-here that
+// seeks the edition's own player. Shape-matched to the live briefing's
+// .dib items so the archive reads like any other day.
+function episodeTextHTML(ep) {
+  const segs = (ep.script && ep.script.segments) || [];
+  const chapters = ep.chapters || [];
+  const srcsByChapter = new Map();
+  for (const s of (ep.sources || [])) { if (!srcsByChapter.has(s.chapter)) srcsByChapter.set(s.chapter, []); srcsByChapter.get(s.chapter).push(s); }
+  const story = (b) => ['lead', 'developing', 'deep_dive', 'hit', 'ahead', 'around'].includes(b);
+  const items = segs.map((seg, i) => ({ seg, i })).filter(({ seg }) => story(seg.beat) && String(seg.written || '').trim());
+  const overview = String((segs.find((x) => x.beat === 'cold_open') || {}).written || '').trim();
+  const at = (i) => (chapters[i] && Number.isFinite(chapters[i].start_ms)) ? chapters[i].start_ms : null;
+  const srcHTML = (list) => list.length ? `<div class="dib-side"><div class="dib-srcs">${list.slice(0, 4).map((s) => `<a class="dib-src" href="${escapeAttr(s.uri)}" target="_blank" rel="noopener">${escapeHTML(s.source || (() => { try { return new URL(s.uri).hostname.replace(/^www\./, ''); } catch (_) { return 'Source'; } })())}</a>`).join('')}</div></div>` : '';
+  return `
+    <div class="di-mast di-mast--v2"><h2 class="di-title"><span class="di-title-kind di-title--today">${escapeHTML(ep.title || 'Global AI Morning Briefing')}</span></h2>
+      <div class="di-metaline">${diEditionStampHTML(ep.created_at || `${ep.edition_date}T09:00:00Z`)}</div></div>
+    ${overview ? `<section class="di-focus"><div class="di-summary aii-sec-body"><p>${escapeHTML(overview)}</p></div></section>` : ''}
+    <section class="di-briefs di-briefs--v2">
+      <h3 class="di-lbl di-lbl--rule">Top Stories</h3>
+      ${items.map(({ seg, i }) => {
+        const ms = at(i);
+        const play = ms != null ? `<button type="button" class="dib-play" data-briefing-seek="${ms}" aria-label="Play this story"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span>Play from here</span></button>` : '';
+        const body = seg.beat === 'around' ? String(seg.written).split(/\n+/).map((l) => `<p>${escapeHTML(l.trim())}</p>`).join('') : `<p>${escapeHTML(String(seg.written).trim())}</p>`;
+        const head = seg.beat === 'around' ? 'Around the topics' : (seg.chapter || '');
+        return `<article class="dib dib--v2${(srcsByChapter.get(i) || []).length ? ' has-srcs' : ''}"><div class="dib-main"><h4 class="dib-head">${escapeHTML(head)}${play}</h4><div class="dib-body aii-sec-body">${body}</div></div>${srcHTML(srcsByChapter.get(i) || [])}</article>`;
+      }).join('')}
+    </section>`;
+}
 function briefFocusLines(d) {
   try {
     const parts = splitSections((d && d.content) || '');
@@ -1857,10 +1886,11 @@ function briefFocusLines(d) {
 }
 function fillBriefFocus(root, d) {
   const ul = root && root.querySelector('[data-tdi-focus]');
+  const lbl = root && root.querySelector('[data-tdi-focus-lbl]');
   if (ul) {
     const lines = briefFocusLines(d);
-    if (!lines.length) ul.hidden = true;
-    else { ul.innerHTML = lines.map((t) => `<li class="tdi-focus-li">${escapeHTML(t)}</li>`).join(''); ul.hidden = false; }
+    if (!lines.length) { ul.hidden = true; if (lbl) lbl.hidden = true; }
+    else { ul.innerHTML = lines.map((t) => `<li class="tdi-focus-li">${escapeHTML(t)}</li>`).join(''); ul.hidden = false; if (lbl) lbl.hidden = false; }
   }
   // revamp1314: the card carries the briefing's OWN overview, not the one-line
   // teaser. Three numbered hits followed by a single sentence restating them
@@ -1981,7 +2011,8 @@ function diHeroCardHTML(o) {
           <!-- revamp1303: the briefing's three In Focus lines, on the preview.
                They are the briefing's own bullets, so the card shows what the
                day is about before the sentence that sums it up. -->
-          <ul class="tdi-focus" data-tdi-focus hidden></ul>
+          <div class="tdi-focus-lbl" data-tdi-focus-lbl hidden>${escapeHTML(o.focusLabel || 'Today in Focus')}</div>
+          <ul class="tdi-focus${o.focusRow ? ' tdi-focus--row' : ''}" data-tdi-focus hidden></ul>
           <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
           ${o.player ? '<div class="tdi-player" data-briefing-player hidden></div>' : ''}
           <div class="tdi-actions">
@@ -2145,7 +2176,7 @@ function fillDihFocus(el, d) {
     el.innerHTML = `<span class="dih-item-focus-li dih-item-focus-li--pending">${escapeHTML((d && d.summary) ? d.summary : 'Briefing publishes with the next edition.')}</span>`;
     return;
   }
-  el.innerHTML = lines.map((t, i) => `<span class="dih-item-focus-li"><span class="dih-item-focus-n" aria-hidden="true">${i + 1}</span>${escapeHTML(t)}</span>`).join('');
+  el.innerHTML = `<span class="dih-item-focus-lbl">In Focus</span>` + lines.map((t, i) => `<span class="dih-item-focus-li"><span class="dih-item-focus-n" aria-hidden="true">${i + 1}</span>${escapeHTML(t)}</span>`).join('');
 }
 function setClampedSummary(el, text) {
   if (!el) return;
@@ -2181,7 +2212,7 @@ function renderFeaturedBriefings(host, opts) {
       <div class="hb-hero hb-hero--side" data-home-briefing>
         <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
           noHeader: true, hubLink: false, art: true, topicLabel: "Global AI Morning Briefing", pillLabel: 'All Topics',
-          cardTitle: homeEditionTitle(), player: true,
+          cardTitle: homeEditionTitle(), player: true, focusRow: true,
           sublabel: 'Your daily briefing across every topic we cover.',
           allBriefingsCta: true,
         })}</div>
@@ -2381,6 +2412,20 @@ function renderIntelligenceHub(container) {
           <p class="ph-sec-sub dih-bytopic-sub">A few of today's briefings to start with.</p>
         </div>
         <div class="dih-groupbody">
+          <!-- revamp1341: the edition card. The Global AI Morning Briefing leads
+               Featured Briefings at full width: the same hero card as the
+               homepage (three In Focus lines in a row, the player), plus an
+               edition picker over the past editions, which /api/episodes keeps. -->
+          <div class="dih-edition" data-dih-edition>
+            <div class="dih-edition-bar">
+              <label class="dih-edition-lbl" for="dih-edition-sel">Edition</label>
+              <select class="dih-edition-sel" id="dih-edition-sel" data-edition-sel aria-label="Choose an edition"><option value="">Today</option></select>
+            </div>
+            <div class="dih-today-card tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition">${diHeroCardHTML({
+              noHeader: true, hubLink: false, art: true, topicLabel: 'Global AI Morning Briefing', pillLabel: 'All Topics',
+              cardTitle: homeEditionTitle(), player: true, focusRow: true,
+            })}</div>
+          </div>
           <div class="dih-items">${featuredBriefs.map((t, i) => item(t, i)).join('')}</div>
           <div class="dih-brief" data-dih-brief hidden>
             <div class="dih-brief-bar">
@@ -2522,6 +2567,49 @@ function renderIntelligenceHub(container) {
         todayCard.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow]').forEach((el) => { el.innerHTML = stampHTML; });
       }
     }).catch(() => {});
+
+    // revamp1341: the edition picker. "Today" is the live briefing above;
+    // any other date is an archived episode, and its text comes from the
+    // episode itself (the written items the writer produced alongside the
+    // spoken ones), rendered in place of the live briefing.
+    const sel = container.querySelector('[data-edition-sel]');
+    if (sel) {
+      loadEpisodeList(30).then((eps) => {
+        if (!sel.isConnected || !eps.length) return;
+        const fmt = (e) => { try { return new Date(`${e.edition_date}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); } catch (_) { return e.edition_date; } };
+        eps.slice(1).forEach((e) => {
+          const o = document.createElement('option');
+          o.value = `${e.edition_date}|${e.edition}`; o.textContent = `${fmt(e)}${e.edition === 'evening' ? ' · Evening' : ''}`;
+          sel.appendChild(o);
+        });
+        if (sel.options.length > 1) sel.closest('.dih-edition-bar').classList.add('is-ready');
+      });
+      sel.addEventListener('change', async () => {
+        const v = sel.value;
+        const card = todayCard;
+        if (!v) {   // back to today: restore the live briefing
+          loaded = false; setOpen(false);
+          mountLatestBriefingPlayer(card.querySelector('[data-briefing-player]'), { compact: true });
+          fetchDailyBrief('home').then((d) => { if (d) fillBriefFocus(card, d); });
+          return;
+        }
+        const [date, edition] = v.split('|');
+        const ep = await loadEpisode({ date, edition, full: true });
+        if (!ep || !card.isConnected) return;
+        mountBriefingPlayer(card.querySelector('[data-briefing-player]'), ep, { compact: true });
+        // In Focus from the episode
+        const lines = (ep.script && Array.isArray(ep.script.in_focus) && ep.script.in_focus.length ? ep.script.in_focus
+          : (ep.chapters || []).filter((c) => ['lead', 'developing'].includes(c.beat)).map((c) => c.label)).slice(0, 3);
+        const ul = card.querySelector('[data-tdi-focus]'); const lbl = card.querySelector('[data-tdi-focus-lbl]');
+        if (ul) { ul.innerHTML = lines.map((t) => `<li class="tdi-focus-li">${escapeHTML(t)}</li>`).join(''); ul.hidden = !lines.length; if (lbl) lbl.hidden = !lines.length; }
+        card.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow]').forEach((el) => { el.innerHTML = diEditionStampHTML(ep.created_at || `${ep.edition_date}T09:00:00Z`); });
+        // The archived text, in place of the live briefing
+        loaded = true;
+        const hostEl = inner && (inner.querySelector('[data-di-host]') || inner);
+        if (hostEl) hostEl.innerHTML = episodeTextHTML(ep);
+        setOpen(true);
+      });
+    }
   }
 
   // A parent card flips between its list of topics and one topic's briefing.

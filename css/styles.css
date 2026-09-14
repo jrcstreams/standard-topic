@@ -35431,9 +35431,9 @@ html body.home-search.app-mode.home-mode:not(.nav-docked) #content {
   padding-left: 14px;
   font-family: var(--font-family);
   font-size: 0.93rem;
-  font-weight: 650;
-  line-height: 1.35;
-  color: #1f2c4f;
+  font-weight: 520;
+  line-height: 1.4;
+  color: #2b3c66;
 }
 .tdi-focus > li::before {
   content: '';
@@ -35441,11 +35441,14 @@ html body.home-search.app-mode.home-mode:not(.nav-docked) #content {
   width: 6px; height: 6px; border-radius: 50%;
   background: #7d93c4;
 }
+/* revamp1341: stacked, full-width lines by default (topic pages); the row
+   of three is opt-in (.tdi-focus--row) for the wide cards — home, and the
+   edition card on the AI Briefings page. */
 @media (min-width: 900px) {
-  .tdi-focus { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 26px; }
-  .tdi-focus > li { padding-left: 0; }
-  .tdi-focus > li::before { display: none; }
-  .tdi-focus > li {
+  .tdi-focus--row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 26px; }
+  .tdi-focus--row > li { padding-left: 0; }
+  .tdi-focus--row > li::before { display: none; }
+  .tdi-focus--row > li {
     padding-top: 8px;
     border-top: 2px solid #dbe4fb;
   }
@@ -35465,10 +35468,20 @@ html body.home-search.app-mode.home-mode:not(.nav-docked) #content {
   font-size: 0.68rem; font-weight: 750; line-height: 16px; text-align: center;
 }
 @media (min-width: 900px) {
-  .tdi-focus > li { padding-left: 0; padding-top: 10px; }
-  .tdi-focus > li::before {
+  .tdi-focus--row > li { padding-left: 0; padding-top: 10px; }
+  .tdi-focus--row > li::before {
     display: block; position: static; margin: 0 0 6px;
   }
+}
+/* The light label above the lines. */
+.tdi-focus-lbl {
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase;
+  color: #7488ad; margin: 2px 0 8px;
+}
+.tdi-focus-lbl[hidden] { display: none !important; }
+.dih-item-focus-lbl {
+  font-family: var(--font-family); font-size: 0.68rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase;
+  color: #7488ad; margin-bottom: 1px;
 }
 .tdi-summary[hidden] { display: none !important; }
 
@@ -35479,7 +35492,7 @@ html body.home-search.app-mode.home-mode:not(.nav-docked) #content {
   display: flex; flex-direction: column; gap: 5px; width: 100%;
   font-family: var(--font-family); font-size: 0.86rem; line-height: 1.4; color: #2b3c66;
 }
-.dih-item-focus-li { position: relative; padding-left: 22px; font-weight: 600; }
+.dih-item-focus-li { position: relative; padding-left: 22px; font-weight: 500; color: #2b3c66; }
 .dih-item-focus-li--pending { padding-left: 0; font-weight: 400; color: #46557a; }
 .dih-item-focus-n {
   position: absolute; left: 0; top: 0.12em;
@@ -36768,10 +36781,14 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
    lines on the home card, again inside the opened briefing, and on the hub. */
 .tdi-player, .di-player { margin: 2px 0 12px; }
 .tdi-player[hidden], .di-player[hidden] { display: none !important; }
+/* revamp1341: contained — a light box in the card's own palette, not a bar. */
 .bp {
-  border-left: 3px solid #bcd0f5; padding: 8px 0 8px 14px;
+  background: #f7f9fd; border: 1px solid #dbe4fb; border-radius: 10px;
+  padding: 12px 14px 11px;
   font-family: var(--font-family); color: #1f2c4f;
 }
+.bp-transport { background: #fff; border: 1px solid #e3e9f4; border-radius: 8px; padding: 6px 10px 6px 6px; }
+.bp-chapters { border-top: 1px solid #dbe4fb; }
 .bp-head { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; font-size: 0.95rem; }
 .bp-ic { display: inline-flex; color: #2c4f9e; }
 .bp-title { font-weight: 700; }
@@ -36831,3 +36848,15 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   font-family: var(--font-family); font-size: 0.72rem; font-weight: 650; color: #2c4f9e; cursor: pointer;
 }
 @media (hover: hover) { .dib-play:hover { background: #eef3fd; border-color: #b9c6dd; } }
+
+/* revamp1341: the edition card on the AI Briefings page — full width, first in
+   Featured Briefings, with the edition picker on a slim bar above it. */
+.dih-edition { margin: 0 0 14px; }
+.dih-edition-bar { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 8px; }
+.dih-edition-bar:not(.is-ready) { display: none; }
+.dih-edition-lbl { font-family: var(--font-family); font-size: 0.72rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: #7488ad; }
+.dih-edition-sel {
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; color: #2b3c66;
+  border: 1px solid #cfd8e8; border-radius: 8px; background: #fff; padding: 5px 9px;
+}
+.tdi-card--edition { width: 100%; }
