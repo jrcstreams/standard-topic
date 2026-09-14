@@ -37111,3 +37111,8 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .bp-transport { padding-bottom: 22px; }
   .bp-row { padding-bottom: 0; }
 }
+
+/* revamp1344f: on a wide card the lead column holds its sentence on one line. */
+@container (min-width: 1000px) {
+  .bp-row { grid-template-columns: minmax(390px, 1fr) minmax(220px, 1.5fr) auto; }
+}
