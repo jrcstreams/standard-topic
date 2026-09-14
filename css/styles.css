@@ -37116,3 +37116,19 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
 @container (min-width: 1000px) {
   .bp-row { grid-template-columns: minmax(390px, 1fr) minmax(220px, 1.5fr) auto; }
 }
+
+/* revamp1345: the head, balanced. The date line gets air under the title
+   (8px, not 4), the title line sits a touch taller, and the tile is the height
+   of the resulting block — 56px — so the two read as one object rather than a
+   tall tile beside a short stack. */
+.tdi-card--edition .ec-head { gap: 16px; align-items: center; }
+.tdi-card--edition .ec-tile[class] { width: 56px; height: 56px; border-radius: 13px; }
+.tdi-card--edition .ec-tile[class] svg { width: 27px; height: 27px; }
+.tdi-card--edition .ec-title[class] { font-size: 1.7rem; line-height: 1.12; }
+.tdi-card--edition .ec-meta[class] { margin-top: 8px; line-height: 1.25; }
+.tdi-card--edition .ec-meta .tdi-date[class][class] { font-size: 0.86rem; }
+.tdi-card--edition .ec-focushead { margin-top: 22px; }
+@media (max-width: 899.98px) {
+  .tdi-card--edition .ec-tile[class] { width: 50px; height: 50px; }
+  .tdi-card--edition .ec-meta[class] { margin-top: 6px; }
+}
