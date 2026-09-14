@@ -36997,3 +36997,23 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .bp-meta > span { white-space: normal; }
 }
 .tdi-card--edition[class][class][class] { border-radius: 16px !important; }
+
+/* revamp1343c: sized by the card, not the screen. The In Focus row stacks when
+   the card itself is narrow (the hub column on a laptop), the player's lead
+   column is wide enough for its one line, and the info ring stays a ring. */
+.tdi-card--edition .ec { container-type: inline-size; }
+@container (max-width: 760px) {
+  .ec-focus { grid-template-columns: 1fr; }
+  .ec-item { border-left: 0; padding: 10px 0; border-bottom: 1px solid #eef1f7; }
+  .ec-item:first-child { padding-top: 2px; }
+  .ec-item:last-child { border-bottom: 0; }
+  .ec-focushead::after { display: none; }
+}
+.bp-row { grid-template-columns: minmax(300px, 1.1fr) minmax(220px, 1.4fr) auto; }
+.bp-meta { flex-wrap: nowrap; }
+.bp .bp-info.how-aigen[class][class] svg circle { fill: none !important; }
+.bp .bp-info.how-aigen[class][class] svg line { stroke: currentColor; }
+@container (max-width: 760px) {
+  .bp-row { grid-template-columns: 1fr; gap: 12px; }
+  .bp-meta { flex-wrap: wrap; white-space: normal; }
+}
