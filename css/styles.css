@@ -37081,3 +37081,19 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
 .tdi-card--edition .ec-meta .tdi-stamp-val { display: inline-flex; align-items: center; gap: 5px; }
 .tdi-card--edition .ec-meta .tdi-stamp-sep { margin: 0 8px; }
 .tdi-card--edition .ec-focushead { margin-top: 20px; }
+
+/* revamp1344c: the times sit under the waveform without adding to its
+   height, so the row's three columns centre on the same axis — play button,
+   bars, title block and controls — instead of the transport riding 11px high
+   to make room for a line of timecodes. */
+.bp-wavewrap { position: relative; height: 44px; }
+.bp-times { position: absolute; left: 0; right: 0; top: 100%; margin-top: 3px; }
+.bp-row { padding-bottom: 18px; }
+.bp-transport { align-items: center; }
+@container (max-width: 760px) {
+  .bp-wavewrap { height: 40px; }
+}
+
+/* revamp1344d: the last word and its ring never split — `.bp-meta > span`
+   (1343d) reset the nowrap on this very span. */
+.bp-meta > .bp-nb[class] { white-space: nowrap !important; }
