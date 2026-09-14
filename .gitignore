@@ -38,3 +38,4 @@ docs/rss-pilot-implementation.md
 docs/rss-full-assessment.md
 docs/rss-full-implementation.md
 COPY-ME-cron-secret.txt
+.env*
