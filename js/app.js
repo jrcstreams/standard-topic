@@ -7,7 +7,7 @@ import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js?v=20260716-revamp588';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp574';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js?v=20260728-revamp668';
-import { installHowItWorks, howItWorksLinkHTML } from './utils/how-it-works.js?v=20260828-revamp1038';
+import { installHowItWorks, howItWorksLinkHTML } from './utils/how-it-works.js?v=20260914-revamp1340';
 import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260817-revamp772';
 // splits out of the initial bundle — see B3.4. (prompt-builder-modal.js was a retired
 // no-op takeover; removed.)
@@ -17,7 +17,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief, splitSections } from './components/ai-intelligence.js?v=20260817-revamp772';
+import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief, splitSections } from './components/ai-intelligence.js?v=20260914-revamp1340';
+import { mountLatestBriefingPlayer } from './components/briefing-player.js?v=20260914-revamp1340';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -1410,7 +1411,6 @@ function wirePromptsDropdown(panel, initialView) {
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head ph-sec-head--card">
             <div class="ph-sec-headrow">
-              <span class="ph-sec-ic" aria-hidden="true">${PROMPTS_FEAT_HEAD_IC}</span>
               <h3 class="ph-sec-title">Featured Prompts</h3>
             </div>
             <p class="ph-sec-sub">Handpicked to get you started.</p>
@@ -1423,7 +1423,6 @@ function wirePromptsDropdown(panel, initialView) {
           <div class="ph-sec-head ph-sec-head--card ph-sec-head--hastoggle">
             <div class="ph-sec-head-tx">
               <div class="ph-sec-headrow">
-                <span class="ph-sec-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
                 <h3 class="ph-sec-title">Prompts by Topic</h3>
               </div>
               <div class="ph-sec-subrow">
@@ -1652,7 +1651,6 @@ function topicsTreeHTML() {
   const head = `<header class="aiidd-pagehead">
     <div class="aiidd-pagehead-tx">
       <div class="aiidd-headrow">
-        <span class="aiidd-head-ic" aria-hidden="true">${GRID_HEAD_IC}</span>
         <h2 class="aiidd-pagehead-title">All Topics</h2>
       </div>
       <div class="aiidd-pagehead-subrow">
@@ -1682,7 +1680,6 @@ function topicsTreeHTML() {
     <header class="aiidd-pagehead tfeat-head">
       <div class="aiidd-pagehead-tx">
         <div class="aiidd-headrow">
-          <span class="aiidd-head-ic" aria-hidden="true">${FEAT_TOPICS_IC}</span>
           <h2 class="aiidd-pagehead-title">Featured Topics</h2>
         </div>
         <p class="aiidd-pagehead-sub">A handpicked mix of the most-followed areas, across parent topics and subtopics.</p>
@@ -1845,6 +1842,10 @@ const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="
 // same parse the open briefing runs, so the preview shows exactly the bullets
 // the reader gets on opening it. Capped at three; a stray fourth must not
 // reshape the card.
+// The homepage briefing's name. Two editions a day are coming (the evening
+// wave lands at 5pm ET); until the evening text is actually published this
+// stays on the morning name rather than promising an edition that is not there.
+function homeEditionTitle() { return 'Global AI Morning Briefing'; }
 function briefFocusLines(d) {
   try {
     const parts = splitSections((d && d.content) || '');
@@ -1867,10 +1868,15 @@ function fillBriefFocus(root, d) {
   // card is then for Top Stories rather than for a longer summary. The AI
   // Briefings page keeps the teaser — its cards are a directory, and fill a
   // different element ([data-fb-sum]).
+  // revamp1340: the preview card is the three In Focus lines and nothing else
+  // — the summary sentence under them was the same information a second time.
+  // The paragraph stays in the markup only as the fallback for a briefing that
+  // has no In Focus section (an older row); when the lines exist it is hidden.
   const sEl = root && root.querySelector('[data-tdi-summary]');
   if (sEl) {
-    const overview = briefOverview(d);
-    if (overview) sEl.textContent = overview;
+    const lines = briefFocusLines(d);
+    if (lines.length) sEl.hidden = true;
+    else { const overview = briefOverview(d); if (overview) sEl.textContent = overview; sEl.hidden = false; }
   }
 }
 // The briefing's overview section as plain text.
@@ -1977,6 +1983,7 @@ function diHeroCardHTML(o) {
                day is about before the sentence that sums it up. -->
           <ul class="tdi-focus" data-tdi-focus hidden></ul>
           <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
+          ${o.player ? '<div class="tdi-player" data-briefing-player hidden></div>' : ''}
           <div class="tdi-actions">
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
               <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
@@ -2129,6 +2136,17 @@ function splitSentences(text) {
   if (tail) out.push(tail);
   return out.filter(Boolean);
 }
+// The directory card's three In Focus lines (revamp1340). Same parser as the
+// hero card, stacked because these cards are narrow; a briefing with no lines
+// yet (or none at all) shows the pending note in the same slot.
+function fillDihFocus(el, d) {
+  const lines = d ? briefFocusLines(d) : [];
+  if (!lines.length) {
+    el.innerHTML = `<span class="dih-item-focus-li dih-item-focus-li--pending">${escapeHTML((d && d.summary) ? d.summary : 'Briefing publishes with the next edition.')}</span>`;
+    return;
+  }
+  el.innerHTML = lines.map((t, i) => `<span class="dih-item-focus-li"><span class="dih-item-focus-n" aria-hidden="true">${i + 1}</span>${escapeHTML(t)}</span>`).join('');
+}
 function setClampedSummary(el, text) {
   if (!el) return;
   const full = String(text || '');
@@ -2162,8 +2180,8 @@ function renderFeaturedBriefings(host, opts) {
     host.innerHTML = `
       <div class="hb-hero hb-hero--side" data-home-briefing>
         <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-          noHeader: true, hubLink: false, art: true, topicLabel: "Today's Briefing", pillLabel: 'All Topics',
-          cardTitle: "Today's AI Briefing",
+          noHeader: true, hubLink: false, art: true, topicLabel: "Global AI Morning Briefing", pillLabel: 'All Topics',
+          cardTitle: homeEditionTitle(), player: true,
           sublabel: 'Your daily briefing across every topic we cover.',
           allBriefingsCta: true,
         })}</div>
@@ -2216,7 +2234,7 @@ function renderFeaturedBriefings(host, opts) {
       <div class="hb-grid">
         <div class="hb-hero" data-home-briefing>
           <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-            noHeader: true, hubLink: false, art: true, topicLabel: "Today's Briefing", pillLabel: 'All Topics',
+            noHeader: true, hubLink: false, art: true, topicLabel: "Global AI Morning Briefing", pillLabel: 'All Topics',
             sublabel: 'Your daily briefing across every topic we cover.',
           })}</div>
         </div>
@@ -2255,7 +2273,7 @@ function renderFeaturedBriefings(host, opts) {
     fetchDailyBrief(name, false, true).then((d) => {
       if (!btn.isConnected) return;
       const sum = btn.querySelector('[data-fb-sum]');
-      if (sum) setClampedSummary(sum, (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.');
+      if (sum) fillDihFocus(sum, d);
       const stamp = btn.querySelector('[data-fb-stamp]');
       if (stamp && d && d.generatedAt) stamp.innerHTML = diEditionStampHTML(d.generatedAt);
     }).catch(() => {});
@@ -2321,7 +2339,7 @@ function renderIntelligenceHub(container) {
         <span class="dih-item-name">${escapeHTML(t.name)}</span>
       </span>
       <span class="tdi-date dih-item-stamp" data-dih-stamp-for="${escapeAttr(t.name)}"></span>
-      <span class="dih-item-sum" data-dih-sum="${escapeAttr(t.name)}">Loading your briefing…</span>
+      <span class="dih-item-focus" data-dih-sum="${escapeAttr(t.name)}"><span class="dih-item-focus-li dih-item-focus-li--pending">Loading your briefing…</span></span>
       <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
     </button>`;
 
@@ -2358,7 +2376,6 @@ function renderIntelligenceHub(container) {
       <section class="dih-group dih-group--featured is-open" data-dih-group>
         <div class="dih-featuredhead ph-sec-head ph-sec-head--card">
           <div class="ph-sec-headrow">
-            <span class="ph-sec-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
             <h2 class="ph-sec-title dih-bytopic-title">Featured Briefings</h2>
           </div>
           <p class="ph-sec-sub dih-bytopic-sub">A few of today's briefings to start with.</p>
@@ -2381,10 +2398,9 @@ function renderIntelligenceHub(container) {
 
       <div class="dih-bytopic-head ph-sec-head ph-sec-head--card">
         <div class="ph-sec-headrow">
-          <span class="ph-sec-ic" aria-hidden="true">${SEC_IC_BYTOPIC}</span>
           <h2 class="ph-sec-title dih-bytopic-title">Briefings by Topic</h2>
         </div>
-        <p class="ph-sec-sub dih-bytopic-sub">Every topic gets its own briefing, twice a day. Browse them all here.</p>
+        <p class="ph-sec-sub dih-bytopic-sub">Every topic gets its own briefing, every morning. Browse them all here.</p>
       </div>
 
 
@@ -2495,6 +2511,7 @@ function renderIntelligenceHub(container) {
       });
     };
     btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
+    mountLatestBriefingPlayer(todayCard.querySelector('[data-briefing-player]'), { compact: true });
     fetchDailyBrief('home').then((d) => {
       if (!d || !todayCard.isConnected) return;
       const sEl = todayCard.querySelector('[data-tdi-summary]');
@@ -2649,10 +2666,10 @@ function renderIntelligenceHub(container) {
       if (!byName.has(key)) byName.set(key, fetchDailyBrief(key, false, true));
       const d = await byName.get(key);
       if (!el.isConnected) return;
-      if (sum) setClampedSummary(sum, (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.');
+      if (sum) fillDihFocus(sum, d);
       if (stamp && d && d.generatedAt) stamp.innerHTML = diEditionStampHTML(d.generatedAt);
     } catch (_) {
-      if (sum) sum.textContent = 'Briefing publishes with the next edition.';
+      if (sum) fillDihFocus(sum, null);
     }
   };
   const items = [...container.querySelectorAll('[data-dih-item]')];
@@ -2699,6 +2716,7 @@ function wireHomeDailyIntelligence(root) {
 
   fitDiHub(card);
 
+  mountLatestBriefingPlayer(card.querySelector('[data-briefing-player]'), { compact: true });
   fetchDailyBrief('home').then((d) => {
     if (!d || !card.isConnected) return;
     const sEl = card.querySelector('[data-tdi-summary]');
@@ -2819,7 +2837,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       </div>
       <div class="topic-top topic-top--lead">
         <section class="topic-top-main">
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, cardTitle: "Today's AI Briefing", cardPill: topic.name, noHeader: true, art: true })}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, cardTitle: 'AI Morning Briefing', cardPill: topic.name, noHeader: true, art: true })}
           </div>
         </section>
       </div>
@@ -2828,7 +2846,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
           <section id="section-newsfeed" class="layout-section"></section>
         </div>
         <section class="topic-top-side"${topicColorStyle(topic)}>
-          <h3 class="trail-head"><span class="trail-head-ic trail-head-ic--prompts" aria-hidden="true">${PROMPTS_HEAD_ICON}</span>AI Prompts</h3>
+          <h3 class="trail-head">AI Prompts</h3>
           <div class="tpr-card" data-tpr>
             <div class="tpr-head">
             </div>
@@ -5257,7 +5275,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
              out to briefings by topic and trending links to its own page, so
              there is nothing left for tabs to switch between. -->
         <div class="home-sections home-v2">
-          <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Today's AI Briefing"></section>
+          <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Global AI Morning Briefing"></section>
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
                is Today's News. Column 2 stacks the briefing, trending, AI
@@ -6610,7 +6628,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   // width runs out, so the first three (Today's Briefing, Trending, World) are
   // the ones that always survive.
   const QUICK_LINKS = [
-    { key: 'briefing', label: "Today's Briefing", icon: QL_BRIEF_IC },
+    { key: 'briefing', label: 'Morning Briefing', icon: QL_BRIEF_IC },
     { key: 'trending', label: 'Trending',         icon: QL_TREND_IC },
     { key: 'topic',    label: 'World',            slug: 'world' },
     { key: 'topic',    label: 'Politics',         slug: 'politics' },
@@ -7197,7 +7215,7 @@ function renderPage(route) {
 
         <div class="about-section">
           <h3>About the AI</h3>
-          <p>The briefings and insights are written by AI, and they say so wherever they appear. They are built from real articles published that day rather than from the model's memory, and the sources sit underneath so you can check any of it.</p>
+          <p>The briefings and insights are written by AI, and they say so wherever they appear. They are built from real articles published that day rather than from the model's memory, and the sources sit underneath so you can check any of it. The audio edition of the Global AI Briefing is AI-generated too: a synthetic voice reading a script written from those same sourced briefings, so what you hear and what you read are the same stories with the same sources.</p>
           <p>It can still be wrong. It is a fast way in, not a replacement for the reporting — the links are there for a reason. The <button type="button" class="about-inline-link how-aigen" data-how-it-works>AI-generated content</button> label on any briefing explains how it is produced.</p>
         </div>
 

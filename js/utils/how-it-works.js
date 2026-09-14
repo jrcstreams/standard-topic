@@ -39,7 +39,7 @@ const HOW_IT_WORKS_HTML = `
   <div class="di-how-panel" role="dialog" aria-modal="true" aria-label="How our AI works">
     <button type="button" class="di-how-x" data-how-close aria-label="Close">&times;</button>
     <h2 class="di-how-title">${SPARK}<span>How our AI works</span></h2>
-    <p class="di-how-lede">Three kinds of AI writing appear on this site. Each one is generated automatically, and each is written from real news articles rather than from whatever the model already knew.</p>
+    <p class="di-how-lede">Four kinds of AI-generated content appear on this site. Each one is generated automatically, and each is written from real news articles rather than from whatever the model already knew.</p>
 
     <div class="di-how-surfaces">
       <section class="di-how-surface">
@@ -54,9 +54,13 @@ const HOW_IT_WORKS_HTML = `
         <h3 class="di-how-surfacetitle">Trend summaries</h3>
         <p>What a spiking search is actually about and why it is moving today. Written from current articles on the subject.</p>
       </section>
+      <section class="di-how-surface">
+        <h3 class="di-how-surfacetitle">Audio briefing</h3>
+        <p>The Global AI Briefing read aloud by a synthetic voice. An AI editor picks the day's stories from the topic briefings, an AI writer turns them into a script, and the same script becomes the written briefing — so the audio and the text are the same stories with the same sources, and each story can be played from where it starts.</p>
+      </section>
     </div>
 
-    <p class="di-how-note">In all three, the sources sit underneath so you can check them. If a section lists none, none were found. We show that rather than filling the gap.</p>
+    <p class="di-how-note">In all four, the sources sit underneath so you can check them. If a section lists none, none were found. We show that rather than filling the gap.</p>
 
     <p class="di-how-foot"><b>It can get things wrong.</b> Check dates and figures against the linked reporting before relying on them.</p>
   </div>`;

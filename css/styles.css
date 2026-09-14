@@ -35452,6 +35452,42 @@ html body.home-search.app-mode.home-mode:not(.nav-docked) #content {
 }
 .tdi-focus[hidden] { display: none !important; }
 
+/* revamp1340: the three In Focus lines carry a numeral — they are "1-2-3
+   highlights" on every card now, with the summary sentence gone. Stacked
+   (narrow) the numeral replaces the dot; in the three-column row (wide) it
+   sits above the line as a small marker so the row still reads as headlines. */
+.tdi-focus { counter-reset: tdiFocus; }
+.tdi-focus > li { counter-increment: tdiFocus; padding-left: 22px; }
+.tdi-focus > li::before {
+  content: counter(tdiFocus);
+  width: 16px; height: 16px; border-radius: 50%; top: 0.22em;
+  background: #e3ebfb; color: #2c4f9e;
+  font-size: 0.68rem; font-weight: 750; line-height: 16px; text-align: center;
+}
+@media (min-width: 900px) {
+  .tdi-focus > li { padding-left: 0; padding-top: 10px; }
+  .tdi-focus > li::before {
+    display: block; position: static; margin: 0 0 6px;
+  }
+}
+.tdi-summary[hidden] { display: none !important; }
+
+/* The directory card (AI Briefings hub): three stacked lines with numerals, in
+   the slot the summary used to fill. Same type as .dih-item-sum so the card's
+   rhythm is unchanged; capped at three lines by the parser, not by clamping. */
+.dih-item-focus {
+  display: flex; flex-direction: column; gap: 5px; width: 100%;
+  font-family: var(--font-family); font-size: 0.86rem; line-height: 1.4; color: #2b3c66;
+}
+.dih-item-focus-li { position: relative; padding-left: 22px; font-weight: 600; }
+.dih-item-focus-li--pending { padding-left: 0; font-weight: 400; color: #46557a; }
+.dih-item-focus-n {
+  position: absolute; left: 0; top: 0.12em;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #e3ebfb; color: #2c4f9e;
+  font-size: 0.68rem; font-weight: 750; line-height: 16px; text-align: center;
+}
+
 /* The rail: twenty, then a button for the rest. */
 @media (min-width: 1024px) {
   body:not(.tt-on) #home-trending .trend-card-grid > .trend-card:nth-child(n+13) { display: block !important; }
@@ -36724,3 +36760,74 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   margin-bottom: 12px !important;
   border-bottom: 1px solid #e0e5ee !important;
 }
+
+
+/* ═══ revamp1340: the briefing audio player (js/components/briefing-player.js) ═══
+   Plain on purpose — a title line, one row of transport, one line of label —
+   with the chapter list folded until asked for. It sits under the In Focus
+   lines on the home card, again inside the opened briefing, and on the hub. */
+.tdi-player, .di-player { margin: 2px 0 12px; }
+.tdi-player[hidden], .di-player[hidden] { display: none !important; }
+.bp {
+  border-left: 3px solid #bcd0f5; padding: 8px 0 8px 14px;
+  font-family: var(--font-family); color: #1f2c4f;
+}
+.bp-head { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; font-size: 0.95rem; }
+.bp-ic { display: inline-flex; color: #2c4f9e; }
+.bp-title { font-weight: 700; }
+.bp-dur { color: #6b7a9c; font-weight: 500; }
+.bp-transport { display: flex; align-items: center; gap: 10px; }
+.bp-btn.bp-play {
+  flex: none; width: 34px; height: 34px; border-radius: 50%; border: 0;
+  background: #1e3a8a; color: #fff; display: grid; place-items: center; cursor: pointer;
+}
+.bp.is-playing .bp-play { background: #2c4f9e; }
+.bp-skip {
+  flex: none; position: relative; width: 28px; height: 28px; border: 0; background: none; cursor: pointer; color: #46557a;
+  font-family: var(--font-family); font-size: 0.62rem; font-weight: 750; padding: 0;
+}
+.bp-skip::before {
+  content: ''; position: absolute; inset: 2px; border-radius: 50%;
+  border: 2px solid currentColor; border-top-color: transparent; transform: rotate(-45deg);
+}
+.bp-skip--fwd::before { transform: rotate(45deg) scaleX(-1); }
+.bp-skip span { position: relative; }
+.bp-track { position: relative; flex: 1; height: 22px; cursor: pointer; touch-action: none; }
+.bp-track::before { content: ''; position: absolute; left: 0; right: 0; top: 10px; height: 2px; background: #cfd8e8; border-radius: 2px; }
+.bp-track-fill { position: absolute; left: 0; top: 10px; height: 2px; width: 0; background: #1e3a8a; border-radius: 2px; }
+.bp-track-knob { position: absolute; top: 6px; left: 0; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: #1e3a8a; }
+.bp-track:focus-visible { outline: 2px solid #2c4f9e; outline-offset: 2px; border-radius: 4px; }
+.bp-time { flex: none; font-size: 0.8rem; color: #46557a; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bp-time-sep { margin: 0 4px; color: #9aa7c2; }
+.bp-rate { flex: none; border: 1px solid #cfd8e8; background: #fff; border-radius: 6px; padding: 3px 7px; font-family: var(--font-family); font-size: 0.74rem; font-weight: 650; color: #2b3c66; cursor: pointer; }
+.bp-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 8px; font-size: 0.82rem; }
+.bp-aigen { display: inline-flex; align-items: center; gap: 5px; color: #46557a; }
+.bp-aigen b { font-weight: 700; color: #1f2c4f; }
+.bp-foot-links { display: inline-flex; align-items: center; gap: 14px; }
+.bp-link { display: inline-flex; align-items: center; gap: 4px; border: 0; background: none; padding: 0; font: inherit; font-weight: 650; color: #2c4f9e; cursor: pointer; text-decoration: none; }
+.bp-link[aria-expanded="true"] svg { transform: rotate(180deg); }
+.bp-chapters { list-style: none; margin: 8px 0 0; padding: 6px 0 0; border-top: 1px solid #e6ebf5; }
+.bp-chapters[hidden] { display: none; }
+.bp-chapter {
+  display: flex; gap: 10px; align-items: baseline; width: 100%; text-align: left;
+  border: 0; background: none; padding: 5px 4px; border-radius: 6px; cursor: pointer; font: inherit; color: #2b3c66;
+}
+.bp-chapter.is-active { background: #eef3fd; color: #1e3a8a; }
+.bp-chapter-tc { flex: none; width: 38px; font-size: 0.76rem; color: #7488ad; font-variant-numeric: tabular-nums; }
+.bp-chapter-nm { font-size: 0.86rem; font-weight: 600; }
+@media (hover: hover) {
+  .bp-chapter:hover { background: #f1f4fa; }
+  .bp-link:hover { text-decoration: underline; }
+  .bp-btn.bp-play:hover { background: #2c4f9e; }
+}
+@media (max-width: 560px) {
+  .bp-aigen-sub { display: none; }
+  .bp-time { font-size: 0.74rem; }
+}
+/* "Play from here" beside a story's headline in the opened briefing. */
+.dib-play {
+  display: inline-flex; align-items: center; gap: 4px; margin-left: 10px; vertical-align: middle;
+  border: 1px solid #cfd8e8; background: #fff; border-radius: 999px; padding: 2px 9px 2px 7px;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 650; color: #2c4f9e; cursor: pointer;
+}
+@media (hover: hover) { .dib-play:hover { background: #eef3fd; border-color: #b9c6dd; } }

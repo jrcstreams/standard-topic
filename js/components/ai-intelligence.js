@@ -14,6 +14,7 @@ import { renderIcon } from '../utils/icons.js';
 import { navigate } from '../utils/router.js?v=20260815-revamp763';
 import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
+import { mountLatestBriefingPlayer, seekBriefingPlayers } from './briefing-player.js?v=20260914-revamp1340';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -2604,7 +2605,10 @@ export function renderDailyIntelligence(container, scope) {
     // "Today's AI Briefing" everywhere, with the topic as an eyebrow above it
     // on the topic pages — rather than "<Topic> Briefing" in a lighter face.
     // Opening a card should not rename it.
-    const briefTitle = `<span class="di-title-kind di-title--today">Today's AI Briefing</span>`;
+    // revamp1340: the open briefing is named by edition. Home is the Global AI
+    // Morning Briefing (the evening name follows when the evening wave ships);
+    // a topic page is that topic's AI Morning Briefing.
+    const briefTitle = `<span class="di-title-kind di-title--today">${isHome ? 'Global AI Morning Briefing' : 'AI Morning Briefing'}</span>`;
     const mastEyebrow = isHome ? '' : `<div class="di-eyebrow">${esc(name)}</div>`;
     const pillLabel = isHome ? 'All Topics' : mastLabel;
     const SEP = '<span class="di-metasep" aria-hidden="true"></span>';
@@ -2624,15 +2628,25 @@ export function renderDailyIntelligence(container, scope) {
         ${thingsList.length ? `<h3 class="di-lbl di-focus-lbl">In Focus</h3>
         <ul class="di-focus-list">${thingsList.map((t) => `<li class="tdi-focus-li">${esc(t)}</li>`).join('')}</ul>` : ''}
         ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
+        ${isHome ? '<div class="di-player" data-briefing-player hidden></div>' : ''}
       </section>` : ''}
       ${items.length ? `<section class="di-briefs di-briefs--v2">
         <h3 class="di-lbl di-lbl--rule">Top Stories</h3>
         ${items.map((it, i) => {
           const srcs = srcsFor(i);
+          // revamp1340: an item rendered from the episode carries "[T<ms>]" at
+          // its end — the chapter it was spoken in. Strip it from the text and
+          // offer it as a control, so a reader can hear that story from its
+          // first word. The marker is data, never shown.
+          let bodyText = it.hasLede ? it.rest : it.raw;
+          let playAt = null;
+          const tm = String(bodyText || '').match(/\s*\[T(\d+)\]\s*$/);
+          if (tm) { playAt = Number(tm[1]); bodyText = String(bodyText).replace(/\s*\[T\d+\]\s*$/, ''); }
+          const playBtn = (playAt != null && isHome) ? `<button type="button" class="dib-play" data-briefing-seek="${playAt}" aria-label="Play this story"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span>Play from here</span></button>` : '';
           return `<article class="dib dib--v2${srcs.length ? ' has-srcs' : ''}">
           <div class="dib-main">
-            ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}</h4>` : ''}
-            <div class="dib-body aii-sec-body">${renderBriefBody(it.hasLede ? it.rest : it.raw, null)}</div>
+            ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}${playBtn}</h4>` : playBtn}
+            <div class="dib-body aii-sec-body">${renderBriefBody(bodyText, null)}</div>
           </div>
           ${srcs.length ? `<div class="dib-side">${srcChips(srcs)}</div>` : ''}
         </article>`;
@@ -2640,6 +2654,22 @@ export function renderDailyIntelligence(container, scope) {
       </section>` : ''}
 `;
   };
+
+  // revamp1340: the audio player under In Focus (home only), and the delegated
+  // "play from here" seek — one listener, because fill() re-renders the body.
+  if (isHome) {
+    const slot = body.querySelector('[data-briefing-player]');
+    if (slot) mountLatestBriefingPlayer(slot);
+  }
+  if (!window.__briefingSeekBound) {
+    window.__briefingSeekBound = true;
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-briefing-seek]');
+      if (!b) return;
+      e.preventDefault();
+      seekBriefingPlayers(Number(b.dataset.briefingSeek));
+    });
+  }
 
   // revamp1226: one delegated listener for every "+N" in the document, wired
   // once. The briefing re-renders its whole body on each fill(), so anything
