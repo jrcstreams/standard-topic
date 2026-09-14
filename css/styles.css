@@ -37035,3 +37035,9 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .bp-vsep { display: none; }
   .bp-ctl[class] { padding: 0; width: auto; height: 42px; border-radius: 10px; }
 }
+
+/* revamp1343f: the meta is one run of text that wraps by word; the info ring
+   is bound to the last word so it never sits alone on a line. */
+.bp-meta { display: block; line-height: 1.45; }
+.bp-nb { white-space: nowrap; }
+.bp .bp-info.how-aigen[class][class] { vertical-align: -2px; margin-left: 4px !important; }

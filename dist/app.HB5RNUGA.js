@@ -510,7 +510,7 @@ Source: ${e.url}`:""}`}function Xd(e){let t=String(e||"").toLowerCase();return/w
           <span class="bp-tile" aria-hidden="true">${n2}</span>
           <div class="bp-txt">
             <div class="bp-title">Listen to the Briefing</div>
-            <div class="bp-meta">${t?`<span>${t} min</span><span class="bp-dot" aria-hidden="true">\xB7</span>`:""}<span>AI-narrated from today\u2019s sourced briefing</span><button type="button" class="bp-info how-aigen" data-how-it-works aria-label="How the audio is made">${c2}</button></div>
+            <div class="bp-meta">${t?`${t} min <span class="bp-dot" aria-hidden="true">\xB7</span> `:""}AI-narrated from today\u2019s sourced <span class="bp-nb">briefing<button type="button" class="bp-info how-aigen" data-how-it-works aria-label="How the audio is made">${c2}</button></span></div>
           </div>
         </div>
         <div class="bp-transport">
