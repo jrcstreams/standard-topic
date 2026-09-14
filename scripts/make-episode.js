@@ -322,6 +322,21 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
   const editionDate = edition.slice(0, 10);
   const bytes = fs.statSync(mp3).size;
   const pathname = `audio/flagship/${editionDate}-${ed}.mp3`;
+
+  // The card's three entries need sublines. A script from before they existed
+  // (or a writer that skipped them) gets them from one small call.
+  const focus = E.normalizeFocus(script.in_focus);
+  if (focus.length < 3 || focus.some((f) => !f.line)) {
+    try { const got = await E.runFocusLines(script); if (got.length) script.in_focus = got; } catch (e) { log(`  (focus lines: ${e.message})`); }
+  }
+  // Waveform peaks for the player: 96 buckets of the decoded audio, 0–100.
+  let peaks = null;
+  try {
+    const raw = execFileSync('ffmpeg', ['-v', 'error', '-i', mp3, '-f', 's16le', '-ac', '1', '-ar', '8000', 'pipe:1'], { maxBuffer: 256 * 1024 * 1024 });
+    const n = raw.length / 2; const B = 96; const per = Math.max(1, Math.floor(n / B)); const out = [];
+    for (let i = 0; i < B; i++) { let m = 0; for (let j = 0; j < per; j++) { const k = i * per + j; if (k >= n) break; const v = Math.abs(raw.readInt16LE(k * 2)); if (v > m) m = v; } out.push(m); }
+    const mx = Math.max(...out) || 1; peaks = out.map((v) => Math.round((v / mx) * 100));
+  } catch (e) { log(`  (peaks: ${e.message})`); }
   const blob = await put(pathname, fs.createReadStream(mp3), {
     access: 'public', contentType: 'audio/mpeg', addRandomSuffix: false, allowOverwrite: true,
     cacheControlMaxAge: 60 * 60 * 24 * 365,
@@ -343,17 +358,17 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
 
   const rows = await sql.query(
     `INSERT INTO ai_audio (kind, family_slug, edition_date, edition, title, teaser, url, bytes, duration_ms,
-       chapters, storyboard, script, sources, voice, provider, chars, cost_micros)
-     VALUES ('flagship','home',$1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11::jsonb,$12,$13,$14,$15)
+       chapters, storyboard, script, sources, voice, provider, chars, cost_micros, peaks)
+     VALUES ('flagship','home',$1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11::jsonb,$12,$13,$14,$15,$16::jsonb)
      ON CONFLICT (kind, family_slug, edition_date, edition) DO UPDATE SET
        title=EXCLUDED.title, teaser=EXCLUDED.teaser, url=EXCLUDED.url, bytes=EXCLUDED.bytes,
        duration_ms=EXCLUDED.duration_ms, chapters=EXCLUDED.chapters, storyboard=EXCLUDED.storyboard,
        script=EXCLUDED.script, sources=EXCLUDED.sources, voice=EXCLUDED.voice, provider=EXCLUDED.provider,
-       chars=EXCLUDED.chars, cost_micros=EXCLUDED.cost_micros, created_at=now()
+       chars=EXCLUDED.chars, cost_micros=EXCLUDED.cost_micros, peaks=EXCLUDED.peaks, created_at=now()
      RETURNING id`,
     [editionDate, ed, title, storyboard.teaser || '', blob.url, bytes, durationMs,
      JSON.stringify(chapters), JSON.stringify(storyboard), JSON.stringify(script), JSON.stringify(sources),
-     VOICE, 'gemini-tts', chars, Math.round(micros + chars * 15)]);
+     VOICE, 'gemini-tts', chars, Math.round(micros + chars * 15), JSON.stringify(peaks)]);
 
   // The home briefing text = this episode, rendered. Only the MORNING edition
   // overwrites the home daily:b row for now: the site has one home briefing

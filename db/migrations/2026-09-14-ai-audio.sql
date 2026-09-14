@@ -29,3 +29,5 @@ CREATE UNIQUE INDEX IF NOT EXISTS ai_audio_edition_idx
   ON ai_audio (kind, family_slug, edition_date, edition);
 CREATE INDEX IF NOT EXISTS ai_audio_recent_idx
   ON ai_audio (edition_date DESC, edition);
+-- Waveform peaks for the site player (revamp1342): 96 buckets, 0–100.
+ALTER TABLE ai_audio ADD COLUMN IF NOT EXISTS peaks JSONB;

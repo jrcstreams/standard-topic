@@ -19,12 +19,12 @@
 const { getSql } = require('../lib/db');
 
 const PUBLIC_COLS = `id, kind, family_slug, edition_date, edition, title, teaser, url, bytes,
-  duration_ms, chapters, sources, voice, created_at`;
+  duration_ms, chapters, sources, voice, peaks, created_at`;
 
 function shape(r) {
   if (!r) return null;
   const out = { ...r };
-  for (const k of ['chapters', 'sources', 'script', 'storyboard']) {
+  for (const k of ['chapters', 'sources', 'script', 'storyboard', 'peaks']) {
     if (typeof out[k] === 'string') { try { out[k] = JSON.parse(out[k]); } catch (_) { out[k] = null; } }
   }
   if (out.edition_date instanceof Date) out.edition_date = out.edition_date.toISOString().slice(0, 10);

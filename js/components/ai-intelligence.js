@@ -2626,7 +2626,7 @@ export function renderDailyIntelligence(container, scope) {
       </div>
       ${(thingsList.length || overview) ? `<section class="di-focus">
         ${thingsList.length ? `<h3 class="di-lbl di-focus-lbl">In Focus</h3>
-        <ul class="di-focus-list">${thingsList.map((t) => `<li class="tdi-focus-li">${esc(t)}</li>`).join('')}</ul>` : ''}
+        <ul class="di-focus-list">${thingsList.map((t) => { const m = String(t).match(/^\*\*(.+?)\*\*\s*(.*)$/); return m ? `<li class="tdi-focus-li"><span class="tdi-focus-tx"><b>${esc(m[1].replace(/[.\s]+$/, ''))}</b>${m[2].trim() ? `<span class="tdi-focus-d">${esc(m[2].trim())}</span>` : ''}</span></li>` : `<li class="tdi-focus-li">${esc(String(t).replace(/\*\*/g, ''))}</li>`; }).join('')}</ul>` : ''}
         ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
         ${isHome ? '<div class="di-player" data-briefing-player hidden></div>' : ''}
       </section>` : ''}

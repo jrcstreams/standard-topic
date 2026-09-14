@@ -1875,23 +1875,39 @@ function episodeTextHTML(ep) {
       }).join('')}
     </section>`;
 }
+// Each line is either "**Title.** subline" (the home briefing, rendered from
+// the episode) or plain text (a topic briefing). Both become {title, line}.
+function focusEntry(l) {
+  const m = String(l || '').match(/^\*\*(.+?)\*\*\s*(.*)$/);
+  return m ? { title: m[1].replace(/[.\s]+$/, '').trim(), line: m[2].trim() } : { title: String(l || '').replace(/\*\*/g, '').trim(), line: '' };
+}
 function briefFocusLines(d) {
   try {
     const parts = splitSections((d && d.content) || '');
     const sec = parts.find((p) => /things to know/i.test(p.name || ''));
     return String((sec && sec.body) || '').split('\n')
       .map((l) => l.replace(/^\s*[-*\u2022]\s*/, '').trim())
-      .filter(Boolean).slice(0, 3);
+      .filter(Boolean).slice(0, 3).map(focusEntry).filter((f) => f.title);
   } catch (_) { return []; }
+}
+// Write entries into a card's list + label. The edition card's list (.ec-focus)
+// takes the numeral / title / subline lockup; a topic card's list keeps the
+// revamp1317 numbered items and just gains the subline when there is one.
+function renderFocusInto(ul, lbl, entries) {
+  if (!ul) return;
+  const items = (entries || []).slice(0, 3);
+  if (!items.length) { ul.hidden = true; if (lbl) lbl.hidden = true; return; }
+  if (ul.classList.contains('ec-focus')) {
+    ul.innerHTML = items.map((f, i) => `<li class="ec-item"><span class="ec-n" aria-hidden="true">${i + 1}</span><span class="ec-tx"><b class="ec-t">${escapeHTML(f.title)}</b>${f.line ? `<span class="ec-d">${escapeHTML(f.line)}</span>` : ''}</span></li>`).join('');
+  } else {
+    ul.innerHTML = items.map((f) => `<li class="tdi-focus-li"><span class="tdi-focus-tx"><b>${escapeHTML(f.title)}</b>${f.line ? `<span class="tdi-focus-d">${escapeHTML(f.line)}</span>` : ''}</span></li>`).join('');
+  }
+  ul.hidden = false; if (lbl) lbl.hidden = false;
 }
 function fillBriefFocus(root, d) {
   const ul = root && root.querySelector('[data-tdi-focus]');
   const lbl = root && root.querySelector('[data-tdi-focus-lbl]');
-  if (ul) {
-    const lines = briefFocusLines(d);
-    if (!lines.length) { ul.hidden = true; if (lbl) lbl.hidden = true; }
-    else { ul.innerHTML = lines.map((t) => `<li class="tdi-focus-li">${escapeHTML(t)}</li>`).join(''); ul.hidden = false; if (lbl) lbl.hidden = false; }
-  }
+  if (ul) renderFocusInto(ul, lbl, briefFocusLines(d));
   // revamp1314: the card carries the briefing's OWN overview, not the one-line
   // teaser. Three numbered hits followed by a single sentence restating them
   // was the same information twice; the overview goes further, and opening the
@@ -1921,6 +1937,49 @@ function briefOverview(d) {
       .replace(/\s*\n\s*/g, ' ')
       .trim();
   } catch (_) { return ''; }
+}
+
+// revamp1342: the Global AI Morning Briefing's own card — home and the AI
+// Briefings page. Same data hooks as diHeroCardHTML (the fills and the expand
+// wiring are shared), different shell: icon tile beside the title with the
+// date on its own line, Today in Focus as a ruled label over three
+// numbered entries with sublines, the player, then the actions. On a phone
+// the entries stack, the tag becomes a tagline, and the buttons go full width.
+function editionCardHTML(o) {
+  o = o || {};
+  const X = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  return `
+      <div class="ec">
+        <div class="ec-head">
+          <span class="ec-tile" aria-hidden="true">${topicIconSVG('globe', '')}</span>
+          <div class="ec-headtx">
+            <h3 class="tdi-brieftitle ec-title">${escapeHTML(o.cardTitle || homeEditionTitle())}</h3>
+            <div class="tdi-metaline ec-meta"><span class="tdi-date" data-tdi-date></span></div>
+          </div>
+          <span class="ec-tag">Real news. AI insights.</span>
+        </div>
+        <p class="ec-tagline">Real news. AI insights. On any topic.</p>
+        <div class="ec-focushead"><span class="tdi-focus-lbl" data-tdi-focus-lbl hidden>Today in Focus</span></div>
+        <ul class="ec-focus" data-tdi-focus hidden></ul>
+        <p class="tdi-summary ec-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
+        <div class="ec-player" data-briefing-player hidden></div>
+        <div class="ec-actions">
+          <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
+            <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+          </button>
+          <a class="tdi-go tdi-go--all" href="#/intelligence">By Topic${SUBPAGE_ARROW}</a>
+          <a class="ec-more" href="#/intelligence">More episodes${SUBPAGE_ARROW}</a>
+        </div>
+      </div>
+      <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
+        <div class="tdi-openhead tdi-openhead--bare">
+          <button type="button" class="tdi-openx" data-di-toggle aria-label="Close briefing">${X}</button>
+        </div>
+        <div data-di-host></div>
+        <div class="tdi-closefoot">
+          <button type="button" class="tdi-closefoot-btn" data-di-toggle>${X}<span>Close Briefing</span></button>
+        </div>
+      </div></div>`;
 }
 
 function diHeroCardHTML(o) {
@@ -2176,7 +2235,7 @@ function fillDihFocus(el, d) {
     el.innerHTML = `<span class="dih-item-focus-li dih-item-focus-li--pending">${escapeHTML((d && d.summary) ? d.summary : 'Briefing publishes with the next edition.')}</span>`;
     return;
   }
-  el.innerHTML = `<span class="dih-item-focus-lbl">In Focus</span>` + lines.map((t, i) => `<span class="dih-item-focus-li"><span class="dih-item-focus-n" aria-hidden="true">${i + 1}</span>${escapeHTML(t)}</span>`).join('');
+  el.innerHTML = `<span class="dih-item-focus-lbl">In Focus</span>` + lines.map((f, i) => `<span class="dih-item-focus-li"><span class="dih-item-focus-n" aria-hidden="true">${i + 1}</span>${escapeHTML(f.title)}</span>`).join('');
 }
 function setClampedSummary(el, text) {
   if (!el) return;
@@ -2210,12 +2269,7 @@ function renderFeaturedBriefings(host, opts) {
   if (o.compact) {
     host.innerHTML = `
       <div class="hb-hero hb-hero--side" data-home-briefing>
-        <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-          noHeader: true, hubLink: false, art: true, topicLabel: "Global AI Morning Briefing", pillLabel: 'All Topics',
-          cardTitle: homeEditionTitle(), player: true, focusRow: true,
-          sublabel: 'Your daily briefing across every topic we cover.',
-          allBriefingsCta: true,
-        })}</div>
+        <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home tdi-card--edition">${editionCardHTML({})}</div>
       </div>`;
     wireHomeDailyIntelligence(host);
     fetchDailyBrief('home', false, true).then((d) => {
@@ -2421,10 +2475,7 @@ function renderIntelligenceHub(container) {
               <label class="dih-edition-lbl" for="dih-edition-sel">Edition</label>
               <select class="dih-edition-sel" id="dih-edition-sel" data-edition-sel aria-label="Choose an edition"><option value="">Today</option></select>
             </div>
-            <div class="dih-today-card tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition">${diHeroCardHTML({
-              noHeader: true, hubLink: false, art: true, topicLabel: 'Global AI Morning Briefing', pillLabel: 'All Topics',
-              cardTitle: homeEditionTitle(), player: true, focusRow: true,
-            })}</div>
+            <div class="dih-today-card tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition">${editionCardHTML({})}</div>
           </div>
           <div class="dih-items">${featuredBriefs.map((t, i) => item(t, i)).join('')}</div>
           <div class="dih-brief" data-dih-brief hidden>
@@ -2598,10 +2649,10 @@ function renderIntelligenceHub(container) {
         if (!ep || !card.isConnected) return;
         mountBriefingPlayer(card.querySelector('[data-briefing-player]'), ep, { compact: true });
         // In Focus from the episode
-        const lines = (ep.script && Array.isArray(ep.script.in_focus) && ep.script.in_focus.length ? ep.script.in_focus
-          : (ep.chapters || []).filter((c) => ['lead', 'developing'].includes(c.beat)).map((c) => c.label)).slice(0, 3);
-        const ul = card.querySelector('[data-tdi-focus]'); const lbl = card.querySelector('[data-tdi-focus-lbl]');
-        if (ul) { ul.innerHTML = lines.map((t) => `<li class="tdi-focus-li">${escapeHTML(t)}</li>`).join(''); ul.hidden = !lines.length; if (lbl) lbl.hidden = !lines.length; }
+        const raw = (ep.script && Array.isArray(ep.script.in_focus) && ep.script.in_focus.length) ? ep.script.in_focus
+          : (ep.chapters || []).filter((c) => ['lead', 'developing'].includes(c.beat)).map((c) => c.label);
+        const entries = raw.slice(0, 3).map((x) => (x && typeof x === 'object') ? { title: String(x.title || ''), line: String(x.line || '') } : focusEntry(x));
+        renderFocusInto(card.querySelector('[data-tdi-focus]'), card.querySelector('[data-tdi-focus-lbl]'), entries);
         card.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow]').forEach((el) => { el.innerHTML = diEditionStampHTML(ep.created_at || `${ep.edition_date}T09:00:00Z`); });
         // The archived text, in place of the live briefing
         loaded = true;
