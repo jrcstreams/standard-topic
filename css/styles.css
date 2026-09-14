@@ -36949,3 +36949,34 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .tdi-card--edition .ec-title[class][class][class] { font-size: 1.42rem !important; line-height: 1.12 !important; }
   .tdi-card--edition .ec-actions .tdi-go[class][class][class] { display: flex !important; width: 100% !important; justify-content: center !important; box-sizing: border-box; }
 }
+
+/* ═══ revamp1343: the edition card, aligned ═══
+   .tdi-card--hero2 zeroes the card's padding and forces its own background
+   with !important (the old card carried a dark header band to the edge), so
+   the edition card's padding lives on its inner .ec and the frame is set at a
+   specificity that beats the hero2 rule. The hub card had neither, which is
+   why it sat flush against the section rule with no border at all. */
+.tdi-card--edition[class][class] { background: #f8f9fc !important; border: 1px solid #e3e8f2 !important; border-radius: 16px; box-shadow: none !important; overflow: visible; }
+.tdi-card--edition .ec { padding: 1.2rem 1.35rem 1.15rem; }
+.dih-edition { margin: 16px 0 18px; }
+.ec-head { align-items: center; }
+.ec-meta { margin-top: 5px; }
+/* Numerals centred on the headline line, not the top of the block. */
+.ec-item { align-items: flex-start; padding-top: 2px; padding-bottom: 2px; }
+.ec-n { width: 30px; height: 30px; margin-top: -3px; font-size: 0.88rem; }
+.ec-t { line-height: 1.32; }
+.ec-focus { margin-bottom: 16px; }
+/* The player's lead column: one line of meta, and the info icon is an icon —
+   the site's .how-aigen pill styling was dressing it as a chip with a dot. */
+.bp-row { grid-template-columns: auto minmax(240px, 1fr) auto; gap: 20px; }
+.bp-lead { max-width: 46%; }
+.bp-meta { align-items: center; }
+.bp .bp-info.how-aigen[class][class] { display: inline-flex !important; align-items: center !important; background: none !important; border: 0 !important; padding: 0 0 0 2px !important; margin: 0 !important; border-radius: 0 !important; color: #7488ad !important; line-height: 0 !important; box-shadow: none !important; }
+.bp .bp-info.how-aigen[class][class] svg { width: 14px; height: 14px; opacity: 1; }
+@media (min-width: 1000px) { .bp-meta { white-space: nowrap; } .bp-meta > span { white-space: nowrap; } }
+.bp-times { margin-top: 4px; }
+.ec-actions { margin-top: 4px; }
+@media (max-width: 899.98px) {
+  .tdi-card--edition .ec { padding: 1rem 1rem 0.95rem; }
+  .bp-lead { max-width: none; }
+}

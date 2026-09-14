@@ -1956,9 +1956,7 @@ function editionCardHTML(o) {
             <h3 class="tdi-brieftitle ec-title">${escapeHTML(o.cardTitle || homeEditionTitle())}</h3>
             <div class="tdi-metaline ec-meta"><span class="tdi-date" data-tdi-date></span></div>
           </div>
-          <span class="ec-tag">Real news. AI insights.</span>
         </div>
-        <p class="ec-tagline">Real news. AI insights. On any topic.</p>
         <div class="ec-focushead"><span class="tdi-focus-lbl" data-tdi-focus-lbl hidden>Today in Focus</span></div>
         <ul class="ec-focus" data-tdi-focus hidden></ul>
         <p class="tdi-summary ec-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
