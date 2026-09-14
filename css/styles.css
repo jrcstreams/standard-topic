@@ -37017,3 +37017,12 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .bp-row { grid-template-columns: 1fr; gap: 12px; }
   .bp-meta { flex-wrap: wrap; white-space: normal; }
 }
+
+/* revamp1343d: the meta may take two lines rather than run under the play
+   button — nowrap at a card width the mock never showed pushed the text into
+   the next column. The lead column can never overlap its neighbour now. */
+.bp-row { grid-template-columns: minmax(230px, 1fr) minmax(220px, 1.6fr) auto; }
+.bp-lead, .bp-txt { min-width: 0; }
+.bp-txt { overflow: hidden; }
+.bp-meta, .bp-meta > span { white-space: normal; }
+.bp-meta { flex-wrap: wrap; row-gap: 1px; }
