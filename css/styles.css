@@ -35455,34 +35455,6 @@ html body.home-search.app-mode.home-mode:not(.nav-docked) #content {
 }
 .tdi-focus[hidden] { display: none !important; }
 
-/* revamp1340: the three In Focus lines carry a numeral — they are "1-2-3
-   highlights" on every card now, with the summary sentence gone. Stacked
-   (narrow) the numeral replaces the dot; in the three-column row (wide) it
-   sits above the line as a small marker so the row still reads as headlines. */
-.tdi-focus { counter-reset: tdiFocus; }
-.tdi-focus > li { counter-increment: tdiFocus; padding-left: 22px; }
-.tdi-focus > li::before {
-  content: counter(tdiFocus);
-  width: 16px; height: 16px; border-radius: 50%; top: 0.22em;
-  background: #e3ebfb; color: #2c4f9e;
-  font-size: 0.68rem; font-weight: 750; line-height: 16px; text-align: center;
-}
-@media (min-width: 900px) {
-  .tdi-focus--row > li { padding-left: 0; padding-top: 10px; }
-  .tdi-focus--row > li::before {
-    display: block; position: static; margin: 0 0 6px;
-  }
-}
-/* The light label above the lines. */
-.tdi-focus-lbl {
-  font-family: var(--font-family); font-size: 0.72rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase;
-  color: #7488ad; margin: 2px 0 8px;
-}
-.tdi-focus-lbl[hidden] { display: none !important; }
-.dih-item-focus-lbl {
-  font-family: var(--font-family); font-size: 0.68rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase;
-  color: #7488ad; margin-bottom: 1px;
-}
 .tdi-summary[hidden] { display: none !important; }
 
 /* The directory card (AI Briefings hub): three stacked lines with numerals, in
@@ -36860,3 +36832,13 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   border: 1px solid #cfd8e8; border-radius: 8px; background: #fff; padding: 5px 9px;
 }
 .tdi-card--edition { width: 100%; }
+
+/* revamp1341b: weight off the In Focus lines. revamp1317 pins the copy at 600
+   with !important so the older blue li[class] rules could not resurface; this
+   sits later at the same specificity and simply lowers it. The numeral keeps
+   its treatment. */
+.tdi-focus > li.tdi-focus-li,
+.di-focus-list > li.tdi-focus-li {
+  font-weight: 500 !important;
+  color: #2b3c66 !important;
+}
