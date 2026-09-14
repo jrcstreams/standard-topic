@@ -37065,3 +37065,19 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .bp-wave { height: 40px; }
   .bp-play { width: 40px; height: 40px; }
 }
+
+/* revamp1344b: the head on one axis. `.tdi-card--v3 .tdi-date` carries a
+   0.4rem bottom margin from the old card, which made the title-and-date block
+   taller than its ink, so the tile centred below the text. The stamp is inline
+   with no margin here, the block is centred as a column, and the tile is the
+   height of the two lines. */
+.ec-head { align-items: center; gap: 14px; }
+.ec-tile { width: 52px; height: 52px; border-radius: 12px; }
+.ec-tile svg { width: 26px; height: 26px; }
+.ec-headtx { display: flex; flex-direction: column; justify-content: center; }
+.ec-title { line-height: 1.1; }
+.ec-meta { margin-top: 4px; line-height: 1.2; display: flex; align-items: center; }
+.tdi-card--edition .ec-meta .tdi-date[class][class] { display: inline-flex !important; align-items: center; margin: 0 !important; line-height: 1.2; }
+.tdi-card--edition .ec-meta .tdi-stamp-val { display: inline-flex; align-items: center; gap: 5px; }
+.tdi-card--edition .ec-meta .tdi-stamp-sep { margin: 0 8px; }
+.tdi-card--edition .ec-focushead { margin-top: 20px; }
