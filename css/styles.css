@@ -37097,3 +37097,17 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
 /* revamp1344d: the last word and its ring never split — `.bp-meta > span`
    (1343d) reset the nowrap on this very span. */
 .bp-meta > .bp-nb[class] { white-space: nowrap !important; }
+
+/* revamp1344e: never clip. The lead column is wide enough for its line at
+   desktop widths, and when it is not the last word and its ring move down
+   together rather than being cut. In the stacked layout the hanging timecodes
+   get their own room above the controls. */
+.bp-txt { overflow: visible; }
+@container (min-width: 761px) {
+  .bp-row { grid-template-columns: minmax(330px, 1fr) minmax(220px, 1.6fr) auto; }
+  .bp-meta { white-space: normal; }
+}
+@container (max-width: 760px) {
+  .bp-transport { padding-bottom: 22px; }
+  .bp-row { padding-bottom: 0; }
+}
