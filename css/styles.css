@@ -36980,3 +36980,20 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .tdi-card--edition .ec { padding: 1rem 1rem 0.95rem; }
   .bp-lead { max-width: none; }
 }
+
+/* revamp1343b: the player lays out by the width it is given, not the viewport.
+   An `auto` first column plus a percentage max-width collapsed the lead to 2px
+   inside the hub's column; sized tracks and a container query fix it, and the
+   card's own width now decides when the three rows stack. */
+.ec-player, .di-player { container-type: inline-size; }
+.bp-lead { max-width: none; }
+.bp-row { grid-template-columns: minmax(200px, 0.9fr) minmax(220px, 1.5fr) auto; }
+@container (max-width: 720px) {
+  .bp-row { grid-template-columns: 1fr; gap: 12px; }
+  .bp-ctrls { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 8px; }
+  .bp-vsep { display: none; }
+  .bp-ctl { padding: 0; width: auto; height: 42px; border-radius: 10px; }
+  .bp-meta { white-space: normal; }
+  .bp-meta > span { white-space: normal; }
+}
+.tdi-card--edition[class][class][class] { border-radius: 16px !important; }
