@@ -2653,14 +2653,17 @@ export function renderDailyIntelligence(container, scope) {
         }).join('')}
       </section>` : ''}
 `;
+    // revamp1340: the audio player under In Focus (home only). Inside fill()
+    // because the slot is re-rendered on every fill, and because isHome and
+    // body only exist here — the first cut put this after fill() and every
+    // briefing open threw ReferenceError: isHome is not defined.
+    if (isHome) {
+      const slot = body.querySelector('[data-briefing-player]');
+      if (slot) mountLatestBriefingPlayer(slot);
+    }
   };
 
-  // revamp1340: the audio player under In Focus (home only), and the delegated
-  // "play from here" seek — one listener, because fill() re-renders the body.
-  if (isHome) {
-    const slot = body.querySelector('[data-briefing-player]');
-    if (slot) mountLatestBriefingPlayer(slot);
-  }
+  // revamp1340: "play from here" — one delegated listener, bound once.
   if (!window.__briefingSeekBound) {
     window.__briefingSeekBound = true;
     document.addEventListener('click', (e) => {
