@@ -37026,3 +37026,12 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
 .bp-txt { overflow: hidden; }
 .bp-meta, .bp-meta > span { white-space: normal; }
 .bp-meta { flex-wrap: wrap; row-gap: 1px; }
+
+/* revamp1343e: the container-query stacking, re-asserted after the column
+   rule that 1343d appended below it. Source order had silently undone it. */
+@container (max-width: 760px) {
+  .bp-row[class] { grid-template-columns: 1fr !important; gap: 12px; }
+  .bp-ctrls[class] { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 8px; }
+  .bp-vsep { display: none; }
+  .bp-ctl[class] { padding: 0; width: auto; height: 42px; border-radius: 10px; }
+}
