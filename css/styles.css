@@ -36941,3 +36941,11 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .bp-vsep { display: none; }
   .bp-ctl { padding: 0; width: auto; height: 42px; border-radius: 10px; }
 }
+
+/* revamp1342b: two phone rules the card lost to older, heavier selectors —
+   the title was shrunk to the generic phone briefing size, and the buttons
+   kept their desktop inline width. */
+@media (max-width: 899.98px) {
+  .tdi-card--edition .ec-title[class][class][class] { font-size: 1.42rem !important; line-height: 1.12 !important; }
+  .tdi-card--edition .ec-actions .tdi-go[class][class][class] { display: flex !important; width: 100% !important; justify-content: center !important; box-sizing: border-box; }
+}
