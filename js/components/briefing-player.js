@@ -81,8 +81,8 @@ export function playerHTML(ep) {
         <div class="bp-lead">
           <span class="bp-tile" aria-hidden="true">${EP_ICON}</span>
           <div class="bp-txt">
-            <div class="bp-title">Listen to the Briefing</div>
-            <div class="bp-meta">${durMin ? `${durMin} min <span class="bp-dot" aria-hidden="true">·</span> ` : ''}AI-narrated from today’s sourced <span class="bp-nb">briefing<button type="button" class="bp-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></div>
+            <div class="bp-titlerow"><span class="bp-title">Listen to the Briefing</span>${durMin ? `<span class="bp-dur">${durMin} min</span>` : ''}</div>
+            <div class="bp-meta">AI-narrated from today’s sourced <span class="bp-nb">briefing<button type="button" class="bp-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></div>
           </div>
         </div>
         <div class="bp-transport">

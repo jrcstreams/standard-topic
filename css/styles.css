@@ -37041,3 +37041,27 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
 .bp-meta { display: block; line-height: 1.45; }
 .bp-nb { white-space: nowrap; }
 .bp .bp-info.how-aigen[class][class] { vertical-align: -2px; margin-left: 4px !important; }
+
+/* revamp1344: the player's three columns line up on one axis.
+   - The duration is a chip beside the title, so the meta is one line and the
+     tile centres on a two-line block.
+   - The waveform is the same height as the play button and the two align at
+     the top, so the button is centred on the bars, not on bars-plus-times. */
+.bp-titlerow { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.bp-title { white-space: nowrap; }
+.bp-dur { flex: none; font-family: var(--font-family); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.02em; color: #2c4f9e; background: #e3ebfb; border-radius: 999px; padding: 2px 8px; line-height: 1.4; }
+.bp-meta { margin-top: 2px; font-size: 0.83rem; }
+.bp-lead { align-items: center; }
+.bp-transport { align-items: flex-start; }
+.bp-wave { height: 44px; }
+.bp-times { margin-top: 4px; }
+.bp-ctrls { align-self: center; }
+@container (min-width: 761px) {
+  .bp-meta { white-space: nowrap; }
+  .bp-row { grid-template-columns: minmax(280px, 1fr) minmax(220px, 1.6fr) auto; align-items: center; }
+}
+@container (max-width: 760px) {
+  .bp-meta { white-space: normal; }
+  .bp-wave { height: 40px; }
+  .bp-play { width: 40px; height: 40px; }
+}
