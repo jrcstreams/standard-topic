@@ -37484,3 +37484,6 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   }
   .ec-headrow .ec-meta[class][class][class][class] { flex: 1 0 100% !important; }
 }
+
+/* revamp1356b: the note wraps to its content, not to a third of the card. */
+.ec-note[class][class] { max-width: none; }
