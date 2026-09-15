@@ -1996,11 +1996,11 @@ function editionCardHTML(o) {
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
         <div class="ec-actions">
-          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Listen to Briefing</span><span class="ec-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ec-btn-x" aria-hidden="true">${X}</span></button>
+          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Listen to Briefing</span><span class="ec-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span><span class="ec-btn-x" aria-hidden="true">${X}</span></button>
           <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
             ${BOOK}<span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
           </button>
-          <a class="ec-btn ec-btn--topics" href="#/intelligence">${GRID}<span>Briefings by Topic</span>${SUBPAGE_ARROW}</a>
+          <a class="ec-btn ec-btn--topics" href="#/intelligence">${GRID}<span class="ec-btn-tx">Briefings by Topic</span>${SUBPAGE_ARROW}<span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span></a>
         </div>
         <div class="ec-listenwrap" data-ec-listenwrap hidden>
           <div class="ec-player" data-briefing-player hidden></div>

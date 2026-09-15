@@ -38194,3 +38194,50 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
 .sticky-hero-inner .navbtn--topics-inline[class][class],
 .sticky-hero-inner .navbtn--topics-inline[class][class] .navbtn-label { color: rgba(255, 255, 255, 0.82) !important; font-weight: 600 !important; }
 .sticky-hero-inner .navbtn--topics-inline[class][class] .navbtn-ico { color: rgba(255, 255, 255, 0.82) !important; }
+
+/* ═══ revamp1392: the action row, three layouts ═══
+   Text sits left in every button, at every width, with the trailing mark
+   (the waveform, the arrow) at the button's far edge. The desktop row —
+   buttons at their own width, Briefings by Topic right — holds down to 640px.
+   Below that the buttons stack full width, a hairline follows, and Briefings
+   by Topic is a plain link with a chevron at the right. Listen is green. The
+   home page's Global kicker is neutral; the topic pages keep their colour. */
+.ec--v2 .ec-actions .ec-btn[class][class][class][class][class][class] { justify-content: flex-start !important; text-align: left !important; }
+.ec--v2 .ec-btn--read[class][class] > svg:last-of-type { margin-left: auto; }
+.ec--v2 .ec-btn--listen .ec-wave { margin-left: auto; }
+.ec-btn-chev { display: none; align-items: center; margin-left: 8px; }
+.ec-btn-chev svg { display: block; }
+/* Listen, in green. */
+.ec--v2 .ec-actions .ec-btn--listen[class][class][class][class][class]:not(.is-open) {
+  background: #e7f4eb !important; border: 1px solid #c3e4ce !important; color: #166534 !important;
+}
+.ec--v2 .ec-btn--listen:not(.is-open) .ec-wave { border-left-color: rgba(22, 101, 52, .25); }
+@media (hover: hover) { .ec--v2 .ec-actions .ec-btn--listen[class][class][class][class][class]:not(.is-open):hover { background: #d9edde !important; border-color: #b0d9be !important; } }
+/* The home kicker, neutral. */
+.tdi-card--edition:not(.tdi-card--topicedition) .ec-kicker[class][class][class] { background: #edf1f8 !important; border-color: #dbe3f0 !important; color: #3f4d6e !important; }
+.tdi-card--edition:not(.tdi-card--topicedition) .ec-kicker[class][class][class] svg { color: #5b6b8f !important; }
+
+/* 640–899: the desktop row, not the phone stack. */
+@media (min-width: 640px) and (max-width: 899.98px) {
+  .ec--v2 .ec-actions[class][class][class][class] { flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; gap: 10px !important; }
+  .ec--v2 .ec-actions .ec-btn--listen[class][class][class][class][class][class],
+  .ec--v2 .ec-actions .ec-btn--read[class][class][class][class][class][class] { flex: 0 0 auto !important; width: auto !important; }
+  .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class][class][class][class] { flex: 0 0 auto !important; margin-left: auto !important; padding: 0 !important; justify-content: flex-start !important; align-self: center !important; border: 0 !important; }
+  .ec--v2 .ec-btn--listen .ec-wave { margin-left: 10px; }
+  .ec--v2 .ec-btn--read[class][class] > svg:last-of-type { margin-left: 0; }
+}
+/* Under 640: stacked, full width, text left, marks right; a hairline; the link. */
+@media (max-width: 639.98px) {
+  .ec--v2 .ec-actions[class][class][class][class] { flex-direction: column !important; align-items: stretch !important; gap: 8px !important; }
+  .ec--v2 .ec-actions .ec-btn--listen[class][class][class][class][class][class],
+  .ec--v2 .ec-actions .ec-btn--read[class][class][class][class][class][class] { flex: 0 0 auto !important; width: 100% !important; height: 42px !important; min-height: 42px !important; padding: 0 14px !important; font-size: 0.9rem !important; }
+  .ec--v2 .ec-btn--listen:not(.is-open) .ec-btn-chev { display: inline-flex; }
+  .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class][class][class][class] {
+    flex: 0 0 auto !important; width: 100% !important; margin: 6px 0 0 !important; padding: 12px 2px 0 !important;
+    border-top: 1px solid #e3e9f4 !important; border-radius: 0 !important;
+    justify-content: flex-start !important; align-self: stretch !important; font-size: 0.92rem !important;
+  }
+  .ec--v2 .ec-actions .ec-btn--topics[class][class] > svg:last-of-type { display: none !important; }
+  .ec--v2 .ec-actions .ec-btn--topics .ec-btn-chev { display: inline-flex; margin-left: auto; }
+  .ec--v2 .ec-actions .ec-btn--topics .ec-btn-tx { flex: 1 1 auto; }
+}
