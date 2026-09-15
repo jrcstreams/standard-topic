@@ -2019,6 +2019,53 @@ function editionCardHTML(o) {
 }
 
 // Fill the edition card from an episode: headline, summary, duration.
+// revamp1387: the topic page's briefing card — the home card's lockup, in
+// the topic's own colour, without the audio. Tile + name + stamp pill on the
+// head row; a rule; the topic as a kicker in its family colour with white
+// type; the day's headline; a one-line summary; Read Briefing. No Today in
+// Focus, no 1-2-3. Opened, it goes straight to Top Stories.
+function topicEditionCardHTML(topic) {
+  const X = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  const BOOK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>';
+  const ic = topicIconSVG(topic.icon || 'globe', '');
+  return `
+      <div class="ec ec--v2 ec--topic"${topicColorStyle(topic)}>
+        <div class="ec-head">
+          <div class="ec-headrow">
+            <span class="ec-tile ec-tile--topic" aria-hidden="true">${ic}</span>
+            <h3 class="tdi-brieftitle ec-title">Morning AI Briefing</h3>
+            <div class="ec-stamp" data-ec-stamp></div>
+          </div>
+          <div class="ec-stamp ec-stamp--below" data-ec-stamp></div>
+        </div>
+        <div class="ec-rule" aria-hidden="true"></div>
+        <div class="ec-lead">
+          <span class="ec-kicker ec-kicker--topic">${ic}<span>${escapeHTML(topic.name)}</span></span>
+          <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
+          <p class="ec-summary tdi-summary" data-ec-summary hidden></p>
+        </div>
+        <div class="ec-actions">
+          <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
+            ${BOOK}<span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+          </button>
+        </div>
+      </div>
+      <button type="button" class="tdi-openx ec-openx" data-di-toggle aria-label="Close briefing">${X}</button>
+      <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
+        <div data-di-host></div>
+        <div class="tdi-closefoot">
+          <button type="button" class="tdi-closefoot-btn" data-di-toggle>${X}<span>Close Briefing</span></button>
+        </div>
+      </div></div>`;
+}
+// The day's headline for a topic card: the briefing's own HEADLINE line when
+// the wave wrote one (revamp1387 template), else its first In Focus title.
+function briefHeadline(d) {
+  const m = String((d && d.content) || '').match(/^\s*(?:\*\*)?HEADLINE:?(?:\*\*)?\s*(.+?)\s*$/im);
+  if (m && m[1]) return m[1].replace(/\*\*/g, '').replace(/[.\s]+$/, '').trim();
+  const f = briefFocusLines(d);
+  return f[0] ? f[0].title : '';
+}
 function applyEpisodeToCard(card, ep) {
   if (!card || !ep) return;
   const h = card.querySelector('[data-ec-headline]'); if (h && ep.title) { h.textContent = ep.title; h.dataset.filled = '1'; }
@@ -2098,7 +2145,7 @@ function wireEditionCard(card) {
 // none: the first In Focus title as the headline, the summary as the summary.
 function fillEditionFallback(card, d) {
   const h = card.querySelector('[data-ec-headline]');
-  if (h && h.dataset.filled !== '1') { const f = briefFocusLines(d); if (f[0]) h.textContent = f[0].title; }
+  if (h && h.dataset.filled !== '1') { const t = briefHeadline(d); if (t) h.textContent = t; }
   const sm = card.querySelector('[data-ec-summary]');
   if (sm && sm.dataset.filled !== '1' && d && d.summary) { sm.textContent = d.summary; sm.hidden = false; }
 }
@@ -3047,7 +3094,7 @@ function wireTopicLandingCards(root, topic, ctx) {
       // Render into the host, not the wrapper — the wrapper also holds the
       // bottom Close Briefing so it rides the same open/close animation.
       renderDailyIntelligence(inner.querySelector('[data-di-host]') || inner, {
-        topic: topic.name, label: topic.name, slug: topic.slug, inline: true,
+        topic: topic.name, label: topic.name, slug: topic.slug, inline: true, chrome: false, prov: true,
       });
     } else {
       renderAIIntelligence(inner.querySelector('[data-pr-host]') || inner, {
@@ -3120,7 +3167,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       </div>
       <div class="topic-top topic-top--lead">
         <section class="topic-top-main">
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, cardTitle: 'Morning AI Briefing', cardPill: topic.name, noHeader: true, art: true })}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition tdi-card--topicedition" data-tdi>${topicEditionCardHTML(topic)}
           </div>
         </section>
       </div>
@@ -3210,8 +3257,11 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       if (!d || !body.isConnected) return;
       const sEl = body.querySelector('[data-tdi-summary]');
       const dEl = body.querySelector('[data-tdi-date]');
-      if (sEl && d.summary) sEl.textContent = d.summary;
-      else if (sEl && d.content) sEl.textContent = String(d.content).replace(/^##.+$/gm, '').replace(/\*\*/g, '').trim().split(/(?<=[.!?])\s/)[0] || '';
+      if (sEl && d.summary) { sEl.textContent = d.summary; sEl.hidden = false; }
+      else if (sEl && d.content) { sEl.textContent = String(d.content).replace(/^##.+$/gm, '').replace(/^\s*HEADLINE:.*$/gmi, '').replace(/\*\*/g, '').trim().split(/(?<=[.!?])\s/)[0] || ''; sEl.hidden = !sEl.textContent; }
+      // revamp1387: the topic card's headline and stamp pill.
+      { const h = body.querySelector('[data-ec-headline]'); const t = briefHeadline(d); if (h && t) h.textContent = t; }
+      if (d.generatedAt) fillEcStamp(body, d.generatedAt);
       fillBriefFocus(body, d);
       // Two stamps, one datum: the compact one rides the title line while the
       // card is closed; the larger one leads the brief when it's open.

@@ -38155,3 +38155,31 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
   .ec--v2 .ec-btn--listen .ec-wave { margin-left: 8px; padding-left: 8px; height: 14px; }
   .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class][class][class] { font-size: 0.86rem !important; }
 }
+
+/* ═══ revamp1387: the topic page's briefing card, in the home card's lockup ═══
+   The tile and the kicker take the topic's family colour (--tc) with white
+   type; the stamp pill sits right on the head row; no note, no Today in
+   Focus. Opened: no masthead, no In Focus — a provenance chip, then Top
+   Stories. The rest is the edition card's own styling, which the container
+   inherits by carrying .tdi-card--edition. */
+.tdi-card--topicedition .ec-tile--topic[class][class][class][class][class][class][class][class][class][class] {
+  background: var(--tc, #1e3a8a) !important; color: #fff !important;
+}
+.tdi-card--topicedition .ec-tile--topic[class][class][class][class][class][class][class][class][class][class] svg { color: #fff !important; }
+.tdi-card--topicedition .ec-kicker--topic[class][class][class] {
+  background: var(--tc, #1e3a8a) !important; border-color: var(--tc, #1e3a8a) !important; color: #fff !important;
+}
+.tdi-card--topicedition .ec-kicker--topic[class][class][class] svg { color: #fff !important; }
+.tdi-card--topicedition .ec-kicker--topic[class][class][class] > span { color: #fff !important; }
+.tdi-card--topicedition .ec-rule { margin-top: 16px; }
+.tdi-card--topicedition .ec-summary[class][class] { display: block; }
+.tdi-card--topicedition .ec-summary[hidden] { display: none !important; }
+/* The topic page's layout hooks: the card opens in place like the home card. */
+.tdi-card--topicedition.is-open .ec-actions[class][class][class] { display: none !important; }
+.tdi-card--topicedition .tdi-expand[class] { margin-top: 0; }
+.tdi-card--topicedition.is-open .tdi-closefoot[class] { padding: 18px 0 2px; }
+.di-provrow { margin: 14px 0 0; }
+.di-provrow .di-prov2 { margin: 0; }
+@media (max-width: 899.98px) {
+  .tdi-card--topicedition .ec-tile--topic[class][class][class][class][class][class][class][class][class][class] { width: 30px !important; height: 30px !important; }
+}

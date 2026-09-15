@@ -2635,6 +2635,7 @@ export function renderDailyIntelligence(container, scope) {
         ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
         ${isHome ? '<div class="di-player" data-briefing-player hidden></div>' : ''}
       </section>` : ''}
+      ${(!chrome && scope.prov) ? `<div class="di-provrow">${provBtn}</div>` : ''}
       ${items.length ? `<section class="di-briefs di-briefs--v2">
         <h3 class="di-lbl di-lbl--rule">Top Stories</h3>
         ${(() => {
