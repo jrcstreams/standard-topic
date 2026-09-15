@@ -38280,3 +38280,10 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
   .ec--v2 .ec-btn--read[class][class] > svg:last-of-type { display: none !important; }
   .ec--v2 .ec-btn--read .ec-btn-chev { display: inline-flex; margin-left: auto; }
 }
+
+/* revamp1397: the home tagline in the brand navy — it read as a section
+   title in near-black. And the kicker's static nudge (1393) had an
+   !important that beat the runtime alignment; it is cleared at a higher
+   weight, and the script now writes its own with priority. */
+.home-hero-title[class][class] { color: #1e3a8a !important; }
+.ec-kicker[class][class][class][class][class][class] svg { transform: none !important; }

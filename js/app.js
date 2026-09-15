@@ -2076,7 +2076,7 @@ function alignKickerIcons(root) {
     const svg = k.querySelector('svg'), sp = k.querySelector('span');
     if (!svg || !sp || !k.offsetParent) return;
     try {
-      svg.style.transform = '';
+      svg.style.setProperty('transform', 'none', 'important');
       const geo = [...svg.querySelectorAll('path,circle,rect,line,polyline,polygon')].map((g) => g.getBoundingClientRect()).filter((r) => r.height > 0);
       if (!geo.length) return;
       const inkCy = (Math.min(...geo.map((r) => r.top)) + Math.max(...geo.map((r) => r.bottom))) / 2;
@@ -2093,7 +2093,7 @@ function alignKickerIcons(root) {
       let shift = capCy - inkCy;
       const top = svg.getBoundingClientRect().top + shift;
       shift += Math.round(top * dpr) / dpr - top;
-      svg.style.transform = Math.abs(shift) < 0.02 ? '' : `translateY(${shift.toFixed(3)}px)`;
+      svg.style.setProperty('transform', Math.abs(shift) < 0.02 ? 'none' : `translateY(${shift.toFixed(3)}px)`, 'important');
     } catch (_) {}
   });
 }
@@ -5645,7 +5645,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <div class="home-hero-headrow">
             <h1 class="home-hero-title">Real news. AI insights. On any topic.</h1>
           </div>
-          <p class="home-hero-sub">Briefed daily on everything you follow.</p>
+          <p class="home-hero-sub">Live news, a morning AI briefing, and prompts to dig deeper. 100+ topics.</p>
           ${heroTopics.length ? `<div class="home-hero-chips">${heroTopics.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="home-hero-chip"${topicColorStyle(t)}><span class="home-hero-chip-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>${escapeHTML(t.name)}</a>`).join('')}</div>` : ''}
         </div>
       </section>`;
