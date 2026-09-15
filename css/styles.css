@@ -38032,3 +38032,21 @@ body #section-newsfeed .news-card[class][class][class][class],
 body .search-news-section .news-card[class][class][class][class] { border-color: #d6ddea !important; }
 body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[class][class],
 .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child[class][class] { border-top-color: #d6ddea !important; }
+
+/* ═══ revamp1379: the kicker's optical centre, square stamp corners, the phone's link ═══
+   The kicker's glyph box measured 0.15px off the globe's centre — centred by
+   the numbers, low to the eye, because mixed-case text is read at its
+   x-height, ~1.3px below its ink centre at this size. The globe drops 1px
+   to meet it; the label sits on a line-height of 1 so nothing else moves. */
+.ec-kicker[class][class] { line-height: 1 !important; }
+.ec-kicker[class][class] > span { line-height: 1; display: block; }
+.ec-kicker[class][class] svg { transform: translateY(1px); }
+/* The stamp is a rectangle with soft corners; the kicker keeps the pill. */
+.ec-stamp-pill[class] { border-radius: 8px !important; }
+/* Phone: Briefings by Topic had 7px under it once the collapsed expand
+   block lost its padding; the card's own tail comes back to 16px there, and
+   the link centres under the two buttons. */
+@media (max-width: 899.98px) {
+  .tdi-card--edition:not(.is-open) .ec[class][class][class] { padding-bottom: 1rem !important; }
+  .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class][class] { justify-content: center !important; align-self: center !important; padding-top: 10px !important; }
+}
