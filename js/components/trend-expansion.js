@@ -176,7 +176,7 @@ export function renderTrendExpansionBody(term, brief) {
   // revamp1241: the icons are back. 1225 stripped them to fit three buttons on
   // one line in a 280px rail; the row is allowed to wrap now, so the width they
   // cost is affordable and the mark is worth more than the line.
-  const drawers = drawerLinkHTML('Search trend', '#/custom/' + encodeURIComponent(term), DRAWER_SEARCH_IC, '', { noArrow: true })
+  const drawers = drawerLinkHTML('Search trend', '#/custom/' + encodeURIComponent(term), DRAWER_SEARCH_IC, '')   // revamp1376: the arrow is back — it is a link, and it reads as one
     + (src ? drawerHTML('Sources', src, DRAWER_SOURCES_IC) : '')
     + `<button type="button" class="te-drawer te-drawer--close trend-exp-close" data-trend-close><span class="te-drawer-sum">${TE_CLOSE_X}<span class="te-drawer-title">Close</span></span></button>`;
   return `<div class="trend-exp im-secs">

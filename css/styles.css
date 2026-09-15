@@ -37949,3 +37949,38 @@ body #home-trending .trending-topics-title[class][class][class][class][class] { 
   font-family: var(--font-family); font-size: 0.8rem; font-weight: 650; letter-spacing: 0.01em; color: #1e3a8a;
 }
 @media (max-width: 899.98px) { .ec-kicker { height: 24px; font-size: 0.76rem; margin-bottom: 8px; } }
+
+/* ═══ revamp1376: the trend card's actions, differentiated ═══
+   Search trend is the primary — solid navy, white, an arrow at its far
+   edge, since it leaves the page. Sources is the secondary — a blue tint
+   with navy text and its chevron, since it opens in place. Close keeps its
+   red-tinted outline. On a phone the three stack full-width, and Close's
+   label centres instead of hugging the left edge. */
+.trend-exp-drawers.ni-actions[class][class][class] > .te-drawer--link > .te-drawer-sum {
+  background: #1e3a8a !important; border-color: #1e3a8a !important; color: #fff !important;
+}
+.trend-exp-drawers.ni-actions[class][class][class] > .te-drawer--link > .te-drawer-sum .te-drawer-ic,
+.trend-exp-drawers.ni-actions[class][class][class] > .te-drawer--link > .te-drawer-sum .te-drawer-title,
+.trend-exp-drawers.ni-actions[class][class][class] > .te-drawer--link > .te-drawer-sum .te-drawer-go { color: #fff !important; opacity: 1 !important; }
+.trend-exp-drawers.ni-actions[class][class][class] > .te-drawer--link > .te-drawer-sum .te-drawer-go {
+  display: inline-block !important; width: 14px !important; height: 14px !important; margin-left: 4px;
+}
+@media (hover: hover) {
+  .trend-exp-drawers.ni-actions[class][class][class] > .te-drawer--link:hover > .te-drawer-sum { background: #172e73 !important; border-color: #172e73 !important; }
+}
+.trend-exp-drawers.ni-actions[class][class][class] > .te-drawer:not(.te-drawer--link):not(.te-drawer--close):not([open]) > .te-drawer-sum {
+  background: #e7edfb !important; border-color: #e7edfb !important; color: #1e3a8a !important;
+}
+.trend-exp-drawers.ni-actions[class][class][class] > .te-drawer:not(.te-drawer--link):not(.te-drawer--close):not([open]) > .te-drawer-sum .te-drawer-ic,
+.trend-exp-drawers.ni-actions[class][class][class] > .te-drawer:not(.te-drawer--link):not(.te-drawer--close):not([open]) > .te-drawer-sum .te-drawer-chev { color: #1e3a8a !important; opacity: 1 !important; }
+@media (hover: hover) {
+  .trend-exp-drawers.ni-actions[class][class][class] > .te-drawer:not(.te-drawer--link):not(.te-drawer--close):not([open]):hover > .te-drawer-sum { background: #d9e3f8 !important; border-color: #d9e3f8 !important; }
+}
+@media (max-width: 560px) {
+  .trend-exp-drawers.ni-actions[class][class][class] > .te-drawer > .te-drawer-sum { min-height: 40px !important; padding: 0 14px !important; font-size: 0.86rem !important; }
+  .trend-exp-drawers.ni-actions[class][class][class] > .te-drawer--link > .te-drawer-sum .te-drawer-tx { flex: 1 1 auto; text-align: left; }
+  .trend-exp-drawers.ni-actions[class][class][class] > .te-drawer--link > .te-drawer-sum .te-drawer-go { display: inline-block !important; margin-left: auto !important; }
+  .trend-exp-drawers.ni-actions[class][class][class] > .te-drawer:not(.te-drawer--link):not(.te-drawer--close) > .te-drawer-sum .te-drawer-tx { flex: 1 1 auto; text-align: left; }
+  .trend-exp-drawers.ni-actions[class][class][class] > .te-drawer:not(.te-drawer--link):not(.te-drawer--close) > .te-drawer-sum .te-drawer-chev { margin-left: auto !important; }
+  .trend-exp-drawers.ni-actions[class][class][class] > .te-drawer--close > .te-drawer-sum { justify-content: center !important; }
+}
