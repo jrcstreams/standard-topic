@@ -37939,3 +37939,13 @@ body #home-trending .trending-topics-title[class][class][class][class][class] { 
 .tdi-card--edition .ec-headline[class][class][class][class][class][class][class] { text-wrap: normal !important; }
 /* The first story clears the Top Stories rule. */
 .tdi-card--edition .di-briefs.di-briefs--v2 .di-lbl + .dib[class][class][class] { padding-top: 20px !important; }
+
+/* revamp1375: the "Global" kicker above the day's headline — the topic
+   pages' topic pill, with more colour in it: a real blue tint, navy text,
+   so it reads as the briefing's subject rather than a grey tag. */
+.ec-kicker {
+  display: inline-flex; align-items: center; height: 26px; padding: 0 11px; margin: 0 0 10px;
+  border-radius: 999px; background: #dbe5fb; border: 1px solid #c9d8f7;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 650; letter-spacing: 0.01em; color: #1e3a8a;
+}
+@media (max-width: 899.98px) { .ec-kicker { height: 24px; font-size: 0.76rem; margin-bottom: 8px; } }

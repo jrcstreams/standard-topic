@@ -1090,6 +1090,7 @@ ${S}`),L.length?L.join(`
         </div>
         <div class="ec-rule" aria-hidden="true"></div>
         <div class="ec-lead">
+          <span class="ec-kicker">Global</span>
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
