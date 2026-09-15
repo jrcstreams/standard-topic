@@ -1984,6 +1984,7 @@ function editionCardHTML(o) {
           <a class="ec-btn ec-btn--topics" href="#/intelligence">${GRID}<span>Briefings by Topic</span>${SUBPAGE_ARROW}</a>
         </div>
         <div class="ec-listenwrap" data-ec-listenwrap hidden>
+          <h3 class="di-lbl ec-listenlbl">Listen to the Briefing</h3>
           <div class="ec-player" data-briefing-player hidden></div>
           <div class="ec-foot">
             <span class="ec-aigen">AI-narrated \u00b7 Based on today\u2019s sourced <span class="ec-nb">briefing<button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></span>
@@ -2037,7 +2038,22 @@ function bindListen(card, ctl) {
   if (close) close.addEventListener('click', () => {
     ctl.pause(); wrap.hidden = true; btn.setAttribute('aria-expanded', 'false'); sync(); btn.focus();
   });
+  // revamp1359: the open briefing carries the player by default, so an
+  // episode that lands after the briefing was opened shows it straight away.
+  if (card.classList.contains('is-open')) { wrap.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
   sync();
+}
+// revamp1359: open, the briefing shows the player under the summary without
+// Listen being pressed; closed, the strip folds away again unless something is
+// still playing — cutting audio because the reader closed the text would be
+// rude. Shared by the home card and the hub's today card.
+function syncEditionPlayer(card, on) {
+  const wrap = card.querySelector('[data-ec-listenwrap]');
+  const btn = card.querySelector('[data-ec-listen]');
+  if (!wrap || !btn || btn.hidden) return;
+  if (on) { wrap.hidden = false; btn.setAttribute('aria-expanded', 'true'); return; }
+  const au = wrap.querySelector('audio');
+  if (!au || au.paused) { wrap.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
 }
 // Mount the latest episode into an edition card: the bare player, the
 // headline block, the Listen button.
@@ -2676,8 +2692,7 @@ function renderIntelligenceHub(container) {
     const setOpen = (on) => {
       btns.forEach((b) => b.setAttribute('aria-expanded', on ? 'true' : 'false'));
       todayCard.classList.toggle('is-open', on);
-      const lw = todayCard.querySelector('[data-ec-listenwrap]');
-      if (lw && on && todayCard.querySelector('[data-ec-listen]:not([hidden])')) lw.hidden = false;
+      syncEditionPlayer(todayCard, on);
       try { if (inner) inner.inert = !on; } catch (_) {}
       if (!on || loaded || !inner) return;
       loaded = true;
@@ -2922,6 +2937,7 @@ function wireHomeDailyIntelligence(root) {
   const setOpen = (on) => {
     btns.forEach((b) => b.setAttribute('aria-expanded', on ? 'true' : 'false'));
     card.classList.toggle('is-open', on);
+    syncEditionPlayer(card, on);
     try { inner.inert = !on; } catch (_) {}
     if (!on || loaded) return;
     loaded = true;
@@ -3241,9 +3257,14 @@ function wireSubnavPicker(root) {
         const titleBtn = picker.querySelector('.tbh-titlebtn');
         const subs = picker.querySelector('.tbh-subswrap') || picker.querySelector('.tbh-subs');
         const anchor = titleBtn || subs;
-        if (anchor) panelwrap.style.top = anchor.offsetTop + 'px';
+        // revamp1359: measured against the page cards, whose title sits 16px
+        // under the card's top edge, this one sat at 0 — the card began at the
+        // title's own top. It now starts 8px above the title (the title's own
+        // padding carries the other 8) and pads its content the same extra.
+        const TSP_HEAD_PAD = 8;
+        if (anchor) panelwrap.style.top = Math.max(0, anchor.offsetTop - TSP_HEAD_PAD) + 'px';
         else panelwrap.style.top = '';
-        if (titleBtn) picker.style.setProperty('--tsp-head-h', (titleBtn.offsetHeight + 10) + 'px');
+        if (titleBtn) picker.style.setProperty('--tsp-head-h', (titleBtn.offsetHeight + TSP_HEAD_PAD + 10) + 'px');
       }
       // Same for the page titles: the panel needs the trigger's height to know
       // how far to push its own content down. Measured per open, because the

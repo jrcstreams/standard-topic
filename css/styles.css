@@ -37574,3 +37574,100 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
 .ec-lead .ec-meta[class][class][class][class][class][class] { margin: 0 0 12px !important; }
 .ec-lead .ec-meta .tdi-stamp-sep[class][class] { margin: 0 14px !important; }
 .ec-headline[class][class][class][class] { margin-top: 0 !important; }
+
+/* ═══ revamp1359: six things measured, six things fixed ═══════════════════
+
+   (1) The briefing tile's glyph sat 3.6px high. topicIconSVG() wraps the svg
+   in a <span>, so the grid centres the SPAN — a 30px block whose inline svg
+   rides its baseline with 7px above and 14px below. The span becomes a grid
+   of its own with no line box, and the svg a block, so the centring reaches
+   the glyph. */
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class][class] {
+  display: grid !important; place-items: center !important; line-height: 0 !important;
+}
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class][class] > * {
+  display: grid !important; place-items: center !important; line-height: 0 !important;
+  width: auto !important; height: auto !important; margin: 0 !important; padding: 0 !important;
+}
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class][class] svg { display: block !important; }
+
+/* (2) The stamp: 14px each side of its divider read as two things, 13px type
+   was a size under the note it follows, and its 12px bottom margin was being
+   taken by a later rule (measured 0). Tighter, a step larger, and 16px of
+   air before the headline, at a level nothing below can take. */
+.tdi-card--edition .ec-lead .ec-meta[class][class][class][class][class][class][class] { margin: 0 0 16px !important; }
+.tdi-card--edition .ec-lead .ec-meta .tdi-date[class][class][class] { font-size: 0.9rem !important; }
+.tdi-card--edition .ec-lead .ec-meta .tdi-stamp-sep[class][class][class] { margin: 0 9px !important; }
+
+/* (3) Open, the briefing keeps no buttons — Listen, Read and Briefings by
+   Topic all go — and the player stands under the summary beneath its own
+   section head, set like Top Stories. The existing hide rule lost to
+   `.ec--v2 .ec-actions[class] { display: flex }` on order; this one carries
+   the weight to win. The label exists only in the open state — closed, the
+   player still drops straight out of the Listen button with no heading. */
+.tdi-card--edition.is-open .ec--v2 .ec-actions[class][class][class] { display: none !important; }
+.tdi-card--edition.is-open .ec-listenwrap[class][class] { display: block !important; margin-top: 18px !important; }
+.ec-listenlbl { display: none; }
+.tdi-card--edition.is-open .ec-listenlbl[class][class][class][class] {
+  display: block !important; margin: 0 0 14px !important; padding: 0 0 9px !important;
+  border: 0 !important; border-bottom: 2px solid #d3dcec !important;
+  font-family: var(--font-family) !important; font-size: 0.95rem !important; font-weight: 750 !important;
+  letter-spacing: 0.11em !important; text-transform: uppercase !important; line-height: 1.2 !important;
+  color: #1e3a8a !important;
+}
+.tdi-card--edition.is-open .ec-listenlbl::after { display: none !important; }
+.tdi-card--edition.is-open .ec-player[class] { display: block !important; margin-top: 0 !important; }
+
+/* (4) Trending, first row open: the first row drops its top border so it
+   sits flush under the section head, and that rule (an id plus five classes,
+   !important) kept winning after the row opened into a bordered card. The
+   open card gets its top edge back at the same weight. And the provenance
+   chip sat 6px under the header band — 2px of body inset plus its 4px margin
+   — a step closer than anything else in the card; 12px. */
+body.home-search #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class][class],
+.home-v2 #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class][class],
+body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class][class],
+.aii-nav-dd-trending .trend-card-grid > .trend-card.is-expanded:first-child[class][class],
+.trending-topics .trend-card-grid > .trend-card.is-expanded:first-child[class][class][class] {
+  border-top: 1.5px solid #b9c6e4 !important;
+}
+#home-trending .trend-card.is-expanded .trend-exp-aitag[class][class][class][class][class][class][class],
+.aii-nav-dd-trending .trend-card.is-expanded .trend-exp-aitag[class][class][class][class][class][class][class] {
+  margin-top: 10px !important;
+}
+
+/* (5) Featured Prompts: the rows had no gap. revamp1126 zeroed the grid's
+   row-gap when each row was a line in a list; revamp1338 made every row a
+   bordered card, and the zero survived, so the cards sat edge on edge while
+   Prompts by Topic beneath them kept 10px. The same 10 / 12 as that grid. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist[class][class][class] {
+  row-gap: 10px !important; column-gap: 12px !important;
+}
+
+/* (6) The topic page's dropdown, closing. Measured against the page cards:
+   the topic card is 380px to their 324, and the .14s fade — tuned to the
+   smaller box — emptied it at 109ms with the box still a third open, while
+   the subtopic pills beneath, hidden by a visibility switch, snapped back at
+   0ms under the shrinking ghost. Two changes, this card only: the wrap clips,
+   so the collapse itself hides the content and the fade only clears the 2px
+   stub at the end; and the pills fade back in under it instead of appearing.
+   The open direction is untouched. */
+.topic-bodyhead.topic-subnav-picker .tsp-panelwrap[class][class][class][class] {
+  overflow: hidden !important;
+  transition:
+    grid-template-rows .26s cubic-bezier(.4, 0, .2, 1),
+    opacity .1s linear .17s !important;
+}
+.topic-bodyhead.topic-subnav-picker.is-open .tsp-panelwrap[class][class][class][class] {
+  overflow: visible !important;
+  transition:
+    grid-template-rows .26s cubic-bezier(.4, 0, .2, 1),
+    opacity .2s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.topic-bodyhead .tsp-panelwrap[class][class] .tsp-panel { min-height: 0; }
+.topic-bodyhead .tbh-subs[class] { transition: opacity .2s ease .08s; }
+.topic-bodyhead.is-open .tbh-subs[class] { visibility: hidden; opacity: 0; transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .topic-bodyhead.topic-subnav-picker .tsp-panelwrap[class][class][class][class],
+  .topic-bodyhead .tbh-subs[class] { transition: none !important; }
+}
