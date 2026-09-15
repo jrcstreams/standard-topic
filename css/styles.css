@@ -37487,3 +37487,65 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
 
 /* revamp1356b: the note wraps to its content, not to a third of the card. */
 .ec-note[class][class] { max-width: none; }
+
+/* ═══ revamp1357: the head reads like a topic page, the stamp leads the day ═══
+   A bigger brand tile with a white glyph, a bigger, bolder name, and the
+   standing note as plain subtext beneath — the lockup the topic pages use. The
+   date and time leave the head entirely and lead the day's headline, which is
+   where they belong: they date the news, not the product. */
+.ec--v2 .ec-head { display: block; }
+.ec-headrow[class] { display: flex; align-items: center; gap: 13px; flex-wrap: nowrap; }
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class] {
+  width: 44px !important; height: 44px !important; border-radius: 12px !important;
+  background: #1e3a8a !important; color: #fff !important; flex: none;
+}
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class] svg {
+  width: 23px !important; height: 23px !important; color: #fff !important; stroke: currentColor;
+}
+.tdi-card--edition .ec-title[class][class][class][class][class][class][class][class] {
+  font-size: 1.42rem !important; font-weight: 800 !important; line-height: 1.15 !important;
+  letter-spacing: -0.014em; margin: 0 !important;
+}
+.ec-note[class][class][class] {
+  display: block; margin: 10px 0 0 !important; padding: 0 !important;
+  background: none !important; border-radius: 0 !important;
+  font-size: 0.97rem !important; line-height: 1.45; color: #5b6b8f !important; max-width: none;
+}
+/* The stamp above the headline: quiet, with room around its divider. */
+.ec-lead .ec-meta[class][class][class][class][class] {
+  display: flex !important; align-items: center; flex: 0 0 auto !important; width: auto !important;
+  margin: 0 0 8px !important; padding: 0 !important; border-left: 0 !important;
+}
+.ec-lead .ec-meta .tdi-date[class][class] { font-size: 0.83rem !important; color: #6b7a9c !important; }
+.ec-lead .ec-meta .tdi-stamp-sep[class] { margin: 0 12px !important; color: #c3cbd8 !important; }
+.ec-lead .ec-meta .tdi-stamp-val[class] { gap: 6px; }
+
+/* Buttons a step smaller. */
+.ec--v2 .ec-actions .ec-btn[class][class][class] {
+  height: 40px !important; min-height: 40px !important; padding: 0 16px !important;
+  font-size: 0.9rem !important; border-radius: 9px !important;
+}
+.ec--v2 .ec-actions .ec-btn[class][class][class] svg { width: 16px !important; height: 16px !important; }
+
+/* The player drops straight out of the button — no second heading, since the
+   button already said what this is — and closes from beneath itself. */
+.ec-listenwrap[class] { margin-top: 14px; padding-top: 0; border-top: 0; }
+.ec-closeaudio-row { display: flex; justify-content: center; margin-top: 12px; }
+.ec-closeaudio {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 34px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid #cfd8e8; background: #fff; color: #5b6b8f; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 650;
+}
+.ec-closeaudio svg { flex: none; width: 12px; height: 12px; }
+@media (hover: hover) { .ec-closeaudio:hover { background: #f1f4fa; border-color: #b9c6dd; color: #2b3c66; } }
+/* Opened, the briefing carries the player but not the close control — the
+   briefing's own close does that job. */
+.tdi-card--edition.is-open .ec-closeaudio-row { display: none; }
+@media (max-width: 899.98px) {
+  .tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class] { width: 38px !important; height: 38px !important; border-radius: 10px !important; }
+  .tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class] svg { width: 20px !important; height: 20px !important; }
+  .tdi-card--edition .ec-title[class][class][class][class][class][class][class][class] { font-size: 1.22rem !important; }
+  .ec-note[class][class][class] { font-size: 0.92rem !important; margin-top: 9px !important; }
+  .ec-lead .ec-meta[class][class][class][class][class] { flex: 0 0 auto !important; }
+}

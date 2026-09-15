@@ -1967,12 +1967,12 @@ function editionCardHTML(o) {
           <div class="ec-headrow">
             <span class="ec-tile" aria-hidden="true">${topicIconSVG('globe', '')}</span>
             <h3 class="tdi-brieftitle ec-title">${escapeHTML(o.cardTitle || homeEditionTitle())}</h3>
-            <div class="tdi-metaline ec-meta"><span class="tdi-date" data-tdi-date></span></div>
           </div>
           <p class="ec-note">Your daily update, published every morning.</p>
         </div>
         <div class="ec-rule" aria-hidden="true"></div>
         <div class="ec-lead">
+          <div class="tdi-metaline ec-meta"><span class="tdi-date" data-tdi-date></span></div>
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
@@ -1984,10 +1984,12 @@ function editionCardHTML(o) {
           <a class="ec-btn ec-btn--topics" href="#/intelligence">${GRID}<span>Briefings by Topic</span>${SUBPAGE_ARROW}</a>
         </div>
         <div class="ec-listenwrap" data-ec-listenwrap hidden>
-          <div class="ec-listenhead" data-ec-playerhead>${HEAD}<span>Listen to the Briefing</span><span class="ec-listenhead-dur" data-ec-dur2></span></div>
           <div class="ec-player" data-briefing-player hidden></div>
           <div class="ec-foot">
             <span class="ec-aigen">AI-narrated \u00b7 Based on today\u2019s sourced <span class="ec-nb">briefing<button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></span>
+          </div>
+          <div class="ec-closeaudio-row">
+            <button type="button" class="ec-closeaudio" data-ec-closeaudio>${X}<span>Close audio player</span></button>
           </div>
         </div>
       </div>
@@ -2008,7 +2010,7 @@ function applyEpisodeToCard(card, ep) {
   const h = card.querySelector('[data-ec-headline]'); if (h && ep.title) { h.textContent = ep.title; h.dataset.filled = '1'; }
   const sm = card.querySelector('[data-ec-summary]'); if (sm && ep.teaser) { sm.textContent = ep.teaser; sm.hidden = false; sm.dataset.filled = '1'; }
   const mins = ep.duration_ms ? `${Math.round(ep.duration_ms / 60000)} min` : '';
-  card.querySelectorAll('[data-ec-dur], [data-ec-dur2]').forEach((d) => { d.textContent = mins; });
+  card.querySelectorAll('[data-ec-dur]').forEach((d) => { d.textContent = mins; });
 }
 // "Listen to Briefing" reveals the player beneath the card and starts it; once
 // open it is a play/pause. Re-bindable, because the hub's edition picker
@@ -2031,6 +2033,10 @@ function bindListen(card, ctl) {
     else ctl.toggle();
   });
   au.addEventListener('play', sync); au.addEventListener('pause', sync); au.addEventListener('ended', sync);
+  const close = wrap.querySelector('[data-ec-closeaudio]');
+  if (close) close.addEventListener('click', () => {
+    ctl.pause(); wrap.hidden = true; btn.setAttribute('aria-expanded', 'false'); sync(); btn.focus();
+  });
   sync();
 }
 // Mount the latest episode into an edition card: the bare player, the
