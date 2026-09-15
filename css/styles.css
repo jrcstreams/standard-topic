@@ -37567,3 +37567,10 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   display: block !important; -webkit-line-clamp: unset !important; overflow: visible !important;
   max-height: none !important; overflow-wrap: break-word !important;
 }
+
+/* revamp1357b: the stamp needs air under it — it was sitting on the headline's
+   cap height with 8px, which read as one block. And the separator's own margin
+   was still the site's default, so Sep 15 and the time ran together. */
+.ec-lead .ec-meta[class][class][class][class][class][class] { margin: 0 0 12px !important; }
+.ec-lead .ec-meta .tdi-stamp-sep[class][class] { margin: 0 14px !important; }
+.ec-headline[class][class][class][class] { margin-top: 0 !important; }
