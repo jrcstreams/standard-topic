@@ -2001,12 +2001,12 @@ function editionCardHTML(o) {
             ${BOOK}<span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}<span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>
           </button>
           <a class="ec-btn ec-btn--topics" href="#/intelligence">${GRID}<span class="ec-btn-tx">Briefings by Topic</span>${SUBPAGE_ARROW}<span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span></a>
-        </div>
         <div class="ec-listenwrap" data-ec-listenwrap hidden>
           <div class="ec-player" data-briefing-player hidden></div>
           <div class="ec-foot">
             <span class="ec-aigen">AI-narrated \u00b7 Based on today\u2019s sourced <span class="ec-nb">briefing<button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></span>
           </div>
+        </div>
         </div>
       </div>
       <button type="button" class="tdi-openx ec-openx" data-di-toggle aria-label="Close briefing">${X}</button>
@@ -2138,7 +2138,9 @@ function bindListen(card, ctl) {
     btn.classList.toggle('is-open', open);
     btn.classList.toggle('is-playing', ctl.isPlaying());
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (lbl) lbl.textContent = open ? 'Close audio player' : 'Listen to Briefing';
+    const stacked = window.matchMedia('(max-width: 639.98px)').matches;
+    btn.classList.toggle('is-drop', open && stacked);
+    if (lbl) lbl.textContent = (open && !stacked) ? 'Close audio player' : 'Listen to Briefing';
   };
   btn._ecSync = sync;
   btn.addEventListener('click', () => {
@@ -2147,6 +2149,8 @@ function bindListen(card, ctl) {
   });
   // The dock's ✕ stops the engine; the card's strip folds with it.
   const offSync = briefingAudio.on((type) => { if (type === 'stop') wrap.hidden = true; sync(); });
+  window.addEventListener('resize', sync);
+  card.addEventListener('ec:unbind', () => window.removeEventListener('resize', sync), { once: true });
   card.addEventListener('ec:unbind', offSync, { once: true });
   // revamp1359: the open briefing carries the player by default, so an
   // episode that lands after the briefing was opened shows it straight away.
