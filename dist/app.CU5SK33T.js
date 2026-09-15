@@ -1099,7 +1099,7 @@ ${S}`),$.length?$.join(`
         <div class="ec-rule ec-rule--player" data-ec-playerrule hidden aria-hidden="true"></div>
         <div class="ec-player" data-briefing-player hidden></div>
         <div class="ec-foot">
-          <span class="ec-aigen"><span>AI-narrated \xB7 Based on today\u2019s sourced briefing</span><button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="7.6" x2="12.01" y2="7.6"/></svg></button></span>
+          <span class="ec-aigen">AI-narrated \xB7 Based on today\u2019s sourced <span class="ec-nb">briefing<button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="7.6" x2="12.01" y2="7.6"/></svg></button></span></span>
           <a class="ec-browse" href="#/intelligence"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Browse briefings by topic</span>${yt}</a>
         </div>
       </div>

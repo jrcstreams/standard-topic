@@ -37190,3 +37190,8 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .ec-foot { flex-direction: column; align-items: flex-start; gap: 10px; }
   .ec-foot .ec-browse { align-self: center; }
 }
+
+/* revamp1347c: the AI label wraps by word with its ring bound to the last word. */
+.ec-aigen { display: inline; line-height: 1.5; }
+.ec-nb { white-space: nowrap; }
+.ec-foot .ec-info.how-aigen[class][class] { vertical-align: -2px; margin-left: 5px !important; }

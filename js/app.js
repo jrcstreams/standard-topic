@@ -1981,7 +1981,7 @@ function editionCardHTML(o) {
         <div class="ec-rule ec-rule--player" data-ec-playerrule hidden aria-hidden="true"></div>
         <div class="ec-player" data-briefing-player hidden></div>
         <div class="ec-foot">
-          <span class="ec-aigen"><span>AI-narrated \u00b7 Based on today\u2019s sourced briefing</span><button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span>
+          <span class="ec-aigen">AI-narrated \u00b7 Based on today\u2019s sourced <span class="ec-nb">briefing<button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></span>
           <a class="ec-browse" href="#/intelligence">${GRID}<span>Browse briefings by topic</span>${SUBPAGE_ARROW}</a>
         </div>
       </div>
