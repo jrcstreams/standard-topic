@@ -37671,3 +37671,9 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
   .topic-bodyhead.topic-subnav-picker .tsp-panelwrap[class][class][class][class],
   .topic-bodyhead .tbh-subs[class] { transition: none !important; }
 }
+
+/* revamp1359b: Featured Prompts rows share a height. With the gap back, the
+   one row holding a two-line description still ended on two different
+   bottoms. Stretch is safe here because an open row takes the whole grid row
+   (grid-column: 1 / -1), so it never has a mate to stretch. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist[class][class][class] { align-items: stretch !important; }
