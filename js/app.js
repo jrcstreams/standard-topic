@@ -2055,7 +2055,8 @@ function bindListen(card, ctl) {
     if (wrap.hidden) { wrap.hidden = false; sync(); ctl.play(); }
     else { ctl.pause(); wrap.hidden = true; sync(); }
   });
-  const offSync = briefingAudio.on(sync);
+  // The dock's ✕ stops the engine; the card's strip folds with it.
+  const offSync = briefingAudio.on((type) => { if (type === 'stop') wrap.hidden = true; sync(); });
   card.addEventListener('ec:unbind', offSync, { once: true });
   // revamp1359: the open briefing carries the player by default, so an
   // episode that lands after the briefing was opened shows it straight away.
