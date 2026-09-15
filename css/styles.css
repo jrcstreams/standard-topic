@@ -37739,3 +37739,15 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
   .ec--v2 .ec-actions .ec-btn--listen.is-open[class][class][class][class]:hover { background: #f1f4fa !important; border-color: #b9c6dd !important; color: #2b3c66 !important; }
 }
 .ec-closeaudio-row[class] { display: none !important; }
+
+/* ═══ revamp1363: the close ✕ lives in the card's top-right corner ═══
+   The bare open-head is a zero-height positioned row at the top of the
+   expand block, and the ✕ was absolute inside it — so it sat wherever the
+   expand block began, which with the player above Top Stories was under the
+   player. The card is the anchor now: the open-head stops being a containing
+   block and the ✕ pins to the card's own corner, whatever comes before it. */
+.tdi-card--edition[class][class][class] { position: relative !important; }
+.tdi-card--edition.is-open .tdi-openhead--bare[class][class] { position: static !important; height: 0 !important; margin: 0 !important; }
+.tdi-card--edition.is-open .tdi-openhead--bare .tdi-openx[class][class][class] {
+  position: absolute !important; top: 16px !important; right: 16px !important; z-index: 5 !important;
+}
