@@ -38267,3 +38267,16 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
    position is set at runtime (alignKickerIcons); no static nudge remains. */
 .tdi-card--topicedition .ec-kicker--topic[class][class][class][class] { background: color-mix(in srgb, var(--tc, #1e3a8a) 82%, #fff) !important; border-color: color-mix(in srgb, var(--tc, #1e3a8a) 82%, #fff) !important; }
 .ec-kicker[class][class][class][class][class] svg { transform: none; }
+
+/* ═══ revamp1396: the stacked row, tidied ═══
+   Briefings by Topic's icon and chevron sit on the same inset as the
+   buttons' contents (14px), so the three read as one column. The waveform
+   sits centred between its separator and the chevron. And all three carry
+   the same chevron in the stack — Read's arrow gives way to it. */
+@media (max-width: 639.98px) {
+  .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class][class][class][class][class][class] { padding: 12px 14px 0 !important; }
+  .ec--v2 .ec-btn--listen:not(.is-open) .ec-wave { margin-left: auto; padding-left: 14px; }
+  .ec--v2 .ec-btn--listen:not(.is-open) .ec-btn-chev { margin-left: 14px; }
+  .ec--v2 .ec-btn--read[class][class] > svg:last-of-type { display: none !important; }
+  .ec--v2 .ec-btn--read .ec-btn-chev { display: inline-flex; margin-left: auto; }
+}
