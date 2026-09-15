@@ -38024,3 +38024,11 @@ body #home-trending .trending-topics-title[class][class][class][class][class] { 
 /* The news cards' border was #e8edf5 on white — one step darker so the
    card reads as a card without turning into a box. Home and topic pages. */
 #section-newsfeed .news-card[class][class] { border-color: #d6ddea !important; }
+
+/* revamp1378b: the news-card edge, at the weight the page's own rules use.
+   1378's border-color at (1,3,0) lost; this matches the heaviest of the
+   card rules, including the first card's separate top-border rule. */
+body #section-newsfeed .news-card[class][class][class][class],
+body .search-news-section .news-card[class][class][class][class] { border-color: #d6ddea !important; }
+body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[class][class],
+.topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child[class][class] { border-top-color: #d6ddea !important; }
