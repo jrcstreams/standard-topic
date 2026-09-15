@@ -1960,14 +1960,12 @@ function editionCardHTML(o) {
   return `
       <div class="ec ec--v2">
         <div class="ec-head">
-          <div class="ec-headtx">
-            <div class="ec-headrow">
-              <span class="ec-tile" aria-hidden="true">${topicIconSVG('globe', '')}</span>
-              <h3 class="tdi-brieftitle ec-title">${escapeHTML(o.cardTitle || homeEditionTitle())}</h3>
-            </div>
+          <div class="ec-headrow">
+            <span class="ec-tile" aria-hidden="true">${topicIconSVG('globe', '')}</span>
+            <h3 class="tdi-brieftitle ec-title">${escapeHTML(o.cardTitle || homeEditionTitle())}</h3>
             <div class="tdi-metaline ec-meta"><span class="tdi-date" data-tdi-date></span></div>
           </div>
-          <span class="ec-note">Your daily update, published every morning.</span>
+          <p class="ec-note">Your daily update, published every morning.</p>
         </div>
         <div class="ec-rule" aria-hidden="true"></div>
         <div class="ec-lead">

@@ -37243,3 +37243,33 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .tdi-card--edition .ec-meta[class][class][class][class][class][class][class] { margin-top: 6px !important; }
   .ec-headrow { gap: 10px; }
 }
+
+/* ═══ revamp1350: the head on one line, the note beneath it ═══
+   Tile, name and the date/time stamp share a row that wraps — on a phone the
+   stamp drops to its own line rather than squeezing the name. The standing
+   note sits under all of it as a thin strip, and the day's headline comes
+   down a size so the card reads: what this is, then what happened. */
+.ec--v2 .ec-head { display: block; }
+.ec-headrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class] { width: 30px !important; height: 30px !important; border-radius: 8px !important; }
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class] svg { width: 16px !important; height: 16px !important; }
+.tdi-card--edition .ec-title[class][class][class][class][class][class][class] { font-size: 1.12rem !important; line-height: 1.25 !important; letter-spacing: -0.004em; }
+.tdi-card--edition .ec-meta[class][class][class][class][class][class][class] { margin: 0 !important; padding-left: 12px; border-left: 1px solid #dfe5f1; }
+.ec-note {
+  display: inline-block; margin: 10px 0 0; padding: 5px 11px;
+  font-family: var(--font-family); font-size: 0.78rem; line-height: 1.4; color: #5b6b8f;
+  background: #eef2fb; border-radius: 7px;
+}
+.ec--v2 .ec-rule { margin: 16px 0; }
+.ec-headline { font-size: 1.36rem; line-height: 1.22; margin-bottom: 7px; }
+.ec-summary[class][class][class] { font-size: 0.97rem !important; }
+@media (max-width: 899.98px) {
+  .tdi-card--edition .ec-tile[class][class][class][class][class][class][class] { width: 28px !important; height: 28px !important; }
+  .tdi-card--edition .ec-tile[class][class][class][class][class][class][class] svg { width: 15px !important; height: 15px !important; }
+  .tdi-card--edition .ec-title[class][class][class][class][class][class][class] { font-size: 1.05rem !important; }
+  /* Wrapped onto its own line, the stamp drops the divider and lines up with
+     the tile rather than hanging off an edge that is no longer beside it. */
+  .tdi-card--edition .ec-meta[class][class][class][class][class][class][class] { padding-left: 0; border-left: 0; flex: 1 0 100%; }
+  .ec-headline { font-size: 1.22rem; }
+  .ec-note { margin-top: 9px; font-size: 0.75rem; }
+}

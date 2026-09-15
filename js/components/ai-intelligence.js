@@ -2615,16 +2615,21 @@ export function renderDailyIntelligence(container, scope) {
     const provBtn = `<button type="button" class="di-prov2 how-aigen" data-how-it-works>${LOGO}<span>AI-generated content included</span>${DI_INFO_ICON}</button>`;
     const whenHTML = `${dateLong ? `<span class="di-meta-date">${CAL_SVG}<span>${esc(dateLong)}</span></span>` : ''}${dateLong && timeET ? SEP : ''}${timeET ? `<span class="di-meta-time">${CLOCK_SVG}<span>${esc(timeET)} ET</span></span>` : ''}`;
 
+    // revamp1351: the edition card already carries the name, the date, the
+    // day's headline, its summary and the player. Opening it must not repeat
+    // any of that — `chrome: false` drops the masthead and the In Focus block
+    // so the briefing opens straight into Top Stories.
+    const chrome = scope.chrome !== false;
     body.innerHTML = `
-      <div class="di-mast di-mast--v2">
+      ${chrome ? `<div class="di-mast di-mast--v2">
         ${mastEyebrow}
         <h2 class="di-title">${briefTitle}</h2>
         <div class="di-metaline">
           ${whenHTML ? `<span class="di-metagrp">${whenHTML}</span><span class="di-metasep di-metasep--prov" aria-hidden="true"></span>` : ''}
           ${provBtn}
         </div>
-      </div>
-      ${(thingsList.length || overview) ? `<section class="di-focus">
+      </div>` : ''}
+      ${(chrome && (thingsList.length || overview)) ? `<section class="di-focus">
         ${thingsList.length ? `<h3 class="di-lbl di-focus-lbl">In Focus</h3>
         <ul class="di-focus-list">${thingsList.map((t) => { const m = String(t).match(/^\*\*(.+?)\*\*\s*(.*)$/); return m ? `<li class="tdi-focus-li"><span class="tdi-focus-tx"><b>${esc(m[1].replace(/[.\s]+$/, ''))}</b>${m[2].trim() ? `<span class="tdi-focus-d">${esc(m[2].trim())}</span>` : ''}</span></li>` : `<li class="tdi-focus-li">${esc(String(t).replace(/\*\*/g, ''))}</li>`; }).join('')}</ul>` : ''}
         ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
@@ -2642,10 +2647,10 @@ export function renderDailyIntelligence(container, scope) {
           let playAt = null;
           const tm = String(bodyText || '').match(/\s*\[T(\d+)\]\s*$/);
           if (tm) { playAt = Number(tm[1]); bodyText = String(bodyText).replace(/\s*\[T\d+\]\s*$/, ''); }
-          const playBtn = (playAt != null && isHome) ? `<button type="button" class="dib-play" data-briefing-seek="${playAt}" aria-label="Play this story"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span>Play from here</span></button>` : '';
+          const playBtn = (playAt != null && isHome) ? `<button type="button" class="dib-play" data-briefing-seek="${playAt}" aria-label="Play this story"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg><span>Play</span></button>` : '';
           return `<article class="dib dib--v2${srcs.length ? ' has-srcs' : ''}">
           <div class="dib-main">
-            ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}${playBtn}</h4>` : playBtn}
+            ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}</h4>` : ''}${playBtn}
             <div class="dib-body aii-sec-body">${renderBriefBody(bodyText, null)}</div>
           </div>
           ${srcs.length ? `<div class="dib-side">${srcChips(srcs)}</div>` : ''}
@@ -2657,10 +2662,8 @@ export function renderDailyIntelligence(container, scope) {
     // because the slot is re-rendered on every fill, and because isHome and
     // body only exist here — the first cut put this after fill() and every
     // briefing open threw ReferenceError: isHome is not defined.
-    if (isHome) {
-      const slot = body.querySelector('[data-briefing-player]');
-      if (slot) mountLatestBriefingPlayer(slot);
-    }
+    const slot = isHome ? body.querySelector('[data-briefing-player]') : null;
+    if (slot) mountLatestBriefingPlayer(slot);
   };
 
   // revamp1340: "play from here" — one delegated listener, bound once.

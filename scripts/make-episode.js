@@ -185,7 +185,7 @@ async function main() {
     const script0 = JSON.parse(fs.readFileSync(path.resolve(String(reuseScript)), 'utf8'));
     const w0 = script0.segments.reduce((n, s) => n + String(s.text || '').split(/\s+/).filter(Boolean).length, 0);
     log(`Stage 2+3 · script … reused ${reuseScript} · ${script0.segments.length} segments · ${w0} words`);
-    return finish(script0, storyboard, briefs, { edition, dateLabel, micros, fmt });
+    return finish(script0, storyboard, briefs, { edition, ed, dateLabel, micros, fmt });
   }
   process.stdout.write('Stage 2 · writer … ');
   const t2 = Date.now();
@@ -227,10 +227,10 @@ async function main() {
     } catch (e) { log(`skipped (${e.message})`); }
   }
 
-  return finish(script, storyboard, briefs, { edition, dateLabel, micros, fmt });
+  return finish(script, storyboard, briefs, { edition, ed, dateLabel, micros, fmt });
 }
 
-async function finish(script, storyboard, briefs, { edition, dateLabel, micros, fmt }) {
+async function finish(script, storyboard, briefs, { edition, ed, dateLabel, micros, fmt }) {
   const title = storyboard.title || `Standard Topic — ${dateLabel}`;
   fs.writeFileSync(path.join(OUT, `script-${edition}.md`), E.scriptToText(script, { title, dateLabel }));
   fs.writeFileSync(path.join(OUT, `script-${edition}.json`), JSON.stringify(script, null, 2));
@@ -325,12 +325,13 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
 
   // The card's three entries need sublines. A script from before they existed
   // (or a writer that skipped them) gets them from one small call.
+  const recard = !!arg('recard');
   const focus = E.normalizeFocus(script.in_focus);
-  if (focus.length < 3 || focus.some((f) => !f.line)) {
+  if (recard || focus.length < 3 || focus.some((f) => !f.line)) {
     try { const got = await E.runFocusLines(script); if (got.length) script.in_focus = got; } catch (e) { log(`  (focus lines: ${e.message})`); }
   }
   // The card's headline and summary; backfilled for a script without them.
-  if (!String(script.headline || '').trim() || !String(script.summary || '').trim()) {
+  if (recard || !String(script.headline || '').trim() || !String(script.summary || '').trim()) {
     try { const got = await E.runHeadline(script); if (got && got.headline) { script.headline = got.headline; script.summary = got.summary || script.summary; } } catch (e) { log(`  (headline: ${e.message})`); }
   }
   const cardTitle = String(script.headline || '').trim() || title;
