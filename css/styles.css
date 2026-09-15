@@ -37549,3 +37549,21 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .ec-note[class][class][class] { font-size: 0.92rem !important; margin-top: 9px !important; }
   .ec-lead .ec-meta[class][class][class][class][class] { flex: 0 0 auto !important; }
 }
+
+/* ═══ revamp1358: one gap under the summary, and whole headlines ═══
+   The card body is a flex column with a 16px gap AND the actions carried a
+   13px top margin, so the topic pages showed 29px under a summary while the
+   homepage — where the gap does not apply — showed 13. One number governs it
+   on both: the body gap goes, the margin is the whole distance. */
+#section-newsfeed .news-card-body[class][class] { gap: 0 !important; }
+#section-newsfeed .news-card-actions[class][class],
+.topic-band .topic-home #section-newsfeed .news-card .news-card-actions[class][class][class] {
+  margin: 18px 0 0 !important; padding: 0 !important;
+}
+/* A headline is never cut. It was clamped to two lines, which ended real
+   titles on an ellipsis; cards size to their own content, so a three-line
+   headline costs nothing but its own height. */
+#section-newsfeed .news-card-title[class][class][class] {
+  display: block !important; -webkit-line-clamp: unset !important; overflow: visible !important;
+  max-height: none !important; overflow-wrap: break-word !important;
+}
