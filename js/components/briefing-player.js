@@ -94,6 +94,7 @@ export function playerHTML(ep, { bare = false } = {}) {
           <div class="bp-wavewrap">
             <div class="bp-wave" data-bp-track role="slider" aria-label="Position" aria-valuemin="0" aria-valuemax="${ep && ep.duration_ms || 0}" aria-valuenow="0" tabindex="0">
               ${bars.map((h) => `<i style="height:${h}%"></i>`).join('')}
+              <div class="bp-wave-played" data-bp-played aria-hidden="true" style="clip-path: inset(0 100% 0 0)">${bars.map((h) => `<i style="height:${h}%"></i>`).join('')}</div>
             </div>
             <div class="bp-times"><span data-bp-cur>0:00</span><span>${mmss(ep && ep.duration_ms)}</span></div>
           </div>
@@ -121,7 +122,8 @@ export function mountBriefingPlayer(host, ep, opts = {}) {
   const play = root.querySelector('[data-bp-play]');
   const icon = root.querySelector('[data-bp-icon]');
   const track = root.querySelector('[data-bp-track]');
-  const bars = [...track.querySelectorAll('i')];
+  const bars = [...track.querySelectorAll(':scope > i')];
+  const played = track.querySelector('[data-bp-played]');
   const cur = root.querySelector('[data-bp-cur]');
   const rateBtn = root.querySelector('[data-bp-rate]');
   const rateLbl = root.querySelector('[data-bp-rate-lbl]');
@@ -136,8 +138,10 @@ export function mountBriefingPlayer(host, ep, opts = {}) {
   const setIcon = () => { icon.setAttribute('d', au.paused ? PLAY_D : PAUSE_D); play.setAttribute('aria-label', au.paused ? 'Play' : 'Pause'); root.classList.toggle('is-playing', !au.paused); };
   const paint = () => {
     const d = dur(); const p = d ? Math.min(1, au.currentTime / d) : 0;
-    const on = Math.floor(p * bars.length);
-    if (on !== lastOn) { bars.forEach((b, i) => b.classList.toggle('on', i < on)); lastOn = on; }
+    // revamp1374: the played part is a continuous fill — a navy copy of the
+    // bars clipped to the current position — not a count of whole bars.
+    if (played) played.style.clipPath = `inset(0 ${(100 - p * 100).toFixed(3)}% 0 0)`;
+    else { const on = Math.floor(p * bars.length); if (on !== lastOn) { bars.forEach((b, i) => b.classList.toggle('on', i < on)); lastOn = on; } }
     cur.textContent = mmss(au.currentTime * 1000);
     track.setAttribute('aria-valuenow', String(Math.round(au.currentTime * 1000)));
     if (chList) {
@@ -179,6 +183,11 @@ export function mountBriefingPlayer(host, ep, opts = {}) {
   }
   au.addEventListener('play', setIcon); au.addEventListener('pause', setIcon);
   au.addEventListener('timeupdate', () => { if (!dragging) paint(); });
+  // timeupdate fires ~4 times a second; while playing, paint every frame so
+  // the fill moves rather than steps.
+  let raf = 0;
+  const tick = () => { if (au.paused || au.ended) { raf = 0; return; } if (!dragging) paint(); raf = requestAnimationFrame(tick); };
+  au.addEventListener('play', () => { if (!raf) raf = requestAnimationFrame(tick); });
   au.addEventListener('ended', () => { setIcon(); paint(); });
   if ('mediaSession' in navigator) {
     au.addEventListener('play', () => {

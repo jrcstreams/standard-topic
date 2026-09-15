@@ -45,6 +45,7 @@ loadEnv(path.join(ROOT, '.env'));
 
 const { getSql } = require('../lib/db');
 const E = require('../lib/episode-core');
+const A = require('../lib/episode-audio');
 
 const LENGTH = String(arg('length', 'standard'));
 const VOICE = String(arg('voice', process.env.EPISODE_VOICE || 'Gacrux'));
@@ -260,6 +261,9 @@ async function finish(script, storyboard, briefs, { edition, ed, dateLabel, micr
   const mp3 = path.join(OUT, `standard-topic-${edition}.mp3`);
   encodeMP3(pcm, rate, mp3, { title, chapters, durationMs });
   const size = fs.statSync(mp3).size;
+  // revamp1374: judge the pace from the finished file, per chapter, so an
+  // episode is checked by numbers rather than by listening to it.
+  try { const pr = A.paceReport(mp3, chapters, script.segments, durationMs); log('Pace, per chapter (from the finished file):\n' + pr.text); log(pr.flags.length ? `  ! pacing flags: ${pr.flags.join(' · ')}` : '  pacing: every chapter in band'); } catch (e) { log(`  (pace report skipped: ${e && e.message})`); }
 
   fs.writeFileSync(path.join(OUT, `notes-${edition}.md`), E.showNotes(script, briefs, { title, teaser: storyboard.teaser || '', chapters, dateLabel }));
   fs.writeFileSync(path.join(OUT, `chapters-${edition}.json`), JSON.stringify(chapters, null, 2));

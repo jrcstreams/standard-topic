@@ -37900,3 +37900,42 @@ body:not(.tt-on) .ndp.aii-nav-dd-trending .trend-card-grid[class][class] { margi
    held it. Same weight as that rule, News Feed's #14213d. */
 body.home-search #home-trending .trending-topics-titlerow .trending-topics-title[class][class][class][class],
 body #home-trending .trending-topics-title[class][class][class][class][class] { color: #14213d !important; }
+
+/* ═══ revamp1374: the player's live fill, and a round of card details ═══
+   The played part of the wave is a navy copy of the bars clipped to the
+   current position, painted every frame while playing. */
+.bp-wave { position: relative; }
+.bp-wave-played { position: absolute; inset: 0; display: flex; align-items: center; gap: 2px; pointer-events: none; }
+.bp-wave-played i { flex: 1 1 0; min-width: 2px; border-radius: 2px; background: #1e3a8a; }
+.bp-wave > i.on { background: #c9d4ea; }
+/* Chapters, hovered: the text stayed navy on a deeper tint — it had been
+   washing out. */
+@media (hover: hover) {
+  .bp-ctl--chapters:hover { background: #cfdcf7 !important; border-color: #cfdcf7 !important; color: #1e3a8a !important; opacity: 1 !important; }
+  .bp-ctl--chapters:hover svg { opacity: 1; }
+}
+/* Briefings by Topic is a link, not a third button: on a wide card it sits
+   right-aligned on the buttons' row with the topics glyph; on a phone it
+   sits left-aligned under the buttons, quieter, in its own space. */
+.ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class] {
+  background: none !important; border: 0 !important; box-shadow: none !important;
+  height: auto !important; min-height: 0 !important; padding: 0 !important; border-radius: 0 !important;
+  color: #2c4f9e !important; font-size: 0.9rem !important; font-weight: 650 !important;
+  display: inline-flex !important; align-items: center !important; gap: 7px !important;
+}
+.ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class] svg:first-child { display: inline-block !important; width: 16px !important; height: 16px !important; }
+@media (hover: hover) { .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class]:hover { color: #1e3a8a !important; text-decoration: underline; text-underline-offset: 3px; } }
+@media (min-width: 900px) {
+  .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class] { margin-left: auto !important; }
+}
+@media (max-width: 899.98px) {
+  .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class] { flex: 0 0 100% !important; justify-content: flex-start !important; align-self: flex-start !important; padding: 8px 0 0 !important; font-size: 0.88rem !important; }
+  /* The stamp pill under the note, a step smaller. */
+  .ec-head .ec-stamp--below .ec-stamp-pill { font-size: 0.8rem !important; padding: 5px 10px !important; gap: 6px !important; }
+  .ec-head .ec-stamp--below .ec-stamp-sun { width: 13px; height: 13px; }
+  /* The headline wraps to its width, not to balanced halves. */
+  .tdi-card--edition .ec-headline[class][class][class][class][class][class][class] { text-wrap: normal !important; text-wrap-style: auto !important; max-width: none !important; width: 100% !important; }
+}
+.tdi-card--edition .ec-headline[class][class][class][class][class][class][class] { text-wrap: normal !important; }
+/* The first story clears the Top Stories rule. */
+.tdi-card--edition .di-briefs.di-briefs--v2 .di-lbl + .dib[class][class][class] { padding-top: 20px !important; }
