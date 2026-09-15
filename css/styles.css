@@ -37882,3 +37882,21 @@ body:not(.tt-on) .ndp.aii-nav-dd-trending .trend-card-grid[class][class] { margi
 .tdi-card--edition .di-briefs.di-briefs--v2[class][class][class] { margin-top: 26px !important; }
 .tdi-card--edition .di-briefs--v2 .di-lbl--rule[class][class][class][class][class] { font-size: 1.05rem !important; }
 .tdi-card--edition .dib--v2 .dib-head[class][class][class][class] { font-size: 1.04rem !important; margin-bottom: 8px !important; }
+
+/* ═══ revamp1373: sources under the story on a phone; the Trending head's colour ═══
+   Below the 700px container width the story grid drops the sources into a
+   new row — but into column 1, the 52px play column, so every chip was
+   crushed to a letter and stacked. The sources take the story's own column
+   now, left-aligned under its text, chips in a row. */
+@container (max-width: 699.98px) {
+  .tdi-card--edition .di-briefs.di-briefs--v2 .dib.dib--play[class][class] .dib-side {
+    grid-column: 2 / -1; border-left: 0; padding-left: 0; margin-top: 2px;
+  }
+  .tdi-card--edition .di-briefs.di-briefs--v2 .dib.dib--play[class][class] .dib-side .dib-srcs { flex-direction: row !important; flex-wrap: wrap !important; gap: 8px !important; }
+  .tdi-card--edition .di-briefs.di-briefs--v2 .dib.dib--play[class][class] .dib-side .dib-srcs-label { flex: 0 0 100%; margin: 0 0 -2px !important; }
+  .tdi-card--edition .di-briefs.di-briefs--v2 .dib.dib--play[class][class] .dib-side .dib-src { max-width: 100%; }
+}
+/* The head's colour was still the rail's navy (#1a2c66): a heavier rule
+   held it. Same weight as that rule, News Feed's #14213d. */
+body.home-search #home-trending .trending-topics-titlerow .trending-topics-title[class][class][class][class],
+body #home-trending .trending-topics-title[class][class][class][class][class] { color: #14213d !important; }
