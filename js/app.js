@@ -2042,7 +2042,7 @@ function topicEditionCardHTML(topic) {
         <div class="ec-lead">
           <span class="ec-kicker ec-kicker--topic">${ic}<span>${escapeHTML(topic.name)}</span></span>
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
-          <p class="ec-summary tdi-summary" data-ec-summary hidden></p>
+          <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
         <div class="ec-actions">
           <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
@@ -2064,7 +2064,7 @@ function briefHeadline(d) {
   const m = String((d && d.content) || '').match(/^\s*(?:\*\*)?HEADLINE:?(?:\*\*)?\s*(.+?)\s*$/im);
   if (m && m[1]) return m[1].replace(/\*\*/g, '').replace(/[.\s]+$/, '').trim();
   const f = briefFocusLines(d);
-  return f[0] ? f[0].title : '';
+  return f[0] ? String(f[0].title).replace(/[.\s]+$/, '') : '';
 }
 function applyEpisodeToCard(card, ep) {
   if (!card || !ep) return;
