@@ -37677,3 +37677,24 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
    bottoms. Stretch is safe here because an open row takes the whole grid row
    (grid-column: 1 / -1), so it never has a mate to stretch. */
 #content .prompts-home--v2 .ph-featured .aii-fi-acclist[class][class][class] { align-items: stretch !important; }
+
+/* ═══ revamp1360: the card's head, sized to its tile; the stamp, condensed ═══
+
+   Title: 22.7px beside a 44px tile read small. It scales with the viewport
+   now — 26.4px on a desktop, down to 21.6px on a phone — in one rule, so the
+   phone size no longer needs its own breakpoint override. */
+.tdi-card--edition .ec-title[class][class][class][class][class][class][class][class][class] {
+  font-size: clamp(1.35rem, 1.05rem + 0.9vw, 1.65rem) !important;
+  font-weight: 800 !important; line-height: 1.12 !important; letter-spacing: -0.016em !important;
+}
+/* The day's headline: one weight down, from 800 to 700. */
+.tdi-card--edition .ec-headline[class][class][class][class][class] { font-weight: 700 !important; letter-spacing: -0.01em !important; }
+/* The stamp. The gap each side of the divider measured 19px — the date row
+   is a flex box with a 10px gap of its own on top of the divider's margin,
+   which is why trimming the margin twice barely moved it. The row's gap goes
+   to zero and the divider's margin is the whole distance: 8px a side. Type up
+   to 1rem, and the two glyphs up with it so they don't go small beside it. */
+.tdi-card--edition .ec-lead .ec-meta .tdi-date[class][class][class][class] { gap: 0 !important; font-size: 1rem !important; }
+.tdi-card--edition .ec-lead .ec-meta .tdi-stamp-sep[class][class][class][class] { margin: 0 8px !important; height: 15px !important; }
+.tdi-card--edition .ec-lead .ec-meta .tdi-stamp-val[class][class] { gap: 6px !important; }
+.tdi-card--edition .ec-lead .ec-meta .tdi-stamp-val[class][class] svg { width: 15px !important; height: 15px !important; }
