@@ -1982,7 +1982,7 @@ function editionCardHTML(o) {
       <div class="ec ec--v2">
         <div class="ec-head">
           <div class="ec-headrow">
-            <span class="ec-tile" aria-hidden="true">${topicIconSVG('globe', '')}</span>
+            <span class="ec-tile" aria-hidden="true">${EC_BRIEF_ICON}</span>
             <h3 class="tdi-brieftitle ec-title">${escapeHTML(o.cardTitle || homeEditionTitle())}</h3>
             <div class="ec-stamp" data-ec-stamp></div>
           </div>
@@ -2024,6 +2024,10 @@ function editionCardHTML(o) {
 // head row; a rule; the topic as a kicker in its family colour with white
 // type; the day's headline; a one-line summary; Read Briefing. No Today in
 // Focus, no 1-2-3. Opened, it goes straight to Top Stories.
+// revamp1390: the Morning AI Briefing's own mark — a sunrise — on every
+// edition card (home, hub, topic pages), white on the brand tile. The topic's
+// icon and colour live on the kicker beneath, not on the briefing's name.
+const EC_BRIEF_ICON = '<span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg></span>';
 function topicEditionCardHTML(topic) {
   const X = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const BOOK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>';
@@ -2032,7 +2036,7 @@ function topicEditionCardHTML(topic) {
       <div class="ec ec--v2 ec--topic"${topicColorStyle(topic)}>
         <div class="ec-head">
           <div class="ec-headrow">
-            <span class="ec-tile ec-tile--topic" aria-hidden="true">${ic}</span>
+            <span class="ec-tile" aria-hidden="true">${EC_BRIEF_ICON}</span>
             <h3 class="tdi-brieftitle ec-title">Morning AI Briefing</h3>
             <div class="ec-stamp" data-ec-stamp></div>
           </div>

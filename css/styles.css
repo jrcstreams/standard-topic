@@ -38183,3 +38183,7 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
 @media (max-width: 899.98px) {
   .tdi-card--topicedition .ec-tile--topic[class][class][class][class][class][class][class][class][class][class] { width: 30px !important; height: 30px !important; }
 }
+
+/* revamp1390: the edition tile is the brand tile everywhere; the topic colour
+   stays on the kicker. */
+.tdi-card--topicedition .ec-tile[class][class][class][class][class][class][class][class][class][class][class] { background: #1e3a8a !important; color: #fff !important; }
