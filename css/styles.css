@@ -37358,3 +37358,38 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
 @media (max-width: 639px) {
   .ph-featured .ph-flist[class][class] { grid-template-columns: 1fr !important; gap: 0 !important; }
 }
+
+/* ═══ revamp1353 — the topic dropdown's close, matched to its own curve ═══
+
+   1336 set the row collapse and the fade to the same .26s and the same easing
+   and assumed they would then travel together. They do not. `grid-template-
+   rows: 1fr -> 0fr` interpolates the FR FACTOR, and the factor maps to pixels
+   on a convex curve, so the box crushes long before the clock says half:
+
+     t=45ms   rows 77%   fade 0.88
+     t=95ms   rows 18%   fade 0.42   <- box all but gone, content still there
+     t=145ms  rows  2%   fade 0.15
+
+   Matching the durations is what made it worse; what matters is matching the
+   SHAPE. The fade is cut to .14s, which puts it at ~0.22 exactly where the box
+   is at 18%, so content and container arrive together. The panel's own second
+   fade is dropped — two opacities multiplying is what left it visible at 0.35
+   over an empty box — and the lift shortens to carry the same movement. */
+.topic-subnav-picker .tsp-panelwrap[class][class][class] {
+  transition:
+    grid-template-rows .26s cubic-bezier(.4, 0, .2, 1),
+    opacity .14s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.topic-subnav-picker .tsp-panel[class][class][class] {
+  opacity: 1;
+  transition: transform .2s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.topic-subnav-picker.is-open .tsp-panelwrap[class][class][class] {
+  transition:
+    grid-template-rows .26s cubic-bezier(.4, 0, .2, 1),
+    opacity .2s cubic-bezier(.4, 0, .2, 1) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .topic-subnav-picker .tsp-panelwrap[class][class][class],
+  .topic-subnav-picker .tsp-panel[class][class][class] { transition: none !important; }
+}
