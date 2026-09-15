@@ -1372,7 +1372,7 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '', variant
     <div class="newsfeed-head section-card-head newsfeed-head--home${tabbed ? ' newsfeed-head--latest' : ''}">
       <div class="newsfeed-headrow">
         <div class="newsfeed-headtext">
-          <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">${feedTitle}</span></h3>
+          <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1z"/><path d="M19 8h1a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2"/><path d="M8 8h7M8 12h7M8 16h4"/></svg></span><span class="newsfeed-title-main">${feedTitle}</span></h3>
         </div>
         ${tabbed ? `<a class="nf-more nf-more--head" href="#/topics">More topics${NF_ARROW}</a>` : ''}
       </div>
@@ -1385,7 +1385,7 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '', variant
     : `
     <div class="newsfeed-head section-card-head newsfeed-head--home newsfeed-head--topic" style="padding-bottom:15px !important">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1z"/><path d="M19 8h1a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2"/><path d="M8 8h7M8 12h7M8 16h4"/></svg></span><span class="newsfeed-title-main">News Feed</span></h3>
       </div>
     </div>`;
 

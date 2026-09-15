@@ -38287,3 +38287,11 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
    weight, and the script now writes its own with priority. */
 .home-hero-title[class][class] { color: #1e3a8a !important; }
 .ec-kicker[class][class][class][class][class][class] svg { transform: none !important; }
+
+/* revamp1398: the News Feed head carries the Feed tab's own glyph, sized to
+   the title like Trending's — 25px, in the brand navy, no tile. Home and
+   topic pages. */
+.newsfeed-title[class][class] { display: inline-flex !important; align-items: center !important; gap: 10px !important; }
+.newsfeed-title-ic { display: inline-flex; align-items: center; color: #1e3a8a; }
+.newsfeed-title-ic svg { width: 25px; height: 25px; display: block; }
+@media (max-width: 899.98px) { .newsfeed-title-ic svg { width: 22px; height: 22px; } .newsfeed-title[class][class] { gap: 8px !important; } }
