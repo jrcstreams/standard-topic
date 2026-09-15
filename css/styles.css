@@ -37868,3 +37868,10 @@ body:not(.tt-on) .ndp.aii-nav-dd-trending .aii-nav-dd-subbar[class][class][class
 body:not(.tt-on) .ndp.aii-nav-dd-trending .trend-card-grid[class][class] { margin-top: 0 !important; padding-top: 0 !important; }
 /* The hub's edition picker goes. */
 .dih-edition[class][class] { display: none !important; }
+
+/* revamp1371: open, the close ✕ sits where the stamp pill ends. The pill
+   steps in by the ✕'s width plus a gap while the briefing is open, at the
+   widths where it is right-aligned. */
+@media (min-width: 900px) {
+  .tdi-card--edition.is-open .ec-headrow .ec-stamp[class][class] { margin-right: 46px; }
+}
