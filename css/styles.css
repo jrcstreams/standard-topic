@@ -37145,3 +37145,48 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .tdi-card--edition .ec-meta[class][class][class][class][class][class] { margin-top: 6px !important; }
   .tdi-card--edition .ec-tile[class][class][class][class][class][class] { width: 50px !important; height: 50px !important; }
 }
+
+/* ═══ revamp1347: the edition card, v2 — headline and summary, Read / Listen, bare player ═══ */
+.ec--v2 .ec-head { align-items: center; gap: 16px; }
+.ec-note { margin-left: auto; align-self: center; font-family: var(--font-family); font-size: 0.84rem; line-height: 1.35; color: #46557a; background: #eef2fb; border-radius: 10px; padding: 9px 13px; max-width: 230px; }
+.ec-rule { height: 1px; background: #dfe5f1; margin: 18px 0; }
+.ec-rule[hidden] { display: none !important; }
+.ec-lead { max-width: 76ch; }
+.ec-headline { margin: 0 0 8px; font-family: var(--font-family); font-size: 1.7rem; line-height: 1.15; font-weight: 800; color: #14213d; letter-spacing: -0.012em; text-wrap: balance; }
+.ec-summary[class][class][class] { margin: 0 !important; font-family: var(--font-family) !important; font-size: 1.02rem !important; line-height: 1.5 !important; color: #46557a !important; max-width: 70ch; display: block !important; -webkit-line-clamp: unset !important; max-height: none !important; overflow: visible !important; }
+.ec-summary[hidden] { display: none !important; }
+.ec--v2 .ec-actions { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
+.ec--v2 .ec-actions .tdi-go--brief svg:first-child { width: 18px; height: 18px; margin-right: 2px; }
+.ec-listen { display: inline-flex; align-items: center; gap: 9px; border: 0; background: #e3ebfb; color: #1e3a8a; border-radius: 10px; padding: 0 18px; height: 44px; font-family: var(--font-family); font-size: 0.96rem; font-weight: 700; cursor: pointer; }
+.ec-listen[hidden] { display: none !important; }
+.ec-listen.is-playing { background: #1e3a8a; color: #fff; }
+.ec-listen-dur { font-weight: 600; opacity: 0.85; }
+@media (hover: hover) { .ec-listen:hover { background: #d6e2fa; } .ec-listen.is-playing:hover { background: #2c4f9e; } }
+.ec-rule--player { margin: 18px 0 14px; }
+.ec--v2 .ec-player { margin: 0; }
+.ec-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; font-family: var(--font-family); font-size: 0.86rem; color: #5b6b8f; }
+.ec-aigen { display: inline-flex; align-items: center; gap: 6px; }
+.ec-foot .ec-info.how-aigen[class][class] { display: inline-flex !important; background: none !important; border: 0 !important; padding: 0 !important; margin: 0 !important; color: #7488ad !important; line-height: 0 !important; }
+.ec-foot .ec-info.how-aigen[class][class] svg circle { fill: none !important; }
+.ec-browse { display: inline-flex; align-items: center; gap: 7px; font-weight: 650; color: #2c4f9e; text-decoration: none; white-space: nowrap; }
+.ec-browse svg { flex: none; }
+@media (hover: hover) { .ec-browse:hover { text-decoration: underline; } }
+.tdi-card--edition.is-open .ec-listen, .tdi-card--edition.is-open .ec-rule--player, .tdi-card--edition.is-open .ec-player, .tdi-card--edition.is-open .ec-foot { display: none; }
+/* bare player: transport + speed + chapters */
+.bp--bare .bp-row { grid-template-columns: 1fr auto; padding-bottom: 18px; }
+@container (min-width: 761px) { .bp--bare .bp-row { grid-template-columns: 1fr auto; } }
+@container (min-width: 1000px) { .bp--bare .bp-row { grid-template-columns: 1fr auto; } }
+@container (max-width: 760px) {
+  .bp--bare .bp-row[class] { grid-template-columns: 1fr !important; }
+  .bp--bare .bp-ctrls[class] { grid-template-columns: 1fr 1.5fr; }
+}
+@media (max-width: 899.98px) {
+  .ec--v2 .ec-head { flex-wrap: wrap; }
+  .ec-note { margin: 4px 0 0; max-width: none; flex: 1 0 100%; text-align: left; }
+  .ec-headline { font-size: 1.45rem; }
+  .ec-summary[class][class][class] { font-size: 0.98rem !important; }
+  .ec--v2 .ec-actions { flex-direction: column; align-items: stretch; }
+  .ec-listen { justify-content: center; }
+  .ec-foot { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .ec-foot .ec-browse { align-self: center; }
+}

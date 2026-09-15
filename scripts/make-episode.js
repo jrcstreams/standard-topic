@@ -329,6 +329,12 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
   if (focus.length < 3 || focus.some((f) => !f.line)) {
     try { const got = await E.runFocusLines(script); if (got.length) script.in_focus = got; } catch (e) { log(`  (focus lines: ${e.message})`); }
   }
+  // The card's headline and summary; backfilled for a script without them.
+  if (!String(script.headline || '').trim() || !String(script.summary || '').trim()) {
+    try { const got = await E.runHeadline(script); if (got && got.headline) { script.headline = got.headline; script.summary = got.summary || script.summary; } } catch (e) { log(`  (headline: ${e.message})`); }
+  }
+  const cardTitle = String(script.headline || '').trim() || title;
+  const cardTeaser = String(script.summary || storyboard.teaser || '').trim();
   // Waveform peaks for the player: 96 buckets of the decoded audio, 0–100.
   let peaks = null;
   try {
@@ -366,7 +372,7 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
        script=EXCLUDED.script, sources=EXCLUDED.sources, voice=EXCLUDED.voice, provider=EXCLUDED.provider,
        chars=EXCLUDED.chars, cost_micros=EXCLUDED.cost_micros, peaks=EXCLUDED.peaks, created_at=now()
      RETURNING id`,
-    [editionDate, ed, title, storyboard.teaser || '', blob.url, bytes, durationMs,
+    [editionDate, ed, cardTitle, cardTeaser, blob.url, bytes, durationMs,
      JSON.stringify(chapters), JSON.stringify(storyboard), JSON.stringify(script), JSON.stringify(sources),
      VOICE, 'gemini-tts', chars, Math.round(micros + chars * 15), JSON.stringify(peaks)]);
 
@@ -376,7 +382,7 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
   let homeUpdated = false;
   if (!arg('no-home') && ed === 'morning') {
     const text = E.renderBriefingText(script, storyboard, { chapters });
-    const summary = String(storyboard.teaser || '').trim() || null;
+    const summary = cardTeaser || null;
     await sql.query(
       `INSERT INTO ai_insights (entity_type, entity_key, insight, content, summary, model, sources)
        VALUES ('shortcut','home','daily:b',$1,$2,$3,$4::jsonb)

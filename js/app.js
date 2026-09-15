@@ -1919,7 +1919,7 @@ function fillBriefFocus(root, d) {
   // The paragraph stays in the markup only as the fallback for a briefing that
   // has no In Focus section (an older row); when the lines exist it is hidden.
   const sEl = root && root.querySelector('[data-tdi-summary]');
-  if (sEl) {
+  if (sEl && ul) {
     const lines = briefFocusLines(d);
     if (lines.length) sEl.hidden = true;
     else { const overview = briefOverview(d); if (overview) sEl.textContent = overview; sEl.hidden = false; }
@@ -1948,25 +1948,41 @@ function briefOverview(d) {
 function editionCardHTML(o) {
   o = o || {};
   const X = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  const BOOK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>';
+  const HEAD = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>';
+  const GRID = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
+  const INFO = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="7.6" x2="12.01" y2="7.6"/></svg>';
+  // revamp1347: the card is the day. A head (tile, name, date), a rule, the
+  // day's headline and a two-sentence summary, Read / Listen, then the player
+  // under its own rule with the AI label and the by-topic link beneath. The
+  // headline and summary come from the episode; the briefing text's own
+  // summary fills in until it loads.
   return `
-      <div class="ec">
+      <div class="ec ec--v2">
         <div class="ec-head">
           <span class="ec-tile" aria-hidden="true">${topicIconSVG('globe', '')}</span>
           <div class="ec-headtx">
             <h3 class="tdi-brieftitle ec-title">${escapeHTML(o.cardTitle || homeEditionTitle())}</h3>
             <div class="tdi-metaline ec-meta"><span class="tdi-date" data-tdi-date></span></div>
           </div>
+          <span class="ec-note">Your daily update, published every morning.</span>
         </div>
-        <div class="ec-focushead"><span class="tdi-focus-lbl" data-tdi-focus-lbl hidden>Today in Focus</span></div>
-        <ul class="ec-focus" data-tdi-focus hidden></ul>
-        <p class="tdi-summary ec-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
-        <div class="ec-player" data-briefing-player hidden></div>
+        <div class="ec-rule" aria-hidden="true"></div>
+        <div class="ec-lead">
+          <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
+          <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
+        </div>
         <div class="ec-actions">
-          <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
-            <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+          <button type="button" class="tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
+            ${BOOK}<span class="tdi-go-open">Read Morning Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
           </button>
-          <a class="tdi-go tdi-go--all" href="#/intelligence">By Topic${SUBPAGE_ARROW}</a>
-          <a class="ec-more" href="#/intelligence">More episodes${SUBPAGE_ARROW}</a>
+          <button type="button" class="ec-listen" data-ec-listen hidden>${HEAD}<span data-ec-listen-lbl>Listen Instead</span><span class="ec-listen-dur" data-ec-dur></span></button>
+        </div>
+        <div class="ec-rule ec-rule--player" data-ec-playerrule hidden aria-hidden="true"></div>
+        <div class="ec-player" data-briefing-player hidden></div>
+        <div class="ec-foot">
+          <span class="ec-aigen"><span>AI-narrated \u00b7 Based on today\u2019s sourced briefing</span><button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span>
+          <a class="ec-browse" href="#/intelligence">${GRID}<span>Browse briefings by topic</span>${SUBPAGE_ARROW}</a>
         </div>
       </div>
       <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
@@ -1978,6 +1994,48 @@ function editionCardHTML(o) {
           <button type="button" class="tdi-closefoot-btn" data-di-toggle>${X}<span>Close Briefing</span></button>
         </div>
       </div></div>`;
+}
+
+// Fill the edition card from an episode: headline, summary, duration.
+function applyEpisodeToCard(card, ep) {
+  if (!card || !ep) return;
+  const h = card.querySelector('[data-ec-headline]'); if (h && ep.title) { h.textContent = ep.title; h.dataset.filled = '1'; }
+  const sm = card.querySelector('[data-ec-summary]'); if (sm && ep.teaser) { sm.textContent = ep.teaser; sm.hidden = false; sm.dataset.filled = '1'; }
+  const d = card.querySelector('[data-ec-dur]'); if (d && ep.duration_ms) d.textContent = ` \u00b7 ${Math.round(ep.duration_ms / 60000)} min`;
+}
+// The Listen button drives the card's own player. Re-bindable: the hub's
+// edition picker mounts a different episode, so the old listener must go.
+function bindListen(card, ctl) {
+  let listen = card.querySelector('[data-ec-listen]');
+  if (!listen) return;
+  const fresh = listen.cloneNode(true); listen.replaceWith(fresh); listen = fresh;
+  const rule = card.querySelector('[data-ec-playerrule]');
+  if (!ctl) { listen.hidden = true; if (rule) rule.hidden = true; return; }
+  listen.hidden = false; if (rule) rule.hidden = false;
+  const au = ctl.el.querySelector('audio');
+  const lbl = listen.querySelector('[data-ec-listen-lbl]');
+  const sync = () => { listen.classList.toggle('is-playing', !au.paused); if (lbl) lbl.textContent = au.paused ? 'Listen Instead' : 'Pause'; };
+  listen.addEventListener('click', () => ctl.toggle());
+  au.addEventListener('play', sync); au.addEventListener('pause', sync); au.addEventListener('ended', sync);
+}
+// Mount the latest episode into an edition card: the bare player, the
+// headline block, the Listen button.
+function wireEditionCard(card) {
+  if (!card) return;
+  loadEpisode({}).then((ep) => {
+    if (!ep || !card.isConnected) { bindListen(card, null); return; }
+    applyEpisodeToCard(card, ep);
+    const ctl = mountBriefingPlayer(card.querySelector('[data-briefing-player]'), ep, { bare: true });
+    bindListen(card, ctl);
+  });
+}
+// Fallbacks from the briefing text while the episode loads, or if there is
+// none: the first In Focus title as the headline, the summary as the summary.
+function fillEditionFallback(card, d) {
+  const h = card.querySelector('[data-ec-headline]');
+  if (h && h.dataset.filled !== '1') { const f = briefFocusLines(d); if (f[0]) h.textContent = f[0].title; }
+  const sm = card.querySelector('[data-ec-summary]');
+  if (sm && sm.dataset.filled !== '1' && d && d.summary) { sm.textContent = d.summary; sm.hidden = false; }
 }
 
 function diHeroCardHTML(o) {
@@ -2605,11 +2663,10 @@ function renderIntelligenceHub(container) {
       });
     };
     btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
-    mountLatestBriefingPlayer(todayCard.querySelector('[data-briefing-player]'), { compact: true });
+    wireEditionCard(todayCard);
     fetchDailyBrief('home').then((d) => {
       if (!d || !todayCard.isConnected) return;
-      const sEl = todayCard.querySelector('[data-tdi-summary]');
-      if (sEl && d.summary) sEl.textContent = d.summary;
+      fillEditionFallback(todayCard, d);
       fillBriefFocus(todayCard, d);
       if (d.generatedAt) {
         const stampHTML = diEditionStampHTML(d.generatedAt);
@@ -2638,14 +2695,14 @@ function renderIntelligenceHub(container) {
         const card = todayCard;
         if (!v) {   // back to today: restore the live briefing
           loaded = false; setOpen(false);
-          mountLatestBriefingPlayer(card.querySelector('[data-briefing-player]'), { compact: true });
-          fetchDailyBrief('home').then((d) => { if (d) fillBriefFocus(card, d); });
+          wireEditionCard(card);
           return;
         }
         const [date, edition] = v.split('|');
         const ep = await loadEpisode({ date, edition, full: true });
         if (!ep || !card.isConnected) return;
-        mountBriefingPlayer(card.querySelector('[data-briefing-player]'), ep, { compact: true });
+        applyEpisodeToCard(card, ep);
+        bindListen(card, mountBriefingPlayer(card.querySelector('[data-briefing-player]'), ep, { bare: true }));
         // In Focus from the episode
         const raw = (ep.script && Array.isArray(ep.script.in_focus) && ep.script.in_focus.length) ? ep.script.in_focus
           : (ep.chapters || []).filter((c) => ['lead', 'developing'].includes(c.beat)).map((c) => c.label);
@@ -2853,11 +2910,10 @@ function wireHomeDailyIntelligence(root) {
 
   fitDiHub(card);
 
-  mountLatestBriefingPlayer(card.querySelector('[data-briefing-player]'), { compact: true });
+  wireEditionCard(card);
   fetchDailyBrief('home').then((d) => {
     if (!d || !card.isConnected) return;
-    const sEl = card.querySelector('[data-tdi-summary]');
-    if (sEl && d.summary) sEl.textContent = d.summary;
+    fillEditionFallback(card, d);
     fillBriefFocus(card, d);
     if (d.generatedAt) {
       const stamp = diEditionStampHTML(d.generatedAt);

@@ -71,20 +71,22 @@ function barsFor(peaks) {
   return out;
 }
 
-export function playerHTML(ep) {
+export function playerHTML(ep, { bare = false } = {}) {
   const durMin = ep && ep.duration_ms ? Math.round(ep.duration_ms / 60000) : 0;
   const chapters = (ep && Array.isArray(ep.chapters) ? ep.chapters : []).filter((c) => c && c.beat !== 'intro');
   const bars = barsFor(ep && ep.peaks);
+  // bare: transport + speed + chapters only. The edition card carries the
+  // title, the AI label and the duration itself.
   return `
-    <div class="bp" data-bp>
+    <div class="bp${bare ? ' bp--bare' : ''}" data-bp>
       <div class="bp-row">
-        <div class="bp-lead">
+        ${bare ? '' : `<div class="bp-lead">
           <span class="bp-tile" aria-hidden="true">${EP_ICON}</span>
           <div class="bp-txt">
             <div class="bp-titlerow"><span class="bp-title">Listen to the Briefing</span>${durMin ? `<span class="bp-dur">${durMin} min</span>` : ''}</div>
             <div class="bp-meta">AI-narrated from today’s sourced <span class="bp-nb">briefing<button type="button" class="bp-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></div>
           </div>
-        </div>
+        </div>`}
         <div class="bp-transport">
           <button type="button" class="bp-play" data-bp-play aria-label="Play">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path data-bp-icon d="${PLAY_D}"/></svg>
@@ -98,7 +100,7 @@ export function playerHTML(ep) {
         </div>
         <div class="bp-ctrls">
           <button type="button" class="bp-ctl bp-rate" data-bp-rate aria-label="Playback speed"><span data-bp-rate-lbl>1×</span>${CHEV}</button>
-          <button type="button" class="bp-ctl bp-mute" data-bp-mute aria-label="Mute"><span data-bp-mute-ic>${VOL_ON}</span></button>
+          ${bare ? '' : `<button type="button" class="bp-ctl bp-mute" data-bp-mute aria-label="Mute"><span data-bp-mute-ic>${VOL_ON}</span></button>`}
           ${chapters.length ? `<span class="bp-vsep" aria-hidden="true"></span><button type="button" class="bp-ctl bp-ctl--chapters" data-bp-chapters aria-expanded="false">${LIST}<span>Chapters</span></button>` : ''}
         </div>
       </div>
@@ -110,9 +112,9 @@ export function playerHTML(ep) {
 }
 
 // Mount into `host` (innerHTML replaced). Returns the controller, or null.
-export function mountBriefingPlayer(host, ep) {
+export function mountBriefingPlayer(host, ep, opts = {}) {
   if (!host || !ep || !ep.url) return null;
-  host.innerHTML = playerHTML(ep);
+  host.innerHTML = playerHTML(ep, opts);
   host.hidden = false;
   const root = host.querySelector('[data-bp]');
   const au = root.querySelector('audio');
@@ -156,7 +158,7 @@ export function mountBriefingPlayer(host, ep) {
 
   play.addEventListener('click', ctl.toggle);
   rateBtn.addEventListener('click', () => { ri = (ri + 1) % RATES.length; au.playbackRate = RATES[ri]; rateLbl.textContent = `${RATES[ri]}×`; });
-  muteBtn.addEventListener('click', () => { au.muted = !au.muted; muteIc.innerHTML = au.muted ? VOL_OFF : VOL_ON; muteBtn.setAttribute('aria-label', au.muted ? 'Unmute' : 'Mute'); muteBtn.classList.toggle('is-muted', au.muted); });
+  if (muteBtn) muteBtn.addEventListener('click', () => { au.muted = !au.muted; muteIc.innerHTML = au.muted ? VOL_OFF : VOL_ON; muteBtn.setAttribute('aria-label', au.muted ? 'Unmute' : 'Mute'); muteBtn.classList.toggle('is-muted', au.muted); });
   const seekFromEvent = (e) => {
     const r = track.getBoundingClientRect();
     const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
@@ -197,5 +199,5 @@ export async function mountLatestBriefingPlayer(host, opts = {}) {
   if (!host) return null;
   const ep = await loadEpisode(opts.query || {});
   if (!ep || !host.isConnected) { if (host) host.hidden = true; return null; }
-  return mountBriefingPlayer(host, ep);
+  return mountBriefingPlayer(host, ep, opts);
 }
