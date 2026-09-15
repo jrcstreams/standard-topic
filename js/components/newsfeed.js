@@ -966,7 +966,17 @@ export function newsCardHTML(item) {
   // is handled by CSS line-clamp so the full text stays in the DOM.
   const tmp = document.createElement('div');
   tmp.innerHTML = descRaw;
-  const descFull = (tmp.textContent || '').trim();
+  // Feeds hand back a title and a summary concatenated with no punctuation
+  // ("…in Earth's orbitThe US has…", "…confirmation hearingDonald…"), and
+  // sometimes a full stop with no space after it. Both read as a typo on the
+  // card, so the seam is repaired before anything is measured or trimmed.
+  // The lower-case run must be four or more so real compounds survive —
+  // YouTube, PayPal, TikTok, iPhone, McDonald all fail the test on purpose.
+  const deglue = (t) => String(t)
+    .replace(/([.!?])([A-Z])/g, '$1 $2')
+    .replace(/([a-z]{4,})([A-Z][a-z]{2,})/g, '$1. $2')
+    .replace(/\s{2,}/g, ' ');
+  const descFull = deglue((tmp.textContent || '').trim());
   // #img245: end the preview at a SENTENCE boundary — run past the soft cap to
   // finish the sentence unless that would be egregious; only then ellipsize.
   const sentenceTrim = (t, soft = 150, hard = 300) => {

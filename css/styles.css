@@ -37327,3 +37327,34 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   display: block !important; opacity: 1 !important; max-height: none !important;
   margin: 0 !important; transition: none !important;
 }
+
+/* ═══ revamp1352: the news feed reads the same on both pages ═══
+   Topic pages stretched every card to the tallest in its row and then pushed
+   the actions to the bottom with `margin: auto 0 0`, so a short story showed a
+   wide band of nothing between its summary and its buttons while the homepage
+   showed none. Cards size to their own content now, and the gap under the
+   summary is the same number everywhere. */
+@media (min-width: 720px) {
+  .topic-band #section-newsfeed .news-list[class] { align-items: start; }
+}
+.topic-band .topic-home #section-newsfeed .news-card .news-card-actions[class][class] {
+  margin: 13px 0 0 !important; padding: 0 !important;
+}
+#section-newsfeed .news-card-actions[class] { margin-top: 13px; }
+/* The summary ends on a whole line: clamped by lines, never mid-word by width. */
+#section-newsfeed .news-card-desc[class] { overflow-wrap: break-word; }
+
+/* ═══ Featured Prompts: one grid, one gutter ═══
+   The rail is a grid whose columns were given a 1.9rem horizontal gutter and
+   NO row gutter, so rows in a column ran straight into each other while the
+   columns sat far apart. One gap value governs both, and each row owns its
+   own hairline rather than borrowing the next card's edge. */
+.ph-featured .ph-flist[class][class] { gap: 0 1.6rem !important; align-items: start; }
+.ph-featured .ph-fitem[class] { padding: 0.72rem 2px; }
+.ph-featured .ph-fitem[class]:last-child { border-bottom: 1px solid #eef1f7; }
+@media (min-width: 1024px) {
+  .ph-featured .ph-flist[class][class] { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 639px) {
+  .ph-featured .ph-flist[class][class] { grid-template-columns: 1fr !important; gap: 0 !important; }
+}
