@@ -1492,6 +1492,10 @@ function wirePromptsDropdown(panel, initialView) {
           const bEl = card.querySelector('.pdir-cardbody');
           const hd = card.querySelector('.pdir-cardhead');
           card.classList.toggle('is-open', on);
+      // The briefing carries the player; opening it reveals the strip whether
+      // or not Listen was pressed first.
+      const lw = card.querySelector('[data-ec-listenwrap]');
+      if (lw && on && card.querySelector('[data-ec-listen]:not([hidden])')) lw.hidden = false;
           if (bEl) bEl.hidden = !on;
           if (hd) hd.setAttribute('aria-expanded', String(on));
         });
@@ -1973,16 +1977,18 @@ function editionCardHTML(o) {
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
         <div class="ec-actions">
-          <button type="button" class="tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
-            ${BOOK}<span class="tdi-go-open">Read Morning Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Listen to Briefing</span><span class="ec-btn-dur" data-ec-dur></span></button>
+          <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
+            ${BOOK}<span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
           </button>
+          <a class="ec-btn ec-btn--topics" href="#/intelligence">${GRID}<span>Briefings by Topic</span>${SUBPAGE_ARROW}</a>
         </div>
-        <div class="ec-rule ec-rule--player" data-ec-playerrule hidden aria-hidden="true"></div>
-        <div class="ec-listenhead" data-ec-playerhead hidden>${HEAD}<span>Listen to the Briefing</span><span class="ec-listenhead-dur" data-ec-dur></span></div>
-        <div class="ec-player" data-briefing-player hidden></div>
-        <div class="ec-foot">
-          <span class="ec-aigen">AI-narrated \u00b7 Based on today\u2019s sourced <span class="ec-nb">briefing<button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></span>
-          <a class="ec-browse" href="#/intelligence">${GRID}<span>Browse briefings by topic</span>${SUBPAGE_ARROW}</a>
+        <div class="ec-listenwrap" data-ec-listenwrap hidden>
+          <div class="ec-listenhead" data-ec-playerhead>${HEAD}<span>Listen to the Briefing</span><span class="ec-listenhead-dur" data-ec-dur2></span></div>
+          <div class="ec-player" data-briefing-player hidden></div>
+          <div class="ec-foot">
+            <span class="ec-aigen">AI-narrated \u00b7 Based on today\u2019s sourced <span class="ec-nb">briefing<button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></span>
+          </div>
         </div>
       </div>
       <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
@@ -2001,15 +2007,31 @@ function applyEpisodeToCard(card, ep) {
   if (!card || !ep) return;
   const h = card.querySelector('[data-ec-headline]'); if (h && ep.title) { h.textContent = ep.title; h.dataset.filled = '1'; }
   const sm = card.querySelector('[data-ec-summary]'); if (sm && ep.teaser) { sm.textContent = ep.teaser; sm.hidden = false; sm.dataset.filled = '1'; }
-  const d = card.querySelector('[data-ec-dur]'); if (d && ep.duration_ms) d.textContent = `${Math.round(ep.duration_ms / 60000)} min`;
+  const mins = ep.duration_ms ? `${Math.round(ep.duration_ms / 60000)} min` : '';
+  card.querySelectorAll('[data-ec-dur], [data-ec-dur2]').forEach((d) => { d.textContent = mins; });
 }
-// Show or hide the player's rule and header with the player itself.
+// "Listen to Briefing" reveals the player beneath the card and starts it; once
+// open it is a play/pause. Re-bindable, because the hub's edition picker
+// mounts a different episode into the same card.
 function bindListen(card, ctl) {
-  const rule = card.querySelector('[data-ec-playerrule]');
-  const head = card.querySelector('[data-ec-playerhead]');
-  const on = !!ctl;
-  if (rule) rule.hidden = !on;
-  if (head) head.hidden = !on;
+  const wrap = card.querySelector('[data-ec-listenwrap]');
+  let btn = card.querySelector('[data-ec-listen]');
+  if (!btn || !wrap) return;
+  const fresh = btn.cloneNode(true); btn.replaceWith(fresh); btn = fresh;
+  if (!ctl) { btn.hidden = true; wrap.hidden = true; return; }
+  btn.hidden = false;
+  const au = ctl.el.querySelector('audio');
+  const lbl = btn.querySelector('[data-ec-listen-lbl]');
+  const sync = () => {
+    btn.classList.toggle('is-playing', !au.paused);
+    if (lbl) lbl.textContent = au.paused ? (wrap.hidden ? 'Listen to Briefing' : 'Play Briefing') : 'Pause Briefing';
+  };
+  btn.addEventListener('click', () => {
+    if (wrap.hidden) { wrap.hidden = false; btn.setAttribute('aria-expanded', 'true'); ctl.play(); }
+    else ctl.toggle();
+  });
+  au.addEventListener('play', sync); au.addEventListener('pause', sync); au.addEventListener('ended', sync);
+  sync();
 }
 // Mount the latest episode into an edition card: the bare player, the
 // headline block, the Listen button.
@@ -2648,6 +2670,8 @@ function renderIntelligenceHub(container) {
     const setOpen = (on) => {
       btns.forEach((b) => b.setAttribute('aria-expanded', on ? 'true' : 'false'));
       todayCard.classList.toggle('is-open', on);
+      const lw = todayCard.querySelector('[data-ec-listenwrap]');
+      if (lw && on && todayCard.querySelector('[data-ec-listen]:not([hidden])')) lw.hidden = false;
       try { if (inner) inner.inert = !on; } catch (_) {}
       if (!on || loaded || !inner) return;
       loaded = true;

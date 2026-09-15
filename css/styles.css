@@ -37393,3 +37393,49 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .topic-subnav-picker .tsp-panelwrap[class][class][class],
   .topic-subnav-picker .tsp-panel[class][class][class] { transition: none !important; }
 }
+
+/* ═══ revamp1354: the card's full width, three buttons, a player on request ═══
+   The headline and the summary were capped at 76ch and 70ch, which on a wide
+   card stopped them near the middle and read as a column pinned left. The card
+   already has a measure of its own; these take it. */
+.ec-lead[class] { max-width: none; }
+.ec-summary[class][class][class][class] { max-width: none !important; }
+.ec-headline[class] { max-width: 40ch; }
+
+.ec--v2 .ec-actions[class] { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; }
+.ec-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; padding: 0 18px; border-radius: 10px; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.95rem; font-weight: 700; text-decoration: none;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.ec-btn svg { flex: none; }
+.ec-btn[hidden] { display: none !important; }
+.ec-btn--listen { background: #e3ebfb; color: #1e3a8a; }
+.ec-btn--listen.is-playing { background: #1e3a8a; color: #fff; }
+.ec-btn--topics { background: #fff; border-color: #cfd8e8; color: #2b3c66; }
+.ec-btn-dur { font-weight: 600; opacity: .75; }
+.ec-btn-dur:not(:empty)::before { content: '·'; margin-right: 6px; opacity: .6; }
+@media (hover: hover) {
+  .ec-btn--listen:hover { background: #d6e2fa; }
+  .ec-btn--listen.is-playing:hover { background: #2c4f9e; }
+  .ec-btn--topics:hover { background: #f1f4fa; border-color: #b9c6dd; }
+}
+/* The player strip: folded away until Listen is pressed, and always present
+   once the briefing itself is open. */
+.ec-listenwrap { margin-top: 18px; padding-top: 16px; border-top: 1px solid #dfe5f1; }
+.ec-listenwrap[hidden] { display: none !important; }
+.tdi-card--edition.is-open .ec-listenwrap { display: block; }
+.ec--v2 .ec-foot { margin-top: 10px; }
+/* On a phone the third button is a link under the other two, so the row does
+   not become two buttons over a lonely third. */
+@media (max-width: 899.98px) {
+  .ec--v2 .ec-actions[class] { flex-direction: column; align-items: stretch; gap: 9px; }
+  .ec-btn--listen, .ec-btn--read { width: 100%; }
+  .ec-btn--topics {
+    background: none !important; border: 0 !important; height: auto; padding: 4px 0 0;
+    color: #2c4f9e; align-self: center; font-size: 0.92rem; font-weight: 650;
+  }
+  .ec-btn--topics svg:first-child { display: none; }
+  .ec-headline[class] { max-width: none; }
+}
