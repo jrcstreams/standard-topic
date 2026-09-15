@@ -37984,3 +37984,34 @@ body #home-trending .trending-topics-title[class][class][class][class][class] { 
   .trend-exp-drawers.ni-actions[class][class][class] > .te-drawer:not(.te-drawer--link):not(.te-drawer--close) > .te-drawer-sum .te-drawer-chev { margin-left: auto !important; }
   .trend-exp-drawers.ni-actions[class][class][class] > .te-drawer--close > .te-drawer-sum { justify-content: center !important; }
 }
+
+/* ═══ revamp1377: a green Global kicker, a waveform on Listen, the book on Read ═══ */
+.ec-kicker[class][class] {
+  gap: 6px; background: #dcf3e4 !important; border-color: #c3e8d0 !important; color: #166534 !important;
+}
+.ec-kicker[class][class] svg { flex: none; width: 13px; height: 13px; color: #1f8a4c; }
+/* The waveform sits past a hairline at the button's end, in the button's own
+   blue; on hover the bars move. Open (the button is the close control) it
+   gives way to the ✕. */
+.ec--v2 .ec-btn--listen .ec-wave {
+  display: inline-flex; align-items: center; gap: 2px; height: 16px;
+  margin-left: 10px; padding-left: 10px; border-left: 1px solid rgba(30, 58, 138, .2);
+}
+.ec--v2 .ec-btn--listen .ec-wave i { display: block; width: 2px; border-radius: 1px; background: currentColor; transform-origin: center; }
+.ec--v2 .ec-btn--listen .ec-wave i:nth-child(1) { height: 6px; }
+.ec--v2 .ec-btn--listen .ec-wave i:nth-child(2) { height: 12px; }
+.ec--v2 .ec-btn--listen .ec-wave i:nth-child(3) { height: 16px; }
+.ec--v2 .ec-btn--listen .ec-wave i:nth-child(4) { height: 10px; }
+.ec--v2 .ec-btn--listen .ec-wave i:nth-child(5) { height: 7px; }
+@keyframes ec-wave-bounce { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(.45); } }
+@media (hover: hover) {
+  .ec--v2 .ec-btn--listen:hover .ec-wave i { animation: ec-wave-bounce .9s ease-in-out infinite; }
+  .ec--v2 .ec-btn--listen:hover .ec-wave i:nth-child(2) { animation-delay: .12s; }
+  .ec--v2 .ec-btn--listen:hover .ec-wave i:nth-child(3) { animation-delay: .24s; }
+  .ec--v2 .ec-btn--listen:hover .ec-wave i:nth-child(4) { animation-delay: .36s; }
+  .ec--v2 .ec-btn--listen:hover .ec-wave i:nth-child(5) { animation-delay: .48s; }
+}
+@media (prefers-reduced-motion: reduce) { .ec--v2 .ec-btn--listen:hover .ec-wave i { animation: none; } }
+.ec--v2 .ec-btn--listen.is-open .ec-wave { display: none !important; }
+/* The book returns beside Read Briefing. */
+.ec--v2 .ec-btn--read[class][class] > svg:first-child { display: inline-block !important; width: 16px !important; height: 16px !important; }
