@@ -37751,3 +37751,9 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
 .tdi-card--edition.is-open .tdi-openhead--bare .tdi-openx[class][class][class] {
   position: absolute !important; top: 16px !important; right: 16px !important; z-index: 5 !important;
 }
+
+/* revamp1364: the standing note under the title — a touch more weight and a
+   step up in size, so it reads as the lockup's second line rather than a
+   caption: 0.97rem/400 -> 1.02rem/500. */
+.ec-note[class][class][class][class][class] { font-size: 1.02rem !important; font-weight: 500 !important; color: #55658a !important; }
+@media (max-width: 899.98px) { .ec-note[class][class][class][class][class] { font-size: 0.96rem !important; } }
