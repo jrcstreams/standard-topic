@@ -38056,3 +38056,8 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
 #home-trending .trending-topics-title-ic[class][class] svg,
 #home-trending .trending-topics-titlerow[class][class] svg,
 #home-trending .trending-topics-title[class][class] svg { width: 25px !important; height: 25px !important; }
+
+/* revamp1381: the kicker's globe — 1379's 1px drop overshot; half a pixel
+   (one device pixel on a Retina display) splits the ink centre and the
+   x-height centre. */
+.ec-kicker[class][class][class] svg { transform: translateY(0.5px); }
