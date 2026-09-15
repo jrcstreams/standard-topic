@@ -37854,3 +37854,17 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
 }
 #home-trending .trending-topics-titlerow[class] svg,
 #home-trending .trending-topics-title[class] svg { width: 21px !important; height: 21px !important; }
+
+/* ═══ revamp1370: three gaps ═══
+   Featured Prompts sat at 0px under its section rule where Prompts by Topic
+   has 12 (revamp1300 zeroed it for the list era). The same 12. */
+#content .prompts-home--v2 .ph-featured .aii-fi-acclist[class][class][class][class] { margin-top: 12px !important; }
+/* The Trending page's rule was a 1px tint with 8px under it; the first row
+   sat 10px off it. It is the home rail's rule now — 2px, #e0e5ee — with the
+   first row directly beneath, the way the home rail sits. */
+body:not(.tt-on) .ndp.aii-nav-dd-trending .aii-nav-dd-subbar[class][class][class][class] {
+  border-bottom: 2px solid #e0e5ee !important; margin-bottom: 0 !important;
+}
+body:not(.tt-on) .ndp.aii-nav-dd-trending .trend-card-grid[class][class] { margin-top: 0 !important; padding-top: 0 !important; }
+/* The hub's edition picker goes. */
+.dih-edition[class][class] { display: none !important; }
