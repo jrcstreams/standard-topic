@@ -37225,3 +37225,21 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
 @media (max-width: 899.98px) {
   .bp--bare .bp-ctl { height: 38px; }
 }
+
+/* ═══ revamp1349: the head — a smaller tile set on the title line, the date below ═══
+   The tile used to be a 56px block beside a two-line stack, which made it the
+   loudest thing on the card. It is now sized to the title's own line and sits
+   on it; the date and time run full width underneath both. */
+.ec--v2 .ec-head { align-items: flex-start; gap: 16px; }
+.ec-headrow { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class] { width: 38px !important; height: 38px !important; border-radius: 10px !important; flex: none; }
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class] svg { width: 19px !important; height: 19px !important; }
+.tdi-card--edition .ec-title[class][class][class][class][class][class][class] { font-size: 1.32rem !important; line-height: 1.2 !important; letter-spacing: -0.008em; }
+.tdi-card--edition .ec-meta[class][class][class][class][class][class][class] { margin: 7px 0 0 !important; }
+@media (max-width: 899.98px) {
+  .tdi-card--edition .ec-tile[class][class][class][class][class][class][class] { width: 34px !important; height: 34px !important; border-radius: 9px !important; }
+  .tdi-card--edition .ec-tile[class][class][class][class][class][class][class] svg { width: 17px !important; height: 17px !important; }
+  .tdi-card--edition .ec-title[class][class][class][class][class][class][class] { font-size: 1.18rem !important; }
+  .tdi-card--edition .ec-meta[class][class][class][class][class][class][class] { margin-top: 6px !important; }
+  .ec-headrow { gap: 10px; }
+}

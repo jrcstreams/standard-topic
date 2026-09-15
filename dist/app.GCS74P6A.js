@@ -1078,9 +1078,11 @@ ${S}`),$.length?$.join(`
 `).map(n=>n.replace(/^\s*[-*\u2022]\s*/,"").trim()).filter(Boolean).slice(0,3).map(Cc).filter(n=>n.title)}catch{return[]}}function Ec(e,t,a){if(!e)return;let n=(a||[]).slice(0,3);if(!n.length){e.hidden=!0,t&&(t.hidden=!0);return}e.classList.contains("ec-focus")?e.innerHTML=n.map((s,i)=>`<li class="ec-item"><span class="ec-n" aria-hidden="true">${i+1}</span><span class="ec-tx"><b class="ec-t">${N(s.title)}</b>${s.line?`<span class="ec-d">${N(s.line)}</span>`:""}</span></li>`).join(""):e.innerHTML=n.map(s=>`<li class="tdi-focus-li"><span class="tdi-focus-tx"><b>${N(s.title)}</b>${s.line?`<span class="tdi-focus-d">${N(s.line)}</span>`:""}</span></li>`).join(""),e.hidden=!1,t&&(t.hidden=!1)}function Si(e,t){let a=e&&e.querySelector("[data-tdi-focus]"),n=e&&e.querySelector("[data-tdi-focus-lbl]");a&&Ec(a,n,Wn(t));let s=e&&e.querySelector("[data-tdi-summary]");if(s&&a)if(Wn(t).length)s.hidden=!0;else{let r=f0(t);r&&(s.textContent=r),s.hidden=!1}}function f0(e){try{let a=ia(e&&e.content||"").find(n=>/overview|rundown/i.test(n.name||""));return!a||!a.body?"":String(a.body).replace(/^\s*[-*\u2022]\s*/gm,"").replace(/\*\*/g,"").replace(/\s*\n\s*/g," ").trim()}catch{return""}}function Hc(e){e=e||{};let t='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';return`
       <div class="ec ec--v2">
         <div class="ec-head">
-          <span class="ec-tile" aria-hidden="true">${ce("globe","")}</span>
           <div class="ec-headtx">
-            <h3 class="tdi-brieftitle ec-title">${N(e.cardTitle||m0())}</h3>
+            <div class="ec-headrow">
+              <span class="ec-tile" aria-hidden="true">${ce("globe","")}</span>
+              <h3 class="tdi-brieftitle ec-title">${N(e.cardTitle||m0())}</h3>
+            </div>
             <div class="tdi-metaline ec-meta"><span class="tdi-date" data-tdi-date></span></div>
           </div>
           <span class="ec-note">Your daily update, published every morning.</span>
