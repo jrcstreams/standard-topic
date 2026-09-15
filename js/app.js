@@ -2001,7 +2001,7 @@ function applyEpisodeToCard(card, ep) {
   if (!card || !ep) return;
   const h = card.querySelector('[data-ec-headline]'); if (h && ep.title) { h.textContent = ep.title; h.dataset.filled = '1'; }
   const sm = card.querySelector('[data-ec-summary]'); if (sm && ep.teaser) { sm.textContent = ep.teaser; sm.hidden = false; sm.dataset.filled = '1'; }
-  const d = card.querySelector('[data-ec-dur]'); if (d && ep.duration_ms) d.textContent = ` \u00b7 ${Math.round(ep.duration_ms / 60000)} min`;
+  const d = card.querySelector('[data-ec-dur]'); if (d && ep.duration_ms) d.textContent = `${Math.round(ep.duration_ms / 60000)} min`;
 }
 // Show or hide the player's rule and header with the player itself.
 function bindListen(card, ctl) {
