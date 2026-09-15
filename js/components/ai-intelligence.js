@@ -2637,7 +2637,16 @@ export function renderDailyIntelligence(container, scope) {
       </section>` : ''}
       ${items.length ? `<section class="di-briefs di-briefs--v2">
         <h3 class="di-lbl di-lbl--rule">Top Stories</h3>
-        ${items.map((it, i) => {
+        ${(() => {
+        // revamp1366: each story's chapter mark, read up front so a story
+        // can be timed against the next one's start (the last against the
+        // episode's end, when the card has the episode).
+        const marks = items.map((it) => { const m = String(it.hasLede ? it.rest : it.raw || '').match(/\[T(\d+)\]\s*$/); return m ? Number(m[1]) : null; });
+        const epi = (typeof scope.episode === 'function' ? scope.episode() : scope.episode) || null;
+        const endMs = epi && Number.isFinite(epi.duration_ms) ? epi.duration_ms : null;
+        const durFor = (i) => { if (marks[i] == null) return null; for (let j = i + 1; j < marks.length; j++) if (marks[j] != null) return marks[j] - marks[i]; return endMs != null ? endMs - marks[i] : null; };
+        const clock = (ms) => { const t = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+        return items.map((it, i) => {
           const srcs = srcsFor(i);
           // revamp1340: an item rendered from the episode carries "[T<ms>]" at
           // its end — the chapter it was spoken in. Strip it from the text and
@@ -2647,15 +2656,18 @@ export function renderDailyIntelligence(container, scope) {
           let playAt = null;
           const tm = String(bodyText || '').match(/\s*\[T(\d+)\]\s*$/);
           if (tm) { playAt = Number(tm[1]); bodyText = String(bodyText).replace(/\s*\[T\d+\]\s*$/, ''); }
-          const playBtn = (playAt != null && isHome) ? `<button type="button" class="dib-play" data-briefing-seek="${playAt}" aria-label="Play this story"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg><span>Play</span></button>` : '';
-          return `<article class="dib dib--v2${srcs.length ? ' has-srcs' : ''}">
+          const d = (playAt != null && isHome) ? durFor(i) : null;
+          const playCol = (playAt != null && isHome) ? `<div class="dib-playcol"><button type="button" class="dib-playbtn" data-briefing-seek="${playAt}" aria-label="Play this story"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button>${d != null && d > 0 ? `<span class="dib-dur">${clock(d)}</span>` : ''}</div>` : '';
+          return `<article class="dib dib--v2${playCol ? ' dib--play' : ''}${srcs.length ? ' has-srcs' : ''}">
+          ${playCol}
           <div class="dib-main">
-            ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}</h4>` : ''}${playBtn}
+            ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}</h4>` : ''}
             <div class="dib-body aii-sec-body">${renderBriefBody(bodyText, null)}</div>
           </div>
           ${srcs.length ? `<div class="dib-side">${srcChips(srcs)}</div>` : ''}
         </article>`;
-        }).join('')}
+        }).join('');
+        })()}
       </section>` : ''}
 `;
     // revamp1340: the audio player under In Focus (home only). Inside fill()

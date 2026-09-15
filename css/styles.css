@@ -37768,3 +37768,54 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
   display: inline-flex !important; position: absolute !important; top: 16px !important; right: 16px !important;
   z-index: 6 !important; margin: 0 !important;
 }
+
+/* ═══ revamp1366: the stamp as a pill, the stories with a play column ═══
+
+   The date and time are one pill — sun, "Mon, Sep 15 • 5:00 AM ET" — on the
+   right of the head row, level with the title. On a phone it wraps under
+   the title, left. No calendar glyph. */
+.ec-headrow[class][class] { flex-wrap: wrap; }
+.ec-stamp { margin-left: auto; display: flex; align-items: center; }
+.ec-stamp:empty { display: none; }
+.ec-stamp-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 13px; border-radius: 999px; background: #eef2fb; border: 1px solid #e0e7f5;
+  font-family: var(--font-family); font-size: 0.92rem; font-weight: 600; color: #2b3c66; white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.ec-stamp-sun { flex: none; color: #f59e0b; }
+.ec-stamp-dot { color: #a3aec4; font-size: 0.8em; }
+@media (max-width: 899.98px) {
+  .ec-stamp { flex: 0 0 100%; margin: 6px 0 0; justify-content: flex-start; }
+  .ec-stamp-pill { font-size: 0.86rem; padding: 6px 11px; }
+}
+/* No heading over the player — it is its own section under the summary. */
+.tdi-card--edition.is-open .ec-listenlbl[class][class][class][class][class] { display: none !important; }
+.tdi-card--edition.is-open .ec-listenwrap[class][class][class] { margin-top: 16px !important; }
+
+/* Each story leads with a round play control and the length of its
+   segment; the title and body sit to its right, the sources beyond. */
+.tdi-card--edition .di-briefs.di-briefs--v2 .dib.dib--play[class][class] {
+  display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 16px; row-gap: 10px; align-items: start;
+}
+@container (min-width: 700px) {
+  .tdi-card--edition .di-briefs.di-briefs--v2 .dib.dib--play[class][class] { grid-template-columns: 52px minmax(0, 1fr) 210px; column-gap: 18px; }
+  .tdi-card--edition .di-briefs.di-briefs--v2 .dib.dib--play[class][class] .dib-side { grid-column: 3; }
+}
+.dib-playcol { display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 2px; }
+.dib-playbtn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+  background: #e7edfb; color: #1e3a8a; transition: background .14s ease, transform .14s ease;
+}
+.dib-playbtn svg { display: block; width: 18px; height: 18px; margin-left: 2px; }
+@media (hover: hover) { .dib-playbtn:hover { background: #d9e3f8; } }
+.dib-playbtn:active { transform: scale(.96); }
+.dib-dur { font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #5b6b8f; font-variant-numeric: tabular-nums; line-height: 1; }
+.dib--play .dib-play[class][class] { display: none !important; }
+
+/* Sources: the chips flow in a row and wrap, so "+2" sits beside the last
+   source rather than on a line of its own. The label keeps the first line. */
+.tdi-card--edition .dib-side .dib-srcs[class][class] { flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; gap: 8px !important; }
+.tdi-card--edition .dib-side .dib-srcs-label[class][class] { flex: 0 0 100%; margin: 0 0 -2px !important; }
+.tdi-card--edition .dib-side .dib-src[class] { max-width: 100%; }

@@ -1872,10 +1872,12 @@ function episodeTextHTML(ep) {
       <h3 class="di-lbl di-lbl--rule">Top Stories</h3>
       ${items.map(({ seg, i }) => {
         const ms = at(i);
-        const play = ms != null ? `<button type="button" class="dib-play" data-briefing-seek="${ms}" aria-label="Play this story"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg><span>Play</span></button>` : '';
+        const nextMs = (() => { for (let j = i + 1; j < chapters.length; j++) { const v = at(j); if (v != null) return v; } return ep.duration_ms || null; })();
+        const dur = (ms != null && nextMs != null && nextMs > ms) ? `<span class="dib-dur">${fmtClock(nextMs - ms)}</span>` : '';
+        const play = ms != null ? `<div class="dib-playcol"><button type="button" class="dib-playbtn" data-briefing-seek="${ms}" aria-label="Play this story"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button>${dur}</div>` : '';
         const body = seg.beat === 'around' ? String(seg.written).split(/\n+/).map((l) => `<p>${escapeHTML(l.trim())}</p>`).join('') : `<p>${escapeHTML(String(seg.written).trim())}</p>`;
         const head = seg.beat === 'around' ? 'Around the topics' : (seg.chapter || '');
-        return `<article class="dib dib--v2${(srcsByChapter.get(i) || []).length ? ' has-srcs' : ''}"><div class="dib-main"><h4 class="dib-head">${escapeHTML(head)}</h4>${play}<div class="dib-body aii-sec-body">${body}</div></div>${srcHTML(srcsByChapter.get(i) || [])}</article>`;
+        return `<article class="dib dib--v2${play ? ' dib--play' : ''}${(srcsByChapter.get(i) || []).length ? ' has-srcs' : ''}">${play}<div class="dib-main"><h4 class="dib-head">${escapeHTML(head)}</h4><div class="dib-body aii-sec-body">${body}</div></div>${srcHTML(srcsByChapter.get(i) || [])}</article>`;
       }).join('')}
     </section>`;
 }
@@ -1966,12 +1968,12 @@ function editionCardHTML(o) {
           <div class="ec-headrow">
             <span class="ec-tile" aria-hidden="true">${topicIconSVG('globe', '')}</span>
             <h3 class="tdi-brieftitle ec-title">${escapeHTML(o.cardTitle || homeEditionTitle())}</h3>
+            <div class="ec-stamp" data-ec-stamp></div>
           </div>
           <p class="ec-note">Your daily update, published every morning.</p>
         </div>
         <div class="ec-rule" aria-hidden="true"></div>
         <div class="ec-lead">
-          <div class="tdi-metaline ec-meta"><span class="tdi-date" data-tdi-date></span></div>
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
@@ -1983,7 +1985,6 @@ function editionCardHTML(o) {
           <a class="ec-btn ec-btn--topics" href="#/intelligence">${GRID}<span>Briefings by Topic</span>${SUBPAGE_ARROW}</a>
         </div>
         <div class="ec-listenwrap" data-ec-listenwrap hidden>
-          <h3 class="di-lbl ec-listenlbl">Listen to the Briefing</h3>
           <div class="ec-player" data-briefing-player hidden></div>
           <div class="ec-foot">
             <span class="ec-aigen">AI-narrated \u00b7 Based on today\u2019s sourced <span class="ec-nb">briefing<button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></span>
@@ -2060,6 +2061,7 @@ function wireEditionCard(card) {
   if (!card) return;
   loadEpisode({}).then((ep) => {
     if (!ep || !card.isConnected) { bindListen(card, null); return; }
+    card._ecEpisode = ep;
     applyEpisodeToCard(card, ep);
     const ctl = mountBriefingPlayer(card.querySelector('[data-briefing-player]'), ep, { bare: true });
     bindListen(card, ctl);
@@ -2232,6 +2234,24 @@ function applyBriefArt(root, iso) {
   root.querySelectorAll('[data-tdi-eyebrow-ic]').forEach((el) => { el.innerHTML = night ? DI_MOON : DI_SUN; });
 }
 
+// revamp1366: the edition card's stamp — one pill, a sun for the morning
+// edition, "Mon, Sep 15 • 5:00 AM ET". No calendar glyph.
+const EC_SUN = '<svg class="ec-stamp-sun" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
+function ecStampHTML(iso) {
+  try {
+    const d = new Date(iso);
+    const et = (opts) => new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', ...opts }).format(d);
+    const day = et({ weekday: 'short', month: 'short', day: 'numeric' });
+    const time = et({ hour: 'numeric', minute: '2-digit' }) + ' ET';
+    return `<span class="ec-stamp-pill">${EC_SUN}<span class="ec-stamp-day">${escapeHTML(day)}</span><span class="ec-stamp-dot" aria-hidden="true">\u2022</span><span class="ec-stamp-time">${escapeHTML(time)}</span></span>`;
+  } catch (_) { return ''; }
+}
+function fillEcStamp(card, iso) {
+  if (!card || !iso) return;
+  const html = ecStampHTML(iso);
+  if (html) card.querySelectorAll('[data-ec-stamp]').forEach((el) => { el.innerHTML = html; });
+}
+function fmtClock(ms) { const t = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; }
 function diEditionStampHTML(iso) {
   const p = diEditionParts(iso);
   if (!p) return '';
@@ -2696,7 +2716,7 @@ function renderIntelligenceHub(container) {
       if (!on || loaded || !inner) return;
       loaded = true;
       renderDailyIntelligence(inner.querySelector('[data-di-host]') || inner, {
-        topic: 'home', label: 'Today', slug: 'home', inline: true, chrome: false,
+        topic: 'home', label: 'Today', slug: 'home', inline: true, chrome: false, episode: () => todayCard._ecEpisode,
       });
     };
     btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
@@ -2708,6 +2728,7 @@ function renderIntelligenceHub(container) {
       if (d.generatedAt) {
         const stampHTML = diEditionStampHTML(d.generatedAt);
         todayCard.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow]').forEach((el) => { el.innerHTML = stampHTML; });
+        fillEcStamp(todayCard, d.generatedAt);
       }
     }).catch(() => {});
 
@@ -2746,6 +2767,7 @@ function renderIntelligenceHub(container) {
         const entries = raw.slice(0, 3).map((x) => (x && typeof x === 'object') ? { title: String(x.title || ''), line: String(x.line || '') } : focusEntry(x));
         renderFocusInto(card.querySelector('[data-tdi-focus]'), card.querySelector('[data-tdi-focus-lbl]'), entries);
         card.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow]').forEach((el) => { el.innerHTML = diEditionStampHTML(ep.created_at || `${ep.edition_date}T09:00:00Z`); });
+        fillEcStamp(card, ep.created_at || `${ep.edition_date}T09:00:00Z`);
         // The archived text, in place of the live briefing
         loaded = true;
         const hostEl = inner && (inner.querySelector('[data-di-host]') || inner);
@@ -2941,7 +2963,7 @@ function wireHomeDailyIntelligence(root) {
     if (!on || loaded) return;
     loaded = true;
     renderDailyIntelligence(inner.querySelector('[data-di-host]') || inner, {
-      topic: 'home', label: 'Today', slug: 'home', inline: true, chrome: false,
+      topic: 'home', label: 'Today', slug: 'home', inline: true, chrome: false, episode: () => card._ecEpisode,
     });
   };
   btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
@@ -2956,6 +2978,7 @@ function wireHomeDailyIntelligence(root) {
     if (d.generatedAt) {
       const stamp = diEditionStampHTML(d.generatedAt);
       card.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow], [data-tdi-date-lg]').forEach((el) => { el.innerHTML = stamp; });
+      fillEcStamp(card, d.generatedAt);
     }
   }).catch(() => {});
 }
