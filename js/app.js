@@ -1845,7 +1845,7 @@ const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="
 // The homepage briefing's name. Two editions a day are coming (the evening
 // wave lands at 5pm ET); until the evening text is actually published this
 // stays on the morning name rather than promising an edition that is not there.
-function homeEditionTitle() { return 'Global AI Morning Briefing'; }
+function homeEditionTitle() { return 'Morning AI Briefing'; }
 // An archived edition's briefing, rendered from the episode row: the written
 // item per story, the sources the desk used for it, and a play-from-here that
 // seeks the edition's own player. Shape-matched to the live briefing's
@@ -1861,7 +1861,7 @@ function episodeTextHTML(ep) {
   const at = (i) => (chapters[i] && Number.isFinite(chapters[i].start_ms)) ? chapters[i].start_ms : null;
   const srcHTML = (list) => list.length ? `<div class="dib-side"><div class="dib-srcs">${list.slice(0, 4).map((s) => `<a class="dib-src" href="${escapeAttr(s.uri)}" target="_blank" rel="noopener">${escapeHTML(s.source || (() => { try { return new URL(s.uri).hostname.replace(/^www\./, ''); } catch (_) { return 'Source'; } })())}</a>`).join('')}</div></div>` : '';
   return `
-    <div class="di-mast di-mast--v2"><h2 class="di-title"><span class="di-title-kind di-title--today">${escapeHTML(ep.title || 'Global AI Morning Briefing')}</span></h2>
+    <div class="di-mast di-mast--v2"><h2 class="di-title"><span class="di-title-kind di-title--today">${escapeHTML(ep.title || 'Morning AI Briefing')}</span></h2>
       <div class="di-metaline">${diEditionStampHTML(ep.created_at || `${ep.edition_date}T09:00:00Z`)}</div></div>
     ${overview ? `<section class="di-focus"><div class="di-summary aii-sec-body"><p>${escapeHTML(overview)}</p></div></section>` : ''}
     <section class="di-briefs di-briefs--v2">
@@ -1939,7 +1939,7 @@ function briefOverview(d) {
   } catch (_) { return ''; }
 }
 
-// revamp1342: the Global AI Morning Briefing's own card — home and the AI
+// revamp1342: the Morning AI Briefing's own card — home and the AI
 // Briefings page. Same data hooks as diHeroCardHTML (the fills and the expand
 // wiring are shared), different shell: icon tile beside the title with the
 // date on its own line, Today in Focus as a ruled label over three
@@ -2317,7 +2317,7 @@ function renderFeaturedBriefings(host, opts) {
       <div class="hb-grid">
         <div class="hb-hero" data-home-briefing>
           <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-            noHeader: true, hubLink: false, art: true, topicLabel: "Global AI Morning Briefing", pillLabel: 'All Topics',
+            noHeader: true, hubLink: false, art: true, topicLabel: "Morning AI Briefing", pillLabel: 'All Topics',
             sublabel: 'Your daily briefing across every topic we cover.',
           })}</div>
         </div>
@@ -2464,7 +2464,7 @@ function renderIntelligenceHub(container) {
           <p class="ph-sec-sub dih-bytopic-sub">A few of today's briefings to start with.</p>
         </div>
         <div class="dih-groupbody">
-          <!-- revamp1341: the edition card. The Global AI Morning Briefing leads
+          <!-- revamp1341: the edition card. The Morning AI Briefing leads
                Featured Briefings at full width: the same hero card as the
                homepage (three In Focus lines in a row, the player), plus an
                edition picker over the past editions, which /api/episodes keeps. -->
@@ -2974,7 +2974,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       </div>
       <div class="topic-top topic-top--lead">
         <section class="topic-top-main">
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, cardTitle: 'AI Morning Briefing', cardPill: topic.name, noHeader: true, art: true })}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'A fresh briefing on this topic, every day.', hubLink: false, topicLabel: topic.name, cardTitle: 'Morning AI Briefing', cardPill: topic.name, noHeader: true, art: true })}
           </div>
         </section>
       </div>
@@ -5412,7 +5412,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
              out to briefings by topic and trending links to its own page, so
              there is nothing left for tabs to switch between. -->
         <div class="home-sections home-v2">
-          <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Global AI Morning Briefing"></section>
+          <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Morning AI Briefing"></section>
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
                is Today's News. Column 2 stacks the briefing, trending, AI
@@ -7352,7 +7352,7 @@ function renderPage(route) {
 
         <div class="about-section">
           <h3>About the AI</h3>
-          <p>The briefings and insights are written by AI, and they say so wherever they appear. They are built from real articles published that day rather than from the model's memory, and the sources sit underneath so you can check any of it. The audio edition of the Global AI Briefing is AI-generated too: a synthetic voice reading a script written from those same sourced briefings, so what you hear and what you read are the same stories with the same sources.</p>
+          <p>The briefings and insights are written by AI, and they say so wherever they appear. They are built from real articles published that day rather than from the model's memory, and the sources sit underneath so you can check any of it. The audio edition of the Morning AI Briefing is AI-generated too: a synthetic voice reading a script written from those same sourced briefings, so what you hear and what you read are the same stories with the same sources.</p>
           <p>It can still be wrong. It is a fast way in, not a replacement for the reporting — the links are there for a reason. The <button type="button" class="about-inline-link how-aigen" data-how-it-works>AI-generated content</button> label on any briefing explains how it is produced.</p>
         </div>
 

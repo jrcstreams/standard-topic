@@ -2607,8 +2607,8 @@ export function renderDailyIntelligence(container, scope) {
     // Opening a card should not rename it.
     // revamp1340: the open briefing is named by edition. Home is the Global AI
     // Morning Briefing (the evening name follows when the evening wave ships);
-    // a topic page is that topic's AI Morning Briefing.
-    const briefTitle = `<span class="di-title-kind di-title--today">${isHome ? 'Global AI Morning Briefing' : 'AI Morning Briefing'}</span>`;
+    // a topic page is that topic's Morning AI Briefing.
+    const briefTitle = `<span class="di-title-kind di-title--today">${isHome ? 'Morning AI Briefing' : 'Morning AI Briefing'}</span>`;
     const mastEyebrow = isHome ? '' : `<div class="di-eyebrow">${esc(name)}</div>`;
     const pillLabel = isHome ? 'All Topics' : mastLabel;
     const SEP = '<span class="di-metasep" aria-hidden="true"></span>';

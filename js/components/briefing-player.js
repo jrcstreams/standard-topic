@@ -1,6 +1,6 @@
 // The briefing's audio player (revamp1340, reshaped revamp1342).
 //
-// One component, mounted wherever the Global AI Morning Briefing is shown:
+// One component, mounted wherever the Morning AI Briefing is shown:
 // under Today in Focus on the homepage card and the AI Briefings edition card,
 // and again inside the opened briefing. It is a contained light panel: a
 // headphones tile and title on the left, the play button and a waveform in the
@@ -181,7 +181,7 @@ export function mountBriefingPlayer(host, ep) {
   if ('mediaSession' in navigator) {
     au.addEventListener('play', () => {
       try {
-        navigator.mediaSession.metadata = new MediaMetadata({ title: ep.title || 'Global AI Morning Briefing', artist: 'Standard Topic', album: `Morning · ${ep.edition_date || ''}` });
+        navigator.mediaSession.metadata = new MediaMetadata({ title: ep.title || 'Morning AI Briefing', artist: 'Standard Topic', album: `Morning · ${ep.edition_date || ''}` });
         navigator.mediaSession.setActionHandler('seekbackward', () => { au.currentTime = Math.max(0, au.currentTime - 10); });
         navigator.mediaSession.setActionHandler('seekforward', () => { au.currentTime = Math.min(dur(), au.currentTime + 10); });
       } catch (_) {}
