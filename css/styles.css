@@ -37195,3 +37195,33 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
 .ec-aigen { display: inline; line-height: 1.5; }
 .ec-nb { white-space: nowrap; }
 .ec-foot .ec-info.how-aigen[class][class] { vertical-align: -2px; margin-left: 5px !important; }
+
+/* ═══ revamp1348: a thinner player under a small header ═══
+   The Listen button is gone, so the player IS the listen affordance — it needs
+   a name of its own. One line: headphones, "Listen to the Briefing", the
+   duration. The player below it loses a third of its height: shorter bars, a
+   smaller play button, tighter padding, and controls that match. */
+.ec-listenhead { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-family: var(--font-family); font-size: 0.95rem; font-weight: 700; color: #14213d; }
+.ec-listenhead[hidden] { display: none !important; }
+.ec-listenhead svg { flex: none; width: 17px; height: 17px; color: #2c4f9e; }
+.ec-listenhead-dur { font-weight: 500; color: #7488ad; }
+.ec-listenhead-dur:not(:empty)::before { content: '·'; margin-right: 6px; color: #9aa7c2; }
+.ec-rule--player { margin: 16px 0 12px; }
+.tdi-card--edition.is-open .ec-listenhead { display: none; }
+.ec--v2 .ec-actions { margin-top: 16px; }
+
+.bp--bare { padding: 10px 12px; border-radius: 10px; }
+.bp--bare .bp-row { padding-bottom: 14px; gap: 14px; align-items: center; }
+.bp--bare .bp-play { width: 36px; height: 36px; }
+.bp--bare .bp-play svg { width: 16px; height: 16px; }
+.bp--bare .bp-wavewrap { height: 30px; }
+.bp--bare .bp-wave { height: 30px; gap: 2px; }
+.bp--bare .bp-times { margin-top: 2px; font-size: 0.72rem; }
+.bp--bare .bp-transport { gap: 10px; }
+.bp--bare .bp-ctl { height: 32px; padding: 0 11px; font-size: 0.8rem; }
+.bp--bare .bp-vsep { height: 20px; }
+.bp--bare .bp-chapters { margin-top: 8px; padding-top: 6px; }
+.bp--bare .bp-chapter { padding: 4px; }
+@media (max-width: 899.98px) {
+  .bp--bare .bp-ctl { height: 38px; }
+}

@@ -1976,9 +1976,9 @@ function editionCardHTML(o) {
           <button type="button" class="tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
             ${BOOK}<span class="tdi-go-open">Read Morning Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
           </button>
-          <button type="button" class="ec-listen" data-ec-listen hidden>${HEAD}<span data-ec-listen-lbl>Listen Instead</span><span class="ec-listen-dur" data-ec-dur></span></button>
         </div>
         <div class="ec-rule ec-rule--player" data-ec-playerrule hidden aria-hidden="true"></div>
+        <div class="ec-listenhead" data-ec-playerhead hidden>${HEAD}<span>Listen to the Briefing</span><span class="ec-listenhead-dur" data-ec-dur></span></div>
         <div class="ec-player" data-briefing-player hidden></div>
         <div class="ec-foot">
           <span class="ec-aigen">AI-narrated \u00b7 Based on today\u2019s sourced <span class="ec-nb">briefing<button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></span>
@@ -2003,20 +2003,13 @@ function applyEpisodeToCard(card, ep) {
   const sm = card.querySelector('[data-ec-summary]'); if (sm && ep.teaser) { sm.textContent = ep.teaser; sm.hidden = false; sm.dataset.filled = '1'; }
   const d = card.querySelector('[data-ec-dur]'); if (d && ep.duration_ms) d.textContent = ` \u00b7 ${Math.round(ep.duration_ms / 60000)} min`;
 }
-// The Listen button drives the card's own player. Re-bindable: the hub's
-// edition picker mounts a different episode, so the old listener must go.
+// Show or hide the player's rule and header with the player itself.
 function bindListen(card, ctl) {
-  let listen = card.querySelector('[data-ec-listen]');
-  if (!listen) return;
-  const fresh = listen.cloneNode(true); listen.replaceWith(fresh); listen = fresh;
   const rule = card.querySelector('[data-ec-playerrule]');
-  if (!ctl) { listen.hidden = true; if (rule) rule.hidden = true; return; }
-  listen.hidden = false; if (rule) rule.hidden = false;
-  const au = ctl.el.querySelector('audio');
-  const lbl = listen.querySelector('[data-ec-listen-lbl]');
-  const sync = () => { listen.classList.toggle('is-playing', !au.paused); if (lbl) lbl.textContent = au.paused ? 'Listen Instead' : 'Pause'; };
-  listen.addEventListener('click', () => ctl.toggle());
-  au.addEventListener('play', sync); au.addEventListener('pause', sync); au.addEventListener('ended', sync);
+  const head = card.querySelector('[data-ec-playerhead]');
+  const on = !!ctl;
+  if (rule) rule.hidden = !on;
+  if (head) head.hidden = !on;
 }
 // Mount the latest episode into an edition card: the bare player, the
 // headline block, the Listen button.
