@@ -139,47 +139,73 @@ export function mountBriefingDock() {
   dock.className = 'bpd';
   dock.setAttribute('role', 'region'); dock.setAttribute('aria-label', 'Now playing');
   dock.hidden = true;
+  const CHEV = '<svg class="bpd-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg>';
   dock.innerHTML = `
-    <div class="bpd-bar" data-bpd-track role="slider" aria-label="Position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="bpd-fill" data-bpd-fill></div></div>
+    <div class="bpd-chapters" data-bpd-chapters hidden><div class="bpd-chapters-h">Chapters</div><ol class="bpd-chlist" data-bpd-chlist></ol></div>
     <div class="bpd-row">
       <button type="button" class="bpd-play" data-bpd-play aria-label="Pause"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path data-bpd-icon d="${PAUSE_D}"/></svg></button>
       <button type="button" class="bpd-back" data-bpd-back aria-label="Back 15 seconds">${BACK}</button>
       <div class="bpd-txt">
-        <div class="bpd-kicker">${HEAD}<span>Morning AI Briefing</span><span class="bpd-time"><span data-bpd-cur>0:00</span> / <span data-bpd-dur>0:00</span></span></div>
-        <div class="bpd-title" data-bpd-title></div>
+        <div class="bpd-kicker">${HEAD}<span>Morning AI Briefing</span></div>
+        <button type="button" class="bpd-title" data-bpd-title-btn aria-expanded="false" aria-label="Chapters"><span class="bpd-title-tx" data-bpd-title></span>${CHEV}</button>
       </div>
       <button type="button" class="bpd-x" data-bpd-x aria-label="Stop and close player">${X}</button>
+    </div>
+    <div class="bpd-scrub">
+      <span class="bpd-t" data-bpd-cur>0:00</span>
+      <div class="bpd-track" data-bpd-track role="slider" aria-label="Position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="bpd-fill" data-bpd-fill></div><div class="bpd-knob" data-bpd-knob></div></div>
+      <span class="bpd-t" data-bpd-dur>0:00</span>
     </div>`;
   document.body.appendChild(dock);
   const play = dock.querySelector('[data-bpd-play]'), icon = dock.querySelector('[data-bpd-icon]'), back = dock.querySelector('[data-bpd-back]');
-  const track = dock.querySelector('[data-bpd-track]'), fill = dock.querySelector('[data-bpd-fill]'), cur = dock.querySelector('[data-bpd-cur]'), dur = dock.querySelector('[data-bpd-dur]'), title = dock.querySelector('[data-bpd-title]'), x = dock.querySelector('[data-bpd-x]');
+  const track = dock.querySelector('[data-bpd-track]'), fill = dock.querySelector('[data-bpd-fill]'), knob = dock.querySelector('[data-bpd-knob]');
+  const cur = dock.querySelector('[data-bpd-cur]'), dur = dock.querySelector('[data-bpd-dur]'), title = dock.querySelector('[data-bpd-title]'), titleBtn = dock.querySelector('[data-bpd-title-btn]'), x = dock.querySelector('[data-bpd-x]');
+  const chWrap = dock.querySelector('[data-bpd-chapters]'), chList = dock.querySelector('[data-bpd-chlist]');
   const A = briefingAudio;
-  let raf = 0;
-  const paint = () => {
-    const d = A.duration(), t = A.time(); const p = d ? Math.min(1, t / d) : 0;
-    fill.style.width = `${(p * 100).toFixed(3)}%`;
+  let raf = 0; let dragging = false; let dragT = 0; let builtFor = null;
+  const setHeightVar = () => { try { document.body.style.setProperty('--bpd-h', `${dock.offsetHeight + 12}px`); } catch (_) {} };
+  const buildChapters = () => {
+    const e = A.episode; if (!e || builtFor === e.url) return; builtFor = e.url;
+    const ch = (e.chapters || []).filter((c) => c && c.beat !== 'intro');
+    chList.innerHTML = ch.map((c) => `<li><button type="button" class="bpd-ch" data-bpd-seek="${Number(c.start_ms) || 0}"><span class="bpd-ch-tc">${mmss((Number(c.start_ms) || 0) / 1000)}</span><span class="bpd-ch-nm">${esc(c.label)}</span></button></li>`).join('');
+    chList.querySelectorAll('[data-bpd-seek]').forEach((b) => b.addEventListener('click', () => { A.seekTo(Number(b.dataset.bpdSeek), e); }));
+  };
+  const paintPos = (t, d) => {
+    const p = d ? Math.min(1, Math.max(0, t / d)) : 0;
+    fill.style.width = `${(p * 100).toFixed(3)}%`; knob.style.left = `${(p * 100).toFixed(3)}%`;
     track.setAttribute('aria-valuenow', String(Math.round(p * 100)));
     cur.textContent = mmss(t); dur.textContent = mmss(d);
+  };
+  const paint = () => {
+    const d = A.duration(), t = dragging ? dragT : A.time();
+    paintPos(t, d);
     const ch = A.chapterAt(t); const e = A.episode;
     title.textContent = ch && ch.label && ch.beat !== 'cold_open' ? ch.label : ((e && e.title) || '');
     const playing = A.isPlaying();
     icon.setAttribute('d', playing ? PAUSE_D : PLAY_D); play.setAttribute('aria-label', playing ? 'Pause' : 'Play');
     dock.classList.toggle('is-playing', playing);
+    if (!chWrap.hidden) { const ms = t * 1000; let active = null; chList.querySelectorAll('[data-bpd-seek]').forEach((b) => { if (ms >= Number(b.dataset.bpdSeek)) active = b; }); chList.querySelectorAll('[data-bpd-seek]').forEach((b) => b.classList.toggle('is-active', b === active)); }
   };
   const tick = () => { if (!A.isPlaying()) { raf = 0; return; } paint(); raf = requestAnimationFrame(tick); };
   const decide = () => {
     const show = A.started && !!A.episode && !A.anyViewVisible() && !A.el.ended;
-    if (show !== !dock.hidden) { dock.hidden = !show; document.body.classList.toggle('has-bpd', show); }
+    if (show !== !dock.hidden) { dock.hidden = !show; document.body.classList.toggle('has-bpd', show); if (show) { buildChapters(); setHeightVar(); } }
     if (show) { paint(); if (A.isPlaying() && !raf) raf = requestAnimationFrame(tick); }
   };
-  A.on((type) => { if (type === 'ended') { paint(); setTimeout(decide, 1200); return; } decide(); });
+  A.on((type) => { if (type === 'load') builtFor = null; if (type === 'ended') { paint(); setTimeout(decide, 1200); return; } decide(); });
   play.addEventListener('click', () => A.toggle());
   back.addEventListener('click', () => A.skip(-15));
-  x.addEventListener('click', () => { A.stop(); decide(); });
-  const seekFrom = (e) => { const r = track.getBoundingClientRect(); const px = (e.touches ? e.touches[0].clientX : e.clientX) - r.left; const d = A.duration(); if (d) A.el.currentTime = Math.max(0, Math.min(d, (px / r.width) * d)); paint(); };
-  track.addEventListener('pointerdown', seekFrom);
-  track.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') { A.skip(10); e.preventDefault(); } if (e.key === 'ArrowLeft') { A.skip(-10); e.preventDefault(); } if (e.key === ' ' || e.key === 'Enter') { A.toggle(); e.preventDefault(); } });
-  window.addEventListener('scroll', () => { /* IntersectionObserver drives visibility; nothing to do here */ }, { passive: true });
+  x.addEventListener('click', () => { A.stop(); chWrap.hidden = true; titleBtn.setAttribute('aria-expanded', 'false'); decide(); });
+  titleBtn.addEventListener('click', () => { buildChapters(); const open = chWrap.hidden; chWrap.hidden = !open; titleBtn.setAttribute('aria-expanded', String(open)); dock.classList.toggle('is-expanded', open); paint(); setHeightVar(); });
+  // The scrubber: drag anywhere on the track; the position is applied on
+  // release (and live while dragging for the readout), with the knob following.
+  const tFrom = (e) => { const r = track.getBoundingClientRect(); const px = (e.clientX != null ? e.clientX : (e.touches && e.touches[0].clientX)) - r.left; const d = A.duration(); return d ? Math.max(0, Math.min(d, (px / r.width) * d)) : 0; };
+  track.addEventListener('pointerdown', (e) => { dragging = true; dragT = tFrom(e); try { track.setPointerCapture(e.pointerId); } catch (_) {} dock.classList.add('is-scrubbing'); paint(); e.preventDefault(); });
+  track.addEventListener('pointermove', (e) => { if (!dragging) return; dragT = tFrom(e); paint(); });
+  const endDrag = (e) => { if (!dragging) return; dragging = false; dock.classList.remove('is-scrubbing'); try { track.releasePointerCapture(e.pointerId); } catch (_) {} try { A.el.currentTime = dragT; } catch (_) {} paint(); };
+  track.addEventListener('pointerup', endDrag); track.addEventListener('pointercancel', endDrag);
+  track.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') { A.skip(10); e.preventDefault(); } if (e.key === 'ArrowLeft') { A.skip(-10); e.preventDefault(); } if (e.key === ' ' || e.key === 'Enter') { A.toggle(); e.preventDefault(); } paint(); });
+  window.addEventListener('resize', () => { if (!dock.hidden) setHeightVar(); });
   // A reload: come back paused where it was, dock showing.
   if (A.restore()) decide();
   return dock;
