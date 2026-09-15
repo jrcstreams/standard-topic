@@ -37273,3 +37273,48 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .ec-headline { font-size: 1.22rem; }
   .ec-note { margin-top: 9px; font-size: 0.75rem; }
 }
+
+/* ═══ revamp1351: the opened edition card ═══
+   Open, the card keeps its head, the day's headline and summary, and the
+   player — then goes straight to Top Stories. The expanded panel sat outside
+   .ec, which carries the card's padding, so every line in the briefing rode
+   the card's edge; it gets the same inset here. */
+.tdi-card--edition .tdi-expand[class] { margin-top: 0; border-top: 0; padding: 0 1.35rem 1.15rem; }
+.tdi-card--edition .tdi-expand-inner[class] { padding: 0; }
+.tdi-card--edition.is-open .ec { padding-bottom: 0; }
+.tdi-card--edition.is-open .ec-rule--player,
+.tdi-card--edition.is-open .ec-player { display: block; }
+.tdi-card--edition.is-open .ec-listenhead { display: flex; }
+.tdi-card--edition.is-open .ec-note,
+.tdi-card--edition.is-open .ec-actions,
+.tdi-card--edition.is-open .ec-foot { display: none; }
+.tdi-card--edition.is-open .ec-headline { font-size: 1.2rem; margin-bottom: 6px; }
+.tdi-card--edition.is-open .ec-summary[class][class][class] { font-size: 0.94rem !important; }
+.tdi-card--edition.is-open .ec-rule--player { margin: 14px 0 10px; }
+.tdi-card--edition.is-open .tdi-openhead { display: none; }
+
+/* Top Stories: one rhythm. The first item was taller than the rest because
+   its source column set the row height. */
+.tdi-card--edition .di-briefs .dib[class] { padding: 14px 0; border-bottom: 1px solid #eef1f7; margin: 0; }
+.tdi-card--edition .di-briefs .dib[class]:last-child { border-bottom: 0; }
+.tdi-card--edition .di-briefs .dib-side[class] { align-self: start; }
+.tdi-card--edition .di-briefs .dib-main[class] { min-width: 0; }
+.tdi-card--edition .di-briefs .dib-head[class] { margin: 0 0 7px; }
+.tdi-card--edition .di-briefs .dib-body[class] { margin: 0; }
+
+/* "Play" — headphones, under the story's title, sized to be hit. */
+.dib-play[class][class] {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0 0 8px; vertical-align: baseline;
+  border: 1px solid #cfd8e8; background: #fff; border-radius: 999px;
+  padding: 0 14px; height: 32px;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 650; color: #2c4f9e; cursor: pointer;
+}
+.dib-play[class][class] svg { flex: none; }
+@media (hover: hover) { .dib-play[class][class]:hover { background: #eef3fd; border-color: #b9c6dd; } }
+
+/* The close control clears the card's bottom edge. */
+.tdi-card--edition .tdi-closefoot[class] { padding: 18px 0 2px; }
+@media (max-width: 899.98px) {
+  .tdi-card--edition .tdi-expand[class] { padding: 0 1rem 1rem; }
+  .tdi-card--edition.is-open .ec-headline { font-size: 1.12rem; }
+}

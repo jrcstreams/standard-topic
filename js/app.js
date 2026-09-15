@@ -1868,10 +1868,10 @@ function episodeTextHTML(ep) {
       <h3 class="di-lbl di-lbl--rule">Top Stories</h3>
       ${items.map(({ seg, i }) => {
         const ms = at(i);
-        const play = ms != null ? `<button type="button" class="dib-play" data-briefing-seek="${ms}" aria-label="Play this story"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span>Play from here</span></button>` : '';
+        const play = ms != null ? `<button type="button" class="dib-play" data-briefing-seek="${ms}" aria-label="Play this story"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg><span>Play</span></button>` : '';
         const body = seg.beat === 'around' ? String(seg.written).split(/\n+/).map((l) => `<p>${escapeHTML(l.trim())}</p>`).join('') : `<p>${escapeHTML(String(seg.written).trim())}</p>`;
         const head = seg.beat === 'around' ? 'Around the topics' : (seg.chapter || '');
-        return `<article class="dib dib--v2${(srcsByChapter.get(i) || []).length ? ' has-srcs' : ''}"><div class="dib-main"><h4 class="dib-head">${escapeHTML(head)}${play}</h4><div class="dib-body aii-sec-body">${body}</div></div>${srcHTML(srcsByChapter.get(i) || [])}</article>`;
+        return `<article class="dib dib--v2${(srcsByChapter.get(i) || []).length ? ' has-srcs' : ''}"><div class="dib-main"><h4 class="dib-head">${escapeHTML(head)}</h4>${play}<div class="dib-body aii-sec-body">${body}</div></div>${srcHTML(srcsByChapter.get(i) || [])}</article>`;
       }).join('')}
     </section>`;
 }
@@ -2652,7 +2652,7 @@ function renderIntelligenceHub(container) {
       if (!on || loaded || !inner) return;
       loaded = true;
       renderDailyIntelligence(inner.querySelector('[data-di-host]') || inner, {
-        topic: 'home', label: 'Today', slug: 'home', inline: true,
+        topic: 'home', label: 'Today', slug: 'home', inline: true, chrome: false,
       });
     };
     btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
@@ -2896,7 +2896,7 @@ function wireHomeDailyIntelligence(root) {
     if (!on || loaded) return;
     loaded = true;
     renderDailyIntelligence(inner.querySelector('[data-di-host]') || inner, {
-      topic: 'home', label: 'Today', slug: 'home', inline: true,
+      topic: 'home', label: 'Today', slug: 'home', inline: true, chrome: false,
     });
   };
   btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
