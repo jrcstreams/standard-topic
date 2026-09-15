@@ -1966,6 +1966,7 @@ function briefOverview(d) {
 function editionCardHTML(o) {
   o = o || {};
   const X = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  const BOOK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>';
   const HEAD = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>';
   const GRID = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
   const INFO = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="7.6" x2="12.01" y2="7.6"/></svg>';
@@ -1987,14 +1988,14 @@ function editionCardHTML(o) {
         </div>
         <div class="ec-rule" aria-hidden="true"></div>
         <div class="ec-lead">
-          <span class="ec-kicker">Global</span>
+          <span class="ec-kicker"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span>Global</span></span>
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
         <div class="ec-actions">
-          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Listen to Briefing</span><span class="ec-btn-x" aria-hidden="true">${X}</span></button>
+          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Listen to Briefing</span><span class="ec-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ec-btn-x" aria-hidden="true">${X}</span></button>
           <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
-            <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+            ${BOOK}<span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
           </button>
           <a class="ec-btn ec-btn--topics" href="#/intelligence">${GRID}<span>Briefings by Topic</span>${SUBPAGE_ARROW}</a>
         </div>

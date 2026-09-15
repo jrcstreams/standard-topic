@@ -1090,14 +1090,14 @@ ${S}`),L.length?L.join(`
         </div>
         <div class="ec-rule" aria-hidden="true"></div>
         <div class="ec-lead">
-          <span class="ec-kicker">Global</span>
+          <span class="ec-kicker"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span>Global</span></span>
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
         <div class="ec-actions">
-          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg><span data-ec-listen-lbl>Listen to Briefing</span><span class="ec-btn-x" aria-hidden="true">${t}</span></button>
+          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg><span data-ec-listen-lbl>Listen to Briefing</span><span class="ec-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ec-btn-x" aria-hidden="true">${t}</span></button>
           <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
-            <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${bt}
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg><span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${bt}
           </button>
           <a class="ec-btn ec-btn--topics" href="#/intelligence"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Briefings by Topic</span>${bt}</a>
         </div>

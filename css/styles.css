@@ -38015,3 +38015,12 @@ body #home-trending .trending-topics-title[class][class][class][class][class] { 
 .ec--v2 .ec-btn--listen.is-open .ec-wave { display: none !important; }
 /* The book returns beside Read Briefing. */
 .ec--v2 .ec-btn--read[class][class] > svg:first-child { display: inline-block !important; width: 16px !important; height: 16px !important; }
+
+/* revamp1378: the card's tail, and the news cards' edge.
+   Closed, the card measured 21px above the tile and 39px under the buttons:
+   the collapsed expand block still carried its 18px bottom padding. Zero
+   while closed, so the two ends match. */
+.tdi-card--edition:not(.is-open) .tdi-expand[class][class] { padding-bottom: 0 !important; }
+/* The news cards' border was #e8edf5 on white — one step darker so the
+   card reads as a card without turning into a box. Home and topic pages. */
+#section-newsfeed .news-card[class][class] { border-color: #d6ddea !important; }
