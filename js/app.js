@@ -1990,10 +1990,8 @@ function editionCardHTML(o) {
           </div>
         </div>
       </div>
+      <button type="button" class="tdi-openx ec-openx" data-di-toggle aria-label="Close briefing">${X}</button>
       <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
-        <div class="tdi-openhead tdi-openhead--bare">
-          <button type="button" class="tdi-openx" data-di-toggle aria-label="Close briefing">${X}</button>
-        </div>
         <div data-di-host></div>
         <div class="tdi-closefoot">
           <button type="button" class="tdi-closefoot-btn" data-di-toggle>${X}<span>Close Briefing</span></button>

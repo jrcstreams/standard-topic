@@ -37757,3 +37757,14 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
    caption: 0.97rem/400 -> 1.02rem/500. */
 .ec-note[class][class][class][class][class] { font-size: 1.02rem !important; font-weight: 500 !important; color: #55658a !important; }
 @media (max-width: 899.98px) { .ec-note[class][class][class][class][class] { font-size: 0.96rem !important; } }
+
+/* revamp1365: the close ✕ is a child of the card, not of the expand block.
+   1363 pinned it to "the card" — but the expand block is positioned for its
+   own stacking, so it was the ✕'s containing block and the ✕ stayed under
+   the player. It now sits in the card's markup directly, outside the expand
+   block (and outside its inert region), and shows only while open. */
+.tdi-card--edition .ec-openx[class][class] { display: none !important; }
+.tdi-card--edition.is-open .ec-openx[class][class][class] {
+  display: inline-flex !important; position: absolute !important; top: 16px !important; right: 16px !important;
+  z-index: 6 !important; margin: 0 !important;
+}
