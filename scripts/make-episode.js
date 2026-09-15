@@ -362,19 +362,23 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
     }
   });
 
+  // The stamp the site shows is this row's created_at. It is the wave the
+  // edition was built from (5am ET), not the moment of a (re)publish — the
+  // card was reading "8:56 PM ET" on a morning briefing after a re-run.
+  const stamp = E.waveStart(new Date()).toISOString();
   const rows = await sql.query(
     `INSERT INTO ai_audio (kind, family_slug, edition_date, edition, title, teaser, url, bytes, duration_ms,
-       chapters, storyboard, script, sources, voice, provider, chars, cost_micros, peaks)
-     VALUES ('flagship','home',$1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11::jsonb,$12,$13,$14,$15,$16::jsonb)
+       chapters, storyboard, script, sources, voice, provider, chars, cost_micros, peaks, created_at)
+     VALUES ('flagship','home',$1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11::jsonb,$12,$13,$14,$15,$16::jsonb,$17)
      ON CONFLICT (kind, family_slug, edition_date, edition) DO UPDATE SET
        title=EXCLUDED.title, teaser=EXCLUDED.teaser, url=EXCLUDED.url, bytes=EXCLUDED.bytes,
        duration_ms=EXCLUDED.duration_ms, chapters=EXCLUDED.chapters, storyboard=EXCLUDED.storyboard,
        script=EXCLUDED.script, sources=EXCLUDED.sources, voice=EXCLUDED.voice, provider=EXCLUDED.provider,
-       chars=EXCLUDED.chars, cost_micros=EXCLUDED.cost_micros, peaks=EXCLUDED.peaks, created_at=now()
+       chars=EXCLUDED.chars, cost_micros=EXCLUDED.cost_micros, peaks=EXCLUDED.peaks, created_at=EXCLUDED.created_at
      RETURNING id`,
     [editionDate, ed, cardTitle, cardTeaser, blob.url, bytes, durationMs,
      JSON.stringify(chapters), JSON.stringify(storyboard), JSON.stringify(script), JSON.stringify(sources),
-     VOICE, 'gemini-tts', chars, Math.round(micros + chars * 15), JSON.stringify(peaks)]);
+     VOICE, 'gemini-tts', chars, Math.round(micros + chars * 15), JSON.stringify(peaks), stamp]);
 
   // The home briefing text = this episode, rendered. Only the MORNING edition
   // overwrites the home daily:b row for now: the site has one home briefing
@@ -384,12 +388,12 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
     const text = E.renderBriefingText(script, storyboard, { chapters });
     const summary = cardTeaser || null;
     await sql.query(
-      `INSERT INTO ai_insights (entity_type, entity_key, insight, content, summary, model, sources)
-       VALUES ('shortcut','home','daily:b',$1,$2,$3,$4::jsonb)
+      `INSERT INTO ai_insights (entity_type, entity_key, insight, content, summary, model, sources, created_at)
+       VALUES ('shortcut','home','daily:b',$1,$2,$3,$4::jsonb,$5)
        ON CONFLICT (entity_type, entity_key, insight)
-       DO UPDATE SET content=EXCLUDED.content, summary=EXCLUDED.summary, model=EXCLUDED.model, sources=EXCLUDED.sources, created_at=now()`,
+       DO UPDATE SET content=EXCLUDED.content, summary=EXCLUDED.summary, model=EXCLUDED.model, sources=EXCLUDED.sources, created_at=EXCLUDED.created_at`,
       [text.replace(/^SUMMARY:.*\n+/, ''), summary, `episode:${E.deskModel()}`,
-       JSON.stringify(sources.map((s) => ({ title: s.title, uri: s.uri, source: s.source, via: 'episode', item: s.chapter })))]);
+       JSON.stringify(sources.map((s) => ({ title: s.title, uri: s.uri, source: s.source, via: 'episode', item: s.chapter }))), stamp]);
     homeUpdated = true;
   }
   return { url: blob.url, bytes, id: rows[0] && rows[0].id, homeUpdated };
