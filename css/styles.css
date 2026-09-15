@@ -37449,3 +37449,38 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
    same card inset, so the card box itself sat a step lower. The list's own
    lead is removed; the card's padding is the whole gap on both pages. */
 .home-v2 #section-newsfeed .news-list[class][class] { margin-top: 0 !important; padding-top: 0 !important; }
+
+/* ═══ revamp1356: the three real causes ═══
+
+   1. The headline box was already the card's full width — `text-wrap: balance`
+      was splitting it into two even lines on purpose, which reads as a column
+      pinned left. It fills the line now and wraps only when it must.
+   2. The date/time stamp carries .tdi-metaline, which is full-width, so it
+      claimed the whole flex row and dropped under the title instead of sitting
+      beside it. It sizes to its content.
+   3. The middle button also carries .tdi-go, whose older rules beat mine on
+      radius (8 vs 10), font size (14.4 vs 15.2) and vertical offset (6px low).
+      All three buttons are pinned to one set of numbers. */
+.ec-headline[class][class][class] { text-wrap: normal !important; }
+
+.ec-headrow .ec-meta[class][class][class][class] {
+  flex: 0 0 auto !important; width: auto !important; max-width: none !important;
+}
+
+.ec--v2 .ec-actions .ec-btn[class][class][class] {
+  height: 44px !important; min-height: 44px !important;
+  padding: 0 18px !important; border-radius: 10px !important;
+  font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1 !important;
+  margin: 0 !important; align-self: center !important; box-sizing: border-box !important;
+  display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important;
+}
+.ec--v2 .ec-actions .ec-btn[class][class][class] svg { width: 17px !important; height: 17px !important; }
+@media (max-width: 899.98px) {
+  .ec--v2 .ec-actions .ec-btn--listen[class][class][class],
+  .ec--v2 .ec-actions .ec-btn--read[class][class][class] { width: 100% !important; }
+  .ec--v2 .ec-actions .ec-btn--topics[class][class][class] {
+    height: auto !important; min-height: 0 !important; padding: 4px 0 0 !important;
+    background: none !important; border: 0 !important; border-radius: 0 !important;
+  }
+  .ec-headrow .ec-meta[class][class][class][class] { flex: 1 0 100% !important; }
+}
