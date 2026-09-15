@@ -37844,3 +37844,13 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
   .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class] { flex: 0 0 100% !important; padding: 2px 0 0 !important; }
   .tdi-card--edition:not(.is-open) .ec[class][class] { padding-bottom: 0.45rem !important; }
 }
+
+/* revamp1369: the home Trending head matches the News Feed head — measured
+   19.84px/750 against 24.8px/800 in a different navy. Same size, weight,
+   colour and tracking; the trend glyph scales with it. */
+#home-trending .trending-topics-title[class][class][class] {
+  font-size: 1.55rem !important; font-weight: 800 !important; color: #14213d !important;
+  letter-spacing: -0.022em !important; line-height: 1.1 !important;
+}
+#home-trending .trending-topics-titlerow[class] svg,
+#home-trending .trending-topics-title[class] svg { width: 21px !important; height: 21px !important; }
