@@ -19,6 +19,7 @@ import { initTrendingDetailModal } from './components/trending-detail-modal.js?v
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
 import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief, splitSections } from './components/ai-intelligence.js?v=20260914-revamp1340c';
 import { mountLatestBriefingPlayer, mountBriefingPlayer, loadEpisode, loadEpisodeList } from './components/briefing-player.js?v=20260914-revamp1341';
+import { briefingAudio, mountBriefingDock } from './components/briefing-audio.js';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -51,6 +52,9 @@ import { trackPageView, track } from './utils/analytics.js';
 })();
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // revamp1382: the site-wide audio engine's dock, mounted once on the body
+  // (never re-rendered), so the briefing plays on across page changes.
+  try { mountBriefingDock(); } catch (_) {}
   // Boot must never leave a silent blank page: if the core data fetches fail
   // (bad deploy, CDN hiccup, offline), show a minimal reload fallback instead.
   try {
@@ -266,8 +270,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
           const ec = document.querySelector('.tdi-card--edition');
           const wrap = ec && ec.querySelector('[data-ec-listenwrap]');
-          const au = wrap && wrap.querySelector('audio');
-          const st = ec ? { open: ec.classList.contains('is-open'), player: !!(wrap && !wrap.hidden), t: au ? au.currentTime : 0, playing: !!(au && !au.paused && !au.ended) } : null;
+          const st = ec ? { open: ec.classList.contains('is-open'), player: !!(wrap && !wrap.hidden) } : null;
           window.__ecRestore = (st && (st.open || st.player)) ? st : null;
         } catch (_) { window.__ecRestore = null; }
         renderLayout(base); renderPage(base);
@@ -2030,10 +2033,11 @@ function bindListen(card, ctl) {
   const wrap = card.querySelector('[data-ec-listenwrap]');
   let btn = card.querySelector('[data-ec-listen]');
   if (!btn || !wrap) return;
+  try { card.dispatchEvent(new Event('ec:unbind')); } catch (_) {}
   const fresh = btn.cloneNode(true); btn.replaceWith(fresh); btn = fresh;
   if (!ctl) { btn.hidden = true; wrap.hidden = true; window.__ecRestore = null; return; }
   btn.hidden = false;
-  const au = ctl.el.querySelector('audio');
+  const au = ctl.audio;
   const lbl = btn.querySelector('[data-ec-listen-lbl]');
   // revamp1362: the button reads the strip's state. Closed, it is "Listen to
   // Briefing" and pressing it opens the strip and starts the audio. Open, it
@@ -2042,7 +2046,7 @@ function bindListen(card, ctl) {
   const sync = () => {
     const open = !wrap.hidden;
     btn.classList.toggle('is-open', open);
-    btn.classList.toggle('is-playing', !au.paused);
+    btn.classList.toggle('is-playing', ctl.isPlaying());
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
     if (lbl) lbl.textContent = open ? 'Close audio player' : 'Listen to Briefing';
   };
@@ -2051,19 +2055,17 @@ function bindListen(card, ctl) {
     if (wrap.hidden) { wrap.hidden = false; sync(); ctl.play(); }
     else { ctl.pause(); wrap.hidden = true; sync(); }
   });
-  au.addEventListener('play', sync); au.addEventListener('pause', sync); au.addEventListener('ended', sync);
+  const offSync = briefingAudio.on(sync);
+  card.addEventListener('ec:unbind', offSync, { once: true });
   // revamp1359: the open briefing carries the player by default, so an
   // episode that lands after the briefing was opened shows it straight away.
   if (card.classList.contains('is-open')) wrap.hidden = false;
-  // revamp1368: after a breakpoint re-render, put the strip and the audio
-  // back where they were. Position waits for metadata if it has to.
+  // revamp1382: the engine plays on across page changes and re-renders. A
+  // card mounted while its episode is already going (back from another page,
+  // across a breakpoint) opens its strip and shows the live position.
+  if (ctl.isCurrent() && briefingAudio.started) wrap.hidden = false;
   const rs = window.__ecRestore; window.__ecRestore = null;
-  if (rs && rs.player) {
-    wrap.hidden = false;
-    const seek = () => { try { if (rs.t > 0) au.currentTime = rs.t; } catch (_) {} };
-    if (au.readyState >= 1) seek(); else au.addEventListener('loadedmetadata', seek, { once: true });
-    if (rs.playing) { try { const pr = ctl.play(); if (pr && pr.catch) pr.catch(() => {}); } catch (_) {} }
-  }
+  if (rs && rs.player) wrap.hidden = false;
   sync();
 }
 // revamp1359: open, the briefing shows the player under the summary without
@@ -2075,7 +2077,7 @@ function syncEditionPlayer(card, on) {
   const btn = card.querySelector('[data-ec-listen]');
   if (!wrap || !btn || btn.hidden) return;
   if (on) wrap.hidden = false;
-  else { const au = wrap.querySelector('audio'); if (!au || au.paused) wrap.hidden = true; }
+  else if (!briefingAudio.isPlaying()) wrap.hidden = true;
   if (typeof btn._ecSync === 'function') btn._ecSync();
   else btn.setAttribute('aria-expanded', wrap.hidden ? 'false' : 'true');
 }
