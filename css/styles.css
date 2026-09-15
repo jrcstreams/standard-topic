@@ -37318,3 +37318,12 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .tdi-card--edition .tdi-expand[class] { padding: 0 1rem 1rem; }
   .tdi-card--edition.is-open .ec-headline { font-size: 1.12rem; }
 }
+
+/* revamp1351c: the edition card's summary stays when the briefing opens.
+   `.tdi-card.is-open .tdi-summary` collapses the old card's summary to
+   opacity 0 / max-height 0 — right for that card, wrong for this one, where
+   the summary is the standfirst above Top Stories. */
+.tdi-card--edition.is-open .ec-summary[class][class][class][class] {
+  display: block !important; opacity: 1 !important; max-height: none !important;
+  margin: 0 !important; transition: none !important;
+}
