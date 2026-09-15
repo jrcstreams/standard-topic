@@ -38337,3 +38337,19 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
 .tdi-card--edition.is-open .ec--v2 .ec-actions[class][class][class][class] { display: flex !important; }
 .tdi-card--edition.is-open .ec--v2 .ec-actions > .ec-btn[class][class][class] { display: none !important; }
 .tdi-card--edition.is-open .ec--v2 .ec-actions .ec-listenwrap[class][class] { margin-top: 0 !important; border: 0 !important; padding: 0 !important; background: none !important; border-radius: 0 !important; }
+
+/* revamp1401: the player inside the dropdown fits its box. Seventy-two bars
+   at a 2px minimum plus 2px gaps need 288px; the dropdown gives ~220. Under
+   480px the wave keeps every other bar (in both layers, so the fill still
+   lines up) and the track can shrink. The AI-narrated line steps down to
+   fit one line where it can. */
+.bp-wavewrap { min-width: 0; }
+.bp-wave, .bp-wave-played { min-width: 0; overflow: hidden; }
+@media (max-width: 479.98px) {
+  .bp--bare .bp-wave > i:nth-child(even), .bp--bare .bp-wave-played > i:nth-child(even) { display: none; }
+  .bp--bare .bp-wave > i, .bp--bare .bp-wave-played > i { min-width: 2px; }
+}
+@media (max-width: 639.98px) {
+  .ec--v2 .ec-actions .ec-listenwrap .ec-foot .ec-aigen { font-size: 0.74rem; line-height: 1.35; }
+  .ec--v2 .ec-actions .ec-listenwrap .ec-foot { margin-top: 8px; }
+}
