@@ -38187,3 +38187,10 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
 /* revamp1390: the edition tile is the brand tile everywhere; the topic colour
    stays on the kicker. */
 .tdi-card--topicedition .ec-tile[class][class][class][class][class][class][class][class][class][class][class] { background: #1e3a8a !important; color: #fff !important; }
+
+/* revamp1391: 1385 brightened BOTH Topics variants; only the button beside
+   Search on narrow screens needed it. The Topics link in the nav list goes
+   back to its siblings' ink — measured on Trending: white at .82, weight 600. */
+.sticky-hero-inner .navbtn--topics-inline[class][class],
+.sticky-hero-inner .navbtn--topics-inline[class][class] .navbtn-label { color: rgba(255, 255, 255, 0.82) !important; font-weight: 600 !important; }
+.sticky-hero-inner .navbtn--topics-inline[class][class] .navbtn-ico { color: rgba(255, 255, 255, 0.82) !important; }
