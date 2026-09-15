@@ -37439,3 +37439,10 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
   .ec-btn--topics svg:first-child { display: none; }
   .ec-headline[class] { max-width: none; }
 }
+
+/* revamp1354b: the homepage feed starts where the topic feed does. Measured
+   from the News Feed rule to the first headline: topic 58px, home 59px — but
+   the home list carries a 12px top margin AND 4px of padding on top of the
+   same card inset, so the card box itself sat a step lower. The list's own
+   lead is removed; the card's padding is the whole gap on both pages. */
+.home-v2 #section-newsfeed .news-list[class][class] { margin-top: 0 !important; padding-top: 0 !important; }
