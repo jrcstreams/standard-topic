@@ -2064,6 +2064,45 @@ function topicEditionCardHTML(topic) {
 }
 // The day's headline for a topic card: the briefing's own HEADLINE line when
 // the wave wrote one (revamp1387 template), else its first In Focus title.
+// revamp1395: the kicker's icon, aligned by ink and snapped to the device
+// pixel grid. Measured, the icon's ink centre already sat within 0.16px of
+// the label's cap-height centre at every layout tried — what read as "off"
+// was the SVG rasterising at a fractional pixel while the text snaps to the
+// grid. This measures both, moves the icon's ink centre onto the label's
+// cap centre, and rounds that to the nearest device pixel.
+function alignKickerIcons(root) {
+  const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+  (root || document).querySelectorAll('.ec-kicker').forEach((k) => {
+    const svg = k.querySelector('svg'), sp = k.querySelector('span');
+    if (!svg || !sp || !k.offsetParent) return;
+    try {
+      svg.style.transform = '';
+      const geo = [...svg.querySelectorAll('path,circle,rect,line,polyline,polygon')].map((g) => g.getBoundingClientRect()).filter((r) => r.height > 0);
+      if (!geo.length) return;
+      const inkCy = (Math.min(...geo.map((r) => r.top)) + Math.max(...geo.map((r) => r.bottom))) / 2;
+      const cs = getComputedStyle(sp);
+      const c = document.createElement('canvas').getContext('2d');
+      c.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      const mH = c.measureText('H'), mA = c.measureText(sp.textContent || 'H');
+      const rg = document.createRange(); rg.selectNodeContents(sp); const tr = rg.getClientRects()[0];
+      if (!tr) return;
+      const baseline = tr.top + (tr.height - (mA.fontBoundingBoxAscent + mA.fontBoundingBoxDescent)) / 2 + mA.fontBoundingBoxAscent;
+      const capCy = baseline - mH.actualBoundingBoxAscent / 2;
+      // the shift that puts the ink centre on the cap centre, then the extra
+      // that lands the icon's top on a device pixel
+      let shift = capCy - inkCy;
+      const top = svg.getBoundingClientRect().top + shift;
+      shift += Math.round(top * dpr) / dpr - top;
+      svg.style.transform = Math.abs(shift) < 0.02 ? '' : `translateY(${shift.toFixed(3)}px)`;
+    } catch (_) {}
+  });
+}
+if (typeof window !== 'undefined') {
+  let __kickT = 0;
+  const __kick = () => { clearTimeout(__kickT); __kickT = setTimeout(() => alignKickerIcons(), 60); };
+  window.addEventListener('resize', __kick);
+  try { document.fonts && document.fonts.ready && document.fonts.ready.then(__kick); } catch (_) {}
+}
 function briefHeadline(d) {
   const m = String((d && d.content) || '').match(/^\s*(?:\*\*)?HEADLINE:?(?:\*\*)?\s*(.+?)\s*$/im);
   if (m && m[1]) return m[1].replace(/\*\*/g, '').replace(/[.\s]+$/, '').trim();
@@ -2808,6 +2847,7 @@ function renderIntelligenceHub(container) {
         const stampHTML = diEditionStampHTML(d.generatedAt);
         todayCard.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow]').forEach((el) => { el.innerHTML = stampHTML; });
         fillEcStamp(todayCard, d.generatedAt);
+        alignKickerIcons(todayCard);
       }
     }).catch(() => {});
 
@@ -3060,6 +3100,7 @@ function wireHomeDailyIntelligence(root) {
       card.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow], [data-tdi-date-lg]').forEach((el) => { el.innerHTML = stamp; });
       fillEcStamp(card, d.generatedAt);
     }
+    alignKickerIcons(card);
   }).catch(() => {});
 }
 
@@ -3266,6 +3307,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       // revamp1387: the topic card's headline and stamp pill.
       { const h = body.querySelector('[data-ec-headline]'); const t = briefHeadline(d); if (h && t) h.textContent = t; }
       if (d.generatedAt) fillEcStamp(body, d.generatedAt);
+      alignKickerIcons(body);
       fillBriefFocus(body, d);
       // Two stamps, one datum: the compact one rides the title line while the
       // card is closed; the larger one leads the brief when it's open.

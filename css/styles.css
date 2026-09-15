@@ -38261,3 +38261,9 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
 .ec--v2 .ec-btn--listen:not(.is-open) .ec-btn-chev { color: #5b6b8f; }
 @media (hover: hover) { .ec--v2 .ec-actions .ec-btn--listen[class][class][class][class][class][class][class]:not(.is-open):hover { background: #f1f4fa !important; border-color: #b9c6dd !important; } }
 .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class][class][class][class][class] { order: 2; }
+
+/* revamp1395: the topic kicker takes the page header tile's own mix of the
+   topic colour — 82% over white — not the raw value. And the icon's
+   position is set at runtime (alignKickerIcons); no static nudge remains. */
+.tdi-card--topicedition .ec-kicker--topic[class][class][class][class] { background: color-mix(in srgb, var(--tc, #1e3a8a) 82%, #fff) !important; border-color: color-mix(in srgb, var(--tc, #1e3a8a) 82%, #fff) !important; }
+.ec-kicker[class][class][class][class][class] svg { transform: none; }
