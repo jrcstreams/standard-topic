@@ -38133,3 +38133,25 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
   body.has-bpd { padding-bottom: var(--bpd-h, 118px); }
   .bpd-scrub { padding: 0 14px 12px; }
 }
+
+/* ═══ revamp1385: the nav's Topics matches Search; the phone card's buttons ═══
+   Topics read lighter than Search beside it (a 0.9 white at weight 500 against
+   Search's solid white). Same ink, same weight, on both Topics variants. */
+.sticky-hero-inner #nav-topics.navbtn--topics-right .navbtn-label,
+.sticky-hero-inner .navbtn--topics-inline .navbtn-label { color: #fff !important; font-weight: 700 !important; }
+.sticky-hero-inner #nav-topics.navbtn--topics-right .navbtn-ico,
+.sticky-hero-inner .navbtn--topics-inline .navbtn-ico { color: #fff !important; opacity: 1 !important; }
+/* Listen (with its waveform) and Read need ~190px each; below that they
+   stack full-width instead of spilling their icons out of the row. And on a
+   phone all three controls take a smaller size. */
+@media (max-width: 899.98px) {
+  .ec--v2 .ec-actions .ec-btn--listen[class][class][class][class][class],
+  .ec--v2 .ec-actions .ec-btn--read[class][class][class][class][class] {
+    flex: 1 1 190px !important; min-width: 0 !important; height: 38px !important; min-height: 38px !important;
+    font-size: 0.86rem !important; padding: 0 12px !important; overflow: hidden !important;
+  }
+  .ec--v2 .ec-actions .ec-btn--listen[class][class][class][class][class] > svg:first-child,
+  .ec--v2 .ec-actions .ec-btn--read[class][class][class][class][class] > svg:first-child { flex: none; }
+  .ec--v2 .ec-btn--listen .ec-wave { margin-left: 8px; padding-left: 8px; height: 14px; }
+  .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class][class][class] { font-size: 0.86rem !important; }
+}
