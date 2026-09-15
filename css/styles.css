@@ -38050,3 +38050,9 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
   .tdi-card--edition:not(.is-open) .ec[class][class][class] { padding-bottom: 1rem !important; }
   .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class][class][class] { justify-content: center !important; align-self: center !important; padding-top: 10px !important; }
 }
+
+/* revamp1380: the home Trending glyph matches its head — 25px against the
+   24.8px title, at every width (1369's 21px had shrunk the phone's 24). */
+#home-trending .trending-topics-title-ic[class][class] svg,
+#home-trending .trending-topics-titlerow[class][class] svg,
+#home-trending .trending-topics-title[class][class] svg { width: 25px !important; height: 25px !important; }
