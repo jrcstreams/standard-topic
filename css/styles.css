@@ -37875,3 +37875,10 @@ body:not(.tt-on) .ndp.aii-nav-dd-trending .trend-card-grid[class][class] { margi
 @media (min-width: 900px) {
   .tdi-card--edition.is-open .ec-headrow .ec-stamp[class][class] { margin-right: 46px; }
 }
+
+/* revamp1372: the open briefing's stories — titles a step up (0.94 -> 1.04rem),
+   the Top Stories head a step up (0.95 -> 1.05rem) with real room between it
+   and the player (16 -> 26px). */
+.tdi-card--edition .di-briefs.di-briefs--v2[class][class][class] { margin-top: 26px !important; }
+.tdi-card--edition .di-briefs--v2 .di-lbl--rule[class][class][class][class][class] { font-size: 1.05rem !important; }
+.tdi-card--edition .dib--v2 .dib-head[class][class][class][class] { font-size: 1.04rem !important; margin-bottom: 8px !important; }
