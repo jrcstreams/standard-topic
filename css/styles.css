@@ -37400,7 +37400,10 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
    already has a measure of its own; these take it. */
 .ec-lead[class] { max-width: none; }
 .ec-summary[class][class][class][class] { max-width: none !important; }
-.ec-headline[class] { max-width: 40ch; }
+/* revamp1355: no cap on the headline. 1354 lifted the caps off the lead and
+   the summary and then put a 40ch one on the headline itself, which is why the
+   summary spanned the card and the headline stopped two thirds across. */
+.ec-headline[class][class] { max-width: none !important; }
 
 .ec--v2 .ec-actions[class] { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; }
 .ec-btn {
@@ -37437,7 +37440,7 @@ body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class
     color: #2c4f9e; align-self: center; font-size: 0.92rem; font-weight: 650;
   }
   .ec-btn--topics svg:first-child { display: none; }
-  .ec-headline[class] { max-width: none; }
+  .ec-headline[class][class] { max-width: none !important; }
 }
 
 /* revamp1354b: the homepage feed starts where the topic feed does. Measured
