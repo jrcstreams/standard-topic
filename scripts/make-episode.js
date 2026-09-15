@@ -232,6 +232,8 @@ async function main() {
 }
 
 async function finish(script, storyboard, briefs, { edition, ed, dateLabel, micros, fmt }) {
+  // revamp1386: time words the sources do not support come out before the voice.
+  { const r = E.enforceTimeWords(script, briefs, storyboard); script = r.script; if (r.stripped.length) log(`Time words stripped (${r.stripped.length}): ${[...new Set(r.stripped)].join(', ')}`); }
   const title = storyboard.title || `Standard Topic — ${dateLabel}`;
   fs.writeFileSync(path.join(OUT, `script-${edition}.md`), E.scriptToText(script, { title, dateLabel }));
   fs.writeFileSync(path.join(OUT, `script-${edition}.json`), JSON.stringify(script, null, 2));
