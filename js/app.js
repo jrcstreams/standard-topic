@@ -2158,7 +2158,7 @@ function bindListen(card, ctl) {
   // revamp1382: the engine plays on across page changes and re-renders. A
   // card mounted while its episode is already going (back from another page,
   // across a breakpoint) opens its strip and shows the live position.
-  if (ctl.isCurrent() && briefingAudio.started) wrap.hidden = false;
+  if (ctl.isPlaying()) wrap.hidden = false;   // revamp1400b: only while actually playing, not merely started-then-paused
   const rs = window.__ecRestore; window.__ecRestore = null;
   if (rs && rs.player) wrap.hidden = false;
   sync();
