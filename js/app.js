@@ -1976,7 +1976,7 @@ function editionCardHTML(o) {
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
         <div class="ec-actions">
-          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Listen to Briefing</span></button>
+          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Listen to Briefing</span><span class="ec-btn-x" aria-hidden="true">${X}</span></button>
           <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
             <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
           </button>
@@ -1987,9 +1987,6 @@ function editionCardHTML(o) {
           <div class="ec-player" data-briefing-player hidden></div>
           <div class="ec-foot">
             <span class="ec-aigen">AI-narrated \u00b7 Based on today\u2019s sourced <span class="ec-nb">briefing<button type="button" class="ec-info how-aigen" data-how-it-works aria-label="How the audio is made">${INFO}</button></span></span>
-          </div>
-          <div class="ec-closeaudio-row">
-            <button type="button" class="ec-closeaudio" data-ec-closeaudio>${X}<span>Close audio player</span></button>
           </div>
         </div>
       </div>
@@ -2024,22 +2021,26 @@ function bindListen(card, ctl) {
   btn.hidden = false;
   const au = ctl.el.querySelector('audio');
   const lbl = btn.querySelector('[data-ec-listen-lbl]');
+  // revamp1362: the button reads the strip's state. Closed, it is "Listen to
+  // Briefing" and pressing it opens the strip and starts the audio. Open, it
+  // is "Close audio player" — the player carries its own transport, so the
+  // button's one job is to fold the strip away (and stop the audio with it).
   const sync = () => {
+    const open = !wrap.hidden;
+    btn.classList.toggle('is-open', open);
     btn.classList.toggle('is-playing', !au.paused);
-    if (lbl) lbl.textContent = au.paused ? (wrap.hidden ? 'Listen to Briefing' : 'Play Briefing') : 'Pause Briefing';
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (lbl) lbl.textContent = open ? 'Close audio player' : 'Listen to Briefing';
   };
+  btn._ecSync = sync;
   btn.addEventListener('click', () => {
-    if (wrap.hidden) { wrap.hidden = false; btn.setAttribute('aria-expanded', 'true'); ctl.play(); }
-    else ctl.toggle();
+    if (wrap.hidden) { wrap.hidden = false; sync(); ctl.play(); }
+    else { ctl.pause(); wrap.hidden = true; sync(); }
   });
   au.addEventListener('play', sync); au.addEventListener('pause', sync); au.addEventListener('ended', sync);
-  const close = wrap.querySelector('[data-ec-closeaudio]');
-  if (close) close.addEventListener('click', () => {
-    ctl.pause(); wrap.hidden = true; btn.setAttribute('aria-expanded', 'false'); sync(); btn.focus();
-  });
   // revamp1359: the open briefing carries the player by default, so an
   // episode that lands after the briefing was opened shows it straight away.
-  if (card.classList.contains('is-open')) { wrap.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
+  if (card.classList.contains('is-open')) wrap.hidden = false;
   sync();
 }
 // revamp1359: open, the briefing shows the player under the summary without
@@ -2050,9 +2051,10 @@ function syncEditionPlayer(card, on) {
   const wrap = card.querySelector('[data-ec-listenwrap]');
   const btn = card.querySelector('[data-ec-listen]');
   if (!wrap || !btn || btn.hidden) return;
-  if (on) { wrap.hidden = false; btn.setAttribute('aria-expanded', 'true'); return; }
-  const au = wrap.querySelector('audio');
-  if (!au || au.paused) { wrap.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+  if (on) wrap.hidden = false;
+  else { const au = wrap.querySelector('audio'); if (!au || au.paused) wrap.hidden = true; }
+  if (typeof btn._ecSync === 'function') btn._ecSync();
+  else btn.setAttribute('aria-expanded', wrap.hidden ? 'false' : 'true');
 }
 // Mount the latest episode into an edition card: the bare player, the
 // headline block, the Listen button.

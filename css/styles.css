@@ -37720,3 +37720,22 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
 .tdi-card--edition .ec-headline[class][class][class][class][class][class] { font-weight: 600 !important; color: #172554 !important; }
 .ec--v2 .ec-btn--listen .ec-btn-dur[class] { display: none !important; }
 .ec--v2 .ec-btn--read[class] > svg:first-child { display: none !important; }
+
+/* ═══ revamp1362: one button for the strip ═══
+   Open, the Listen button is the close control — "Close audio player" with
+   an ✕ — set quietly: white, a hairline, the muted text of the other
+   secondary controls. The headphones give way to the ✕; nothing else about
+   the button moves, so the row does not jump when it changes. The bottom
+   close row is gone from the markup; this covers a cached app. */
+.ec--v2 .ec-btn--listen .ec-btn-x { display: none; }
+.ec--v2 .ec-btn--listen .ec-btn-x svg { width: 13px !important; height: 13px !important; }
+.ec--v2 .ec-actions .ec-btn--listen.is-open[class][class][class][class] {
+  background: #fff !important; border: 1px solid #cfd8e8 !important; color: #5b6b8f !important;
+  box-shadow: none !important;
+}
+.ec--v2 .ec-btn--listen.is-open > svg:first-child { display: none !important; }
+.ec--v2 .ec-btn--listen.is-open .ec-btn-x { display: inline-flex !important; align-items: center; }
+@media (hover: hover) {
+  .ec--v2 .ec-actions .ec-btn--listen.is-open[class][class][class][class]:hover { background: #f1f4fa !important; border-color: #b9c6dd !important; color: #2b3c66 !important; }
+}
+.ec-closeaudio-row[class] { display: none !important; }
