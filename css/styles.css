@@ -37698,3 +37698,25 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
 .tdi-card--edition .ec-lead .ec-meta .tdi-stamp-sep[class][class][class][class] { margin: 0 8px !important; height: 15px !important; }
 .tdi-card--edition .ec-lead .ec-meta .tdi-stamp-val[class][class] { gap: 6px !important; }
 .tdi-card--edition .ec-lead .ec-meta .tdi-stamp-val[class][class] svg { width: 15px !important; height: 15px !important; }
+
+/* ═══ revamp1361: the tile steps down, the stamp steps up, the headline goes blue ═══
+   The tile at 44px outweighed the 26px title; 38px (34 on a phone) puts the
+   name in charge of the lockup. The stamp goes to 1.1rem with 17px glyphs —
+   a size that reads as a line of its own, not a caption. The headline drops
+   another weight, 700 to 600, and takes a deep blue in place of the
+   near-black it wore. Listen loses its duration and its dot; Read loses the
+   book glyph (both removed from the markup; these rules cover a cached app). */
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class][class][class] {
+  width: 38px !important; height: 38px !important; border-radius: 10px !important;
+}
+.tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class][class][class] svg { width: 20px !important; height: 20px !important; }
+@media (max-width: 899.98px) {
+  .tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class][class][class] { width: 34px !important; height: 34px !important; border-radius: 9px !important; }
+  .tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class][class][class] svg { width: 18px !important; height: 18px !important; }
+}
+.tdi-card--edition .ec-lead .ec-meta .tdi-date[class][class][class][class][class] { font-size: 1.1rem !important; font-weight: 600 !important; }
+.tdi-card--edition .ec-lead .ec-meta .tdi-stamp-val[class][class][class] svg { width: 17px !important; height: 17px !important; }
+.tdi-card--edition .ec-lead .ec-meta .tdi-stamp-sep[class][class][class][class][class] { height: 16px !important; }
+.tdi-card--edition .ec-headline[class][class][class][class][class][class] { font-weight: 600 !important; color: #172554 !important; }
+.ec--v2 .ec-btn--listen .ec-btn-dur[class] { display: none !important; }
+.ec--v2 .ec-btn--read[class] > svg:first-child { display: none !important; }
