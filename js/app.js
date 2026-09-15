@@ -258,6 +258,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Preserve an OPEN subnav topic-picker across the breakpoint crossing — the
         // full re-render rebuilds the sub-header, which silently closed it (#img75).
         const pickerWasOpen = !!document.querySelector('#sub-header .topic-subnav-picker.is-open');
+        // revamp1368: the briefing card's state survives the crossing — an
+        // open briefing stays open, an open player stays open, and audio
+        // that was playing picks up where it was. The re-render rebuilds the
+        // card; the wiring reads this back (wireHomeDailyIntelligence, the
+        // hub's today card, bindListen) and clears it.
+        try {
+          const ec = document.querySelector('.tdi-card--edition');
+          const wrap = ec && ec.querySelector('[data-ec-listenwrap]');
+          const au = wrap && wrap.querySelector('audio');
+          const st = ec ? { open: ec.classList.contains('is-open'), player: !!(wrap && !wrap.hidden), t: au ? au.currentTime : 0, playing: !!(au && !au.paused && !au.ended) } : null;
+          window.__ecRestore = (st && (st.open || st.player)) ? st : null;
+        } catch (_) { window.__ecRestore = null; }
         renderLayout(base); renderPage(base);
         // revamp1080: the ROUTER rebuilds the static-page sub-header via
         // renderPageNavBar after renderLayout/renderPage — but this manual
@@ -2017,7 +2029,7 @@ function bindListen(card, ctl) {
   let btn = card.querySelector('[data-ec-listen]');
   if (!btn || !wrap) return;
   const fresh = btn.cloneNode(true); btn.replaceWith(fresh); btn = fresh;
-  if (!ctl) { btn.hidden = true; wrap.hidden = true; return; }
+  if (!ctl) { btn.hidden = true; wrap.hidden = true; window.__ecRestore = null; return; }
   btn.hidden = false;
   const au = ctl.el.querySelector('audio');
   const lbl = btn.querySelector('[data-ec-listen-lbl]');
@@ -2041,6 +2053,15 @@ function bindListen(card, ctl) {
   // revamp1359: the open briefing carries the player by default, so an
   // episode that lands after the briefing was opened shows it straight away.
   if (card.classList.contains('is-open')) wrap.hidden = false;
+  // revamp1368: after a breakpoint re-render, put the strip and the audio
+  // back where they were. Position waits for metadata if it has to.
+  const rs = window.__ecRestore; window.__ecRestore = null;
+  if (rs && rs.player) {
+    wrap.hidden = false;
+    const seek = () => { try { if (rs.t > 0) au.currentTime = rs.t; } catch (_) {} };
+    if (au.readyState >= 1) seek(); else au.addEventListener('loadedmetadata', seek, { once: true });
+    if (rs.playing) { try { const pr = ctl.play(); if (pr && pr.catch) pr.catch(() => {}); } catch (_) {} }
+  }
   sync();
 }
 // revamp1359: open, the briefing shows the player under the summary without
@@ -2721,6 +2742,7 @@ function renderIntelligenceHub(container) {
       });
     };
     btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
+    if (window.__ecRestore && window.__ecRestore.open) setOpen(true);   // revamp1368
     wireEditionCard(todayCard);
     fetchDailyBrief('home').then((d) => {
       if (!d || !todayCard.isConnected) return;
@@ -2968,6 +2990,7 @@ function wireHomeDailyIntelligence(root) {
     });
   };
   btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
+  if (window.__ecRestore && window.__ecRestore.open) setOpen(true);   // revamp1368
 
   fitDiHub(card);
 
