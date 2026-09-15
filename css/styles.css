@@ -37819,3 +37819,28 @@ body #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class
 .tdi-card--edition .dib-side .dib-srcs[class][class] { flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; gap: 8px !important; }
 .tdi-card--edition .dib-side .dib-srcs-label[class][class] { flex: 0 0 100%; margin: 0 0 -2px !important; }
 .tdi-card--edition .dib-side .dib-src[class] { max-width: 100%; }
+
+/* ═══ revamp1367: the card on a phone ═══
+   The stamp pill sits under the note, not between the title and the note:
+   the head carries a second slot after the note, and each width shows one.
+   Everything steps down a size; Listen and Read share a line and only stack
+   when the card is genuinely too narrow for both; the tail padding under
+   Briefings by Topic — two paddings stacked to 36px — comes down. */
+.ec-stamp--below { display: none; }
+@media (max-width: 899.98px) {
+  .ec-headrow .ec-stamp:not(.ec-stamp--below) { display: none !important; }
+  .ec-head .ec-stamp--below[class] { display: flex !important; flex: 0 0 auto; margin: 10px 0 0 !important; justify-content: flex-start; }
+  .ec-stamp-pill { font-size: 0.86rem; padding: 6px 11px; gap: 7px; }
+  .tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class][class][class] { width: 30px !important; height: 30px !important; border-radius: 8px !important; }
+  .tdi-card--edition .ec-tile[class][class][class][class][class][class][class][class][class][class] svg { width: 16px !important; height: 16px !important; }
+  .tdi-card--edition .ec-title[class][class][class][class][class][class][class][class][class] { font-size: 1.2rem !important; }
+  .ec-headrow[class][class] { gap: 10px; }
+  .ec-note[class][class][class][class][class] { font-size: 0.88rem !important; margin-top: 7px !important; }
+  .tdi-card--edition .ec-headline[class][class][class][class][class][class] { font-size: 1.1rem !important; line-height: 1.3 !important; }
+  .tdi-card--edition .ec-summary[class][class][class][class] { font-size: 0.92rem !important; line-height: 1.55 !important; }
+  .ec--v2 .ec-actions[class][class][class] { flex-direction: row !important; flex-wrap: wrap !important; align-items: stretch !important; gap: 8px !important; margin-top: 14px !important; }
+  .ec--v2 .ec-actions .ec-btn--listen[class][class][class][class],
+  .ec--v2 .ec-actions .ec-btn--read[class][class][class][class] { flex: 1 1 140px !important; width: auto !important; min-width: 0 !important; justify-content: center !important; }
+  .ec--v2 .ec-actions .ec-btn--topics[class][class][class][class] { flex: 0 0 100% !important; padding: 2px 0 0 !important; }
+  .tdi-card--edition:not(.is-open) .ec[class][class] { padding-bottom: 0.45rem !important; }
+}

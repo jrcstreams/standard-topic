@@ -1971,6 +1971,7 @@ function editionCardHTML(o) {
             <div class="ec-stamp" data-ec-stamp></div>
           </div>
           <p class="ec-note">Your daily update, published every morning.</p>
+          <div class="ec-stamp ec-stamp--below" data-ec-stamp></div>
         </div>
         <div class="ec-rule" aria-hidden="true"></div>
         <div class="ec-lead">
