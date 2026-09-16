@@ -38527,12 +38527,12 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class][class] {
    edge, and comes down in size to match. */
 .tdi-card--edition .ec-title[class][class][class][class][class][class][class][class][class][class] {
   font-family: var(--font-family) !important;
-  font-size: 0.72rem !important;
+  font-size: 0.84rem !important;
   font-weight: 750 !important;
-  letter-spacing: 0.11em !important;
+  letter-spacing: 0.09em !important;
   text-transform: uppercase !important;
   line-height: 1.2 !important;
-  color: #2d54b4 !important;
+  color: #172554 !important;
   margin: 0 !important;
 }
 .ec-head .ec-headrow .ec-stamp[class][class][class] { margin-left: 0 !important; }

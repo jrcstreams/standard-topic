@@ -1073,7 +1073,6 @@ ${A}`),S.length?S.join(`
             <h3 class="tdi-brieftitle ec-title">${z(e.cardTitle||P0())}</h3>
             <div class="ec-stamp" data-ec-stamp></div>
           </div>
-          <p class="ec-note">Your daily update, published every morning.</p>
           <div class="ec-stamp ec-stamp--below" data-ec-stamp></div>
         </div>
         <div class="ec-rule" aria-hidden="true"></div>
