@@ -1875,7 +1875,7 @@ const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="
 // The homepage briefing's name. Two editions a day are coming (the evening
 // wave lands at 5pm ET); until the evening text is actually published this
 // stays on the morning name rather than promising an edition that is not there.
-function homeEditionTitle() { return 'Morning AI Briefing'; }
+function homeEditionTitle() { return 'Morning Briefing'; }
 // An archived edition's briefing, rendered from the episode row: the written
 // item per story, the sources the desk used for it, and a play-from-here that
 // seeks the edition's own player. Shape-matched to the live briefing's
@@ -1891,7 +1891,7 @@ function episodeTextHTML(ep) {
   const at = (i) => (chapters[i] && Number.isFinite(chapters[i].start_ms)) ? chapters[i].start_ms : null;
   const srcHTML = (list) => list.length ? `<div class="dib-side"><div class="dib-srcs">${list.slice(0, 4).map((s) => `<a class="dib-src" href="${escapeAttr(s.uri)}" target="_blank" rel="noopener">${escapeHTML(s.source || (() => { try { return new URL(s.uri).hostname.replace(/^www\./, ''); } catch (_) { return 'Source'; } })())}</a>`).join('')}</div></div>` : '';
   return `
-    <div class="di-mast di-mast--v2"><h2 class="di-title"><span class="di-title-kind di-title--today">${escapeHTML(ep.title || 'Morning AI Briefing')}</span></h2>
+    <div class="di-mast di-mast--v2"><h2 class="di-title"><span class="di-title-kind di-title--today">${escapeHTML(ep.title || 'Morning Briefing')}</span></h2>
       <div class="di-metaline">${diEditionStampHTML(ep.created_at || `${ep.edition_date}T09:00:00Z`)}</div></div>
     ${overview ? `<section class="di-focus"><div class="di-summary aii-sec-body"><p>${escapeHTML(overview)}</p></div></section>` : ''}
     <section class="di-briefs di-briefs--v2">
@@ -1993,7 +1993,6 @@ function editionCardHTML(o) {
       <div class="ec ec--v2">
         <div class="ec-head">
           <div class="ec-headrow">
-            <span class="ec-tile" aria-hidden="true">${EC_BRIEF_ICON}</span>
             <h3 class="tdi-brieftitle ec-title">${escapeHTML(o.cardTitle || homeEditionTitle())}</h3>
             <div class="ec-stamp" data-ec-stamp></div>
           </div>
@@ -2002,7 +2001,6 @@ function editionCardHTML(o) {
         </div>
         <div class="ec-rule" aria-hidden="true"></div>
         <div class="ec-lead">
-          <span class="ec-kicker"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span>Global</span></span>
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
@@ -2042,20 +2040,17 @@ const EC_BRIEF_ICON = '<span aria-hidden="true"><svg viewBox="0 0 24 24" fill="n
 function topicEditionCardHTML(topic) {
   const X = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const BOOK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>';
-  const ic = topicIconSVG(topic.icon || 'globe', '');
   return `
       <div class="ec ec--v2 ec--topic"${topicColorStyle(topic)}>
         <div class="ec-head">
           <div class="ec-headrow">
-            <span class="ec-tile" aria-hidden="true">${EC_BRIEF_ICON}</span>
-            <h3 class="tdi-brieftitle ec-title">Morning AI Briefing</h3>
+            <h3 class="tdi-brieftitle ec-title">Morning Briefing</h3>
             <div class="ec-stamp" data-ec-stamp></div>
           </div>
           <div class="ec-stamp ec-stamp--below" data-ec-stamp></div>
         </div>
         <div class="ec-rule" aria-hidden="true"></div>
         <div class="ec-lead">
-          <span class="ec-kicker ec-kicker--topic">${ic}<span>${escapeHTML(topic.name)}</span></span>
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
@@ -2373,9 +2368,12 @@ function ecStampHTML(iso) {
   try {
     const d = new Date(iso);
     const et = (opts) => new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', ...opts }).format(d);
-    const day = et({ weekday: 'short', month: 'short', day: 'numeric' });
-    const time = et({ hour: 'numeric', minute: '2-digit' }) + ' ET';
-    return `<span class="ec-stamp-pill">${EC_SUN}<span class="ec-stamp-day">${escapeHTML(day)}</span><span class="ec-stamp-dot" aria-hidden="true">\u2022</span><span class="ec-stamp-time">${escapeHTML(time)}</span></span>`;
+    // revamp1410: the shortest form that still says which day and roughly when
+    // — "9/16, 3 PM ET". The weekday, the month name and the minute were all
+    // detail nobody reads off a daily briefing's masthead.
+    const day = et({ month: 'numeric', day: 'numeric' }) + ',';
+    const time = et({ hour: 'numeric' }) + ' ET';
+    return `<span class="ec-stamp-pill">${EC_SUN}<span class="ec-stamp-day">${escapeHTML(day)}</span><span class="ec-stamp-time">${escapeHTML(time)}</span></span>`;
   } catch (_) { return ''; }
 }
 function fillEcStamp(card, iso) {
@@ -2567,7 +2565,7 @@ function renderFeaturedBriefings(host, opts) {
       <div class="hb-grid">
         <div class="hb-hero" data-home-briefing>
           <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
-            noHeader: true, hubLink: false, art: true, topicLabel: "Morning AI Briefing", pillLabel: 'All Topics',
+            noHeader: true, hubLink: false, art: true, topicLabel: "Morning Briefing", pillLabel: 'All Topics',
             sublabel: 'Your daily briefing across every topic we cover.',
           })}</div>
         </div>
@@ -5617,7 +5615,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
              out to briefings by topic and trending links to its own page, so
              there is nothing left for tabs to switch between. -->
         <div class="home-sections home-v2">
-          <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Morning AI Briefing"></section>
+          <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Morning Briefing"></section>
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
                is Today's News. Column 2 stacks the briefing, trending, AI

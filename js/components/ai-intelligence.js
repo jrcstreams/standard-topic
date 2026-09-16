@@ -2608,8 +2608,10 @@ export function renderDailyIntelligence(container, scope) {
     // revamp1340: the open briefing is named by edition. Home is the Global AI
     // Morning Briefing (the evening name follows when the evening wave ships);
     // a topic page is that topic's Morning AI Briefing.
-    const briefTitle = `<span class="di-title-kind di-title--today">${isHome ? 'Morning AI Briefing' : 'Morning AI Briefing'}</span>`;
-    const mastEyebrow = isHome ? '' : `<div class="di-eyebrow">${esc(name)}</div>`;
+    // revamp1410: "Morning Briefing", and no topic eyebrow above it. The page
+    // you opened it from already says which topic this is.
+    const briefTitle = `<span class="di-title-kind di-title--today">Morning Briefing</span>`;
+    const mastEyebrow = '';
     const pillLabel = isHome ? 'All Topics' : mastLabel;
     const SEP = '<span class="di-metasep" aria-hidden="true"></span>';
     const provBtn = `<button type="button" class="di-prov2 how-aigen" data-how-it-works>${LOGO}<span>AI-generated content included</span>${DI_INFO_ICON}</button>`;

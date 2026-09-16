@@ -38464,3 +38464,26 @@ body.home-search #home-trending .trend-card-title[class][class][class],
   box-shadow: none !important;
   overflow: visible !important;
 }
+
+/* ── revamp1410 ────────────────────────────────────────────────────────────
+   The News Feed head's glyph sits in a filled tile, white on navy, the way
+   every other identity mark on the site does. As a bare navy outline at 25px
+   its newspaper fold read as noise. */
+.newsfeed-title-ic[class][class] {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: #1e3a8a;
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.newsfeed-title-ic[class][class] svg { width: 19px; height: 19px; }
+@media (max-width: 899.98px) {
+  .newsfeed-title-ic[class][class] { width: 30px; height: 30px; border-radius: 9px; }
+  .newsfeed-title-ic[class][class] svg { width: 17px; height: 17px; }
+}
+
+/* The hero line goes a shade deeper, off the link blue and onto the navy the
+   headlines use. */
+.home-hero-title[class][class][class] { color: #172554 !important; }

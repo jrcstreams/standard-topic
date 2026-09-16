@@ -56,7 +56,7 @@ const HOW_IT_WORKS_HTML = `
       </section>
       <section class="di-how-surface">
         <h3 class="di-how-surfacetitle">Audio briefing</h3>
-        <p>The Morning AI Briefing read aloud by a synthetic voice. An AI editor picks the day's stories from the topic briefings, an AI writer turns them into a script, and the same script becomes the written briefing — so the audio and the text are the same stories with the same sources, and each story can be played from where it starts.</p>
+        <p>The Morning Briefing read aloud by a synthetic voice. An AI editor picks the day's stories from the topic briefings, an AI writer turns them into a script, and the same script becomes the written briefing — so the audio and the text are the same stories with the same sources, and each story can be played from where it starts.</p>
       </section>
     </div>
 
