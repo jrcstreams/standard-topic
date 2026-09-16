@@ -38442,19 +38442,16 @@ body.home-search #home-trending .trend-card-title[class][class][class],
    size that renders as a smudge, not a mark. A round dot, like every other
    separator on the site. */
 .dih-item .dih-item-stamp[class][class][class][class] { font-size: 0.82rem !important; }
-.dih-item .dih-item-stamp[class][class][class][class] .tdi-stamp-sep {
-  width: 3px !important; height: 3px !important;
-  border-radius: 50% !important;
-  background: #c2cbd9 !important;
-  opacity: 1 !important;
-  align-self: center !important;
-  margin: 0 1px !important;
-}
+/* revamp1409c: no separator at all on these cards. As a 1px gradient it read
+   as a smudge and as a dot it read as a stray period between two labels that
+   already have their own glyphs; the gap does the separating. */
+.dih-item .dih-item-stamp[class][class][class][class] .tdi-stamp-sep { display: none !important; }
+.dih-item .dih-item-stamp[class][class][class][class] { gap: 12px !important; }
 
 /* Three lines walked into each other: the topic, the date, the headline. Each
    gets room now. */
-.dih-item .dih-item-head[class][class] { margin-bottom: 0.55rem !important; }
-.dih-item .dih-item-stamp[class][class][class][class] { margin: 0 0 0.55rem !important; }
+.dih-item .dih-item-head[class][class] { margin-bottom: 0.4rem !important; }
+.dih-item .dih-item-stamp[class][class][class][class] { margin: 0 0 0.4rem !important; }
 
 /* And the fifteen cards are the page — they do not sit inside a second card.
    The section box made sense when each was one accordion among fourteen. */
