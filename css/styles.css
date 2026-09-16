@@ -38732,6 +38732,7 @@ body.tt-on .topic-band .topic-home > .topic-body-cols[class][class] {
   /* The card's own sizing rule is `.ec--v2 .ec-actions .ec-btn[class]x3`, so
      this has to carry the same shape to outrank it. */
   .ec--v2 .ec-actions .ec-btn[class][class][class][class][class] {
+    min-height: 33px !important;
     height: 33px !important;
     padding: 0 12px !important;
     font-size: 0.82rem !important;
