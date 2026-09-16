@@ -22,12 +22,13 @@ const { withHealthcheck } = require('../../lib/healthcheck');
 const { generate } = require('../../lib/gemini');
 
 const RSSAPP_BASE = 'https://api.rss.app/v1/feeds';
-// revamp1406: the topic cut left 30 feeds where there were 100, and each one
-// is now a bundle of up to 50 sources, so a fetch takes longer than it used to.
-// Fifteen a run is what fits inside the function's 300s: two batches, every
-// topic refreshed every 6 hours — twice the coverage of the 4-batch rotation
-// this replaces, at the same number of rss.app fetches a day.
-const BATCH_SIZE = 15;          // feeds fetched per run
+// revamp1407: one run covers every topic. The 300s timeout that prompted the
+// 15-feed batch was the one-off backfill — thousands of new rows to insert,
+// prune and grade in a single invocation — not the fetches: a steady-state run
+// over all 16 bundles takes about 5 seconds. So the rotation is retired and
+// every topic refreshes on every 3-hourly run, against every 12 hours before
+// the cut.
+const BATCH_SIZE = 20;          // feeds fetched per run (> the topic count = no rotation)
 const FETCH_LIMIT = 100;        // articles pulled per feed (rss.app ceiling)
 // revamp1406: 3000, not 1000. Each parent now carries the history of the
 // subtopics folded into it — 8,900 stories for Sports — and a 1000-row cap
