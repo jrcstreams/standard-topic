@@ -239,12 +239,16 @@ async function main() {
     process.stdout.write('Stage 3b · fact check (grounded) … ');
     const t3b = Date.now();
     try {
-      const { script: checked, usage: u3b, changes, card } = await E.runFactCheck(fmt, { script, dateLabel, card: { headline: storyboard.title || script.headline || '', teaser: storyboard.teaser || script.summary || '' } }, { model: E.textModel() });
+      const { script: checked, usage: u3b, changes, card, dossier } = await E.runFactCheck(fmt, { script, dateLabel, card: { headline: storyboard.title || script.headline || '', teaser: storyboard.teaser || script.summary || '' } }, { model: E.textModel() });
+      fs.writeFileSync(path.join(OUT, `factcheck-${edition}.md`), dossier || '');
       if (card) { if (card.headline) { storyboard.title = card.headline; if (script.headline) script.headline = card.headline; } if (card.teaser) { storyboard.teaser = card.teaser; if (script.summary) script.summary = card.teaser; } }
       micros += (u3b && u3b.micros) || 0;
       if (checked && Array.isArray(checked.segments) && checked.segments.length) {
         const budgets = {}; for (const b of fmt.beats) budgets[b.beat] = E.wordsFor(b.sec);
         const merged = E.mergeQA(script, checked, budgets);
+        // mergeQA carries text/chapter/written; the corrected paragraphs and In Focus ride along here
+        merged.script.segments.forEach((seg, i) => { if (checked.segments[i] && checked.segments[i].paragraphs && seg.text === checked.segments[i].text) seg.paragraphs = checked.segments[i].paragraphs; });
+        if (checked.in_focus) merged.script.in_focus = checked.in_focus;
         script = merged.script;
         log(`${((Date.now() - t3b) / 1000).toFixed(1)}s · ${changes.length ? `corrected: ${changes.join(', ')}` : 'no corrections'} · ${merged.restored} restored · ${(u3b && u3b.searches) || 0} searches · ${fmtUSD((u3b && u3b.micros) || 0)}`);
       } else log('skipped (no usable result)');
