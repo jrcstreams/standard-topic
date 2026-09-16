@@ -38353,3 +38353,48 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
   .ec--v2 .ec-actions .ec-listenwrap .ec-foot .ec-aigen { font-size: 0.74rem; line-height: 1.35; }
   .ec--v2 .ec-actions .ec-listenwrap .ec-foot { margin-top: 8px; }
 }
+
+/* ── revamp1407: fifteen topics, one level ─────────────────────────────────
+   The briefings hub lost its Featured row, so its one grid carries every
+   briefing — two across, half the width each, rather than the three-up the
+   featured row used. */
+.dih-group--all .dih-items[class][class] { grid-template-columns: 1fr !important; }
+@media (min-width: 760px) {
+  .dih-group--all .dih-items[class][class] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; column-gap: 16px !important; }
+}
+@media (min-width: 1200px) {
+  .dih-group--all .dih-items[class][class] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+/* A directory card now reads the way the homepage card does: the day's
+   headline, then the summary under it — not three numbered lines naming what
+   the briefing covers. */
+.dih-item-hl[class] {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1rem; font-weight: 700; line-height: 1.28; letter-spacing: -0.01em;
+  color: #1e3a8a;
+}
+.dih-item-sum[class] {
+  display: block; margin-top: 5px;
+  font-family: var(--font-family);
+  font-size: 0.88rem; font-weight: 400; line-height: 1.45; color: #46557a;
+}
+
+/* The topic briefing's kicker takes the homepage pill's neutral scheme — the
+   one the "Global" pill wears — rather than the topic's own colour. The card's
+   tile and rule still carry the topic hue; the pill is a label, not a badge. */
+.tdi-card--topicedition .ec-kicker--topic[class][class][class][class][class][class] {
+  background: #edf1f8 !important;
+  border-color: #dbe3f0 !important;
+  color: #3f4d6e !important;
+}
+.tdi-card--topicedition .ec-kicker--topic[class][class][class][class][class][class] svg { color: #5b6b8f !important; }
+.tdi-card--topicedition .ec-kicker--topic[class][class][class][class][class][class] > span { color: #3f4d6e !important; }
+
+/* Trending titles in the site blue, so the query reads as the thing you click
+   and the sentence under it as description. Home sidebar, trending page and
+   the nav dropdown all share the class. */
+.trend-card-title[class][class][class],
+body.home-search #home-trending .trend-card-title[class][class][class],
+.aii-nav-dd-trending .trend-card-title[class][class][class] { color: #2c4f9e !important; }

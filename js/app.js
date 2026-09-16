@@ -1191,7 +1191,14 @@ const PDIR_CHEV_R = '<svg class="pdir-cell-chev" viewBox="0 0 24 24" width="15" 
       <span class="pdir-cell-name">${escapeHTML(t.name)}</span>
       ${PDIR_CHEV_R}
     </button>`;
-  const block = ({ parent, subtopics }) => `<section class="pdir-card" data-pdir-card${topicColorStyle(parent)}>
+  // revamp1407: with the tree flat, a card's grid held exactly one cell — the
+  // topic itself — so opening a category asked you to pick it before it would
+  // show you anything. A card with no subtopics now opens straight onto its
+  // prompts, and there is nothing to step back to.
+  const block = ({ parent, subtopics }) => {
+    const subs = subtopics || [];
+    const direct = !subs.length;
+    return `<section class="pdir-card" data-pdir-card${direct ? ` data-pdir-direct data-slug="${escapeAttr(parent.slug)}" data-name="${escapeAttr(parent.name)}"` : ''}${topicColorStyle(parent)}>
       <button type="button" class="pdir-cardhead" aria-expanded="false">
         <span class="pdir-card-ic" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span>
         <span class="pdir-card-tx">
@@ -1199,10 +1206,9 @@ const PDIR_CHEV_R = '<svg class="pdir-cell-chev" viewBox="0 0 24 24" width="15" 
         </span>
         ${PDIR_CHEV}
       </button>
-      <div class="pdir-cardbody" hidden>
-        <div class="pdir-grid">${cell(parent)}${(subtopics || []).map(cell).join('')}</div>
-      </div>
+      <div class="pdir-cardbody" hidden>${direct ? '' : `<div class="pdir-grid">${cell(parent)}${subs.map(cell).join('')}</div>`}</div>
     </section>`;
+  };
   return `<div class="pdir">${groups.map(block).join('')}</div>`;
 }
 
@@ -1215,6 +1221,33 @@ function wirePromptDirectory(root, ctls) {
     const bodyEl = card.querySelector('.pdir-cardbody');
     if (!head || !bodyEl) return;
     const gridHTML = bodyEl.innerHTML;
+    // revamp1407: a card with nothing under it mounts its own prompts the first
+    // time it opens. No grid to pick from, no header takeover, nothing to go
+    // back to — the card head already names the topic.
+    const direct = card.hasAttribute('data-pdir-direct');
+    const mountDirect = () => {
+      if (card.__directMounted) return;
+      card.__directMounted = true;
+      const slug = card.dataset.slug; const name = card.dataset.name;
+      bodyEl.innerHTML = '<div class="pdir-topicview"><div class="pdir-topichost prompts-topic-host"></div></div>';
+      bodyEl.classList.add('is-topic');
+      const host = bodyEl.querySelector('.pdir-topichost');
+      let shortcuts = [];
+      try { shortcuts = getShortcutsForTopic(slug) || []; } catch (_) {}
+      const descriptions = {}; const icons = {};
+      shortcuts.forEach((sc) => { if (sc && sc.name) { descriptions[sc.name] = sc.description || ''; icons[sc.name] = sc.icon || ''; } });
+      try {
+        const c = renderAIIntelligence(host, {
+          inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+          topic: name, label: name, descriptions, icons, shortcuts, topicKey: slug,
+        });
+        if (ctls) ctls.push(c);
+      } catch (err) {
+        console.error('prompt directory mount failed', slug, err);
+        host.innerHTML = '<p class="aii-empty">Couldn\u2019t load these prompts.</p>';
+      }
+      requestAnimationFrame(updateNavDdFades);
+    };
     const wireCells = () => {
       bodyEl.querySelectorAll('[data-pdir-topic]').forEach((cellBtn) => {
         cellBtn.addEventListener('click', () => {
@@ -1311,9 +1344,10 @@ function wirePromptDirectory(root, ctls) {
     wireCells();
     head.addEventListener('click', () => {
       const open = !card.classList.contains('is-open');
+      if (open && direct) mountDirect();
       // revamp926: collapsing while drilled in resets the header and the body
       // back to the topic grid, so re-opening never shows a stale sub-topic.
-      if (!open && card.classList.contains('is-topicview')) {
+      if (!direct && !open && card.classList.contains('is-topicview')) {
         if (card.__restoreHead) card.__restoreHead();
         card.classList.remove('is-topicview');
         bodyEl.classList.remove('is-topic');
@@ -1681,51 +1715,11 @@ function topicsTreeHTML() {
       <div class="aiidd-parent-body"><div class="aiidd-vlist">${links}</div></div>
     </section>`;
   };
-  // revamp1047: a small page header over the tree — the grey subnav only names
-  // the page; this explains what the list does.
-  const GRID_HEAD_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
-  const head = `<header class="aiidd-pagehead">
-    <div class="aiidd-pagehead-tx">
-      <div class="aiidd-headrow">
-        <h2 class="aiidd-pagehead-title">All Topics</h2>
-      </div>
-      <div class="aiidd-pagehead-subrow">
-        <p class="aiidd-pagehead-sub">Expand a topic section to reach its parent topic and subtopic pages.</p>
-        <button type="button" class="trend-sports-toggle aiidd-expandall" data-topics-expandall role="switch" aria-checked="false" title="Expand every topic's subtopics"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
-      </div>
-    </div>
-  </header>`;
-  // revamp1122 — Featured Topics: a handpicked set above All Topics.
-  // revamp1205: exactly SIX, in a fixed order, so the grid fills its rows at
-  // three columns (2 rows) and two columns (3 rows) alike — fifteen left a
-  // ragged last row at both widths and read as a second directory.
-  const FEATURED_TOPIC_SLUGS = [
-    'world', 'politics', 'markets', 'artificial-intelligence', 'technology', 'sports',
-  ];
-  const featItems = FEATURED_TOPIC_SLUGS.map((slug) => {
-    const t = getTopicBySlug(slug);
-    if (!t) return '';
-    return `<a href="#/topic/${t.slug}" class="tfeat-item" data-aiidd-link${topicColorStyle(t)}>
-      <span class="tfeat-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
-      <span class="tfeat-name">${escapeHTML(t.name)}</span>
-      <span class="tfeat-arrow" aria-hidden="true">${AIIDD_CHEV_R}</span>
-    </a>`;
-  }).join('');
-  const FEAT_TOPICS_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.72 5.51 6.08.88-4.4 4.29 1.04 6.06L12 16.98l-5.44 2.86 1.04-6.06-4.4-4.29 6.08-.88z"/></svg>';
-  const featuredSection = `<section class="tfeat-section">
-    <header class="aiidd-pagehead tfeat-head">
-      <div class="aiidd-pagehead-tx">
-        <div class="aiidd-headrow">
-          <h2 class="aiidd-pagehead-title">Featured Topics</h2>
-        </div>
-        <p class="aiidd-pagehead-sub">A handpicked mix of the most-followed areas, across parent topics and subtopics.</p>
-      </div>
-    </header>
-    <div class="tfeat-grid">${featItems}</div>
-  </section>`;
-  // The "All Topics" head loses its subtext label in this context — the section
-  // header carries the meaning. Keep it for the accordion tree below.
-  return `${featuredSection}${head}<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
+  // revamp1407: the tree is the page. With no subtopics left there is nothing
+  // to expand, so the "All Topics" head and its Expand-all switch went with the
+  // hierarchy; and a Featured Topics grid above a fifteen-row list was the same
+  // list twice, six of them promoted for no reason the reader can see.
+  return `<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
 }
 function topicsNavDdCfg() {
   return {
@@ -1733,7 +1727,7 @@ function topicsNavDdCfg() {
     title: 'Topics', ariaLabel: 'All topics',
     // The glyph the condensed bar shows beside the name (revamp810).
     icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
-    subtitle: 'Browse every topic and its subtopics.',
+    subtitle: 'Browse every topic.',
     // One head button: Search Custom Topic (the Homepage button was dropped — the
     // brand/Home nav already covers it, #img77).
     // revamp809: the search field is replaced by a view toggle — Condensed
@@ -2237,12 +2231,12 @@ function diHeroCardHTML(o) {
         <div class="tdi-hubcard-head">
           <h4 class="tdi-hubcard-title">View more AI Briefings</h4>
         </div>
-        <p class="tdi-hubcard-sub tdi-hubcard-sub--d">Briefings across 100+ topics, refreshed morning and night.</p>
-        <p class="tdi-hubcard-sub tdi-hubcard-sub--m">Briefings across 100+ topics, refreshed morning and night.</p>
+        <p class="tdi-hubcard-sub tdi-hubcard-sub--d">A briefing on every topic, every morning.</p>
+        <p class="tdi-hubcard-sub tdi-hubcard-sub--m">A briefing on every topic, every morning.</p>
         <div class="tdi-hubcard-feats">
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_AI}</span><span class="tdi-hubfeat-tx">AI-generated</span></div>
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_SUN}</span><span class="tdi-hubfeat-tx">Updates twice daily</span></div>
-          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_DOC}</span><span class="tdi-hubfeat-tx">100+ topics</span></div>
+          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_DOC}</span><span class="tdi-hubfeat-tx">Every topic</span></div>
         </div>
         <!-- revamp897: ONE text link for every breakpoint — the desktop pill and
              the separate mobile variant have collapsed into this. -->
@@ -2480,12 +2474,16 @@ function splitSentences(text) {
 // hero card, stacked because these cards are narrow; a briefing with no lines
 // yet (or none at all) shows the pending note in the same slot.
 function fillDihFocus(el, d) {
-  const lines = d ? briefFocusLines(d) : [];
-  if (!lines.length) {
-    el.innerHTML = `<span class="dih-item-focus-li dih-item-focus-li--pending">${escapeHTML((d && d.summary) ? d.summary : 'Briefing publishes with the next edition.')}</span>`;
+  // revamp1407: the day's headline and the summary under it, the shape the
+  // homepage card uses. Three numbered lines said what the briefing covered;
+  // a headline says what happened, which is what you pick a briefing on.
+  const head = d ? briefHeadline(d) : '';
+  const sum = (d && d.summary) ? String(d.summary) : '';
+  if (!head && !sum) {
+    el.innerHTML = `<span class="dih-item-focus-li dih-item-focus-li--pending">Briefing publishes with the next edition.</span>`;
     return;
   }
-  el.innerHTML = `<span class="dih-item-focus-lbl">In Focus</span>` + lines.map((f, i) => `<span class="dih-item-focus-li"><span class="dih-item-focus-n" aria-hidden="true">${i + 1}</span>${escapeHTML(f.title)}</span>`).join('');
+  el.innerHTML = `${head ? `<span class="dih-item-hl">${escapeHTML(head)}</span>` : ''}${sum ? `<span class="dih-item-sum">${escapeHTML(sum)}</span>` : ''}`;
 }
 function setClampedSummary(el, text) {
   if (!el) return;
@@ -2660,15 +2658,12 @@ function renderIntelligenceHub(container) {
   // lazily on intersection, and a display:none card never intersects, so the
   // extras cost nothing until they're actually on screen. Rendering both also
   // means crossing the tab-mode threshold on a resize needs no re-render.
-  const FEATURED_LEAD = 4;
-  const featuredBriefs = (() => {
-    let f = [];
-    try { f = (getFeaturedTopics() || []).slice(0, 15); } catch (_) {}
-    if (!f.length) f = (groups || []).slice(0, 15).map((g) => g.parent).filter(Boolean);
-    return f;
-  })();
-  const item = (t, i = 0) => `
-    <button type="button" class="dih-item${i >= FEATURED_LEAD ? ' dih-item--extra' : ''}" data-dih-item="${escapeAttr(t.name)}" data-dih-slug="${escapeAttr(t.slug)}"${topicColorStyle(t)}>
+  // revamp1407: every briefing is on the page, in one stacked grid. A Featured
+  // Briefings row above a directory of the same cards showed eight of fifteen
+  // topics twice and made the page look longer than it is.
+  const allBriefs = (groups || []).flatMap((g) => [g.parent].concat(g.subtopics || [])).filter(Boolean);
+  const item = (t) => `
+    <button type="button" class="dih-item" data-dih-item="${escapeAttr(t.name)}" data-dih-slug="${escapeAttr(t.slug)}"${topicColorStyle(t)}>
       <span class="dih-item-head">
         <span class="dih-item-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
         <span class="dih-item-name">${escapeHTML(t.name)}</span>
@@ -2703,31 +2698,28 @@ function renderIntelligenceHub(container) {
         </div>
       </section>
 
-      <!-- revamp947: the lone Cross-Topic card is replaced by a Featured
-           Briefings row. It is a [data-dih-group] like every other section, so
-           the existing lazy-fill and open-a-briefing wiring applies unchanged —
-           it just renders permanently open with a plain header instead of a
-           toggle. -->
-      <section class="dih-group dih-group--featured is-open" data-dih-group>
-        <div class="dih-featuredhead ph-sec-head ph-sec-head--card">
-          <div class="ph-sec-headrow">
-            <h2 class="ph-sec-title dih-bytopic-title">Featured Briefings</h2>
-          </div>
-          <p class="ph-sec-sub dih-bytopic-sub">A few of today's briefings to start with.</p>
+      <!-- revamp1341: the edition card — the Morning AI Briefing itself, with a
+           picker over the editions /api/episodes keeps. It led Featured
+           Briefings; with that section gone it leads the page. -->
+      <div class="dih-edition" data-dih-edition>
+        <div class="dih-edition-bar">
+          <label class="dih-edition-lbl" for="dih-edition-sel">Edition</label>
+          <select class="dih-edition-sel" id="dih-edition-sel" data-edition-sel aria-label="Choose an edition"><option value="">Today</option></select>
         </div>
-        <div class="dih-groupbody">
-          <!-- revamp1341: the edition card. The Morning AI Briefing leads
-               Featured Briefings at full width: the same hero card as the
-               homepage (three In Focus lines in a row, the player), plus an
-               edition picker over the past editions, which /api/episodes keeps. -->
-          <div class="dih-edition" data-dih-edition>
-            <div class="dih-edition-bar">
-              <label class="dih-edition-lbl" for="dih-edition-sel">Edition</label>
-              <select class="dih-edition-sel" id="dih-edition-sel" data-edition-sel aria-label="Choose an edition"><option value="">Today</option></select>
-            </div>
-            <div class="dih-today-card tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition">${editionCardHTML({})}</div>
-          </div>
-          <div class="dih-items">${featuredBriefs.map((t, i) => item(t, i)).join('')}</div>
+        <div class="dih-today-card tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition">${editionCardHTML({})}</div>
+      </div>
+
+      <div class="dih-bytopic-head ph-sec-head ph-sec-head--card">
+        <div class="ph-sec-headrow">
+          <h2 class="ph-sec-title dih-bytopic-title">Briefings by Topic</h2>
+        </div>
+        <p class="ph-sec-sub dih-bytopic-sub">Every topic gets its own briefing, every morning.</p>
+      </div>
+
+      <div class="dih-groups" data-dih-groups>
+        <section class="dih-group dih-group--all is-open" data-dih-group>
+          <div class="dih-groupbody">
+            <div class="dih-items">${allBriefs.map((t) => item(t)).join('')}</div>
           <div class="dih-brief" data-dih-brief hidden>
             <div class="dih-brief-bar">
               <button type="button" class="dih-brief-back fb-closelink" data-dih-back><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Close Briefing</span></button>
@@ -2739,47 +2731,8 @@ function renderIntelligenceHub(container) {
             <div data-dih-host></div>
             ${DIH_BRIEF_FOOT}
           </div>
-        </div>
-      </section>
-
-      <div class="dih-bytopic-head ph-sec-head ph-sec-head--card">
-        <div class="ph-sec-headrow">
-          <h2 class="ph-sec-title dih-bytopic-title">Briefings by Topic</h2>
-        </div>
-        <p class="ph-sec-sub dih-bytopic-sub">Every topic gets its own briefing, every morning. Browse them all here.</p>
-      </div>
-
-
-      <div class="dih-groups" data-dih-groups>
-        ${groups.map((g) => `
-          <section class="dih-group" id="dih-${escapeAttr(g.parent.slug)}" data-dih-group${topicColorStyle(g.parent)}>
-            <!-- revamp933: parent groups are real accordions now — closed on
-                 load, bordered, two across, matching the accordion pattern used
-                 on Prompts and the search results. -->
-            <button type="button" class="dih-grouphead" data-dih-grouptoggle aria-expanded="false">
-              <span class="dih-groupident">
-                <span class="dih-group-ic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>
-                <h2 class="dih-grouptitle">${escapeHTML(g.parent.name)}</h2>
-              </span>
-              ${PDIR_CHEV}
-            </button>
-            <div class="dih-groupbody" hidden>
-            <div class="dih-items">${[g.parent, ...(g.subtopics || [])].map((t) => item(t)).join('')}</div>
-            <div class="dih-brief" data-dih-brief hidden>
-              <!-- revamp949: a close-link on the left and a larger X on the
-                   right, in place of the back link. -->
-              <div class="dih-brief-bar">
-                <button type="button" class="dih-brief-back fb-closelink" data-dih-back><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Close Briefing</span></button>
-                <button type="button" class="dih-brief-close fb-closex" data-dih-back aria-label="Close briefing">
-                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-              </div>
-              <div class="dih-brief-title" data-dih-brief-title></div>
-              <div data-dih-host></div>
-              ${DIH_BRIEF_FOOT}
-            </div>
-            </div>
-          </section>`).join('')}
+          </div>
+        </section>
       </div>
 
     </div>`;
@@ -5666,7 +5619,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <div class="home-hero-headrow">
             <h1 class="home-hero-title">Real news. AI insights. On any topic.</h1>
           </div>
-          <p class="home-hero-sub">Live news, a morning AI briefing, and prompts to dig deeper. 100+ topics.</p>
+          <p class="home-hero-sub">Live news, a morning AI briefing, and prompts to dig deeper.</p>
           ${heroTopics.length ? `<div class="home-hero-chips">${heroTopics.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="home-hero-chip"${topicColorStyle(t)}><span class="home-hero-chip-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>${escapeHTML(t.name)}</a>`).join('')}</div>` : ''}
         </div>
       </section>`;
@@ -7608,7 +7561,7 @@ function renderPage(route) {
         <div class="about-section">
           <h3>Why it works this way</h3>
           <p>Most news sites want you to read them. This one wants you to understand a subject, which usually means reading several people on it. So the unit here is the topic, not the outlet — every page pulls from roughly 100 publishers and organises them around what they are about.</p>
-          <p>There are 100 topics, from World and Markets to NBA and Cryptocurrency. You can also search anything that isn't one of them and get the same treatment.</p>
+          <p>There are fifteen topics, from World and Business &amp; Finance to Artificial Intelligence and Sports. You can also search anything that isn&rsquo;t one of them and get the same treatment.</p>
         </div>
 
         <div class="about-section">
