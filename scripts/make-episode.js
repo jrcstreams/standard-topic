@@ -239,7 +239,8 @@ async function main() {
     process.stdout.write('Stage 3b · fact check (grounded) … ');
     const t3b = Date.now();
     try {
-      const { script: checked, usage: u3b, changes } = await E.runFactCheck(fmt, { script, dateLabel }, { model: E.textModel() });
+      const { script: checked, usage: u3b, changes, card } = await E.runFactCheck(fmt, { script, dateLabel, card: { headline: storyboard.title || script.headline || '', teaser: storyboard.teaser || script.summary || '' } }, { model: E.textModel() });
+      if (card) { if (card.headline) { storyboard.title = card.headline; if (script.headline) script.headline = card.headline; } if (card.teaser) { storyboard.teaser = card.teaser; if (script.summary) script.summary = card.teaser; } }
       micros += (u3b && u3b.micros) || 0;
       if (checked && Array.isArray(checked.segments) && checked.segments.length) {
         const budgets = {}; for (const b of fmt.beats) budgets[b.beat] = E.wordsFor(b.sec);
