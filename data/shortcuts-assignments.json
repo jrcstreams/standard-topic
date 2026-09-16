@@ -89,17 +89,13 @@
       "funding-and-lending-small-business",
       "best-software-small-business",
       "tax-compliance-small-business",
-      "marketing-small-business"
-    ],
-    "economy": [
+      "marketing-small-business",
       "economic-indicators-roundup",
       "inflation-watch",
       "jobs-report-breakdown",
       "recession-risk-check",
       "fed-watch",
-      "consumer-health-check"
-    ],
-    "markets": [
+      "consumer-health-check",
       "us-market-snapshot",
       "global-market-snapshot",
       "biggest-movers-market",
@@ -168,29 +164,34 @@
       "funding-roundup",
       "vc-hot-sectors",
       "startup-ipo-watch",
-      "vc-firm-watch"
+      "vc-firm-watch",
+      "recent-major-breaches",
+      "active-threats-watch",
+      "critical-vulnerabilities",
+      "ransomware-tracker",
+      "ai-impact-cybersecurity",
+      "personal-security-hygiene",
+      "social-platforms-snapshot",
+      "creator-economy-updates",
+      "content-moderation-watch",
+      "social-media-marketing",
+      "youth-privacy-safety-social-media"
     ],
     "artificial-intelligence": [
       "new-model-releases",
       "frontier-lab-watch",
       "where-ai-is-being-used",
       "ai-safety-updates",
-      "open-source-ai-watch"
-    ],
-    "cybersecurity": [
-      "recent-major-breaches",
-      "active-threats-watch",
-      "critical-vulnerabilities",
-      "ransomware-tracker",
-      "ai-impact-cybersecurity",
-      "personal-security-hygiene"
-    ],
-    "social-media": [
-      "social-platforms-snapshot",
-      "creator-economy-updates",
-      "content-moderation-watch",
-      "social-media-marketing",
-      "youth-privacy-safety-social-media"
+      "open-source-ai-watch",
+      "global-ai-regulation-tracking",
+      "us-ai-policy-updates",
+      "ai-copyright-updates",
+      "ai-in-workplace",
+      "ai-infrastructure-buildout",
+      "ai-data-stack",
+      "ai-and-privacy",
+      "ai-coding-tools",
+      "ai-in-saas"
     ],
     "science": [
       "science-recent-discoveries",
@@ -251,9 +252,7 @@
       "fda-approval-tracker",
       "glp1-metabolic-watch",
       "vaccine-development-updates",
-      "mental-health-treatment-frontier"
-    ],
-    "public-health": [
+      "mental-health-treatment-frontier",
       "disease-outbreak-watch",
       "respiratory-virus-season-updates",
       "vaccination-landscape",
@@ -293,18 +292,14 @@
       "trade-economic-statecraft",
       "multilateral-institutions-watch",
       "election-spillovers",
-      "energy-geopolitics"
-    ],
-    "defense-national-security-foreign-policy": [
+      "energy-geopolitics",
       "globla-defense-policy-updates",
       "us-defense-policy-updates",
       "active-conflicts-tracker",
       "us-china-strategic-competition",
       "sanctions-export-controls",
       "defense-industry-watch",
-      "diplomatic-calendar"
-    ],
-    "us-politics": [
+      "diplomatic-calendar",
       "polling-public-opinion",
       "state-politics-spotlight",
       "us-politics-inside-the-parties",
@@ -379,17 +374,13 @@
       "eastern-europe-snapshot",
       "caucasus-central-asia-updates",
       "belarus-moldova-updates",
-      "russias-global-role-updates"
-    ],
-    "china": [
+      "russias-global-role-updates",
       "china-snapshot",
       "chinese-economy-watch",
       "xi-ccp-watch",
       "chinese-tech-sector-updates",
       "china-global-reach",
-      "china-us-tech-trade-war"
-    ],
-    "us": [
+      "china-us-tech-trade-war",
       "us-snapshot",
       "us-foreign-policy-watch",
       "us-economy-world",
@@ -509,17 +500,13 @@
       "top-podcasts-right-now",
       "podcast-industry-watch",
       "podcast-episodes-worth-hearing",
-      "video-podcasting-watch"
-    ],
-    "television-movies": [
+      "video-podcasting-watch",
       "tv-movies-what-to-watch-this-week",
       "movies-box-office-watch",
       "streaming-wars-updates",
       "tv-movies-awards-season-watch",
       "hollywood-business-watch",
-      "tv-movies-trailer-hype-watch"
-    ],
-    "music": [
+      "tv-movies-trailer-hype-watch",
       "new-music-this-week",
       "music-charts-hits-watch",
       "music-tours-concerts-watch",
@@ -542,9 +529,7 @@
       "fashion-week-recaps",
       "fashion-industry-watch",
       "sustainable-fashion-watch",
-      "streetwear-sneaker-updates"
-    ],
-    "food-dining": [
+      "streetwear-sneaker-updates",
       "restaurant-industry-watch",
       "food-trends-watch",
       "restaurant-awards-lists",
@@ -559,15 +544,11 @@
       "energy-efficiency-upgrades",
       "smart-home-snapshot",
       "job-market-snapshot",
-      "compensation-trends"
-    ],
-    "cars-auto": [
+      "compensation-trends",
       "auto-industry-snapshot",
       "cars-best-evs",
       "car-buying-negotiation",
-      "maintenance-ownership"
-    ],
-    "travel": [
+      "maintenance-ownership",
       "travel-industry-updates",
       "flight-hotel-strategy"
     ],

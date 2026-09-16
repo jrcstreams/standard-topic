@@ -797,6 +797,146 @@
       "source": "/topic/religion-faith/:tab",
       "destination": "/topic/ideas-opinion-more/:tab",
       "permanent": true
+    },
+    {
+      "source": "/topic/economy",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/economy/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/markets",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/markets/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/cybersecurity",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/cybersecurity/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/social-media",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/social-media/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/public-health",
+      "destination": "/topic/health-wellness",
+      "permanent": true
+    },
+    {
+      "source": "/topic/public-health/:tab",
+      "destination": "/topic/health-wellness/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/defense-national-security-foreign-policy",
+      "destination": "/topic/politics",
+      "permanent": true
+    },
+    {
+      "source": "/topic/defense-national-security-foreign-policy/:tab",
+      "destination": "/topic/politics/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/us-politics",
+      "destination": "/topic/politics",
+      "permanent": true
+    },
+    {
+      "source": "/topic/us-politics/:tab",
+      "destination": "/topic/politics/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/china",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/china/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/us",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/us/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/television-movies",
+      "destination": "/topic/entertainment",
+      "permanent": true
+    },
+    {
+      "source": "/topic/television-movies/:tab",
+      "destination": "/topic/entertainment/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/music",
+      "destination": "/topic/entertainment",
+      "permanent": true
+    },
+    {
+      "source": "/topic/music/:tab",
+      "destination": "/topic/entertainment/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/food-dining",
+      "destination": "/topic/arts-culture",
+      "permanent": true
+    },
+    {
+      "source": "/topic/food-dining/:tab",
+      "destination": "/topic/arts-culture/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/cars-auto",
+      "destination": "/topic/lifestyle",
+      "permanent": true
+    },
+    {
+      "source": "/topic/cars-auto/:tab",
+      "destination": "/topic/lifestyle/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/travel",
+      "destination": "/topic/lifestyle",
+      "permanent": true
+    },
+    {
+      "source": "/topic/travel/:tab",
+      "destination": "/topic/lifestyle/:tab",
+      "permanent": true
     }
   ],
   "rewrites": [

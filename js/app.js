@@ -587,7 +587,13 @@ const CHANGE_CHEV = '<svg class="tcb-chev" viewBox="0 0 24 24" width="15" height
 // the parent "Overview" landing, then the subtopics as a responsive GRID (no rail).
 function topicPickerPanelHTML(topic, panelId) {
   const parent = topic.parent ? (getTopicBySlug(topic.parent) || topic) : topic;
-  const family = getSubtopics(parent.slug);   // parent's children = this topic + siblings (or its own subtopics)
+  // revamp1407: the tree is flat now — every topic is a main topic, so a family
+  // of siblings no longer exists and this panel would have offered the page you
+  // are already on, alone, with a checkmark. When there are no children it
+  // offers every main topic instead, which is what "change topic" now means.
+  const kids = getSubtopics(parent.slug);
+  const flat = kids.length === 0;
+  const family = flat ? getParentTopics() : kids;
   const parentActive = parent.slug === topic.slug;
   const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
   const cellHTML = (t) => {
@@ -616,12 +622,12 @@ function topicPickerPanelHTML(topic, panelId) {
             <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${TSP_X_IC}</button>
           </div>
           <div class="tsp-scroll">
-            <div class="tsp-group-label">Related Topics</div>
+            <div class="tsp-group-label">${flat ? 'All Topics' : 'Related Topics'}</div>
             <div class="tsp-grid">${(() => {
               // ACTIVE page first, parent second (unless the parent IS active),
               // then the rest in their designated order (#img121).
               const rest = family.filter((t) => t.slug !== parent.slug && t.slug !== topic.slug);
-              const lead = parentActive ? [parent] : [topic, parent];
+              const lead = flat ? [topic] : (parentActive ? [parent] : [topic, parent]);
               return lead.concat(rest).map(cellHTML).join('');
             })()}</div>
           </div>
@@ -5901,7 +5907,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
 // shortcuts/news feed card shape: orange accent header + scrollable
 // list of related topic links below.
 function renderRelatedSection(container, topic) {
-  const items = getRelatedTopics(topic) || [];
+  // revamp1407: a flat tree has no related topics in the old sense; the other
+  // main topics are the useful answer, not an empty panel.
+  let items = getRelatedTopics(topic) || [];
+  if (!items.length) items = getParentTopics().filter((t) => t.slug !== topic.slug);
   const list = items.length === 0
     ? `<p class="sidebar-empty">No related topics yet.</p>`
     : `<div class="sidebar-shortcut-list">

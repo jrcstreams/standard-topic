@@ -19,41 +19,27 @@ export const TOPIC_DESCRIPTIONS = {
   'ideas-opinion-more': 'Big ideas, history, philosophy, faith, and perspectives worth weighing.',
 
   // ── Business & Finance ──────────────────────────────────────────────────────
-  'economy': 'Growth, inflation, jobs, and the forces driving the broader economy.',
-  'markets': 'Stocks, bonds, and the daily moves across global financial markets.',
 
   // ── Technology ──────────────────────────────────────────────────────────────
   'artificial-intelligence': 'Models, research, and the products built on modern AI.',
-  'cybersecurity': 'Breaches, threats, and the fight to keep systems and data secure.',
-  'social-media': 'Platforms, creators, and how we connect and share online.',
 
   // ── Science ─────────────────────────────────────────────────────────────────
 
   // ── Health & Wellness ───────────────────────────────────────────────────────
-  'public-health': 'Disease, prevention, and the health of whole populations.',
 
   // ── Politics ────────────────────────────────────────────────────────────────
-  'defense-national-security-foreign-policy': 'Defense, security, and how nations project power abroad.',
-  'us-politics': 'The parties, players, and fights driving American politics.',
 
   // ── World ───────────────────────────────────────────────────────────────────
-  'china': 'Beijing’s politics, economy, and role on the world stage.',
-  'us': 'National news and developments from across the United States.',
 
   // ── Sports ──────────────────────────────────────────────────────────────────
 
   // ── Climate & Environment ─────────────────────────────────────────────────────
 
   // ── Entertainment ─────────────────────────────────────────────────────────────
-  'television-movies': 'Premieres, box office, and what to watch next.',
-  'music': 'Releases, tours, and the artists shaping the charts.',
 
   // ── Arts & Culture ─────────────────────────────────────────────────────────────
-  'food-dining': 'Restaurants, chefs, and the culture of food.',
 
   // ── Lifestyle ──────────────────────────────────────────────────────────────────
-  'cars-auto': 'New models, EVs, and the world of cars and driving.',
-  'travel': 'Destinations, tips, and the way we explore the world.',
 
   // ── Media ───────────────────────────────────────────────────────────────────────
 

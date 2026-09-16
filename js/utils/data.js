@@ -97,11 +97,25 @@ export function getAllTopics() {
   return topicsData?.topics || [];
 }
 
-// revamp1406 — the subtopic cut. Seventy subtopic pages folded into their
-// parents; every retired URL still resolves. A cold hit is 301'd by
+// revamp1406/1407 — the subtopic cut. Eighty-four subtopic pages folded into
+// their parents; every retired URL still resolves. A cold hit is 301'd by
 // vercel.json, and this map catches the in-app kind: a link inside a stored AI
 // answer, a bookmark the SPA restores without a server round trip.
 const TOPIC_ALIASES = {
+  'economy': 'business-finance',
+  'markets': 'business-finance',
+  'cybersecurity': 'technology',
+  'social-media': 'technology',
+  'public-health': 'health-wellness',
+  'defense-national-security-foreign-policy': 'politics',
+  'us-politics': 'politics',
+  'china': 'world',
+  'us': 'world',
+  'television-movies': 'entertainment',
+  'music': 'entertainment',
+  'food-dining': 'arts-culture',
+  'cars-auto': 'lifestyle',
+  'travel': 'lifestyle',
   'banking': 'business-finance',
   'cryptocurrency': 'business-finance',
   'deals-ma': 'business-finance',

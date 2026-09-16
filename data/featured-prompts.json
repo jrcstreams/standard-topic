@@ -10,11 +10,11 @@
       "name": "Frontier AI Lab Watch"
     },
     {
-      "topic": "markets",
+      "topic": "business-finance",
       "name": "US Markets Snapshot"
     },
     {
-      "topic": "economy",
+      "topic": "business-finance",
       "name": "Economic Indicators Roundup"
     },
     {
@@ -26,7 +26,7 @@
       "name": "Crypto Market Snapshot"
     },
     {
-      "topic": "us-politics",
+      "topic": "politics",
       "name": "Polling and Public Opinion"
     },
     {
@@ -50,7 +50,7 @@
       "name": "Recent Scientific Discoveries"
     },
     {
-      "topic": "cybersecurity",
+      "topic": "technology",
       "name": "Recent Major Breaches"
     },
     {

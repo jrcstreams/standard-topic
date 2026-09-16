@@ -20,24 +20,6 @@
       "tier": 1
     },
     {
-      "slug": "economy",
-      "name": "Economy",
-      "parent": "business-finance",
-      "rssFeedId": "_fZm4At6uvdQnkEKY",
-      "webhookEnabled": false,
-      "icon": "chart-line",
-      "tier": 3
-    },
-    {
-      "slug": "markets",
-      "name": "Markets",
-      "parent": "business-finance",
-      "rssFeedId": "_sBKji3wYHDRlZ52N",
-      "webhookEnabled": false,
-      "icon": "trending-up",
-      "tier": 3
-    },
-    {
       "slug": "technology",
       "name": "Technology",
       "parent": null,
@@ -51,29 +33,13 @@
     {
       "slug": "artificial-intelligence",
       "name": "Artificial Intelligence",
-      "parent": "technology",
+      "parent": null,
+      "color": "#0891b2",
       "rssFeedId": "_8jzF02HttCpLy5ce",
       "webhookEnabled": false,
       "icon": "sparkles",
-      "tier": 3
-    },
-    {
-      "slug": "cybersecurity",
-      "name": "Cybersecurity",
-      "parent": "technology",
-      "rssFeedId": "_pQ8GTVs8J5VeeKRW",
-      "webhookEnabled": false,
-      "icon": "shield-check",
-      "tier": 3
-    },
-    {
-      "slug": "social-media",
-      "name": "Social Media",
-      "parent": "technology",
-      "rssFeedId": "_BrQONeamSBMZynn4",
-      "webhookEnabled": false,
-      "icon": "message-circle",
-      "tier": 3
+      "featured": true,
+      "tier": 1
     },
     {
       "slug": "science",
@@ -98,15 +64,6 @@
       "tier": 1
     },
     {
-      "slug": "public-health",
-      "name": "Public Health",
-      "parent": "health-wellness",
-      "rssFeedId": "_ZB2claHKziDhEXka",
-      "webhookEnabled": false,
-      "icon": "shield-plus",
-      "tier": 3
-    },
-    {
       "slug": "politics",
       "name": "Politics",
       "parent": null,
@@ -118,24 +75,6 @@
       "tier": 1
     },
     {
-      "slug": "defense-national-security-foreign-policy",
-      "name": "Defense, Security, Foreign Policy",
-      "parent": "politics",
-      "rssFeedId": "_UfFeXwMw6wf1UkKC",
-      "webhookEnabled": false,
-      "icon": "radar",
-      "tier": 3
-    },
-    {
-      "slug": "us-politics",
-      "name": "US Politics",
-      "parent": "politics",
-      "rssFeedId": "_jZ0GzUNf99Mvs2ib",
-      "webhookEnabled": false,
-      "icon": "flag",
-      "tier": 3
-    },
-    {
       "slug": "world",
       "name": "World",
       "parent": null,
@@ -145,24 +84,6 @@
       "icon": "globe",
       "featured": true,
       "tier": 1
-    },
-    {
-      "slug": "china",
-      "name": "China",
-      "parent": "world",
-      "rssFeedId": "_4AH9YIpxcVhO4iHs",
-      "webhookEnabled": false,
-      "icon": "map-china",
-      "tier": 3
-    },
-    {
-      "slug": "us",
-      "name": "US",
-      "parent": "world",
-      "rssFeedId": "_7ddoE5hGPIwyGeZz",
-      "webhookEnabled": false,
-      "icon": "map-us",
-      "tier": 3
     },
     {
       "slug": "sports",
@@ -198,24 +119,6 @@
       "tier": 1
     },
     {
-      "slug": "television-movies",
-      "name": "TV & Movies",
-      "parent": "entertainment",
-      "rssFeedId": "_gq5KsClgitS9nPcw",
-      "webhookEnabled": false,
-      "icon": "clapperboard",
-      "tier": 3
-    },
-    {
-      "slug": "music",
-      "name": "Music",
-      "parent": "entertainment",
-      "rssFeedId": "_OXZFXY4KQL8haJYa",
-      "webhookEnabled": false,
-      "icon": "music",
-      "tier": 3
-    },
-    {
       "slug": "arts-culture",
       "name": "Arts & Culture",
       "parent": null,
@@ -227,15 +130,6 @@
       "tier": 1
     },
     {
-      "slug": "food-dining",
-      "name": "Food & Dining",
-      "parent": "arts-culture",
-      "rssFeedId": "_PVtPDuJekyQm7CED",
-      "webhookEnabled": false,
-      "icon": "utensils",
-      "tier": 3
-    },
-    {
       "slug": "lifestyle",
       "name": "Lifestyle",
       "parent": null,
@@ -245,24 +139,6 @@
       "icon": "coffee",
       "featured": true,
       "tier": 1
-    },
-    {
-      "slug": "cars-auto",
-      "name": "Cars & Auto",
-      "parent": "lifestyle",
-      "rssFeedId": "_NszeVeZkunpfk15P",
-      "webhookEnabled": false,
-      "icon": "car",
-      "tier": 3
-    },
-    {
-      "slug": "travel",
-      "name": "Travel",
-      "parent": "lifestyle",
-      "rssFeedId": "_ZPxawIYnc3QqNf6Y",
-      "webhookEnabled": false,
-      "icon": "plane",
-      "tier": 3
     },
     {
       "slug": "media",
@@ -304,6 +180,7 @@
     "politics",
     "science",
     "technology",
+    "artificial-intelligence",
     "sports",
     "entertainment",
     "media",
