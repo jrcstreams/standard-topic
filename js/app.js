@@ -2709,13 +2709,6 @@ function renderIntelligenceHub(container) {
         <div class="dih-today-card tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition">${editionCardHTML({})}</div>
       </div>
 
-      <div class="dih-bytopic-head ph-sec-head ph-sec-head--card">
-        <div class="ph-sec-headrow">
-          <h2 class="ph-sec-title dih-bytopic-title">Briefings by Topic</h2>
-        </div>
-        <p class="ph-sec-sub dih-bytopic-sub">Every topic gets its own briefing, every morning.</p>
-      </div>
-
       <div class="dih-groups" data-dih-groups>
         <section class="dih-group dih-group--all is-open" data-dih-group>
           <div class="dih-groupbody">

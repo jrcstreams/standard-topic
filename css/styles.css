@@ -38396,4 +38396,26 @@ body.home-search .home-v2 #section-newsfeed .news-list > .news-card:first-child[
    the nav dropdown all share the class. */
 .trend-card-title[class][class][class],
 body.home-search #home-trending .trend-card-title[class][class][class],
-.aii-nav-dd-trending .trend-card-title[class][class][class] { color: #2c4f9e !important; }
+.aii-nav-dd-trending .trend-card-title[class][class][class] { color: #1e3a8a !important; }
+
+/* ── revamp1408: the hub's preview cards ───────────────────────────────────
+   The headline takes the homepage card's treatment — the body face at 600 in
+   the deep navy, not the display face in blue — so the two cards read as the
+   same object at two sizes. It also sits closer to the summary it introduces:
+   the two were separated by the column gap AND a margin, which read as two
+   blocks rather than a headline and its standfirst. */
+.dih-item-focus[class][class] { gap: 0 !important; }
+.dih-item-hl[class][class] {
+  font-family: var(--font-family) !important;
+  font-size: 1.02rem !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.01em !important;
+  color: #172554 !important;
+}
+.dih-item-sum[class][class] { margin-top: 3px !important; }
+
+/* The topic's name and glyph lead the card, so they carry a little more size. */
+.dih-item .dih-item-name[class][class] { font-size: 1.12rem !important; }
+.dih-item .dih-item-ic[class][class][class] { width: 24px !important; height: 24px !important; }
+.dih-item .dih-item-ic[class][class][class] svg { width: 24px !important; height: 24px !important; }
