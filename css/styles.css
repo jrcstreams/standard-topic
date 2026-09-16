@@ -38525,7 +38525,7 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class][class] {
    small, uppercase, tracked out, in the label blue the rest of the site uses.
    The dateline follows it on the same line instead of being pushed to the far
    edge, and comes down in size to match. */
-.tdi-card--edition .ec-title[class][class][class][class][class][class][class][class] {
+.tdi-card--edition .ec-title[class][class][class][class][class][class][class][class][class][class] {
   font-family: var(--font-family) !important;
   font-size: 0.72rem !important;
   font-weight: 750 !important;
