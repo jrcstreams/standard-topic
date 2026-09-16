@@ -38458,9 +38458,12 @@ body.home-search #home-trending .trend-card-title[class][class][class],
 
 /* And the fifteen cards are the page — they do not sit inside a second card.
    The section box made sense when each was one accordion among fourteen. */
+#content .dih .dih-groups > .dih-group--all[class][class],
+#content .dih .dih-groups > .dih-group--all[class][class].is-open,
 .dih-groups[class] > .dih-group--all[class][class] {
   border: 0 !important;
   background: transparent !important;
   border-radius: 0 !important;
+  box-shadow: none !important;
   overflow: visible !important;
 }
