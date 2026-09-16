@@ -22,9 +22,16 @@ const { withHealthcheck } = require('../../lib/healthcheck');
 const { generate } = require('../../lib/gemini');
 
 const RSSAPP_BASE = 'https://api.rss.app/v1/feeds';
-const BATCH_SIZE = 25;          // feeds fetched per run
+// revamp1406: the topic cut left 30 feeds where there were 100, so a run now
+// covers all of them — every topic is refreshed every 3 hours instead of every
+// 6, for about the same number of rss.app fetches a day.
+const BATCH_SIZE = 40;          // feeds fetched per run
 const FETCH_LIMIT = 100;        // articles pulled per feed (rss.app ceiling)
-const KEEP_PER_TOPIC = 1000;    // retained history per topic
+// revamp1406: 3000, not 1000. Each parent now carries the history of the
+// subtopics folded into it — 8,900 stories for Sports — and a 1000-row cap
+// would have thrown most of that away on the next run. 30 topics x 3000 is a
+// smaller ceiling than the 100 x 1000 it replaces.
+const KEEP_PER_TOPIC = 3000;    // retained history per topic
 // Must match the cron cadence in vercel.json, or batches repeat instead of
 // advancing. revamp1110 moved the schedule to `0 */3` and left this at 6h, which
 // made floor(now/6h) return the SAME batch for the 00:00 and 03:00 runs, the
