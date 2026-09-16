@@ -1353,7 +1353,7 @@ ${A}`),S.length?S.join(`
           <section id="section-newsfeed" class="layout-section"></section>
         </div>
         <section class="topic-top-side"${Ue(t)}>
-          <h3 class="trail-head">AI Prompts</h3>
+          <h3 class="trail-head"><span class="trail-head-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2l1.5 4.1a2 2 0 0 0 1.2 1.2l4.1 1.5-4.1 1.5a2 2 0 0 0-1.2 1.2L12 16.8l-1.5-4.1a2 2 0 0 0-1.2-1.2L5.2 10l4.1-1.5a2 2 0 0 0 1.2-1.2z"/><path d="M18.5 15.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z"/></svg></span><span class="trail-head-tx">AI Prompts</span></h3>
           <div class="tpr-card" data-tpr>
             <div class="tpr-head">
             </div>

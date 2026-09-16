@@ -38552,3 +38552,94 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class][class] {
   border-color: #ccd5e4 !important;
   border-radius: 10px !important;
 }
+
+/* ── revamp1414: the briefing card, tightened ──────────────────────────────
+   The label reads as a standfirst, so it is faint rather than navy, and a
+   touch larger. It sits closer to the card's top edge, and on a wide card the
+   hairline under it is gone — the headline follows the label directly, which
+   is the relationship the two already have. */
+.tdi-card--edition .ec-title[class][class][class][class][class][class][class][class][class][class][class] {
+  font-size: 0.9rem !important;
+  color: #4c5c80 !important;
+  letter-spacing: 0.085em !important;
+}
+.tdi-card--edition[class][class][class] { padding-top: 0.85rem !important; }
+@media (min-width: 900px) {
+  .tdi-card--edition .ec--v2 .ec-rule[class]:not(.ec-rule--player) { display: none !important; }
+  .tdi-card--edition .ec--v2 .ec-head[class] { margin-bottom: 14px !important; }
+}
+
+/* A tighter corner than 10. */
+.tdi-card--edition[class][class][class][class][class] { border-radius: 6px !important; }
+
+/* The headline comes down a step and picks up weight, so it reads as heavier
+   type rather than bigger type. */
+.tdi-card--edition .ec-headline[class][class][class][class][class][class][class] {
+  font-size: 1.22rem !important;
+  font-weight: 680 !important;
+  line-height: 1.26 !important;
+}
+@media (max-width: 899.98px) {
+  .tdi-card--edition .ec-headline[class][class][class][class][class][class][class] { font-size: 1.06rem !important; }
+}
+
+/* Read / Listen / Briefings by Topic come down from a 44px control to 38. */
+.ec--v2 .ec-btn[class][class] {
+  height: 38px !important;
+  padding: 0 14px !important;
+  font-size: 0.88rem !important;
+  border-radius: 8px !important;
+  gap: 7px !important;
+}
+.ec--v2 .ec-btn[class][class] svg { width: 16px !important; height: 16px !important; }
+
+/* ── revamp1414: the two column heads match ────────────────────────────────
+   AI Prompts takes the News Feed's size and its tile, and both tiles trade the
+   solid navy for a faint grey with a dark glyph — a section marker, not a
+   badge. */
+.newsfeed-title-ic[class][class][class],
+.trail-head .trail-head-ic[class][class] {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: #eef0f6 !important;
+  color: #1c3a6b !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.newsfeed-title-ic[class][class][class] svg,
+.trail-head .trail-head-ic[class][class] svg { width: 19px !important; height: 19px !important; }
+.topic-top-side .trail-head[class][class][class] {
+  display: flex !important;
+  align-items: center;
+  gap: 11px;
+  font-family: var(--font-display) !important;
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.024em !important;
+  color: #1c3a6b !important;
+}
+@media (max-width: 899.98px) {
+  .newsfeed-title-ic[class][class][class],
+  .trail-head .trail-head-ic[class][class] { width: 30px; height: 30px; border-radius: 9px; }
+  .newsfeed-title-ic[class][class][class] svg,
+  .trail-head .trail-head-ic[class][class] svg { width: 17px !important; height: 17px !important; }
+}
+
+/* ── revamp1414: the topic rows behave like buttons ────────────────────────
+   They are links, so hover underlined the name and turned it link-blue. A row
+   this size is a target, not a phrase: it lifts on hover and presses on click. */
+.aiidd-tree .aiidd-parent-flat[class] { transition: background-color .14s ease, border-color .14s ease, transform .08s ease; }
+.aiidd-tree .aiidd-parent-flat[class],
+.aiidd-tree .aiidd-parent-flat[class]:hover,
+.aiidd-tree .aiidd-parent-flat[class]:focus-visible { text-decoration: none !important; }
+.aiidd-tree .aiidd-parent-flat[class] .aiidd-parent-name,
+.aiidd-tree .aiidd-parent-flat[class]:hover .aiidd-parent-name { text-decoration: none !important; color: #16233d !important; }
+@media (hover: hover) {
+  .aiidd-tree .aiidd-parent-flat[class]:hover {
+    background: #f4f6fb !important;
+    border-color: color-mix(in srgb, var(--tc, #2f4d9e) 34%, #e8eaef) !important;
+  }
+}
+.aiidd-tree .aiidd-parent-flat[class]:active { transform: translateY(1px); background: #eef1f8 !important; }
