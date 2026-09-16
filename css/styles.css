@@ -38508,3 +38508,47 @@ body.home-search #home-trending .trend-card-title[class][class][class],
 @media (hover: hover) {
   .topic-top-side .aii-fi-acc[class][class]:hover { background: #f1f3f8 !important; border-color: #d8dfec !important; }
 }
+
+/* revamp1411b: the rail rule is scoped through body and the column, so match it. */
+body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class][class] {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* ── revamp1412: the briefing card's head reads as a label ─────────────────
+   "Morning Briefing" was set at 21px in the card's heaviest weight, competing
+   with the headline two lines below it. It is a standfirst, not a headline:
+   small, uppercase, tracked out, in the label blue the rest of the site uses.
+   The dateline follows it on the same line instead of being pushed to the far
+   edge, and comes down in size to match. */
+.tdi-card--edition .ec-title[class][class][class][class][class][class][class][class] {
+  font-family: var(--font-family) !important;
+  font-size: 0.72rem !important;
+  font-weight: 750 !important;
+  letter-spacing: 0.11em !important;
+  text-transform: uppercase !important;
+  line-height: 1.2 !important;
+  color: #2d54b4 !important;
+  margin: 0 !important;
+}
+.ec-head .ec-headrow .ec-stamp[class][class][class] { margin-left: 0 !important; }
+.ec-head .ec-headrow .ec-stamp-pill[class][class][class] {
+  font-size: 0.7rem !important;
+  font-weight: 650 !important;
+  padding: 3px 9px !important;
+  gap: 6px !important;
+  border-radius: 6px !important;
+  letter-spacing: 0.01em !important;
+}
+.ec-head .ec-headrow .ec-stamp-pill[class][class][class] svg { width: 12px !important; height: 12px !important; }
+.ec-head .ec-headrow[class][class] { gap: 10px !important; }
+
+/* A firmer edge and a tighter corner on the card itself. */
+.tdi-card--edition[class][class][class][class] {
+  border-color: #ccd5e4 !important;
+  border-radius: 10px !important;
+}
