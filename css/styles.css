@@ -38708,3 +38708,15 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class][class] {
 
 /* revamp1417: less room still above the card's label. */
 .tdi-card--edition[class][class][class][class][class][class] { padding-top: 0.35rem !important; }
+
+/* ── revamp1418: tab mode is one column, whatever the viewport says ────────
+   Tab mode is decided on the CONTENT width (the viewport minus the docked
+   sidebar), but the two-column grid collapsed on a `max-width: 1023px` media
+   query, which reads the viewport. With the sidebar docked at, say, 1280px,
+   the page was in tab mode — one section visible at a time — while the grid
+   still reserved a 360px track for the hidden one. That empty track is the
+   dead half of the screen beside the news cards. In tab mode only one child is
+   ever visible, so the grid is always a single column. */
+body.tt-on .topic-band .topic-home > .topic-body-cols[class][class] {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
