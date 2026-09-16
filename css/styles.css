@@ -38724,3 +38724,17 @@ body.tt-on .topic-band .topic-home > .topic-body-cols[class][class] {
 /* revamp1418b: the room above the label was never the card's padding — the
    inner .ec carries 19px of its own. That is what put the label 30px down. */
 .tdi-card--edition .ec--v2[class][class] { padding-top: 6px !important; }
+
+/* revamp1419: Read / Listen come down another step on desktop, where the card
+   is wide and the buttons had the most room to look oversized. The phone keeps
+   the 38px control — a tap target should not shrink. */
+@media (min-width: 900px) {
+  .ec--v2 .ec-btn[class][class][class] {
+    height: 33px !important;
+    padding: 0 12px !important;
+    font-size: 0.82rem !important;
+    border-radius: 7px !important;
+    gap: 6px !important;
+  }
+  .ec--v2 .ec-btn[class][class][class] svg { width: 14px !important; height: 14px !important; }
+}
