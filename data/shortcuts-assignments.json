@@ -41,29 +41,55 @@
       "business-day-snapshot",
       "earnings-season-pulse",
       "wall-street-worries",
-      "big-company-news"
-    ],
-    "banking": [
+      "big-company-news",
       "interest-rate-watch",
       "bank-earnings-roundup",
       "bank-health-check",
       "banking-regulation-update",
-      "deposit-rates"
-    ],
-    "cryptocurrency": [
+      "deposit-rates",
       "crypto-market-snapshot",
       "crypto-regulation-watch",
       "bitcoin-watch",
       "ethereum-update",
       "defi-pulse",
-      "crypto-avoid-scams"
-    ],
-    "deals-ma": [
+      "crypto-avoid-scams",
       "biggest-deals-weekly",
       "pending-deals-tracker",
       "antitrust-watch",
       "sector-ma-heatmap",
-      "activist-investor-watch"
+      "activist-investor-watch",
+      "oil-market-snapshot",
+      "natural-gas-update",
+      "gold-precious-metals",
+      "energy-earnings",
+      "energy-geopolitics",
+      "fintech-funding",
+      "payments-industry",
+      "embedded-finance",
+      "neobanks-update",
+      "fintech-regulation-update",
+      "consumer-credit-updates",
+      "us-housing-market",
+      "best-and-worst-us-housing-markets",
+      "global-housing-market",
+      "mortgage-rate-watch",
+      "housing-affordability-updates",
+      "commercial-real-estate-update",
+      "labor-market-snapshot",
+      "layoff-tracker",
+      "remote-work-updates",
+      "wage-growth-inequality",
+      "ai-impact-on-jobs",
+      "best-rates-personal-finance",
+      "tax-strategy-updates",
+      "best-credit-cards-now",
+      "investing-for-beginners",
+      "finance-tools-resources",
+      "small-business-climate-check",
+      "funding-and-lending-small-business",
+      "best-software-small-business",
+      "tax-compliance-small-business",
+      "marketing-small-business"
     ],
     "economy": [
       "economic-indicators-roundup",
@@ -72,36 +98,6 @@
       "recession-risk-check",
       "fed-watch",
       "consumer-health-check"
-    ],
-    "energy-commodities": [
-      "oil-market-snapshot",
-      "natural-gas-update",
-      "gold-precious-metals",
-      "energy-earnings",
-      "energy-geopolitics"
-    ],
-    "fintech": [
-      "fintech-funding",
-      "payments-industry",
-      "embedded-finance",
-      "neobanks-update",
-      "fintech-regulation-update",
-      "consumer-credit-updates"
-    ],
-    "housing-real-estate": [
-      "us-housing-market",
-      "best-and-worst-us-housing-markets",
-      "global-housing-market",
-      "mortgage-rate-watch",
-      "housing-affordability-updates",
-      "commercial-real-estate-update"
-    ],
-    "jobs-labor": [
-      "labor-market-snapshot",
-      "layoff-tracker",
-      "remote-work-updates",
-      "wage-growth-inequality",
-      "ai-impact-on-jobs"
     ],
     "markets": [
       "us-market-snapshot",
@@ -112,26 +108,67 @@
       "market-sentiment-check",
       "bond-market-check"
     ],
-    "personal-finance": [
-      "best-rates-personal-finance",
-      "tax-strategy-updates",
-      "best-credit-cards-now",
-      "investing-for-beginners",
-      "finance-tools-resources"
-    ],
-    "small-business": [
-      "small-business-climate-check",
-      "funding-and-lending-small-business",
-      "best-software-small-business",
-      "tax-compliance-small-business",
-      "marketing-small-business"
-    ],
     "technology": [
       "tech-industry-snapshot",
       "big-tech-watch",
       "product-launch-roundup",
       "tech-earnings-pulse",
-      "tech-policy-updates"
+      "tech-policy-updates",
+      "global-ai-regulation-tracking",
+      "us-ai-policy-updates",
+      "ai-copyright-updates",
+      "ai-in-workplace",
+      "layer-1-blockchain",
+      "defi-status-check",
+      "rwa-tokenization-updates",
+      "web3-developer-activity",
+      "crypto-infrastructure-watch",
+      "hyperscaler-earnings-roundup",
+      "ai-infrastructure-buildout",
+      "cloud-cost-optimization",
+      "cloud-security-watch",
+      "edge-distributed-cloud",
+      "new-product-launches",
+      "wearables-update",
+      "smart-home-updates",
+      "best-tech-deals-right-now",
+      "modern-data-stack",
+      "ai-data-stack",
+      "real-time-streaming-data",
+      "data-quality-observability",
+      "quantum-computing-watch",
+      "brain-computer-interfaces",
+      "nuclear-fusion-energy",
+      "synthetic-biology-updates",
+      "robotics-frontier-updates",
+      "space-tech-watch",
+      "us-privacy-law-tracking",
+      "global-privacy-law-tracking",
+      "cross-border-data-transfer-updates",
+      "childrens-privacy-watch",
+      "privacy-tech-updates",
+      "personal-privacy-hygiene",
+      "ai-and-privacy",
+      "language-and-frameworks",
+      "ai-coding-tools",
+      "developer-productivity-tools",
+      "open-source-watch",
+      "coding-career-pulse",
+      "humanoid-robots",
+      "industrial-automation-updates",
+      "autonomous-vehicles",
+      "drones-aerial-robotics",
+      "robotics-healthcare",
+      "automation-workforce-impact",
+      "saas-earnings-roundup",
+      "enterprise-software-buyers-guide",
+      "vertical-saas-watch",
+      "ai-in-saas",
+      "saas-pricing-trends",
+      "funding-roundup",
+      "vc-hot-sectors",
+      "startup-ipo-watch",
+      "vc-firm-watch"
     ],
     "artificial-intelligence": [
       "new-model-releases",
@@ -139,32 +176,6 @@
       "where-ai-is-being-used",
       "ai-safety-updates",
       "open-source-ai-watch"
-    ],
-    "ai-governance-policy": [
-      "global-ai-regulation-tracking",
-      "us-ai-policy-updates",
-      "ai-copyright-updates",
-      "ai-in-workplace"
-    ],
-    "blockchain-web3": [
-      "layer-1-blockchain",
-      "defi-status-check",
-      "rwa-tokenization-updates",
-      "web3-developer-activity",
-      "crypto-infrastructure-watch"
-    ],
-    "cloud-computing": [
-      "hyperscaler-earnings-roundup",
-      "ai-infrastructure-buildout",
-      "cloud-cost-optimization",
-      "cloud-security-watch",
-      "edge-distributed-cloud"
-    ],
-    "consumer-electronics": [
-      "new-product-launches",
-      "wearables-update",
-      "smart-home-updates",
-      "best-tech-deals-right-now"
     ],
     "cybersecurity": [
       "recent-major-breaches",
@@ -174,44 +185,6 @@
       "ai-impact-cybersecurity",
       "personal-security-hygiene"
     ],
-    "data-analytics": [
-      "modern-data-stack",
-      "ai-data-stack",
-      "real-time-streaming-data",
-      "data-quality-observability"
-    ],
-    "emerging-technologies": [
-      "quantum-computing-watch",
-      "brain-computer-interfaces",
-      "nuclear-fusion-energy",
-      "synthetic-biology-updates",
-      "robotics-frontier-updates",
-      "space-tech-watch"
-    ],
-    "privacy-data-protection": [
-      "us-privacy-law-tracking",
-      "global-privacy-law-tracking",
-      "cross-border-data-transfer-updates",
-      "childrens-privacy-watch",
-      "privacy-tech-updates",
-      "personal-privacy-hygiene",
-      "ai-and-privacy"
-    ],
-    "programming-development": [
-      "language-and-frameworks",
-      "ai-coding-tools",
-      "developer-productivity-tools",
-      "open-source-watch",
-      "coding-career-pulse"
-    ],
-    "robotics-automation": [
-      "humanoid-robots",
-      "industrial-automation-updates",
-      "autonomous-vehicles",
-      "drones-aerial-robotics",
-      "robotics-healthcare",
-      "automation-workforce-impact"
-    ],
     "social-media": [
       "social-platforms-snapshot",
       "creator-economy-updates",
@@ -219,50 +192,29 @@
       "social-media-marketing",
       "youth-privacy-safety-social-media"
     ],
-    "software-saas": [
-      "saas-earnings-roundup",
-      "enterprise-software-buyers-guide",
-      "vertical-saas-watch",
-      "ai-in-saas",
-      "saas-pricing-trends"
-    ],
-    "startups-venture-capital": [
-      "funding-roundup",
-      "vc-hot-sectors",
-      "startup-ipo-watch",
-      "vc-firm-watch"
-    ],
     "science": [
       "science-recent-discoveries",
       "science-funding-politics",
       "science-results-to-watch-for",
-      "science-hype-reality-check"
-    ],
-    "astronomy-space": [
+      "science-hype-reality-check",
       "space-mission-updates",
       "launch-cadence-watch",
       "astronomy-discoveries",
       "mars-lunar-programs",
       "sky-watching-guide",
-      "commercial-space-sector"
-    ],
-    "chemistry-biology-genetics": [
+      "commercial-space-sector",
       "biology-breakthrough-watch",
       "gene-editing-updates",
       "synthetic-biology-watch",
       "chemistry-highlights",
       "genomics-updates",
-      "microbiome-research-updates"
-    ],
-    "physics": [
+      "microbiome-research-updates",
       "physics-breakthrough-watch",
       "quantum-frontier-updates",
       "particle-physics-updates",
       "cosmology-open-questions",
       "advances-in-materials-condensed-matter",
-      "fusion-progress-check"
-    ],
-    "research-academia": [
+      "fusion-progress-check",
       "federal-research-funding-watch",
       "academic-publishing-updates",
       "universities-politics",
@@ -273,30 +225,22 @@
     "health-wellness": [
       "major-trial-approval-watch",
       "healthcare-politics-updates",
-      "public-health-watch"
-    ],
-    "fitness-exercise": [
+      "public-health-watch",
       "evidence-based-fitness-updates",
       "recovery-science",
-      "best-fitness-wearables"
-    ],
-    "healthcare-industry": [
+      "best-fitness-wearables",
       "healthcare-earnings-roundup",
       "medicare-medicaid-watch",
       "hospital-industry-check",
       "health-insurance-landscape",
       "healthcare-ai-in-practice",
-      "drug-pricing-updates"
-    ],
-    "nutrition-diet": [
+      "drug-pricing-updates",
       "nutrition-science-updates",
       "diet-approach-comparisons",
       "protein-macros-guidance",
       "ultra-processed-food-watch",
       "supplements-worth-taking",
-      "food-industry-policy-watch"
-    ],
-    "medical-research-pharma-biotech": [
+      "food-industry-policy-watch",
       "pharma-earnings-roundup",
       "biotech-funding-pipeline",
       "patent-cliff-watch",
@@ -325,33 +269,31 @@
       "us-polling-snapshot",
       "us-political-calendar",
       "this-week-in-washington",
-      "most-consequental-stories"
-    ],
-    "campaigns-elections": [
+      "most-consequental-stories",
       "global-election-calendar",
-      "global-polling-snapshot",
       "us-election-calendar",
-      "us-polling-snapshot",
       "us-campaign-finance-watch",
       "us-ballot-initiative-tracker",
       "us-voting-rights-updates",
-      "us-electoral-map-analysis"
-    ],
-    "congress-white-house": [
+      "us-electoral-map-analysis",
       "congressional-agenda-updates",
       "white-house-watch",
       "budget-spending-watch",
       "key-bills-to-watch",
       "administration-personnel-watch",
-      "executive-action-tracker"
-    ],
-    "courts-law-regulation": [
+      "executive-action-tracker",
       "supreme-court-watch",
       "federal-court-watch",
       "major-regulatory-actions",
       "big-tech-antitrust-cases",
       "state-ag-activity",
-      "constitutional-law-trends"
+      "constitutional-law-trends",
+      "global-hotspots-updates",
+      "power-shifts-to-watch",
+      "trade-economic-statecraft",
+      "multilateral-institutions-watch",
+      "election-spillovers",
+      "energy-geopolitics"
     ],
     "defense-national-security-foreign-policy": [
       "globla-defense-policy-updates",
@@ -361,14 +303,6 @@
       "sanctions-export-controls",
       "defense-industry-watch",
       "diplomatic-calendar"
-    ],
-    "geopolitics": [
-      "global-hotspots-updates",
-      "power-shifts-to-watch",
-      "trade-economic-statecraft",
-      "multilateral-institutions-watch",
-      "election-spillovers",
-      "energy-geopolitics"
     ],
     "us-politics": [
       "polling-public-opinion",
@@ -388,31 +322,64 @@
       "elections-around-the-world",
       "underreported-stories-world",
       "authoritarianism-democracy-watch",
-      "global-tech-ai-race"
-    ],
-    "africa": [
+      "global-tech-ai-race",
       "content-wide-snapshot",
       "african-economic-updates",
       "african-politics-watch",
       "sahel-security",
       "africa-global-partnerships",
-      "african-tech-scene"
-    ],
-    "asia": [
+      "african-tech-scene",
       "asia-pacfic-snapshot",
       "southeast-asia-updates",
       "korean-peninsula-watch",
       "japan-updates",
       "taiwan-strait-watch",
-      "asian-markets-snapshot"
-    ],
-    "canada": [
+      "asian-markets-snapshot",
       "canadian-political-snapshot",
       "canada-us-relations-watch",
       "canada-provincial-politics",
       "canada-economy-updates",
       "canada-indigenous-affairs-watch",
-      "canada-markets-business"
+      "canada-markets-business",
+      "eu-snapshot",
+      "european-politics-watch",
+      "eu-regulation-tracker",
+      "european-economy-check",
+      "europe-far-right-far-left",
+      "uk-in-europe-post-brexit",
+      "european-defense-updates",
+      "india-snapshot",
+      "india-government-watch",
+      "india-economy-updates",
+      "indian-tech-startups",
+      "india-foreign-policy",
+      "state-politics-india",
+      "latin-america-snapshot",
+      "mexico-snapshot",
+      "brazil-snapshot",
+      "argentina-snapshot",
+      "latin-america-andean-region-updates",
+      "latin-america-migration-border-issues",
+      "latin-america-organized-crime-security",
+      "middle-east-snapshot",
+      "middle-east-israel-region-updates",
+      "iran-snapshot",
+      "turkey-snapshot",
+      "gulf-states-snapshot",
+      "egypt-north-africa-snapshot",
+      "energy-middle-east-updates",
+      "australia-snapshot",
+      "new-zealand-snapshot",
+      "pacific-island-snapshot",
+      "oceania-auk-us-defens",
+      "australian-economy-markets",
+      "climate-pacific-updates",
+      "russia-ukraine-updates",
+      "russia-snapshot",
+      "eastern-europe-snapshot",
+      "caucasus-central-asia-updates",
+      "belarus-moldova-updates",
+      "russias-global-role-updates"
     ],
     "china": [
       "china-snapshot",
@@ -432,127 +399,60 @@
       "us-china-relationship-watch",
       "us-immigration-border-updates"
     ],
-    "europe": [
-      "eu-snapshot",
-      "european-politics-watch",
-      "eu-regulation-tracker",
-      "european-economy-check",
-      "europe-far-right-far-left",
-      "uk-in-europe-post-brexit",
-      "european-defense-updates"
-    ],
-    "india": [
-      "india-snapshot",
-      "india-government-watch",
-      "india-economy-updates",
-      "indian-tech-startups",
-      "india-foreign-policy",
-      "state-politics-india"
-    ],
-    "latin-america": [
-      "latin-america-snapshot",
-      "mexico-snapshot",
-      "brazil-snapshot",
-      "argentina-snapshot",
-      "latin-america-andean-region-updates",
-      "latin-america-migration-border-issues",
-      "latin-america-organized-crime-security"
-    ],
-    "middle-east": [
-      "middle-east-snapshot",
-      "middle-east-israel-region-updates",
-      "iran-snapshot",
-      "turkey-snapshot",
-      "gulf-states-snapshot",
-      "egypt-north-africa-snapshot",
-      "energy-middle-east-updates"
-    ],
-    "oceania": [
-      "australia-snapshot",
-      "new-zealand-snapshot",
-      "pacific-island-snapshot",
-      "oceania-auk-us-defens",
-      "australian-economy-markets",
-      "climate-pacific-updates"
-    ],
-    "russia-eastern-europe": [
-      "russia-ukraine-updates",
-      "russia-snapshot",
-      "eastern-europe-snapshot",
-      "caucasus-central-asia-updates",
-      "belarus-moldova-updates",
-      "russias-global-role-updates"
-    ],
     "sports": [
       "sports-snapshot",
       "this-weekends-slate",
       "sports-business-watch",
-      "coaching-athlete-movement"
-    ],
-    "soccer": [
+      "coaching-athlete-movement",
       "soccer-top-leagues",
       "soccer-european-competition-watch",
       "premier-league-snapshot",
       "mls-us-soccer-snapshot",
       "international-soccer-updates",
       "soccer-transfer-window-watch",
-      "soccer-ballon-dor-race"
-    ],
-    "mlb": [
+      "soccer-ballon-dor-race",
       "mlb-snapshot",
       "standings-playoff-picture",
       "mlb-power-rankings",
       "trade-roster-watch",
       "mlb-injury-report",
       "stat-leaders-updates",
-      "awards-watch"
-    ],
-    "nba": [
+      "awards-watch",
       "nba-league-snapshot-today",
       "nba-standings-playoff-picture",
       "nba-power-rankings",
       "nba-trade-roster-watch",
       "nba-injury-report",
       "nba-awards-race",
-      "nba-stat-trends"
-    ],
-    "nfl": [
+      "nba-stat-trends",
       "nfl-weekly-snapshot",
       "nfl-standings-playoff-picture",
       "nfl-power-rankings",
       "nfl-injury-report",
       "nfl-qb-carousel",
       "nfl-trade-cut-coaching-watch",
-      "nfl-awards-race"
-    ],
-    "nhl": [
+      "nfl-awards-race",
       "nhl-league-snapshot",
       "nhl-standings-playoff-picture",
       "nhl-power-rankings",
       "nhl-trade-roster-watch",
       "nhl-injury-report",
       "nhl-awards-race",
-      "nhl-stat-leaders"
-    ],
-    "college-basketball": [
+      "nhl-stat-leaders",
       "ncaab-rankings-and-movers",
       "ncaab-bracketology-update",
       "ncaab-conference-race-snapshot",
       "ncaab-coaching-watch",
       "ncaab-player-of-year-watch",
       "ncaab-transfer-portal-nil-watch",
-      "ncaab-upset-theats-warning-signs"
-    ],
-    "college-football": [
+      "ncaab-upset-theats-warning-signs",
       "ncaaf-top-25-movers",
       "ncaaf-playoff-picture",
       "ncaaf-conference-race-snapshot",
       "ncaaf-heisman-watch",
       "ncaaf-coaching-carousel",
       "ncaaf-transfer-portal-nil-watch",
-      "ncaaf-big-games"
-    ],
-    "combat-sports": [
+      "ncaaf-big-games",
       "ufc-snapshot",
       "boxing-snapshot",
       "combat-pound-for-pound-rankings",
@@ -564,34 +464,26 @@
       "climate-snapshot",
       "climate-state",
       "climate-economy",
-      "climate-tech-investment"
-    ],
-    "conservation-wildlife": [
+      "climate-tech-investment",
       "endangered-species-updates",
       "ocean-marine-watch",
       "forests-land-use",
       "biodiversity-crisis-updates",
       "wildlife-trafficking-watch",
-      "conservation-wins"
-    ],
-    "clean-energy-sustainability": [
+      "conservation-wins",
       "energy-transition-snapshot",
       "ev-market-updates",
       "battery-storage-watch",
       "solar-wind-pipeline",
       "climate-tech-funding",
       "corporate-sustainability-watch",
-      "hydrogen-emerging-clean-tech"
-    ],
-    "climate-policy": [
+      "hydrogen-emerging-clean-tech",
       "us-climate-policy-updates",
       "international-climate-policy-updates",
       "carbon-markets-watch",
       "ira-implementation-watch",
       "climate-litigation-updates",
-      "climate-trade-policy-updates"
-    ],
-    "weather": [
+      "climate-trade-policy-updates",
       "severe-weather-watch",
       "hurricane-season-snapshot",
       "tornado-season-check",
@@ -602,22 +494,22 @@
     "entertainment": [
       "what-to-watch-listen-play",
       "cultural-moments-right-now",
-      "awards-season-watch"
-    ],
-    "celebrities": [
+      "awards-season-watch",
       "celebrity-news-snapshot",
       "celebrity-business-snapshot",
       "red-carpet-awards-snapshot",
       "influencer-creator-watch",
-      "cultutral-conversation-snapshot"
-    ],
-    "gaming-streaming": [
+      "cultutral-conversation-snapshot",
       "gaming-streaming-new-releases-roundup",
       "gaming-industry-snapshot",
       "gaming-hardware-snapshot",
       "gaming-streaming-live-service-watch",
       "esports-streaming-snapshot",
-      "indie-game-snapshot"
+      "indie-game-snapshot",
+      "top-podcasts-right-now",
+      "podcast-industry-watch",
+      "podcast-episodes-worth-hearing",
+      "video-podcasting-watch"
     ],
     "television-movies": [
       "tv-movies-what-to-watch-this-week",
@@ -633,32 +525,20 @@
       "music-tours-concerts-watch",
       "music-festival-season-updates"
     ],
-    "podcasts": [
-      "top-podcasts-right-now",
-      "podcast-industry-watch",
-      "podcast-episodes-worth-hearing",
-      "video-podcasting-watch"
-    ],
     "arts-culture": [
       "arts-culture-culturual-conversations",
       "arts-culture-awards-lists",
-      "arts-culture-cultural-calendar"
-    ],
-    "architecture-design": [
+      "arts-culture-cultural-calendar",
       "architecture-design-notable-new-buildings",
       "architecture-design-design-award-watch",
       "architecture-design-urbanism-cities",
       "interior-design-trends",
       "industrial-product-design-updates",
-      "architecture-and-ai"
-    ],
-    "books-literature": [
+      "architecture-and-ai",
       "new-releases-worth-reading",
       "bestseller-watch",
       "literary-awards-watch",
-      "publishing-industry-watch"
-    ],
-    "fashion-style": [
+      "publishing-industry-watch",
       "fashion-week-recaps",
       "fashion-industry-watch",
       "sustainable-fashion-watch",
@@ -674,7 +554,12 @@
     "lifestyle": [
       "lifestyle-snapshot",
       "cost-of-living-watch",
-      "lifestyle-best-new-tools-apps"
+      "lifestyle-best-new-tools-apps",
+      "seasonal-home-maintenance",
+      "energy-efficiency-upgrades",
+      "smart-home-snapshot",
+      "job-market-snapshot",
+      "compensation-trends"
     ],
     "cars-auto": [
       "auto-industry-snapshot",
@@ -682,45 +567,29 @@
       "car-buying-negotiation",
       "maintenance-ownership"
     ],
-    "home-garden": [
-      "seasonal-home-maintenance",
-      "energy-efficiency-upgrades",
-      "smart-home-snapshot"
-    ],
-    "relationships": [],
     "travel": [
       "travel-industry-updates",
       "flight-hotel-strategy"
-    ],
-    "work-careers": [
-      "job-market-snapshot",
-      "compensation-trends"
     ],
     "media": [
       "media-news-snapshot",
       "media-business-watch",
       "ai-impact-media",
       "press-freedom-trust",
-      "audience-distribution-shifts"
-    ],
-    "advertising-marketing": [
+      "audience-distribution-shifts",
       "ad-industry-snapshot",
       "digital-ad-platform-watch",
       "retail-media-updates",
       "best-marketing-tools",
       "ai-in-marketing",
       "brand-marketing-watch",
-      "privacy-ad-stack"
-    ],
-    "journalism": [
+      "privacy-ad-stack",
       "journalism-industry-watch",
       "press-freedom-updates",
       "investigative-journalism-highlights",
       "independent-media-watch",
       "ai-journalism-watch",
-      "local-news-crisis"
-    ],
-    "media-business": [
+      "local-news-crisis",
       "media-earnings-roundup",
       "streaming-economics-updates",
       "media-m-a-watch",
@@ -733,20 +602,15 @@
       "education-news-snapshot",
       "ai-in-education-watch",
       "federal-education-policy",
-      "learning-trends"
-    ],
-    "higher-education": [
+      "learning-trends",
       "higher-ed-snapshot",
       "admissions-watch",
       "federal-higher-ed-policy",
       "student-debt-updates",
       "universities-in-the-news",
       "college-affordability-value",
-      "international-students-watch"
-    ],
-    "learning-edtech": [
+      "international-students-watch",
       "edtech-snapshot",
-      "ai-in-education-watch",
       "online-learning-snapshot",
       "k-12-edtech-watch",
       "skills-based-learning"
@@ -755,16 +619,10 @@
       "ideas-in-the-air",
       "ideas-worth-knowing",
       "opinion-across-the-spectrum",
-      "best-long-reads"
-    ],
-    "ethics-philosophy": [
+      "best-long-reads",
       "applied-ethics-watch",
-      "moral-philosophical-frameworks"
-    ],
-    "history": [
-      "on-this-day-in-history"
-    ],
-    "religion-faith": [
+      "moral-philosophical-frameworks",
+      "on-this-day-in-history",
       "religion-news-snapshot",
       "vatican-catholic-church-watch",
       "us-religious-landscape",
@@ -877,8 +735,20 @@
   ],
   "evergreenExclusions": {},
   "featuredShortcuts": {
-    "discover": ["latest-news", "trends", "the-cutting-edge"],
-    "analyze": ["why-it-matters", "different-perspectives", "risks-red-flags"],
-    "learn": ["beginners-guide", "key-players", "how-it-actually-works"]
+    "discover": [
+      "latest-news",
+      "trends",
+      "the-cutting-edge"
+    ],
+    "analyze": [
+      "why-it-matters",
+      "different-perspectives",
+      "risks-red-flags"
+    ],
+    "learn": [
+      "beginners-guide",
+      "key-players",
+      "how-it-actually-works"
+    ]
   }
 }

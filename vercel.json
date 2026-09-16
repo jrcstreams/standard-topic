@@ -97,6 +97,708 @@
       "path": "/api/cron/pregenerate?type=purge&scope=orphans"
     }
   ],
+  "redirects": [
+    {
+      "source": "/topic/banking",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/banking/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/cryptocurrency",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/cryptocurrency/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/deals-ma",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/deals-ma/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/energy-commodities",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/energy-commodities/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/fintech",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/fintech/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/housing-real-estate",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/housing-real-estate/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/jobs-labor",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/jobs-labor/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/personal-finance",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/personal-finance/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/small-business",
+      "destination": "/topic/business-finance",
+      "permanent": true
+    },
+    {
+      "source": "/topic/small-business/:tab",
+      "destination": "/topic/business-finance/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/ai-governance-policy",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/ai-governance-policy/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/blockchain-web3",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/blockchain-web3/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/cloud-computing",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/cloud-computing/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/consumer-electronics",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/consumer-electronics/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/data-analytics",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/data-analytics/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/emerging-technologies",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/emerging-technologies/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/privacy-data-protection",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/privacy-data-protection/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/programming-development",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/programming-development/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/robotics-automation",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/robotics-automation/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/software-saas",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/software-saas/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/startups-venture-capital",
+      "destination": "/topic/technology",
+      "permanent": true
+    },
+    {
+      "source": "/topic/startups-venture-capital/:tab",
+      "destination": "/topic/technology/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/astronomy-space",
+      "destination": "/topic/science",
+      "permanent": true
+    },
+    {
+      "source": "/topic/astronomy-space/:tab",
+      "destination": "/topic/science/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/chemistry-biology-genetics",
+      "destination": "/topic/science",
+      "permanent": true
+    },
+    {
+      "source": "/topic/chemistry-biology-genetics/:tab",
+      "destination": "/topic/science/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/physics",
+      "destination": "/topic/science",
+      "permanent": true
+    },
+    {
+      "source": "/topic/physics/:tab",
+      "destination": "/topic/science/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/research-academia",
+      "destination": "/topic/science",
+      "permanent": true
+    },
+    {
+      "source": "/topic/research-academia/:tab",
+      "destination": "/topic/science/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/fitness-exercise",
+      "destination": "/topic/health-wellness",
+      "permanent": true
+    },
+    {
+      "source": "/topic/fitness-exercise/:tab",
+      "destination": "/topic/health-wellness/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/healthcare-industry",
+      "destination": "/topic/health-wellness",
+      "permanent": true
+    },
+    {
+      "source": "/topic/healthcare-industry/:tab",
+      "destination": "/topic/health-wellness/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/nutrition-diet",
+      "destination": "/topic/health-wellness",
+      "permanent": true
+    },
+    {
+      "source": "/topic/nutrition-diet/:tab",
+      "destination": "/topic/health-wellness/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/medical-research-pharma-biotech",
+      "destination": "/topic/health-wellness",
+      "permanent": true
+    },
+    {
+      "source": "/topic/medical-research-pharma-biotech/:tab",
+      "destination": "/topic/health-wellness/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/campaigns-elections",
+      "destination": "/topic/politics",
+      "permanent": true
+    },
+    {
+      "source": "/topic/campaigns-elections/:tab",
+      "destination": "/topic/politics/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/congress-white-house",
+      "destination": "/topic/politics",
+      "permanent": true
+    },
+    {
+      "source": "/topic/congress-white-house/:tab",
+      "destination": "/topic/politics/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/courts-law-regulation",
+      "destination": "/topic/politics",
+      "permanent": true
+    },
+    {
+      "source": "/topic/courts-law-regulation/:tab",
+      "destination": "/topic/politics/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/geopolitics",
+      "destination": "/topic/politics",
+      "permanent": true
+    },
+    {
+      "source": "/topic/geopolitics/:tab",
+      "destination": "/topic/politics/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/africa",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/africa/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/asia",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/asia/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/canada",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/canada/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/europe",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/europe/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/india",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/india/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/latin-america",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/latin-america/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/middle-east",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/middle-east/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/oceania",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/oceania/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/russia-eastern-europe",
+      "destination": "/topic/world",
+      "permanent": true
+    },
+    {
+      "source": "/topic/russia-eastern-europe/:tab",
+      "destination": "/topic/world/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/soccer",
+      "destination": "/topic/sports",
+      "permanent": true
+    },
+    {
+      "source": "/topic/soccer/:tab",
+      "destination": "/topic/sports/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/mlb",
+      "destination": "/topic/sports",
+      "permanent": true
+    },
+    {
+      "source": "/topic/mlb/:tab",
+      "destination": "/topic/sports/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/nba",
+      "destination": "/topic/sports",
+      "permanent": true
+    },
+    {
+      "source": "/topic/nba/:tab",
+      "destination": "/topic/sports/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/nfl",
+      "destination": "/topic/sports",
+      "permanent": true
+    },
+    {
+      "source": "/topic/nfl/:tab",
+      "destination": "/topic/sports/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/nhl",
+      "destination": "/topic/sports",
+      "permanent": true
+    },
+    {
+      "source": "/topic/nhl/:tab",
+      "destination": "/topic/sports/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/college-basketball",
+      "destination": "/topic/sports",
+      "permanent": true
+    },
+    {
+      "source": "/topic/college-basketball/:tab",
+      "destination": "/topic/sports/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/college-football",
+      "destination": "/topic/sports",
+      "permanent": true
+    },
+    {
+      "source": "/topic/college-football/:tab",
+      "destination": "/topic/sports/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/combat-sports",
+      "destination": "/topic/sports",
+      "permanent": true
+    },
+    {
+      "source": "/topic/combat-sports/:tab",
+      "destination": "/topic/sports/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/conservation-wildlife",
+      "destination": "/topic/climate-environment",
+      "permanent": true
+    },
+    {
+      "source": "/topic/conservation-wildlife/:tab",
+      "destination": "/topic/climate-environment/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/clean-energy-sustainability",
+      "destination": "/topic/climate-environment",
+      "permanent": true
+    },
+    {
+      "source": "/topic/clean-energy-sustainability/:tab",
+      "destination": "/topic/climate-environment/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/climate-policy",
+      "destination": "/topic/climate-environment",
+      "permanent": true
+    },
+    {
+      "source": "/topic/climate-policy/:tab",
+      "destination": "/topic/climate-environment/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/weather",
+      "destination": "/topic/climate-environment",
+      "permanent": true
+    },
+    {
+      "source": "/topic/weather/:tab",
+      "destination": "/topic/climate-environment/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/celebrities",
+      "destination": "/topic/entertainment",
+      "permanent": true
+    },
+    {
+      "source": "/topic/celebrities/:tab",
+      "destination": "/topic/entertainment/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/gaming-streaming",
+      "destination": "/topic/entertainment",
+      "permanent": true
+    },
+    {
+      "source": "/topic/gaming-streaming/:tab",
+      "destination": "/topic/entertainment/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/podcasts",
+      "destination": "/topic/entertainment",
+      "permanent": true
+    },
+    {
+      "source": "/topic/podcasts/:tab",
+      "destination": "/topic/entertainment/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/architecture-design",
+      "destination": "/topic/arts-culture",
+      "permanent": true
+    },
+    {
+      "source": "/topic/architecture-design/:tab",
+      "destination": "/topic/arts-culture/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/books-literature",
+      "destination": "/topic/arts-culture",
+      "permanent": true
+    },
+    {
+      "source": "/topic/books-literature/:tab",
+      "destination": "/topic/arts-culture/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/fashion-style",
+      "destination": "/topic/arts-culture",
+      "permanent": true
+    },
+    {
+      "source": "/topic/fashion-style/:tab",
+      "destination": "/topic/arts-culture/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/home-garden",
+      "destination": "/topic/lifestyle",
+      "permanent": true
+    },
+    {
+      "source": "/topic/home-garden/:tab",
+      "destination": "/topic/lifestyle/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/relationships",
+      "destination": "/topic/lifestyle",
+      "permanent": true
+    },
+    {
+      "source": "/topic/relationships/:tab",
+      "destination": "/topic/lifestyle/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/work-careers",
+      "destination": "/topic/lifestyle",
+      "permanent": true
+    },
+    {
+      "source": "/topic/work-careers/:tab",
+      "destination": "/topic/lifestyle/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/advertising-marketing",
+      "destination": "/topic/media",
+      "permanent": true
+    },
+    {
+      "source": "/topic/advertising-marketing/:tab",
+      "destination": "/topic/media/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/journalism",
+      "destination": "/topic/media",
+      "permanent": true
+    },
+    {
+      "source": "/topic/journalism/:tab",
+      "destination": "/topic/media/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/media-business",
+      "destination": "/topic/media",
+      "permanent": true
+    },
+    {
+      "source": "/topic/media-business/:tab",
+      "destination": "/topic/media/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/higher-education",
+      "destination": "/topic/education",
+      "permanent": true
+    },
+    {
+      "source": "/topic/higher-education/:tab",
+      "destination": "/topic/education/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/learning-edtech",
+      "destination": "/topic/education",
+      "permanent": true
+    },
+    {
+      "source": "/topic/learning-edtech/:tab",
+      "destination": "/topic/education/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/ethics-philosophy",
+      "destination": "/topic/ideas-opinion-more",
+      "permanent": true
+    },
+    {
+      "source": "/topic/ethics-philosophy/:tab",
+      "destination": "/topic/ideas-opinion-more/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/history",
+      "destination": "/topic/ideas-opinion-more",
+      "permanent": true
+    },
+    {
+      "source": "/topic/history/:tab",
+      "destination": "/topic/ideas-opinion-more/:tab",
+      "permanent": true
+    },
+    {
+      "source": "/topic/religion-faith",
+      "destination": "/topic/ideas-opinion-more",
+      "permanent": true
+    },
+    {
+      "source": "/topic/religion-faith/:tab",
+      "destination": "/topic/ideas-opinion-more/:tab",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/topic/:slug",

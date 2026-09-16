@@ -97,8 +97,93 @@ export function getAllTopics() {
   return topicsData?.topics || [];
 }
 
+// revamp1406 — the subtopic cut. Seventy subtopic pages folded into their
+// parents; every retired URL still resolves. A cold hit is 301'd by
+// vercel.json, and this map catches the in-app kind: a link inside a stored AI
+// answer, a bookmark the SPA restores without a server round trip.
+const TOPIC_ALIASES = {
+  'banking': 'business-finance',
+  'cryptocurrency': 'business-finance',
+  'deals-ma': 'business-finance',
+  'energy-commodities': 'business-finance',
+  'fintech': 'business-finance',
+  'housing-real-estate': 'business-finance',
+  'jobs-labor': 'business-finance',
+  'personal-finance': 'business-finance',
+  'small-business': 'business-finance',
+  'ai-governance-policy': 'technology',
+  'blockchain-web3': 'technology',
+  'cloud-computing': 'technology',
+  'consumer-electronics': 'technology',
+  'data-analytics': 'technology',
+  'emerging-technologies': 'technology',
+  'privacy-data-protection': 'technology',
+  'programming-development': 'technology',
+  'robotics-automation': 'technology',
+  'software-saas': 'technology',
+  'startups-venture-capital': 'technology',
+  'astronomy-space': 'science',
+  'chemistry-biology-genetics': 'science',
+  'physics': 'science',
+  'research-academia': 'science',
+  'fitness-exercise': 'health-wellness',
+  'healthcare-industry': 'health-wellness',
+  'nutrition-diet': 'health-wellness',
+  'medical-research-pharma-biotech': 'health-wellness',
+  'campaigns-elections': 'politics',
+  'congress-white-house': 'politics',
+  'courts-law-regulation': 'politics',
+  'geopolitics': 'politics',
+  'africa': 'world',
+  'asia': 'world',
+  'canada': 'world',
+  'europe': 'world',
+  'india': 'world',
+  'latin-america': 'world',
+  'middle-east': 'world',
+  'oceania': 'world',
+  'russia-eastern-europe': 'world',
+  'soccer': 'sports',
+  'mlb': 'sports',
+  'nba': 'sports',
+  'nfl': 'sports',
+  'nhl': 'sports',
+  'college-basketball': 'sports',
+  'college-football': 'sports',
+  'combat-sports': 'sports',
+  'conservation-wildlife': 'climate-environment',
+  'clean-energy-sustainability': 'climate-environment',
+  'climate-policy': 'climate-environment',
+  'weather': 'climate-environment',
+  'celebrities': 'entertainment',
+  'gaming-streaming': 'entertainment',
+  'podcasts': 'entertainment',
+  'architecture-design': 'arts-culture',
+  'books-literature': 'arts-culture',
+  'fashion-style': 'arts-culture',
+  'home-garden': 'lifestyle',
+  'relationships': 'lifestyle',
+  'work-careers': 'lifestyle',
+  'advertising-marketing': 'media',
+  'journalism': 'media',
+  'media-business': 'media',
+  'higher-education': 'education',
+  'learning-edtech': 'education',
+  'ethics-philosophy': 'ideas-opinion-more',
+  'history': 'ideas-opinion-more',
+  'religion-faith': 'ideas-opinion-more',
+};
+
+// The live slug for a slug that may have been retired.
+export function resolveTopicSlug(slug) {
+  return (slug && TOPIC_ALIASES[slug]) || slug;
+}
+
 export function getTopicBySlug(slug) {
-  return getAllTopics().find(t => t.slug === slug) || null;
+  const all = getAllTopics();
+  return all.find(t => t.slug === slug)
+    || (TOPIC_ALIASES[slug] ? all.find(t => t.slug === TOPIC_ALIASES[slug]) : null)
+    || null;
 }
 
 export function getParentTopics() {

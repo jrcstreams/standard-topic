@@ -1,5 +1,5 @@
 import { initRouter, onRoute, getCurrentRoute, navigate as routerNavigate, routeHash, replaceRoute } from './utils/router.js?v=20260909-revamp1286';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById, fetchWithTimeout, topicColorStyle } from './utils/data.js';
+import { loadAllData, getTopicBySlug, resolveTopicSlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById, fetchWithTimeout, topicColorStyle } from './utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, openModel, copyPrompt } from './utils/ai-models.js?v=20260605-polish30';
 import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
@@ -147,6 +147,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   }, { passive: true, capture: true });
 
   onRoute((route) => {
+    // revamp1406: a retired subtopic slug (one of the seventy folded into its
+    // parent) resolves to the parent, and the address bar is corrected in
+    // place, so everything downstream — shortcuts, feeds, the subnav — reads
+    // one live slug instead of a name nothing answers to any more.
+    if (route.type === 'topic') {
+      const live = resolveTopicSlug(route.slug);
+      if (live !== route.slug) {
+        route = { ...route, slug: live };
+        try { replaceRoute('/topic/' + live + (route.tab && route.tab !== 'newsfeed' ? '/' + route.tab : '')); } catch (_) {}
+      }
+    }
     // Per-route <title> (SEO 2a) — set before trackPageView so GA4 gets it too.
     try { document.title = documentTitleFor(route); } catch (_) {}
     // Remember where we came from so sub-pages can offer a named "Back to …",
@@ -827,13 +838,13 @@ function topicBodyHeadHTML(topic) {
         </button>
       </div>
       ${desc ? `<p class="tbh-desc">${escapeHTML(desc)}</p>` : ''}
-      <div class="tbh-subswrap">
+      ${pills ? `<div class="tbh-subswrap">
         <nav class="tbh-subs" aria-label="Subtopics">
           ${pills}
           <button type="button" class="tbh-more tsp-btn" data-tbh-more hidden
                   aria-expanded="false" aria-controls="tsp-panel-body">More<span class="tbh-more-chev" aria-hidden="true">${TBH_MORE_CHEV}</span></button>
         </nav>
-      </div>
+      </div>` : ''}
       ${topicPickerPanelHTML(topic, 'tsp-panel-body')}
     </header>`;
 }

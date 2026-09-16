@@ -20,33 +20,6 @@
       "tier": 1
     },
     {
-      "slug": "banking",
-      "name": "Banking",
-      "parent": "business-finance",
-      "rssFeedId": "_gwmxDXRtCwy9EJmV",
-      "webhookEnabled": false,
-      "icon": "banknote",
-      "tier": 3
-    },
-    {
-      "slug": "cryptocurrency",
-      "name": "Cryptocurrency",
-      "parent": "business-finance",
-      "rssFeedId": "_m6GN3CNgGl4zXok5",
-      "webhookEnabled": false,
-      "icon": "bitcoin",
-      "tier": 3
-    },
-    {
-      "slug": "deals-ma",
-      "name": "Deals & M&A",
-      "parent": "business-finance",
-      "rssFeedId": "_vaQEaz7EjENqg7te",
-      "webhookEnabled": false,
-      "icon": "handshake",
-      "tier": 3
-    },
-    {
       "slug": "economy",
       "name": "Economy",
       "parent": "business-finance",
@@ -56,66 +29,12 @@
       "tier": 3
     },
     {
-      "slug": "energy-commodities",
-      "name": "Energy & Commodities",
-      "parent": "business-finance",
-      "rssFeedId": "_eeMuxtQbHp3Hfbaa",
-      "webhookEnabled": false,
-      "icon": "flame",
-      "tier": 3
-    },
-    {
-      "slug": "fintech",
-      "name": "Fintech",
-      "parent": "business-finance",
-      "rssFeedId": "_tTSYsLsuskKsRhIK",
-      "webhookEnabled": false,
-      "icon": "credit-card",
-      "tier": 3
-    },
-    {
-      "slug": "housing-real-estate",
-      "name": "Housing & Real Estate",
-      "parent": "business-finance",
-      "rssFeedId": "_J2JqjxI7K86rB5A7",
-      "webhookEnabled": false,
-      "icon": "key-round",
-      "tier": 3
-    },
-    {
-      "slug": "jobs-labor",
-      "name": "Jobs & Labor",
-      "parent": "business-finance",
-      "rssFeedId": "_OHjHmY7Ii47dUhpH",
-      "webhookEnabled": false,
-      "icon": "hard-hat",
-      "tier": 3
-    },
-    {
       "slug": "markets",
       "name": "Markets",
       "parent": "business-finance",
       "rssFeedId": "_sBKji3wYHDRlZ52N",
       "webhookEnabled": false,
       "icon": "trending-up",
-      "tier": 3
-    },
-    {
-      "slug": "personal-finance",
-      "name": "Personal Finance",
-      "parent": "business-finance",
-      "rssFeedId": "_m3xH9obMYO5jkDwK",
-      "webhookEnabled": false,
-      "icon": "piggy-bank",
-      "tier": 3
-    },
-    {
-      "slug": "small-business",
-      "name": "Small Business",
-      "parent": "business-finance",
-      "rssFeedId": "_e4cXoWPXTcSLfgDy",
-      "webhookEnabled": false,
-      "icon": "store",
       "tier": 3
     },
     {
@@ -139,42 +58,6 @@
       "tier": 3
     },
     {
-      "slug": "ai-governance-policy",
-      "name": "AI Governance & Policy",
-      "parent": "technology",
-      "rssFeedId": "_2LOlZvJ46s2akfiR",
-      "webhookEnabled": false,
-      "icon": "gavel",
-      "tier": 3
-    },
-    {
-      "slug": "blockchain-web3",
-      "name": "Blockchain & Web3",
-      "parent": "technology",
-      "rssFeedId": "_3VTY2CCwnynTAvg2",
-      "webhookEnabled": false,
-      "icon": "link",
-      "tier": 3
-    },
-    {
-      "slug": "cloud-computing",
-      "name": "Cloud Computing",
-      "parent": "technology",
-      "rssFeedId": "_w6S6jLwPFH9dSsJi",
-      "webhookEnabled": false,
-      "icon": "cloud",
-      "tier": 3
-    },
-    {
-      "slug": "consumer-electronics",
-      "name": "Consumer Electronics",
-      "parent": "technology",
-      "rssFeedId": "_tTAA3WacctTlL11E",
-      "webhookEnabled": false,
-      "icon": "smartphone",
-      "tier": 3
-    },
-    {
       "slug": "cybersecurity",
       "name": "Cybersecurity",
       "parent": "technology",
@@ -184,75 +67,12 @@
       "tier": 3
     },
     {
-      "slug": "data-analytics",
-      "name": "Data & Analytics",
-      "parent": "technology",
-      "rssFeedId": "_TCjdWW4O4cokZcKc",
-      "webhookEnabled": false,
-      "icon": "database",
-      "tier": 3
-    },
-    {
-      "slug": "emerging-technologies",
-      "name": "Emerging Technologies",
-      "parent": "technology",
-      "rssFeedId": "_S3TbrZB1adpfxULB",
-      "webhookEnabled": false,
-      "icon": "zap",
-      "tier": 3
-    },
-    {
-      "slug": "privacy-data-protection",
-      "name": "Privacy & Data Protection",
-      "parent": "technology",
-      "rssFeedId": "_lTDgEJAGV9byeqF5",
-      "webhookEnabled": false,
-      "icon": "lock",
-      "tier": 3
-    },
-    {
-      "slug": "programming-development",
-      "name": "Programming & Development",
-      "parent": "technology",
-      "rssFeedId": "_e8avElFhKi0rlPwc",
-      "webhookEnabled": false,
-      "icon": "code",
-      "tier": 3
-    },
-    {
-      "slug": "robotics-automation",
-      "name": "Robotics & Automation",
-      "parent": "technology",
-      "rssFeedId": "_yxSdN5UypMY4cqGu",
-      "webhookEnabled": false,
-      "icon": "bot",
-      "tier": 3
-    },
-    {
       "slug": "social-media",
       "name": "Social Media",
       "parent": "technology",
       "rssFeedId": "_BrQONeamSBMZynn4",
       "webhookEnabled": false,
       "icon": "message-circle",
-      "tier": 3
-    },
-    {
-      "slug": "software-saas",
-      "name": "Software & SaaS",
-      "parent": "technology",
-      "rssFeedId": "_OWnm5k1xOJp5F2Bd",
-      "webhookEnabled": false,
-      "icon": "app-window",
-      "tier": 3
-    },
-    {
-      "slug": "startups-venture-capital",
-      "name": "Startups & VC",
-      "parent": "technology",
-      "rssFeedId": "_bFIjIm4IX19SK988",
-      "webhookEnabled": false,
-      "icon": "rocket",
       "tier": 3
     },
     {
@@ -267,42 +87,6 @@
       "tier": 1
     },
     {
-      "slug": "astronomy-space",
-      "name": "Astronomy & Space",
-      "parent": "science",
-      "rssFeedId": "_ZaXTQ7UyH5Nh4Bje",
-      "webhookEnabled": false,
-      "icon": "telescope",
-      "tier": 3
-    },
-    {
-      "slug": "chemistry-biology-genetics",
-      "name": "Biosciences",
-      "parent": "science",
-      "rssFeedId": "_ZaUTpEHMw4JozDZN",
-      "webhookEnabled": false,
-      "icon": "flask-conical",
-      "tier": 3
-    },
-    {
-      "slug": "physics",
-      "name": "Physics",
-      "parent": "science",
-      "rssFeedId": "_2SWOT5t3AjWocHhS",
-      "webhookEnabled": false,
-      "icon": "atom",
-      "tier": 3
-    },
-    {
-      "slug": "research-academia",
-      "name": "Research & Academia",
-      "parent": "science",
-      "rssFeedId": "_OIudMzjiaK3XGeAp",
-      "webhookEnabled": false,
-      "icon": "microscope",
-      "tier": 3
-    },
-    {
       "slug": "health-wellness",
       "name": "Health & Wellness",
       "parent": null,
@@ -312,42 +96,6 @@
       "icon": "heart-pulse",
       "featured": true,
       "tier": 1
-    },
-    {
-      "slug": "fitness-exercise",
-      "name": "Fitness & Exercise",
-      "parent": "health-wellness",
-      "rssFeedId": "_YgqTuEKy6ZjqaZt9",
-      "webhookEnabled": false,
-      "icon": "dumbbell",
-      "tier": 3
-    },
-    {
-      "slug": "healthcare-industry",
-      "name": "Healthcare Industry",
-      "parent": "health-wellness",
-      "rssFeedId": "_IR2RfY7WzP9kgM3o",
-      "webhookEnabled": false,
-      "icon": "stethoscope",
-      "tier": 3
-    },
-    {
-      "slug": "nutrition-diet",
-      "name": "Nutrition & Diet",
-      "parent": "health-wellness",
-      "rssFeedId": "_Galu2Ul3BqVr8bL1",
-      "webhookEnabled": false,
-      "icon": "apple",
-      "tier": 3
-    },
-    {
-      "slug": "medical-research-pharma-biotech",
-      "name": "Life Sciences",
-      "parent": "health-wellness",
-      "rssFeedId": "_fZ6OTDQD06CO0Cxq",
-      "webhookEnabled": false,
-      "icon": "pill",
-      "tier": 3
     },
     {
       "slug": "public-health",
@@ -370,48 +118,12 @@
       "tier": 1
     },
     {
-      "slug": "campaigns-elections",
-      "name": "Campaigns & Elections",
-      "parent": "politics",
-      "rssFeedId": "_HmV3YHpJ7zJ7DtF8",
-      "webhookEnabled": false,
-      "icon": "vote",
-      "tier": 3
-    },
-    {
-      "slug": "congress-white-house",
-      "name": "Congress & White House",
-      "parent": "politics",
-      "rssFeedId": "_36Rys4qKjQCLjsmL",
-      "webhookEnabled": false,
-      "icon": "scroll-text",
-      "tier": 3
-    },
-    {
-      "slug": "courts-law-regulation",
-      "name": "Courts, Laws, Regulations",
-      "parent": "politics",
-      "rssFeedId": "_6Z1xnD00r49SAv0A",
-      "webhookEnabled": false,
-      "icon": "scale",
-      "tier": 3
-    },
-    {
       "slug": "defense-national-security-foreign-policy",
       "name": "Defense, Security, Foreign Policy",
       "parent": "politics",
       "rssFeedId": "_UfFeXwMw6wf1UkKC",
       "webhookEnabled": false,
       "icon": "radar",
-      "tier": 3
-    },
-    {
-      "slug": "geopolitics",
-      "name": "Geopolitics",
-      "parent": "politics",
-      "rssFeedId": "_RYCjbUKLhvpMLI6e",
-      "webhookEnabled": false,
-      "icon": "earth",
       "tier": 3
     },
     {
@@ -435,33 +147,6 @@
       "tier": 1
     },
     {
-      "slug": "africa",
-      "name": "Africa",
-      "parent": "world",
-      "rssFeedId": "_nPzi68SWnBB5C8Nm",
-      "webhookEnabled": false,
-      "icon": "map-africa",
-      "tier": 3
-    },
-    {
-      "slug": "asia",
-      "name": "Asia",
-      "parent": "world",
-      "rssFeedId": "_a97P22IO8QuWK5rF",
-      "webhookEnabled": false,
-      "icon": "map-asia",
-      "tier": 3
-    },
-    {
-      "slug": "canada",
-      "name": "Canada",
-      "parent": "world",
-      "rssFeedId": "_Cwck16eZ4pZzpRsU",
-      "webhookEnabled": false,
-      "icon": "map-canada",
-      "tier": 3
-    },
-    {
       "slug": "china",
       "name": "China",
       "parent": "world",
@@ -480,60 +165,6 @@
       "tier": 3
     },
     {
-      "slug": "europe",
-      "name": "Europe",
-      "parent": "world",
-      "rssFeedId": "_WuCucvKlllGU7HTM",
-      "webhookEnabled": false,
-      "icon": "map-europe",
-      "tier": 3
-    },
-    {
-      "slug": "india",
-      "name": "India",
-      "parent": "world",
-      "rssFeedId": "_3MqoUQqH4sxnkCb6",
-      "webhookEnabled": false,
-      "icon": "map-india",
-      "tier": 3
-    },
-    {
-      "slug": "latin-america",
-      "name": "Latin America",
-      "parent": "world",
-      "rssFeedId": "_dHajMVOGobC0Sdx7",
-      "webhookEnabled": false,
-      "icon": "map-latam",
-      "tier": 3
-    },
-    {
-      "slug": "middle-east",
-      "name": "Middle East",
-      "parent": "world",
-      "rssFeedId": "_nD7d0nlHbA8Mylqr",
-      "webhookEnabled": false,
-      "icon": "map-mideast",
-      "tier": 3
-    },
-    {
-      "slug": "oceania",
-      "name": "Oceania",
-      "parent": "world",
-      "rssFeedId": "_JXEBnGjxsFQA3qgR",
-      "webhookEnabled": false,
-      "icon": "map-oceania",
-      "tier": 3
-    },
-    {
-      "slug": "russia-eastern-europe",
-      "name": "Russia & Eastern Europe",
-      "parent": "world",
-      "rssFeedId": "_qR8YWZWOp4eBZWxB",
-      "webhookEnabled": false,
-      "icon": "map-russia",
-      "tier": 3
-    },
-    {
       "slug": "sports",
       "name": "Sports",
       "parent": null,
@@ -543,78 +174,6 @@
       "icon": "trophy",
       "featured": true,
       "tier": 1
-    },
-    {
-      "slug": "soccer",
-      "name": "Soccer",
-      "parent": "sports",
-      "rssFeedId": "_Hemhe2RoP8joBxxT",
-      "webhookEnabled": false,
-      "icon": "soccer-ball",
-      "tier": 3
-    },
-    {
-      "slug": "mlb",
-      "name": "MLB",
-      "parent": "sports",
-      "rssFeedId": "_mVyOjetu2GiVGrhq",
-      "webhookEnabled": false,
-      "icon": "baseball",
-      "tier": 3
-    },
-    {
-      "slug": "nba",
-      "name": "NBA",
-      "parent": "sports",
-      "rssFeedId": "_r115CSPqe7uLNgCc",
-      "webhookEnabled": false,
-      "icon": "basketball",
-      "tier": 3
-    },
-    {
-      "slug": "nfl",
-      "name": "NFL",
-      "parent": "sports",
-      "rssFeedId": "_OkfTgOVWkeG4vqHD",
-      "webhookEnabled": false,
-      "icon": "football",
-      "tier": 3
-    },
-    {
-      "slug": "nhl",
-      "name": "NHL",
-      "parent": "sports",
-      "rssFeedId": "_qmDypAjXIJh1ew0r",
-      "webhookEnabled": false,
-      "icon": "hockey",
-      "tier": 3
-    },
-    {
-      "slug": "college-basketball",
-      "name": "College Basketball",
-      "parent": "sports",
-      "rssFeedId": "_yaSvMDh9IKeFVCIl",
-      "webhookEnabled": false,
-      "icon": "basketball-hoop",
-      "tier": 3
-    },
-    {
-      "slug": "college-football",
-      "name": "College Football",
-      "parent": "sports",
-      "rssFeedId": "_Ie8adRQoWtdCUTpq",
-      "webhookEnabled": false,
-      "icon": "goal-post",
-      "tier": 3
-    },
-    {
-      "slug": "combat-sports",
-      "name": "Combat Sports",
-      "parent": "sports",
-      "rssFeedId": "_H5AXKax9fHna2T4M",
-      "webhookEnabled": false,
-      "icon": "boxing-glove",
-      "tier": 3
     },
     {
       "slug": "climate-environment",
@@ -628,42 +187,6 @@
       "tier": 1
     },
     {
-      "slug": "conservation-wildlife",
-      "name": "Conservation & Wildlife",
-      "parent": "climate-environment",
-      "rssFeedId": "_vgm8Nt3hAqL8rTW3",
-      "webhookEnabled": false,
-      "icon": "rabbit",
-      "tier": 3
-    },
-    {
-      "slug": "clean-energy-sustainability",
-      "name": "Clean Energy & Sustainability",
-      "parent": "climate-environment",
-      "rssFeedId": "_M0SAPY9LwRparELm",
-      "webhookEnabled": false,
-      "icon": "leaf",
-      "tier": 3
-    },
-    {
-      "slug": "climate-policy",
-      "name": "Climate Policy",
-      "parent": "climate-environment",
-      "rssFeedId": "_d1gtBazxaBFdKzJQ",
-      "webhookEnabled": false,
-      "icon": "thermometer",
-      "tier": 3
-    },
-    {
-      "slug": "weather",
-      "name": "Weather",
-      "parent": "climate-environment",
-      "rssFeedId": "_1GKwG2ytRIEukgwj",
-      "webhookEnabled": false,
-      "icon": "cloud-rain",
-      "tier": 3
-    },
-    {
       "slug": "entertainment",
       "name": "Entertainment",
       "parent": null,
@@ -673,24 +196,6 @@
       "icon": "film",
       "featured": true,
       "tier": 1
-    },
-    {
-      "slug": "celebrities",
-      "name": "Celebrities",
-      "parent": "entertainment",
-      "rssFeedId": "_VwPUAlO9JkVxK8l2",
-      "webhookEnabled": false,
-      "icon": "star",
-      "tier": 3
-    },
-    {
-      "slug": "gaming-streaming",
-      "name": "Gaming & Streaming",
-      "parent": "entertainment",
-      "rssFeedId": "_aC6ygh6vtv9PXZ6C",
-      "webhookEnabled": false,
-      "icon": "tv",
-      "tier": 3
     },
     {
       "slug": "television-movies",
@@ -711,15 +216,6 @@
       "tier": 3
     },
     {
-      "slug": "podcasts",
-      "name": "Podcasts",
-      "parent": "entertainment",
-      "rssFeedId": "_L5gmt7iU8pEVjtoK",
-      "webhookEnabled": false,
-      "icon": "mic",
-      "tier": 3
-    },
-    {
       "slug": "arts-culture",
       "name": "Arts & Culture",
       "parent": null,
@@ -729,33 +225,6 @@
       "icon": "palette",
       "featured": true,
       "tier": 1
-    },
-    {
-      "slug": "architecture-design",
-      "name": "Architecture & Design",
-      "parent": "arts-culture",
-      "rssFeedId": "_HjZBcgtcFC2ujp9E",
-      "webhookEnabled": false,
-      "icon": "building-2",
-      "tier": 3
-    },
-    {
-      "slug": "books-literature",
-      "name": "Books & Literature",
-      "parent": "arts-culture",
-      "rssFeedId": "_vubMENXzmfk3lfoH",
-      "webhookEnabled": false,
-      "icon": "library",
-      "tier": 3
-    },
-    {
-      "slug": "fashion-style",
-      "name": "Fashion & Style",
-      "parent": "arts-culture",
-      "rssFeedId": "_E5Ref41pWZzgRw69",
-      "webhookEnabled": false,
-      "icon": "shirt",
-      "tier": 3
     },
     {
       "slug": "food-dining",
@@ -787,39 +256,12 @@
       "tier": 3
     },
     {
-      "slug": "home-garden",
-      "name": "Home & Garden",
-      "parent": "lifestyle",
-      "rssFeedId": "_lBrzEdsO6qK4sAWG",
-      "webhookEnabled": false,
-      "icon": "sprout",
-      "tier": 3
-    },
-    {
-      "slug": "relationships",
-      "name": "Relationships",
-      "parent": "lifestyle",
-      "rssFeedId": "_IayrcgZnpg5PsDXQ",
-      "webhookEnabled": false,
-      "icon": "heart",
-      "tier": 3
-    },
-    {
       "slug": "travel",
       "name": "Travel",
       "parent": "lifestyle",
       "rssFeedId": "_ZPxawIYnc3QqNf6Y",
       "webhookEnabled": false,
       "icon": "plane",
-      "tier": 3
-    },
-    {
-      "slug": "work-careers",
-      "name": "Work & Careers",
-      "parent": "lifestyle",
-      "rssFeedId": "_4Gjd1buCAsYPY9Tm",
-      "webhookEnabled": false,
-      "icon": "id-card",
       "tier": 3
     },
     {
@@ -834,33 +276,6 @@
       "tier": 1
     },
     {
-      "slug": "advertising-marketing",
-      "name": "Advertising & Marketing",
-      "parent": "media",
-      "rssFeedId": "_Itrihfx50TmY5Oyu",
-      "webhookEnabled": false,
-      "icon": "megaphone",
-      "tier": 3
-    },
-    {
-      "slug": "journalism",
-      "name": "Journalism",
-      "parent": "media",
-      "rssFeedId": "_Y5NpmlM6ggDBIX6m",
-      "webhookEnabled": false,
-      "icon": "newspaper",
-      "tier": 3
-    },
-    {
-      "slug": "media-business",
-      "name": "Media Business",
-      "parent": "media",
-      "rssFeedId": "_RbqlLtnGiYiB2UPJ",
-      "webhookEnabled": false,
-      "icon": "monitor-play",
-      "tier": 3
-    },
-    {
       "slug": "education",
       "name": "Education",
       "parent": null,
@@ -872,24 +287,6 @@
       "tier": 1
     },
     {
-      "slug": "higher-education",
-      "name": "Higher Education",
-      "parent": "education",
-      "rssFeedId": "_EQUeiUfBlkxu9BtF",
-      "webhookEnabled": false,
-      "icon": "school",
-      "tier": 3
-    },
-    {
-      "slug": "learning-edtech",
-      "name": "Learning & Edtech",
-      "parent": "education",
-      "rssFeedId": "_2NsKn3sTVFMcj26z",
-      "webhookEnabled": false,
-      "icon": "monitor",
-      "tier": 3
-    },
-    {
       "slug": "ideas-opinion-more",
       "name": "Ideas & Opinion",
       "parent": null,
@@ -899,33 +296,6 @@
       "icon": "lightbulb",
       "featured": true,
       "tier": 1
-    },
-    {
-      "slug": "ethics-philosophy",
-      "name": "Ethics & Philosophy",
-      "parent": "ideas-opinion-more",
-      "rssFeedId": "_09T1X6220qLiXGno",
-      "webhookEnabled": false,
-      "icon": "brain",
-      "tier": 3
-    },
-    {
-      "slug": "history",
-      "name": "History",
-      "parent": "ideas-opinion-more",
-      "rssFeedId": "_JOErjKoUH43T0MM1",
-      "webhookEnabled": false,
-      "icon": "calendar",
-      "tier": 3
-    },
-    {
-      "slug": "religion-faith",
-      "name": "Religion & Faith",
-      "parent": "ideas-opinion-more",
-      "rssFeedId": "_piKSVcnpBIUV1slu",
-      "webhookEnabled": false,
-      "icon": "book-open",
-      "tier": 3
     }
   ],
   "featuredOrder": [

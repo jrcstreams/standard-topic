@@ -18,11 +18,11 @@
       "name": "Economic Indicators Roundup"
     },
     {
-      "topic": "geopolitics",
+      "topic": "politics",
       "name": "Global Geopolitical Hotspots Updates"
     },
     {
-      "topic": "cryptocurrency",
+      "topic": "business-finance",
       "name": "Crypto Market Snapshot"
     },
     {
@@ -54,7 +54,7 @@
       "name": "Recent Major Breaches"
     },
     {
-      "topic": "energy-commodities",
+      "topic": "business-finance",
       "name": "Oil Market Snapshot"
     }
   ]
