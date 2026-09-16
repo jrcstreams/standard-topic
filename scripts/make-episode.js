@@ -159,7 +159,13 @@ async function main() {
   } else {
     process.stdout.write('Stage 1 · desk … ');
     const t1 = Date.now();
-    const r1 = await E.runDesk(fmt, { home, digest, dateLabel, yesterday: null });
+    // revamp1402: yesterday's lead, so the desk can only repeat it as a development.
+    let yesterday = null;
+    try {
+      const prev = await sql.query(`SELECT storyboard->'lead'->>'title' AS lead, teaser FROM ai_audio WHERE kind='flagship' AND family_slug='home' AND edition_date < $1 ORDER BY edition_date DESC LIMIT 1`, [E.editionDate(now)]);
+      if (prev[0] && prev[0].lead) { yesterday = `${prev[0].lead}${prev[0].teaser ? ` — ${String(prev[0].teaser).slice(0, 200)}` : ''}`; log(`  yesterday led with: ${prev[0].lead}`); }
+    } catch (_) {}
+    const r1 = await E.runDesk(fmt, { home, digest, dateLabel, yesterday });
     storyboard = r1.storyboard;
     micros += (r1.usage && r1.usage.micros) || 0;
     log(`${((Date.now() - t1) / 1000).toFixed(1)}s · ${storyboard.segments.length + 1} segments · ${fmtUSD((r1.usage && r1.usage.micros) || 0)}`);
@@ -224,6 +230,22 @@ async function main() {
         script = merged.script;
         words = script.segments.reduce((n, s) => n + String(s.text || '').split(/\s+/).filter(Boolean).length, 0);
         log(`${((Date.now() - t3) / 1000).toFixed(1)}s · ${words} words (${words - before >= 0 ? '+' : ''}${words - before}) · ${merged.accepted} accepted, ${merged.restored} restored · ${fmtUSD((u3 && u3.micros) || 0)}`);
+      } else log('skipped (no usable result)');
+    } catch (e) { log(`skipped (${e.message})`); }
+  }
+
+  // 4b. Fact check — the one pass that reads the live web (revamp1402).
+  if (!arg('no-factcheck')) {
+    process.stdout.write('Stage 3b · fact check (grounded) … ');
+    const t3b = Date.now();
+    try {
+      const { script: checked, usage: u3b, changes } = await E.runFactCheck(fmt, { script, dateLabel }, { model: E.textModel() });
+      micros += (u3b && u3b.micros) || 0;
+      if (checked && Array.isArray(checked.segments) && checked.segments.length) {
+        const budgets = {}; for (const b of fmt.beats) budgets[b.beat] = E.wordsFor(b.sec);
+        const merged = E.mergeQA(script, checked, budgets);
+        script = merged.script;
+        log(`${((Date.now() - t3b) / 1000).toFixed(1)}s · ${changes.length ? `corrected: ${changes.join(', ')}` : 'no corrections'} · ${merged.restored} restored · ${(u3b && u3b.searches) || 0} searches · ${fmtUSD((u3b && u3b.micros) || 0)}`);
       } else log('skipped (no usable result)');
     } catch (e) { log(`skipped (${e.message})`); }
   }
