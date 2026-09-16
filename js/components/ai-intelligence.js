@@ -2538,6 +2538,14 @@ export function renderDailyIntelligence(container, scope) {
     const thingsList = String(things || '').split('\n')
       .map((l) => l.replace(/^\s*[-*\u2022]\s*/, '').trim())
       .filter(Boolean).slice(0, 3);
+    // revamp1417: the day's headline, the same line the preview card leads
+    // with. An opened briefing used to start with three numbered takeaways;
+    // it starts with the headline and the summary now, as the card does.
+    const dayHeadline = (() => {
+      const m = String(data.content || '').match(/^\s*(?:\*\*)?HEADLINE:?(?:\*\*)?\s*(.+?)\s*$/im);
+      if (m && m[1]) return m[1].replace(/\*\*/g, '').replace(/[.\s]+$/, '').trim();
+      return thingsList[0] ? String(thingsList[0]).replace(/\*\*/g, '').replace(/[.\s]+$/, '').trim() : '';
+    })();
     if (!parts.length) briefChunks.push(String(data.content || ''));
     const items = splitBriefItems(briefChunks.join('\n\n'));
 
@@ -2631,9 +2639,8 @@ export function renderDailyIntelligence(container, scope) {
           ${provBtn}
         </div>
       </div>` : ''}
-      ${(chrome && (thingsList.length || overview)) ? `<section class="di-focus">
-        ${thingsList.length ? `<h3 class="di-lbl di-focus-lbl">In Focus</h3>
-        <ul class="di-focus-list">${thingsList.map((t) => { const m = String(t).match(/^\*\*(.+?)\*\*\s*(.*)$/); return m ? `<li class="tdi-focus-li"><span class="tdi-focus-tx"><b>${esc(m[1].replace(/[.\s]+$/, ''))}</b>${m[2].trim() ? `<span class="tdi-focus-d">${esc(m[2].trim())}</span>` : ''}</span></li>` : `<li class="tdi-focus-li">${esc(String(t).replace(/\*\*/g, ''))}</li>`; }).join('')}</ul>` : ''}
+      ${(chrome && (dayHeadline || overview)) ? `<section class="di-focus">
+        ${dayHeadline ? `<h3 class="di-dayhead">${esc(dayHeadline)}</h3>` : ''}
         ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
         ${isHome ? '<div class="di-player" data-briefing-player hidden></div>' : ''}
       </section>` : ''}

@@ -2664,8 +2664,8 @@ function renderIntelligenceHub(container) {
       <span class="dih-item-head">
         <span class="dih-item-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
         <span class="dih-item-name">${escapeHTML(t.name)}</span>
+        <span class="tdi-date dih-item-stamp" data-dih-stamp-for="${escapeAttr(t.name)}"></span>
       </span>
-      <span class="tdi-date dih-item-stamp" data-dih-stamp-for="${escapeAttr(t.name)}"></span>
       <span class="dih-item-focus" data-dih-sum="${escapeAttr(t.name)}"><span class="dih-item-focus-li dih-item-focus-li--pending">Loading your briefing…</span></span>
       <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
     </button>`;
@@ -3003,7 +3003,7 @@ function renderIntelligenceHub(container) {
       const d = await byName.get(key);
       if (!el.isConnected) return;
       if (sum) fillDihFocus(sum, d);
-      if (stamp && d && d.generatedAt) stamp.innerHTML = diEditionStampHTML(d.generatedAt);
+      if (stamp && d && d.generatedAt) stamp.innerHTML = ecStampHTML(d.generatedAt);
     } catch (_) {
       if (sum) fillDihFocus(sum, null);
     }

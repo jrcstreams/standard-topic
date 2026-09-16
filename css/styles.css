@@ -38675,3 +38675,36 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class][class] {
   .tbh-titlebtn[class][class][aria-expanded="true"]:hover,
   .tbh-titlebtn[class][class][aria-expanded="true"] { background: transparent !important; }
 }
+
+/* ── revamp1416: the hub card's dateline ───────────────────────────────────
+   Same stamp the briefing card wears — the sun, "9/16, 3 PM ET" — and it sits
+   on the topic's line, pushed to the card's right edge, rather than on a line
+   of its own below it. */
+.dih-item .dih-item-head[class][class][class] { width: 100%; gap: 10px; }
+.dih-item .dih-item-head[class][class][class] .dih-item-stamp { margin-left: auto !important; margin-bottom: 0 !important; }
+.dih-item .ec-stamp-pill[class][class] {
+  font-size: 0.7rem !important;
+  font-weight: 650 !important;
+  padding: 3px 9px !important;
+  gap: 6px !important;
+  border-radius: 6px !important;
+  background: #eef2fb !important;
+  border-color: #e0e7f5 !important;
+}
+.dih-item .ec-stamp-pill[class][class] svg { width: 12px !important; height: 12px !important; }
+
+/* revamp1417: the opened briefing leads with the day's headline. */
+.di-focus .di-dayhead[class] {
+  margin: 0 0 8px;
+  font-family: var(--font-family);
+  font-size: 1.22rem;
+  font-weight: 680;
+  line-height: 1.26;
+  letter-spacing: -0.01em;
+  color: #172554;
+  text-wrap: balance;
+}
+@media (max-width: 899.98px) { .di-focus .di-dayhead[class] { font-size: 1.06rem; } }
+
+/* revamp1417: less room still above the card's label. */
+.tdi-card--edition[class][class][class][class][class][class] { padding-top: 0.35rem !important; }
