@@ -129,6 +129,9 @@
     },
     "api/insight.js": {
       "maxDuration": 60
+    },
+    "api/rss-merge.js": {
+      "maxDuration": 300
     }
   },
   "headers": [
