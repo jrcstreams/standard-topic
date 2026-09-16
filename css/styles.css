@@ -38487,3 +38487,24 @@ body.home-search #home-trending .trend-card-title[class][class][class],
 /* The hero line goes a shade deeper, off the link blue and onto the navy the
    headlines use. */
 .home-hero-title[class][class][class] { color: #172554 !important; }
+
+/* ── revamp1411: the topic page's AI Prompts rail ──────────────────────────
+   A grey card holding white cards is two containers doing one job. The panel
+   drops its fill, border and side padding so the heading and the rows line up
+   with the column edge, and the prompt rows take the faint grey the panel was
+   carrying — which is what actually needs to read as a group. */
+.topic-top-side[class][class] {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.topic-top-side .aii-fi-acc[class][class] {
+  background: #f5f6f9 !important;
+  border-color: #e4e9f2 !important;
+}
+@media (hover: hover) {
+  .topic-top-side .aii-fi-acc[class][class]:hover { background: #f1f3f8 !important; border-color: #d8dfec !important; }
+}
