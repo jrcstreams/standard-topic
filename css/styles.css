@@ -38643,3 +38643,35 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class][class] {
   }
 }
 .aiidd-tree .aiidd-parent-flat[class]:active { transform: translateY(1px); background: #eef1f8 !important; }
+
+/* ── revamp1415 ────────────────────────────────────────────────────────────
+   (1) Less room above the label. */
+.tdi-card--edition[class][class][class][class] { padding-top: 0.55rem !important; }
+
+/* (2) The trend card's action row was painting twice: the fill and the border
+   live on the inner .te-drawer-sum, while the <details>/<a> around it kept its
+   own border and radius — a ring around Search trend and a second, squarer box
+   around Sources. Only the inner paints now. */
+.trend-exp-drawers.ni-actions[class][class][class][class] > .te-drawer:not([open]) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+.trend-exp-drawers.ni-actions[class][class][class][class] > .te-drawer > .te-drawer-sum {
+  border-radius: 10px !important;
+}
+.trend-exp-drawers.ni-actions[class][class][class][class] > .te-drawer:not([open]) { border-radius: 10px !important; }
+
+/* (3) The topic picker's trigger: the hover fill bled further left than the
+   content it sits behind, and it stayed lit while the panel was open, which is
+   what made an open picker read as a stuck hover. */
+.tbh-titlebtn[class][class] {
+  padding: 8px 14px 8px 10px !important;
+  margin-left: -10px !important;
+  border-radius: 10px !important;
+}
+@media (hover: hover) {
+  .tbh-titlebtn[class][class]:hover { background: rgba(15, 26, 46, .05) !important; }
+  .tbh-titlebtn[class][class][aria-expanded="true"]:hover,
+  .tbh-titlebtn[class][class][aria-expanded="true"] { background: transparent !important; }
+}
