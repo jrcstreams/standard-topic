@@ -3636,27 +3636,18 @@ function renderLayout(route) {
     // revamp820: hidden on arrival, sliding in as a sticky bar once the title
     // block scrolls away — and no back link inside it.
     document.body.classList.add('has-subnav', 'pagenav-mode');
+    document.body.classList.remove('bview-topics');
     subHeader.className = 'is-subnav static-page pagenav';
-    // revamp1149 — section tabs in the sub-header band (tab mode): Featured
-    // Briefings / Briefings by Topic. Active state on body.bview-topics.
-    const bOnTopics = document.body.classList.contains('bview-topics');
-    const briefTabs = `
-      <div class="prompts-subnav-tabs" data-brief-subnav-tabs role="tablist" aria-label="Briefings sections">
-        <button type="button" class="pst-tab${bOnTopics ? '' : ' is-active'}" data-bview="featured"><span class="pst-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/></svg></span>Featured Briefings</button>
-        <button type="button" class="pst-tab${bOnTopics ? ' is-active' : ''}" data-bview="topics"><span class="pst-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>Briefings by Topic</button>
-      </div>`;
+    // revamp1407: the two section tabs are gone with the Featured Briefings
+    // section they switched between. One page, one list — and the CSS that hid
+    // the directory off the featured tab would otherwise hide all of it.
+    const briefTabs = '';
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
         <div class="topic-subnav-inner">
           ${pagePickerHTML('intelligence', 'tsp-panel-page-brief', `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg>`, 'AI Briefings')}
         </div>
       </div>${briefTabs}`;
-    subHeader.querySelectorAll('[data-brief-subnav-tabs] [data-bview]').forEach((b) => b.addEventListener('click', () => {
-      const topics = b.dataset.bview === 'topics';
-      document.body.classList.toggle('bview-topics', topics);
-      subHeader.querySelectorAll('[data-brief-subnav-tabs] [data-bview]').forEach((x) => x.classList.toggle('is-active', x === b));
-      window.scrollTo(0, 0);
-    }));
     observeSubnavHeight();
     wireSubnavPicker(subHeader);
     wirePageNavReveal();

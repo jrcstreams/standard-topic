@@ -29594,9 +29594,8 @@ body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: none
 /* ═══ revamp1149 — AI Briefings page: section tabs in the sub-header (tab mode)
    — Featured Briefings / Briefings by Topic, switching the two sections. The
    section headers/subtext/line hide in tab mode (the tabs label them). ══════ */
-body.tt-on.bview-topics #content .dih .dih-group--featured { display: none !important; }
-body.tt-on:not(.bview-topics) #content .dih .dih-bytopic-head,
-body.tt-on:not(.bview-topics) #content .dih .dih-groups { display: none !important; }
+/* revamp1407: the hub had two views to switch between; it has one list now, so
+   the rules that hid the directory off the featured tab are gone with the tabs. */
 body.tt-on #content .dih .dih-featuredhead,
 body.tt-on #content .dih .dih-bytopic-head { display: none !important; }
 
