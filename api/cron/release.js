@@ -6,8 +6,12 @@
 // live, and it will only do so when the edition is WHOLE:
 //
 //   · its release time has passed, and
-//   · its episode exists, and
-//   · at least MIN_BRIEFS of its briefings are staged.
+//   · its episode exists.
+//
+// The episode is the gate on the briefings, not the reverse: whatever is staged
+// goes live beside it, and a topic whose briefing did not land keeps the one it
+// had. make-episode refuses to build below eight briefings, so a thin episode
+// never reaches here.
 //
 // If the episode is late, nothing happens. The reader keeps seeing the previous
 // edition — complete and self-consistent, a headline over the voice that reads
