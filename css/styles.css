@@ -38950,3 +38950,18 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head[cl
 .tdi-expand-inner .di-provrow[class][class][class],
 .di-provrow[class][class][class] { margin: 0 !important; }
 .di-provrow[class][class][class] + .di-briefs[class][class][class] { margin-top: 10px !important; }
+
+/* ── revamp1431: the dateline stays on the label's line at every width ─────
+   Below 900px the stamp was moved to a line of its own — a rule from when the
+   title was 21px type and the two genuinely collided. The label is 13px now
+   and the pill is small; they share a line at any width the card is readable
+   at. The hairline under them goes with the second line it was separating. */
+@media (max-width: 899.98px) {
+  .ec-head .ec-headrow .ec-stamp[class][class]:not(.ec-stamp--below) {
+    display: flex !important;
+    margin-left: auto !important;
+  }
+  .ec-head .ec-stamp--below[class][class] { display: none !important; }
+  .tdi-card--edition .ec--v2 .ec-rule[class]:not(.ec-rule--player) { display: none !important; }
+  .tdi-card--edition .ec--v2 .ec-head[class] { margin-bottom: 12px !important; }
+}
