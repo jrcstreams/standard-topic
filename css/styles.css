@@ -38759,6 +38759,8 @@ body.tt-on .topic-band .topic-home > .topic-body-cols[class][class] {
 /* ── revamp1421: the rule under a page's title band ────────────────────────
    Trending's sub-bar draws a 2px rule and every other page drew a 1px hairline
    that read as an accident beside it. One weight everywhere. */
+body:not(.tt-on) .page-hero[class],
+body.tt-on .page-hero[class],
 .page-hero[class] { border-bottom: 2px solid #e0e5ee !important; }
 
 /* A topic page gets the same rule under its intro line, which had none on
