@@ -38830,8 +38830,9 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head[cl
 
 /* Room to breathe: the briefing card off the rule above it, and the two heads
    off the card. */
-.home-featbriefs[class] { margin-top: 8px !important; }
-#section-newsfeed[class], #home-trending[class] { margin-top: 12px !important; }
+.home-sections .home-featbriefs[class][class] { margin-top: 18px !important; }
+.home-sections.home-v2 > .home-main[class][class],
+.home-sections.home-v2 > .home-side[class][class] { margin-top: 12px !important; }
 
 /* ── revamp1422: the rail head's glyph takes the News Feed's navy ─────────
    It was inheriting the topic's colour, so it read purple on Science and
@@ -38839,3 +38840,28 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head[cl
 .topic-top-side .trail-head .trail-head-ic[class][class][class],
 .topic-top-side .trail-head .trail-head-ic[class][class][class] svg { color: #1c3a6b !important; }
 .topic-top-side .trail-head .trail-head-ic[class][class][class] { background: #eef0f6 !important; }
+
+/* ── revamp1423 ────────────────────────────────────────────────────────────
+   The News Feed head's visible text is .newsfeed-title-main at 1.55rem/800 —
+   the .newsfeed-title wrapper is smaller, which is what the rail head had been
+   matched against. The rail's own text span takes the real size, and its tile
+   the real tile: 34px, the same faint grey, the same navy glyph. */
+.topic-top-side .trail-head .trail-head-tx[class][class] {
+  font-size: 1.55rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.024em !important;
+  line-height: 1.15 !important;
+}
+.topic-top-side .trail-head .trail-head-ic[class][class][class][class] {
+  width: 34px !important; height: 34px !important;
+  border-radius: 10px !important;
+  background: #eef0f6 !important;
+  color: #1c3a6b !important;
+}
+.topic-top-side .trail-head .trail-head-ic[class][class][class][class] svg {
+  width: 19px !important; height: 19px !important; color: #1c3a6b !important;
+}
+
+/* The "View all trending" link carried a 14px top margin, which made its row
+   taller than the News Feed's and pushed Trending's title and rule below it. */
+#home-trending .trending-topics-titlerow .trending-topics-viewall[class][class] { margin-top: 0 !important; }
