@@ -151,8 +151,13 @@ async function main() {
   // 1. Gather ---------------------------------------------------------------
   const briefs = await E.gatherBriefs(sql, { since: wave, edition: editionKey });
   const home = briefs.find((b) => b.isHome) || null;
-  const fresh = briefs.filter((b) => b.fresh);
   const staged = briefs.filter((b) => b.staged);
+  // revamp1433: "fresh" means BELONGS TO THIS EDITION. The old since-the-wave
+  // test passed every briefing when the wave it compared against resolved to
+  // yesterday, which is how a run with nothing staged reported "16 from this
+  // edition". Only when nothing is staged at all does it fall back to the time
+  // window, so a hand-run against live briefings still works.
+  const fresh = staged.length ? staged : briefs.filter((b) => b.fresh);
   log(`Briefings: ${briefs.length} found, ${fresh.length} from this edition (${staged.length} staged)${home ? '' : ', NO home briefing'}`);
   if (!home) console.warn('  ! the home briefing is missing — the desk will work from topics alone');
   // revamp1433: the floor is most of the sixteen topics, not the sixty that
@@ -209,7 +214,37 @@ async function main() {
     collect(s.brief_refs);
     for (const it of (s.items || [])) collect(it.brief_refs);
   }
-  const selected = briefs.filter((b) => wanted.has(b.slug) || b.isHome);
+  // revamp1433: brief_refs is whatever the desk felt like returning. It has
+  // been slugs ("energy-commodities"), trend ids ("T27505") and, today, the
+  // headline sentences themselves — and `wanted.has(b.slug)` matched none of
+  // those last ones, so the writer got the home briefing and nothing else. A
+  // ref is resolved three ways now: as a slug, as a topic name, or by finding
+  // the briefing whose text actually contains that headline, which is where
+  // the desk read it. Then a floor, because the writer must never be starved.
+  const norm = (v) => String(v || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const refs = [...wanted].map(norm).filter(Boolean);
+  const bySlug = new Map(briefs.map((b) => [norm(b.slug), b]));
+  const byName = new Map(briefs.map((b) => [norm(b.name), b]));
+  const picked = new Set();
+  for (const ref of refs) {
+    const direct = bySlug.get(ref) || byName.get(ref);
+    if (direct) { picked.add(direct.slug); continue; }
+    // The headline the desk quoted lives in exactly one briefing.
+    const needle = ref.slice(0, 48);
+    if (needle.length < 12) continue;
+    const owner = briefs.find((b) => norm(b.content).includes(needle));
+    if (owner) picked.add(owner.slug);
+  }
+  let selected = briefs.filter((b) => b.isHome || picked.has(b.slug));
+  const MATERIAL_FLOOR = 6;
+  if (selected.length < MATERIAL_FLOOR) {
+    const extra = briefs
+      .filter((b) => !b.isHome && !picked.has(b.slug) && b.content)
+      .sort((a, c) => (c.content.length - a.content.length))
+      .slice(0, MATERIAL_FLOOR - selected.length);
+    if (extra.length) log(`  ! only ${selected.length} briefings resolved from the desk's refs — adding ${extra.length} more so the writer has material`);
+    selected = selected.concat(extra);
+  }
   log(`  writer material: ${selected.length} briefings (${selected.reduce((n, b) => n + b.content.length, 0).toLocaleString()} chars)\n`);
 
   // 3. Writer ---------------------------------------------------------------
