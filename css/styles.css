@@ -38888,3 +38888,14 @@ body.home-search .home-sections.home-v2 > .home-featbriefs--lead[class][class][c
   #content .dih .dih-group--all .dih-items[class][class][class],
   .dih-group--all .dih-items[class][class][class] { grid-template-columns: minmax(0, 1fr) !important; }
 }
+
+/* ── revamp1426: the grid runs the page's own width ───────────────────────
+   .dih-groupbody carried 14px of side padding from when each group was an
+   accordion with a head above it and needed to sit inside that box. There is
+   no box any more, so the padding only made the cards 28px narrower than the
+   title band they sit under — which is what read as "not full width". */
+.dih-group--all > .dih-groupbody[class][class],
+#content .dih .dih-group--all > .dih-groupbody[class][class] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
