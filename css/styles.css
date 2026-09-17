@@ -38866,3 +38866,21 @@ body.home-search .home-sections.home-v2 > .home-featbriefs--lead[class][class][c
 /* The "View all trending" link carried a 14px top margin, which made its row
    taller than the News Feed's and pushed Trending's title and rule below it. */
 #home-trending .trending-topics-titlerow .trending-topics-viewall[class][class] { margin-top: 0 !important; }
+
+/* ── revamp1425: the briefings grid measures itself, not the window ────────
+   The two-column rule hung off a viewport media query, so with the sidebar
+   docked the page could be in tab mode — content about 750px — while the
+   window read well over 760 and the grid still tried to make its own call
+   from the wrong number. A container query asks the grid how wide IT is: two
+   columns from 640px of its own width, one below that. The media query stays
+   as the fallback where container queries are unsupported. */
+.dih-groups { container-type: inline-size; container-name: dihgrid; }
+@container dihgrid (min-width: 640px) {
+  .dih-group--all .dih-items[class][class][class] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    column-gap: 22px !important;
+  }
+}
+@container dihgrid (max-width: 639.98px) {
+  .dih-group--all .dih-items[class][class][class] { grid-template-columns: minmax(0, 1fr) !important; }
+}
