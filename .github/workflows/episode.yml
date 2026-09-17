@@ -68,8 +68,18 @@ jobs:
       - name: Install dependencies
         run: npm ci --omit=dev || npm install --omit=dev
 
-      - name: Check ffmpeg
-        run: ffmpeg -version | head -1 && ffprobe -version | head -1
+      # ubuntu-24.04 dropped ffmpeg from the runner image, and `ffmpeg -version
+      # | head -1` reported success anyway because the pipeline's status came
+      # from head. Install it, then check it in a way that can actually fail.
+      - name: Install ffmpeg
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends ffmpeg
+          fi
+          command -v ffmpeg && command -v ffprobe
+          ffmpeg -version | head -1
+          ffprobe -version | head -1
 
       - name: Build and publish the episode
         env:
@@ -79,7 +89,11 @@ jobs:
           EPISODE_EDITION: ${{ inputs.edition }}
         run: |
           set -o pipefail
-          FLAGS="--publish"
+          # Keep the run's artefacts where the retry (and the failure upload)
+          # can find them. Left to itself the script writes to a temp dir.
+          OUTDIR="$GITHUB_WORKSPACE/out"
+          mkdir -p "$OUTDIR"
+          FLAGS="--publish --out=$OUTDIR"
           if [ "${{ inputs.force }}" = "true" ]; then FLAGS="$FLAGS --force"; fi
           for attempt in 1 2 3; do
             echo "::group::Attempt $attempt"
@@ -94,10 +108,10 @@ jobs:
             # voice failure redoes the voice alone, so the copy a reader gets
             # is the copy that was fact-checked, and the text calls are not
             # paid for twice.
-            SCRIPT=$(ls -t out/script-*.json 2>/dev/null | head -1 || true)
+            SCRIPT=$(ls -t "$OUTDIR"/script-*.json 2>/dev/null | head -1 || true)
             if [ -n "$SCRIPT" ]; then
               echo "reusing $SCRIPT on the next attempt"
-              FLAGS="--publish --script=$SCRIPT"
+              FLAGS="--publish --out=$OUTDIR --script=$SCRIPT"
             fi
             sleep $((attempt * 45))
           done

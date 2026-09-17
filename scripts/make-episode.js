@@ -157,6 +157,16 @@ async function main() {
   if (!home) console.warn('  ! the home briefing is missing — the desk will work from topics alone');
   // revamp1433: the floor is most of the sixteen topics, not the sixty that
   // made sense when there were a hundred of them.
+  // revamp1433: refuse to build a thin episode. Off-cycle, or before the wave
+  // has staged its briefings, the desk has almost nothing to work from — one
+  // run made a whole edition out of a single briefing. Better to fail, hold the
+  // edition and let a catch-up try once the wave has landed.
+  const FLOOR = 8;
+  if (fresh.length < FLOOR && !arg('force')) {
+    console.error(`\nOnly ${fresh.length} briefings belong to ${editionKey} (need ${FLOOR}).`);
+    console.error('The wave has not staged this edition yet. Holding — a catch-up run will pick it up.');
+    process.exit(1);
+  }
   if (fresh.length < 12) console.warn(`  ! only ${fresh.length} briefings belong to this edition; the episode will lean on older ones`);
 
   const digest = E.digestFor(briefs);
