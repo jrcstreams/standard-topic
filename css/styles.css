@@ -38914,3 +38914,15 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class][class] {
   border-bottom: 2px solid #e0e5ee !important;
   margin-bottom: 12px !important;
 }
+
+/* ── revamp1428: the hub card's stamp, centred on the topic's line ────────
+   The row centres the stamp's wrapper, but the pill sat at the top of a taller
+   wrapper, leaving its centre 4px above the topic name's. The wrapper is a
+   centring box now, and the pill takes a little more height on this page. */
+.dih-item .dih-item-head .dih-item-stamp[class][class] {
+  align-self: center !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  line-height: 1 !important;
+}
+.dih-item .ec-stamp-pill[class][class][class] { padding: 5px 10px !important; }
