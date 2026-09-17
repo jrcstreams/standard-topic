@@ -19,7 +19,8 @@
 const { getSql } = require('../../lib/db');
 const EDITION = require('../../lib/edition');
 
-// Sixteen topics carry an edition; a couple can fail and it is still an edition.
+// Kept for the response, not as a gate: make-episode refuses to build below
+// eight briefings for an edition, so a thin episode never reaches this point.
 const MIN_BRIEFS = 12;
 
 module.exports = async function handler(req, res) {
@@ -59,9 +60,11 @@ module.exports = async function handler(req, res) {
     if (!ep.length) {
       return res.status(200).json({ ok: true, released: false, held: true, edition: key, briefs: staged, reason: 'no episode yet' });
     }
-    if (staged < MIN_BRIEFS) {
-      return res.status(200).json({ ok: true, released: false, held: true, edition: key, briefs: staged, reason: `only ${staged} briefings staged` });
-    }
+    // The episode gates the BRIEFINGS, not the other way round. Whatever is
+    // staged for this edition goes live beside it; a topic whose briefing did
+    // not make it keeps the one it had, which is old but not wrong. Zero staged
+    // is the transition case — briefings already published under the old rules
+    // — and the episode still belongs with them.
 
     // Whole. Promote the briefings and open the episode, in that order, so a
     // reader can never land on an episode whose briefings have not moved yet.
