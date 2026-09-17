@@ -38767,13 +38767,25 @@ body.tt-on .page-hero[class],
 /* A topic page gets the same rule under its intro line, which had none on
    desktop, and the line sits closer to the title it belongs to. */
 @media (min-width: 900px) {
+  /* revamp1432b: the rule is drawn as an overlay, not a border. The closed
+     topic picker (.tsp-panelwrap, z-index 400) is a 2px-tall white sliver
+     parked exactly on the head's bottom edge, so a border there was painted
+     over and invisible at any weight under about 6px. This sits above it. */
   .topic-bodyhead[class][class] {
     padding-bottom: 14px !important;
-    /* revamp1432: a shade darker than the feed's #e0e5ee. This rule is drawn
-       over the topic's tinted hero band, not over white, and at #e0e5ee it
-       disappeared into the tint — the line was painting all along. */
-    border-bottom: 2px solid #cbd5e6 !important;
+    border-bottom: 0 !important;
+    position: relative;
   }
+  .topic-bodyhead[class][class]::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: #cbd5e6;
+    z-index: 401;
+    pointer-events: none;
+  }
+  .topic-bodyhead.is-open[class][class]::after { display: none; }
 }
 .topic-bodyhead .tbh-desc[class][class] { margin-top: 4px !important; }
 
