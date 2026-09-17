@@ -2589,6 +2589,14 @@ export function renderDailyIntelligence(container, scope) {
     // tanker attack and a UK-PM story under the White House's midterm strategy
     // (#img1368/1369). Nothing matched means nothing is shown; the leftovers go
     // to Related Coverage below, where they claim nothing.
+    //
+    // revamp1433: NOT loosened for episode-derived briefings. Their sources do
+    // carry the story index make-episode recorded, but that index counts the
+    // episode's SEGMENTS (cold open, intro, each story, outro) while the page
+    // renders only the stories, and one story beat can render as no item at
+    // all. Trusting it would put a chip under the wrong story, which is the
+    // exact failure 1190 exists to prevent. The supply was the real problem:
+    // the episode was storing zero sources, so there was nothing to match.
     const srcsFor = (i) => buckets[i] || [];
 
     // Masthead: the day plus when this version was actually written. Editions
