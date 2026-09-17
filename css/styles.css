@@ -38811,3 +38811,31 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head[cl
 
 /* revamp1421c: and the section under the AI label carries 26px of its own. */
 .di-provrow[class][class] + .di-briefs[class][class] { margin-top: 12px !important; }
+
+/* ── revamp1422: the settings drawer opens under the button that opens it ──
+   The panel sat after the whole footer, so it appeared below Run Prompt — a
+   long way from the Settings button and below the action it modifies. It is
+   inside the footer now, on its own full-width row between the tools and Run. */
+.aii-pc-foot > .aii-pc-set[class] { flex: 1 0 100%; width: 100%; }
+
+/* ── revamp1422: the two homepage heads line up ───────────────────────────
+   Trending's head row is taller than the News Feed's because it carries the
+   "View all trending" link, which pushed its title 3px down and its rule 6px
+   below the feed's. The row takes the title's own height. */
+#home-trending .trending-topics-titlerow[class][class] {
+  min-height: 34px !important;
+  align-items: center !important;
+}
+#home-trending .trending-topics-titlerow[class][class] > * { align-self: center !important; }
+
+/* Room to breathe: the briefing card off the rule above it, and the two heads
+   off the card. */
+.home-featbriefs[class] { margin-top: 8px !important; }
+#section-newsfeed[class], #home-trending[class] { margin-top: 12px !important; }
+
+/* ── revamp1422: the rail head's glyph takes the News Feed's navy ─────────
+   It was inheriting the topic's colour, so it read purple on Science and
+   indigo on Technology while the feed's stayed navy. */
+.topic-top-side .trail-head .trail-head-ic[class][class][class],
+.topic-top-side .trail-head .trail-head-ic[class][class][class] svg { color: #1c3a6b !important; }
+.topic-top-side .trail-head .trail-head-ic[class][class][class] { background: #eef0f6 !important; }

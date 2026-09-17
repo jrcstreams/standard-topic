@@ -1899,21 +1899,21 @@ export function renderAIIntelligence(container, scope) {
           <button type="button" class="aii-pc-btn" data-pc-copy>${ICON_COPY_MINI}<span data-pc-copy-tx>Copy</span></button>
           <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${ICON_GEAR}<span>Settings</span></button>
         </div>
+        <div class="aii-pc-set" data-pc-set hidden>
+          <div class="aii-pc-sethead">
+            <span class="aii-pc-settitle">${ICON_GEAR}<span>Prompt settings</span></span>
+            <button type="button" class="aii-pc-setdone" data-pc-settings>Done</button>
+          </div>
+          <div class="aii-review-grid">
+            <label class="aii-review-fld"><span class="aii-review-flbl">Reasoning level</span><span class="aii-explore-select-wrap"><select class="aii-review-reasoning">${reasoningOpts}</select>${CHEV}</span></label>
+            <label class="aii-review-fld"><span class="aii-review-flbl">Output type</span><span class="aii-explore-select-wrap"><select class="aii-review-output">${otOpts}</select>${CHEV}</span></label>
+          </div>
+          <label class="aii-review-fld"><span class="aii-review-flbl">Secondary topics</span><input type="text" class="aii-review-secondary" placeholder="e.g. trade policy"></label>
+          <label class="aii-review-fld"><span class="aii-review-flbl">Custom instructions <span class="aii-review-flbl-note">— this submission only</span></span><textarea class="aii-review-custom" rows="2" placeholder="A one-off instruction for this prompt"></textarea></label>
+        </div>
         <div class="aii-pc-runrow">
           <button type="button" class="aii-pc-submit" data-pc-submit${m ? '' : ' disabled'} title="${escAttr(pcNoteText(m))}"><span>Run Prompt</span>${ICON_ARROW_R}</button>
         </div>
-      </div>
-      <div class="aii-pc-set" data-pc-set hidden>
-        <div class="aii-pc-sethead">
-          <span class="aii-pc-settitle">${ICON_GEAR}<span>Prompt settings</span></span>
-          <button type="button" class="aii-pc-setdone" data-pc-settings>Done</button>
-        </div>
-        <div class="aii-review-grid">
-          <label class="aii-review-fld"><span class="aii-review-flbl">Reasoning level</span><span class="aii-explore-select-wrap"><select class="aii-review-reasoning">${reasoningOpts}</select>${CHEV}</span></label>
-          <label class="aii-review-fld"><span class="aii-review-flbl">Output type</span><span class="aii-explore-select-wrap"><select class="aii-review-output">${otOpts}</select>${CHEV}</span></label>
-        </div>
-        <label class="aii-review-fld"><span class="aii-review-flbl">Secondary topics</span><input type="text" class="aii-review-secondary" placeholder="e.g. trade policy"></label>
-        <label class="aii-review-fld"><span class="aii-review-flbl">Custom instructions <span class="aii-review-flbl-note">— this submission only</span></span><textarea class="aii-review-custom" rows="2" placeholder="A one-off instruction for this prompt"></textarea></label>
       </div>
     </div>`;
   }
