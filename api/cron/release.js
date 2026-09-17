@@ -78,13 +78,16 @@ module.exports = async function handler(req, res) {
               summary = coalesce(pending_summary, summary),
               model   = coalesce(pending_model, model),
               sources = coalesce(pending_sources, sources),
-              created_at = now(),
+              created_at = $2,
               pending_content = NULL, pending_summary = NULL, pending_model = NULL,
               pending_sources = NULL, pending_edition = NULL, pending_at = NULL
         WHERE entity_type='shortcut' AND insight='daily:b' AND pending_edition=$1
-        RETURNING entity_key`, [key]);
+        RETURNING entity_key`, [key, live.releaseAt.toISOString()]);
+    // revamp1433g: stamped with the EDITION's release time, not the moment this
+    // cron happened to fire. The card's dateline is this stamp, and an edition
+    // that publishes a few minutes late must still say 5:00, not 9:35.
     await sql.query(
-      `UPDATE ai_audio SET release_at = now()
+      `UPDATE ai_audio SET release_at = least(release_at, now())
         WHERE kind='flagship' AND family_slug='home' AND edition_date=$1 AND edition=$2
           AND (release_at IS NULL OR release_at > now())`, [date, edition]);
 
