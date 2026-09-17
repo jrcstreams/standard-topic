@@ -2618,7 +2618,16 @@ export function renderDailyIntelligence(container, scope) {
     // a topic page is that topic's Morning AI Briefing.
     // revamp1410: "Morning Briefing", and no topic eyebrow above it. The page
     // you opened it from already says which topic this is.
-    const briefTitle = `<span class="di-title-kind di-title--today">Morning Briefing</span>`;
+    // revamp1433: editions release at 5:00 and 17:00 ET; an opened briefing
+    // names the one it belongs to.
+    const edName = (() => {
+      try {
+        const h = +new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour12: false, hour: '2-digit' })
+          .format(data.generatedAt ? new Date(data.generatedAt) : new Date()).replace(/\D/g, '') % 24;
+        return (h >= 5 && h < 17) ? 'Morning Briefing' : 'Evening Briefing';
+      } catch (_) { return 'Morning Briefing'; }
+    })();
+    const briefTitle = `<span class="di-title-kind di-title--today">${esc(edName)}</span>`;
     const mastEyebrow = '';
     const pillLabel = isHome ? 'All Topics' : mastLabel;
     const SEP = '<span class="di-metasep" aria-hidden="true"></span>';

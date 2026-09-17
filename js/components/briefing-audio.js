@@ -47,7 +47,7 @@ function ensure() {
   au.addEventListener('play', () => {
     if (!('mediaSession' in navigator) || !ep) return;
     try {
-      navigator.mediaSession.metadata = new MediaMetadata({ title: ep.title || 'Morning Briefing', artist: 'Standard Topic', album: `Morning Briefing · ${ep.edition_date || ''}` });
+      navigator.mediaSession.metadata = new MediaMetadata({ title: ep.title || editionName(ep), artist: 'Standard Topic', album: `${editionName(ep)} · ${ep.edition_date || ''}` });
       navigator.mediaSession.setActionHandler('play', () => briefingAudio.play());
       navigator.mediaSession.setActionHandler('pause', () => briefingAudio.pause());
       navigator.mediaSession.setActionHandler('seekbackward', () => { au.currentTime = Math.max(0, au.currentTime - 15); });
@@ -56,6 +56,11 @@ function ensure() {
   });
   return au;
 }
+
+// revamp1433: an episode names itself by its edition — the evening one is not
+// the morning briefing, and the dock is the one place a reader sees it while
+// the page behind it has moved on.
+function editionName(ep) { return (ep && ep.edition === 'evening') ? 'Evening Briefing' : 'Morning Briefing'; }
 
 export const briefingAudio = {
   get el() { return ensure(); },
@@ -146,7 +151,7 @@ export function mountBriefingDock() {
       <button type="button" class="bpd-play" data-bpd-play aria-label="Pause"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path data-bpd-icon d="${PAUSE_D}"/></svg></button>
       <button type="button" class="bpd-back" data-bpd-back aria-label="Back 15 seconds">${BACK}</button>
       <div class="bpd-txt">
-        <div class="bpd-kicker">${HEAD}<span>Morning Briefing</span></div>
+        <div class="bpd-kicker">${HEAD}<span>${editionName(briefingAudio.episode)}</span></div>
         <button type="button" class="bpd-title" data-bpd-title-btn aria-expanded="false" aria-label="Chapters"><span class="bpd-title-tx" data-bpd-title></span>${CHEV}</button>
       </div>
       <button type="button" class="bpd-x" data-bpd-x aria-label="Stop and close player">${X}</button>

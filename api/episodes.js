@@ -16,6 +16,9 @@
 // written once and never changes, so the only freshness that matters is "has
 // a new edition landed", and five minutes is fine for that.
 
+// revamp1433: an episode with a release_at in the future is not published
+// yet — it is waiting for /api/cron/release to open its edition. Every read
+// here filters it out, so a held episode is invisible rather than early.
 const { getSql } = require('../lib/db');
 
 const PUBLIC_COLS = `id, kind, family_slug, edition_date, edition, title, teaser, url, bytes,
@@ -44,7 +47,7 @@ module.exports = async function handler(req, res) {
     if (q.list) {
       const n = Math.min(Math.max(parseInt(q.list, 10) || 30, 1), 120);
       const rows = await sql.query(
-        `SELECT ${PUBLIC_COLS} FROM ai_audio WHERE kind=$1 AND family_slug=$2
+        `SELECT ${PUBLIC_COLS} FROM ai_audio WHERE kind=$1 AND family_slug=$2 AND (release_at IS NULL OR release_at <= now())
           ORDER BY edition_date DESC, CASE edition WHEN 'evening' THEN 1 ELSE 0 END DESC LIMIT $3`,
         [kind, family, n]);
       return res.status(200).json({ episodes: rows.map(shape) });
@@ -55,12 +58,12 @@ module.exports = async function handler(req, res) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ error: 'date must be YYYY-MM-DD' });
       const ed = q.edition === 'evening' ? 'evening' : (q.edition === 'morning' ? 'morning' : null);
       const rows = ed
-        ? await sql.query(`SELECT ${PUBLIC_COLS}${withScript} FROM ai_audio WHERE kind=$1 AND family_slug=$2 AND edition_date=$3 AND edition=$4 LIMIT 1`, [kind, family, date, ed])
-        : await sql.query(`SELECT ${PUBLIC_COLS}${withScript} FROM ai_audio WHERE kind=$1 AND family_slug=$2 AND edition_date=$3 ORDER BY CASE edition WHEN 'evening' THEN 1 ELSE 0 END DESC LIMIT 1`, [kind, family, date]);
+        ? await sql.query(`SELECT ${PUBLIC_COLS}${withScript} FROM ai_audio WHERE kind=$1 AND family_slug=$2 AND edition_date=$3 AND edition=$4 AND (release_at IS NULL OR release_at <= now()) LIMIT 1`, [kind, family, date, ed])
+        : await sql.query(`SELECT ${PUBLIC_COLS}${withScript} FROM ai_audio WHERE kind=$1 AND family_slug=$2 AND edition_date=$3 AND (release_at IS NULL OR release_at <= now()) ORDER BY CASE edition WHEN 'evening' THEN 1 ELSE 0 END DESC LIMIT 1`, [kind, family, date]);
       return res.status(200).json({ episode: shape(rows[0]) });
     }
     const rows = await sql.query(
-      `SELECT ${PUBLIC_COLS}${withScript} FROM ai_audio WHERE kind=$1 AND family_slug=$2
+      `SELECT ${PUBLIC_COLS}${withScript} FROM ai_audio WHERE kind=$1 AND family_slug=$2 AND (release_at IS NULL OR release_at <= now())
         ORDER BY edition_date DESC, CASE edition WHEN 'evening' THEN 1 ELSE 0 END DESC LIMIT 1`, [kind, family]);
     return res.status(200).json({ episode: shape(rows[0]) });
   } catch (err) {

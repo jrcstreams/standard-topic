@@ -86,7 +86,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // vercel.json registers both DST candidates (09:xx and 10:xx UTC) so exactly one
 // of them is 5am in New York year-round; the other falls through to the
 // catch-up, which is harmless.
-const DAILY_WAVE_HOURS_ET = [5];
+// revamp1433: the wave GENERATES at 4 and 16 ET; the edition it writes is
+// released an hour later, at 5 and 17, once its episode exists. See
+// lib/edition.js and /api/cron/release.
+const DAILY_WAVE_HOURS_ET = [4, 16];
+const EDITION = require('../../lib/edition');
+// The edition this run is building — the next release after now.
+function dailyEditionKey(now = new Date()) { return EDITION.buildingEdition(now).key; }
 const ET_FMT = new Intl.DateTimeFormat('en-US', {
   timeZone: 'America/New_York', hour12: false,
   year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit',
@@ -429,23 +435,31 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       let filled = 0; let refreshed = 0; let orphans = 0; let budget = total;
       const candidates = overviewCandidates();
       const byKey = new Map(candidates.map((c) => [`${c.topic.toLowerCase()}|${c.insight}`, c]));
-      const existing = await sql.query(`SELECT entity_key, created_at FROM ai_insights WHERE entity_type='shortcut' AND insight='daily:b'`);
+      // revamp1433: the wave STAGES this edition rather than publishing it —
+      // see /api/cron/release. Two consequences here. The written row's
+      // created_at no longer moves, so "already done in this wave" has to be
+      // read off pending_edition, or the twelve staggered runs would each
+      // regenerate all sixteen topics. And a topic with no row at all is
+      // written live as well as staged, so a new topic is never blank.
+      const editionKey = dailyEditionKey();
+      const existing = await sql.query(`SELECT entity_key, created_at, pending_edition FROM ai_insights WHERE entity_type='shortcut' AND insight='daily:b'`);
       const haveAt = new Map(existing.map((r) => [r.entity_key, r.created_at]));
       // 1. Fill topics with no daily brief at all.
       for (const c of candidates) {
         if (budget <= 0 || !timeLeftD()) break;
         if (haveAt.has(c.topic.toLowerCase())) continue;
-        if (await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1 })) filled++;
+        if (await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1, stage: editionKey })) filled++;
         budget--;
         await sleep(sleepMs);
       }
-      // 2. Refresh every brief that predates this wave, stalest first.
+      // 2. Stage every brief that has not been written for THIS edition yet.
       if (budget > 0 && timeLeftD()) {
         const stale = await sql.query(
           `SELECT entity_key FROM ai_insights
             WHERE entity_type='shortcut' AND insight='daily:b'
-              AND created_at < $1
-            ORDER BY created_at ASC LIMIT $2`, [waveStartISO, budget]);
+              AND (pending_edition IS DISTINCT FROM $3)
+              AND coalesce(pending_at, created_at) < $1
+            ORDER BY coalesce(pending_at, created_at) ASC LIMIT $2`, [waveStartISO, budget, editionKey]);
         for (const r of stale) {
           if (budget <= 0 || !timeLeftD()) break;
           const c = byKey.get(`${r.entity_key}|daily:b`);
@@ -455,7 +469,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
           // stalest-first queue on every single run, head-blocking the topics
           // behind it. Skip it without spending a slot or a sleep (revamp827).
           if (!c) { orphans++; continue; }
-          if (await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1, refresh: 1 })) refreshed++;
+          if (await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1, refresh: 1, stage: editionKey })) refreshed++;
           budget--;
           await sleep(sleepMs);
         }
@@ -463,9 +477,10 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       const rem = await sql.query(
         `SELECT count(*)::int AS n FROM ai_insights
           WHERE entity_type='shortcut' AND insight='daily:b'
-            AND created_at < $1`, [waveStartISO]);
+            AND (pending_edition IS DISTINCT FROM $2)
+            AND coalesce(pending_at, created_at) < $1`, [waveStartISO, editionKey]);
       return res.status(200).json({
-        ok: true, type: 'daily', wave: waveStartISO,
+        ok: true, type: 'daily', wave: waveStartISO, edition: editionKey,
         filled, refreshed, orphans, staleRemaining: rem[0].n,
       });
     } catch (e) {

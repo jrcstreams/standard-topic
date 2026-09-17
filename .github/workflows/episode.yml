@@ -1,0 +1,129 @@
+name: Episode
+
+# The podcast, twice a day (revamp1433).
+#
+# Editions release at 5:00 and 17:00 America/New_York. The briefing wave runs at
+# 4:00 and 16:00 and stages its sixteen briefings unreleased; this job builds the
+# episode from those staged drafts at :20, and /api/cron/release publishes the
+# whole edition at the top of the hour.
+#
+# Why here and not a Vercel cron: the pipeline runs a desk pass, a writer pass,
+# QA, a grounded fact check, text-to-speech over ~10k characters and an ffmpeg
+# encode. That does not fit in a 300-second function, and Vercel functions have
+# no ffmpeg. A runner has both time and ffmpeg.
+#
+# Retries, in three layers:
+#   1. the step itself retries up to three times with backoff;
+#   2. the :40 and :55 runs are catch-ups, and make-episode exits immediately
+#      when the edition already has an episode, so a catch-up costs seconds;
+#   3. if everything fails, the release endpoint holds the edition and the
+#      reader keeps yesterday's, whole, until a later run lands it.
+#
+# Both UTC times for each slot are scheduled because ET moves with daylight
+# saving; the script resolves its own edition from the America/New_York clock,
+# and a run in the wrong window is a no-op catch-up.
+
+on:
+  schedule:
+    # Morning build, 4:20 ET — 08:20 UTC in summer, 09:20 in winter
+    - cron: '20 8,9 * * *'
+    # Morning catch-ups, 4:40 and 4:55 ET
+    - cron: '40 8,9 * * *'
+    - cron: '55 8,9 * * *'
+    # Evening build, 16:20 ET — 20:20 UTC in summer, 21:20 in winter
+    - cron: '20 20,21 * * *'
+    # Evening catch-ups, 16:40 and 16:55 ET
+    - cron: '40 20,21 * * *'
+    - cron: '55 20,21 * * *'
+  workflow_dispatch:
+    inputs:
+      edition:
+        description: 'Force an edition (morning or evening). Leave blank to use the clock.'
+        required: false
+        type: string
+      force:
+        description: 'Rebuild even if this edition already has an episode'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  # Never two builds of the same edition at once — a catch-up must not race the
+  # build it is covering for.
+  group: episode
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --omit=dev || npm install --omit=dev
+
+      - name: Check ffmpeg
+        run: ffmpeg -version | head -1 && ffprobe -version | head -1
+
+      - name: Build and publish the episode
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          EPISODE_EDITION: ${{ inputs.edition }}
+        run: |
+          set -o pipefail
+          FLAGS="--publish"
+          if [ "${{ inputs.force }}" = "true" ]; then FLAGS="$FLAGS --force"; fi
+          for attempt in 1 2 3; do
+            echo "::group::Attempt $attempt"
+            if node scripts/make-episode.js $FLAGS; then
+              echo "::endgroup::"
+              echo "episode step succeeded on attempt $attempt"
+              exit 0
+            fi
+            echo "::endgroup::"
+            echo "attempt $attempt failed"
+            # Reuse the finished script if one was written: a retry after a
+            # voice failure redoes the voice alone, so the copy a reader gets
+            # is the copy that was fact-checked, and the text calls are not
+            # paid for twice.
+            SCRIPT=$(ls -t out/script-*.json 2>/dev/null | head -1 || true)
+            if [ -n "$SCRIPT" ]; then
+              echo "reusing $SCRIPT on the next attempt"
+              FLAGS="--publish --script=$SCRIPT"
+            fi
+            sleep $((attempt * 45))
+          done
+          echo "all attempts failed — the edition stays held and the next catch-up will try again"
+          exit 1
+
+      - name: Release the edition if it is whole
+        if: success()
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          # Best effort: the Vercel cron also runs this every few minutes. It is
+          # here so an episode that lands early is published the moment its
+          # release time passes, rather than waiting for the next tick.
+          if [ -n "$CRON_SECRET" ]; then
+            curl -sS -H "Authorization: Bearer $CRON_SECRET" \
+              https://www.standardtopic.com/api/cron/release || true
+          fi
+
+      - name: Upload the run's artefacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: episode-debug-${{ github.run_id }}
+          path: |
+            out/*.json
+            out/*.md
+          retention-days: 7
+          if-no-files-found: ignore

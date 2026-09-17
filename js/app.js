@@ -1875,7 +1875,19 @@ const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="
 // The homepage briefing's name. Two editions a day are coming (the evening
 // wave lands at 5pm ET); until the evening text is actually published this
 // stays on the morning name rather than promising an edition that is not there.
-function homeEditionTitle() { return 'Morning Briefing'; }
+// revamp1433: editions release at 5:00 and 17:00 ET, so which one a reader is
+// looking at is a question of the clock, not of the browser's timezone. An ET
+// hour between 5 and 17 is the morning edition; anything else is the evening's.
+function currentEditionName(iso) {
+  try {
+    const d = iso ? new Date(iso) : new Date();
+    const h = +new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour12: false, hour: '2-digit' })
+      .format(d).replace(/\D/g, '') % 24;
+    return (h >= 5 && h < 17) ? 'morning' : 'evening';
+  } catch (_) { return 'morning'; }
+}
+function editionTitleFor(iso) { return currentEditionName(iso) === 'evening' ? 'Evening Briefing' : 'Morning Briefing'; }
+function homeEditionTitle() { return editionTitleFor(); }
 // An archived edition's briefing, rendered from the episode row: the written
 // item per story, the sources the desk used for it, and a play-from-here that
 // seeks the edition's own player. Shape-matched to the live briefing's
@@ -2363,6 +2375,8 @@ function applyBriefArt(root, iso) {
 // revamp1366: the edition card's stamp — one pill, a sun for the morning
 // edition, "Mon, Sep 15 • 5:00 AM ET". No calendar glyph.
 const EC_SUN = '<svg class="ec-stamp-sun" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
+// revamp1433: the evening edition wears a moon.
+const EC_MOON = '<svg class="ec-stamp-sun ec-stamp-moon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a7 7 0 1 0 10.5 10.5z"/></svg>';
 function ecStampHTML(iso) {
   try {
     const d = new Date(iso);
@@ -2372,7 +2386,8 @@ function ecStampHTML(iso) {
     // detail nobody reads off a daily briefing's masthead.
     const day = et({ month: 'numeric', day: 'numeric' }) + ',';
     const time = et({ hour: 'numeric' }) + ' ET';
-    return `<span class="ec-stamp-pill">${EC_SUN}<span class="ec-stamp-day">${escapeHTML(day)}</span><span class="ec-stamp-time">${escapeHTML(time)}</span></span>`;
+    const mark = currentEditionName(iso) === 'evening' ? EC_MOON : EC_SUN;
+    return `<span class="ec-stamp-pill">${mark}<span class="ec-stamp-day">${escapeHTML(day)}</span><span class="ec-stamp-time">${escapeHTML(time)}</span></span>`;
   } catch (_) { return ''; }
 }
 function fillEcStamp(card, iso) {
@@ -2703,7 +2718,7 @@ function renderIntelligenceHub(container) {
           <label class="dih-edition-lbl" for="dih-edition-sel">Edition</label>
           <select class="dih-edition-sel" id="dih-edition-sel" data-edition-sel aria-label="Choose an edition"><option value="">Today</option></select>
         </div>
-        <div class="dih-today-card tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition">${editionCardHTML({ cardTitle: 'The Main Briefing' })}</div>
+        <div class="dih-today-card tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition">${editionCardHTML({})}</div>
       </div>
 
       <div class="dih-groups" data-dih-groups>

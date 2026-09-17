@@ -123,7 +123,22 @@ async function main() {
   if (arg('edition')) process.env.EPISODE_EDITION = String(arg('edition'));
   const ed = E.editionFor(now);
   const wave = E.waveStart(now);
+  // revamp1433: the edition key the wave staged its briefings under, so this
+  // episode is written from the same drafts that will be released beside it.
+  const editionKey = `${E.editionDate(now)}|${ed}`;
   const edition = `${E.editionDate(now)}-${ed}`;
+
+  // revamp1433: a catch-up run must not make a second episode. If this edition
+  // already has one, exit cleanly so the retry schedule is free to fire often.
+  if (!arg('force')) {
+    const done = await sql.query(
+      `SELECT id FROM ai_audio WHERE kind='flagship' AND family_slug='home' AND edition_date=$1 AND edition=$2 LIMIT 1`,
+      [E.editionDate(now), ed]);
+    if (done.length) {
+      log(`\n${edition} already has an episode (#${done[0].id}) — nothing to do.`);
+      return;
+    }
+  }
   const dateLabel = E.todayLabel(now);
   fs.mkdirSync(OUT, { recursive: true });
 
@@ -134,12 +149,15 @@ async function main() {
   log(`  wave      briefings since ${wave.toISOString()}\n`);
 
   // 1. Gather ---------------------------------------------------------------
-  const briefs = await E.gatherBriefs(sql, { since: wave });
+  const briefs = await E.gatherBriefs(sql, { since: wave, edition: editionKey });
   const home = briefs.find((b) => b.isHome) || null;
   const fresh = briefs.filter((b) => b.fresh);
-  log(`Briefings: ${briefs.length} found, ${fresh.length} from this wave${home ? '' : ', NO home briefing'}`);
+  const staged = briefs.filter((b) => b.staged);
+  log(`Briefings: ${briefs.length} found, ${fresh.length} from this edition (${staged.length} staged)${home ? '' : ', NO home briefing'}`);
   if (!home) console.warn('  ! the home briefing is missing — the desk will work from topics alone');
-  if (fresh.length < 60) console.warn(`  ! only ${fresh.length} briefings are from today's wave; the episode will lean on older ones`);
+  // revamp1433: the floor is most of the sixteen topics, not the sixty that
+  // made sense when there were a hundred of them.
+  if (fresh.length < 12) console.warn(`  ! only ${fresh.length} briefings belong to this edition; the episode will lean on older ones`);
 
   const digest = E.digestFor(briefs);
   log(`Desk digest: ${digest.length.toLocaleString()} chars (~${Math.round(digest.length / 4).toLocaleString()} tokens)\n`);
@@ -334,7 +352,7 @@ async function publishOnly() {
   const chapters = rd(`chapters-${edition}.json`);
   const mp3 = path.join(OUT, `standard-topic-${edition}.mp3`);
   const durationMs = Math.round(parseFloat(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', mp3]).toString()) * 1000);
-  const briefs = await E.gatherBriefs(sql, { since: wave });
+  const briefs = await E.gatherBriefs(sql, { since: wave, edition: `${E.editionDate(now)}|${ed}` });
   const chars = script.segments.reduce((n, s) => n + String(s.text || '').length, 0);
   const title = storyboard.title || `Standard Topic — ${dateLabel}`;
   log(`Publish only · ${edition} · ${(durationMs / 60000).toFixed(1)} min`);
@@ -396,38 +414,49 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
     }
   });
 
-  // The stamp the site shows is this row's created_at. It is the wave the
-  // edition was built from (5am ET), not the moment of a (re)publish — the
-  // card was reading "8:56 PM ET" on a morning briefing after a re-run.
-  const stamp = E.waveStart(new Date()).toISOString();
+  // The stamp the site shows is this row's created_at: the edition's RELEASE
+  // time (5am / 5pm ET), not the moment of a (re)publish — the card was reading
+  // "8:56 PM ET" on a morning briefing after a re-run. revamp1433 takes it from
+  // the edition clock, so a 4:20 AM build still stamps 5:00 AM.
+  const CLOCK = require('../lib/edition');
+  const built = CLOCK.forcedEdition() || CLOCK.buildingEdition();
+  const stamp = built.releaseAt.toISOString();
+  const releaseAt = built.releaseAt.toISOString();
   const rows = await sql.query(
     `INSERT INTO ai_audio (kind, family_slug, edition_date, edition, title, teaser, url, bytes, duration_ms,
-       chapters, storyboard, script, sources, voice, provider, chars, cost_micros, peaks, created_at)
-     VALUES ('flagship','home',$1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11::jsonb,$12,$13,$14,$15,$16::jsonb,$17)
+       chapters, storyboard, script, sources, voice, provider, chars, cost_micros, peaks, created_at, release_at)
+     VALUES ('flagship','home',$1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11::jsonb,$12,$13,$14,$15,$16::jsonb,$17,$18)
      ON CONFLICT (kind, family_slug, edition_date, edition) DO UPDATE SET
        title=EXCLUDED.title, teaser=EXCLUDED.teaser, url=EXCLUDED.url, bytes=EXCLUDED.bytes,
        duration_ms=EXCLUDED.duration_ms, chapters=EXCLUDED.chapters, storyboard=EXCLUDED.storyboard,
        script=EXCLUDED.script, sources=EXCLUDED.sources, voice=EXCLUDED.voice, provider=EXCLUDED.provider,
-       chars=EXCLUDED.chars, cost_micros=EXCLUDED.cost_micros, peaks=EXCLUDED.peaks, created_at=EXCLUDED.created_at
+       chars=EXCLUDED.chars, cost_micros=EXCLUDED.cost_micros, peaks=EXCLUDED.peaks, created_at=EXCLUDED.created_at,
+       release_at=EXCLUDED.release_at
      RETURNING id`,
     [editionDate, ed, cardTitle, cardTeaser, blob.url, bytes, durationMs,
      JSON.stringify(chapters), JSON.stringify(storyboard), JSON.stringify(script), JSON.stringify(sources),
-     VOICE, 'gemini-tts', chars, Math.round(micros + chars * 15), JSON.stringify(peaks), stamp]);
+     VOICE, 'gemini-tts', chars, Math.round(micros + chars * 15), JSON.stringify(peaks), stamp, releaseAt]);
 
-  // The home briefing text = this episode, rendered. Only the MORNING edition
-  // overwrites the home daily:b row for now: the site has one home briefing
-  // slot until the evening edition gets its own (revamp1340 follow-up).
+  // The home briefing text = this episode, rendered. revamp1433: it is STAGED
+  // under this edition's key like every other briefing, so it appears the
+  // moment the release runs and not before; and both editions get one now that
+  // the evening edition is back.
   let homeUpdated = false;
-  if (!arg('no-home') && ed === 'morning') {
+  if (!arg('no-home')) {
     const text = E.renderBriefingText(script, storyboard, { chapters });
     const summary = cardTeaser || null;
+    const srcJson = JSON.stringify(sources.map((s) => ({ title: s.title, uri: s.uri, source: s.source, via: 'episode', item: s.chapter })));
+    const body = text.replace(/^SUMMARY:.*\n+/, '');
+    const model = `episode:${E.deskModel()}`;
     await sql.query(
-      `INSERT INTO ai_insights (entity_type, entity_key, insight, content, summary, model, sources, created_at)
-       VALUES ('shortcut','home','daily:b',$1,$2,$3,$4::jsonb,$5)
+      `INSERT INTO ai_insights (entity_type, entity_key, insight, content, summary, model, sources, created_at,
+         pending_content, pending_summary, pending_model, pending_sources, pending_edition, pending_at)
+       VALUES ('shortcut','home','daily:b',$1,$2,$3,$4::jsonb,$5,$1,$2,$3,$4::jsonb,$6,now())
        ON CONFLICT (entity_type, entity_key, insight)
-       DO UPDATE SET content=EXCLUDED.content, summary=EXCLUDED.summary, model=EXCLUDED.model, sources=EXCLUDED.sources, created_at=EXCLUDED.created_at`,
-      [text.replace(/^SUMMARY:.*\n+/, ''), summary, `episode:${E.deskModel()}`,
-       JSON.stringify(sources.map((s) => ({ title: s.title, uri: s.uri, source: s.source, via: 'episode', item: s.chapter }))), stamp]);
+       DO UPDATE SET pending_content=EXCLUDED.pending_content, pending_summary=EXCLUDED.pending_summary,
+         pending_model=EXCLUDED.pending_model, pending_sources=EXCLUDED.pending_sources,
+         pending_edition=EXCLUDED.pending_edition, pending_at=now()`,
+      [body, summary, model, srcJson, stamp, built.key]);
     homeUpdated = true;
   }
   return { url: blob.url, bytes, id: rows[0] && rows[0].id, homeUpdated };
