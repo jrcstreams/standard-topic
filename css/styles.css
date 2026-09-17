@@ -38899,3 +38899,18 @@ body.home-search .home-sections.home-v2 > .home-featbriefs--lead[class][class][c
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+
+/* ── revamp1427: the rail head sits on the feed head's line ───────────────
+   Two offsets held it 16px low with a thinner rule: the column carried 16px of
+   top padding the feed column does not, and the head's own rule was 1px over
+   12px of padding against the feed's 2px over 15. Same numbers now, so the
+   titles share a baseline and the two rules are one line across the page. */
+.topic-body-cols > .topic-top-side[class][class][class],
+body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class][class] {
+  padding-top: 0 !important;
+}
+.topic-top-side .trail-head[class][class][class][class] {
+  padding-bottom: 15px !important;
+  border-bottom: 2px solid #e0e5ee !important;
+  margin-bottom: 12px !important;
+}
