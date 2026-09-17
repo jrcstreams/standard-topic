@@ -38830,6 +38830,7 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head[cl
 
 /* Room to breathe: the briefing card off the rule above it, and the two heads
    off the card. */
+body.home-search .home-sections.home-v2 > .home-featbriefs--lead[class][class][class],
 .home-sections .home-featbriefs[class][class] { margin-top: 18px !important; }
 .home-sections.home-v2 > .home-main[class][class],
 .home-sections.home-v2 > .home-side[class][class] { margin-top: 12px !important; }

@@ -9,6 +9,28 @@
       "icon": "house"
     },
     {
+      "slug": "world",
+      "name": "World",
+      "parent": null,
+      "color": "#0369a1",
+      "rssFeedId": "_Wf3vA7s08Z7qrYFZ",
+      "webhookEnabled": false,
+      "icon": "globe",
+      "featured": true,
+      "tier": 1
+    },
+    {
+      "slug": "politics",
+      "name": "Politics",
+      "parent": null,
+      "color": "#b91c1c",
+      "rssFeedId": "_M9LiWo4EtDyHzuyB",
+      "webhookEnabled": false,
+      "icon": "landmark",
+      "featured": true,
+      "tier": 1
+    },
+    {
       "slug": "business-finance",
       "name": "Business & Finance",
       "parent": null,
@@ -42,50 +64,6 @@
       "tier": 1
     },
     {
-      "slug": "science",
-      "name": "Science",
-      "parent": null,
-      "color": "#6d28d9",
-      "rssFeedId": "_duWpBv2YcGwlsqac",
-      "webhookEnabled": false,
-      "icon": "orbit",
-      "featured": true,
-      "tier": 1
-    },
-    {
-      "slug": "health-wellness",
-      "name": "Health & Wellness",
-      "parent": null,
-      "color": "#0f766e",
-      "rssFeedId": "_bIG9BwtK6iHQAWl4",
-      "webhookEnabled": false,
-      "icon": "heart-pulse",
-      "featured": true,
-      "tier": 1
-    },
-    {
-      "slug": "politics",
-      "name": "Politics",
-      "parent": null,
-      "color": "#b91c1c",
-      "rssFeedId": "_M9LiWo4EtDyHzuyB",
-      "webhookEnabled": false,
-      "icon": "landmark",
-      "featured": true,
-      "tier": 1
-    },
-    {
-      "slug": "world",
-      "name": "World",
-      "parent": null,
-      "color": "#0369a1",
-      "rssFeedId": "_Wf3vA7s08Z7qrYFZ",
-      "webhookEnabled": false,
-      "icon": "globe",
-      "featured": true,
-      "tier": 1
-    },
-    {
       "slug": "sports",
       "name": "Sports",
       "parent": null,
@@ -97,13 +75,13 @@
       "tier": 1
     },
     {
-      "slug": "climate-environment",
-      "name": "Climate & Environment",
+      "slug": "science",
+      "name": "Science",
       "parent": null,
-      "color": "#15803d",
-      "rssFeedId": "_VX3bLtDfLsEBFsG1",
+      "color": "#6d28d9",
+      "rssFeedId": "_duWpBv2YcGwlsqac",
       "webhookEnabled": false,
-      "icon": "cloud-sun",
+      "icon": "orbit",
       "featured": true,
       "tier": 1
     },
@@ -119,13 +97,24 @@
       "tier": 1
     },
     {
-      "slug": "arts-culture",
-      "name": "Arts & Culture",
+      "slug": "media",
+      "name": "Media",
       "parent": null,
-      "color": "#be185d",
-      "rssFeedId": "_CZeepr2xz5bDZqP4",
+      "color": "#475569",
+      "rssFeedId": "_j4copAxkzYjIqDfx",
       "webhookEnabled": false,
-      "icon": "palette",
+      "icon": "radio-tower",
+      "featured": true,
+      "tier": 1
+    },
+    {
+      "slug": "climate-environment",
+      "name": "Climate & Environment",
+      "parent": null,
+      "color": "#15803d",
+      "rssFeedId": "_VX3bLtDfLsEBFsG1",
+      "webhookEnabled": false,
+      "icon": "cloud-sun",
       "featured": true,
       "tier": 1
     },
@@ -141,13 +130,24 @@
       "tier": 1
     },
     {
-      "slug": "media",
-      "name": "Media",
+      "slug": "arts-culture",
+      "name": "Arts & Culture",
       "parent": null,
-      "color": "#475569",
-      "rssFeedId": "_j4copAxkzYjIqDfx",
+      "color": "#be185d",
+      "rssFeedId": "_CZeepr2xz5bDZqP4",
       "webhookEnabled": false,
-      "icon": "radio-tower",
+      "icon": "palette",
+      "featured": true,
+      "tier": 1
+    },
+    {
+      "slug": "health-wellness",
+      "name": "Health & Wellness",
+      "parent": null,
+      "color": "#0f766e",
+      "rssFeedId": "_bIG9BwtK6iHQAWl4",
+      "webhookEnabled": false,
+      "icon": "heart-pulse",
       "featured": true,
       "tier": 1
     },
@@ -176,18 +176,18 @@
   ],
   "featuredOrder": [
     "world",
-    "business-finance",
     "politics",
-    "science",
+    "business-finance",
     "technology",
     "artificial-intelligence",
     "sports",
+    "science",
     "entertainment",
     "media",
-    "health-wellness",
+    "climate-environment",
     "lifestyle",
     "arts-culture",
-    "climate-environment",
+    "health-wellness",
     "education",
     "ideas-opinion-more"
   ]
