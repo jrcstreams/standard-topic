@@ -37865,8 +37865,9 @@ body:not(.tt-on) .ndp.aii-nav-dd-trending .aii-nav-dd-subbar[class][class][class
   border-bottom: 2px solid #e0e5ee !important; margin-bottom: 0 !important;
 }
 body:not(.tt-on) .ndp.aii-nav-dd-trending .trend-card-grid[class][class] { margin-top: 0 !important; padding-top: 0 !important; }
-/* The hub's edition picker goes. */
-.dih-edition[class][class] { display: none !important; }
+/* revamp1429: the hub's edition PICKER goes — the card it sits above stays.
+   Hiding the whole block took the main briefing off the page with it. */
+.dih-edition .dih-edition-bar[class][class] { display: none !important; }
 
 /* revamp1371: open, the close ✕ sits where the stamp pill ends. The pill
    steps in by the ✕'s width plus a gap while the briefing is open, at the
@@ -38926,3 +38927,17 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class][class] {
   line-height: 1 !important;
 }
 .dih-item .ec-stamp-pill[class][class][class] { padding: 5px 10px !important; }
+
+/* revamp1429: the rail's rule, over the id-scoped chain that pinned it to 1px.
+   `body:not(.tt-on) #topic-tab-body … .trail-head[class][class]` was winning,
+   so the head kept a 1px rule over 12px where the feed has 2px over 15. */
+body:not(.tt-on) #topic-tab-body .topic-body-cols > .topic-top-side[class][class] .trail-head[class][class][class][class],
+body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head[class][class][class][class],
+.topic-top-side .trail-head[class][class][class][class] {
+  padding-bottom: 15px !important;
+  border-bottom: 2px solid #e0e5ee !important;
+  margin-bottom: 12px !important;
+}
+
+/* The main briefing leads the hub at full width, above the two-column grid. */
+.dih .dih-edition[class][class] { display: block !important; margin-bottom: 22px; }

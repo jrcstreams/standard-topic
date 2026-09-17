@@ -2703,7 +2703,7 @@ function renderIntelligenceHub(container) {
           <label class="dih-edition-lbl" for="dih-edition-sel">Edition</label>
           <select class="dih-edition-sel" id="dih-edition-sel" data-edition-sel aria-label="Choose an edition"><option value="">Today</option></select>
         </div>
-        <div class="dih-today-card tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition">${editionCardHTML({})}</div>
+        <div class="dih-today-card tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition">${editionCardHTML({ cardTitle: 'The Main Briefing' })}</div>
       </div>
 
       <div class="dih-groups" data-dih-groups>
