@@ -38941,3 +38941,12 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head[cl
 
 /* The main briefing leads the hub at full width, above the two-column grid. */
 .dih .dih-edition[class][class] { display: block !important; margin-bottom: 22px; }
+
+/* revamp1430: the AI label in an opened topic briefing, closer on both sides.
+   26px above it came from the summary's own bottom margin plus the row's top
+   margin; 25px below from Top Stories. It is a caption between two blocks, so
+   it sits close to both. */
+.tdi-card--edition.is-open .ec-summary[class][class][class] { margin-bottom: 8px !important; }
+.tdi-expand-inner .di-provrow[class][class][class],
+.di-provrow[class][class][class] { margin: 0 !important; }
+.di-provrow[class][class][class] + .di-briefs[class][class][class] { margin-top: 10px !important; }
