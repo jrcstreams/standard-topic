@@ -38808,3 +38808,6 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head[cl
   #home-trending .trending-topics-title-ic[class][class][class] svg,
   .trending-topics-title-ic[class][class][class] svg { width: 17px !important; height: 17px !important; }
 }
+
+/* revamp1421c: and the section under the AI label carries 26px of its own. */
+.di-provrow[class][class] + .di-briefs[class][class] { margin-top: 12px !important; }
