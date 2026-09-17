@@ -38769,7 +38769,10 @@ body.tt-on .page-hero[class],
 @media (min-width: 900px) {
   .topic-bodyhead[class][class] {
     padding-bottom: 14px !important;
-    border-bottom: 2px solid #e0e5ee !important;
+    /* revamp1432: a shade darker than the feed's #e0e5ee. This rule is drawn
+       over the topic's tinted hero band, not over white, and at #e0e5ee it
+       disappeared into the tint — the line was painting all along. */
+    border-bottom: 2px solid #cbd5e6 !important;
   }
 }
 .topic-bodyhead .tbh-desc[class][class] { margin-top: 4px !important; }
