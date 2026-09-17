@@ -475,7 +475,13 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
   // revamp1433: through the same resolver as the writer's material — matching
   // on slug alone left every story on the main briefing with no sources at all.
   const sources = []; const seen = new Set();
+  // revamp1433: only the STORY beats collect sources. A URI is claimed by the
+  // first segment that asks for it, and the cold open — which is not rendered
+  // as a story and shows no chips — was claiming six of them before the lead
+  // could, leaving that story bare.
+  const STORY_BEATS = new Set(['lead', 'developing', 'why', 'around', 'ahead']);
   script.segments.forEach((seg, i) => {
+    if (!STORY_BEATS.has(seg.beat)) return;
     for (const b of resolveRefs(seg.brief_refs || [], briefs)) {
       for (const src of (b.sources || []).slice(0, 6)) {
         const uri = src && (src.uri || src.url); if (!uri || seen.has(uri)) continue;
