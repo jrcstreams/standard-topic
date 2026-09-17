@@ -81,7 +81,28 @@ jobs:
           ffmpeg -version | head -1
           ffprobe -version | head -1
 
+      # Each slot is scheduled at both its summer and its winter UTC hour,
+      # because GitHub cron has no timezone. Only one of the pair is the real
+      # 4:20 or 16:20 in New York; the other lands an hour after the release and
+      # would build the NEXT edition early, out of the wrong briefings. So the
+      # job asks what time it is in New York and stands down unless it is in a
+      # build window. A manual run always proceeds.
+      - name: In the build window?
+        id: window
+        run: |
+          H=$(TZ=America/New_York date +%H)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "manual run — proceeding"
+            echo "go=yes" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          case "$H" in
+            04|16) echo "ET hour $H — build window"; echo "go=yes" >> "$GITHUB_OUTPUT" ;;
+            *)     echo "ET hour $H is not a build window (04 or 16) — standing down"; echo "go=no" >> "$GITHUB_OUTPUT" ;;
+          esac
+
       - name: Build and publish the episode
+        if: steps.window.outputs.go == 'yes'
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -119,7 +140,7 @@ jobs:
           exit 1
 
       - name: Release the edition if it is whole
-        if: success()
+        if: success() && steps.window.outputs.go == 'yes'
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
