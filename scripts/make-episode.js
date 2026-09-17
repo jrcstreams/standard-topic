@@ -49,6 +49,45 @@ const A = require('../lib/episode-audio');
 
 const LENGTH = String(arg('length', 'standard'));
 const VOICE = String(arg('voice', process.env.EPISODE_VOICE || 'Gacrux'));
+// revamp1433: resolve whatever the desk put in brief_refs back to briefings.
+// It has returned slugs ("energy-commodities"), trend ids ("T27505") and raw
+// headline sentences, and every caller that assumed slugs quietly got nothing:
+// the writer was handed one briefing, and the per-chapter source links came out
+// empty. A ref resolves as a slug, as a topic name, or by finding the briefing
+// whose text contains that headline — which is where the desk read it.
+function resolveRefs(refs, briefs) {
+  const norm = (v) => String(v || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const bySlug = new Map(briefs.map((b) => [norm(b.slug), b]));
+  const byName = new Map(briefs.map((b) => [norm(b.name), b]));
+  const home = briefs.find((b) => b.isHome) || null;
+  const out = []; const seen = new Set();
+  const take = (b) => { if (b && !seen.has(b.slug)) { seen.add(b.slug); out.push(b); } };
+  for (const raw of (refs || [])) {
+    const text = String(raw || '').trim();
+    if (!text) continue;
+    // The digest labels every briefing "### Name [slug]" and every item
+    // "(n) headline", so the desk answers in that shape: "politics: (1) Indian
+    // and Pakistani naval vessels collided…" or "HOME: …". The part before the
+    // first colon is the briefing; the rest is which item of it.
+    const cut = text.indexOf(':');
+    if (cut > 0 && cut <= 48) {
+      const head = norm(text.slice(0, cut));
+      if (head === 'home' && home) { take(home); continue; }
+      const keyed = bySlug.get(head) || byName.get(head);
+      if (keyed) { take(keyed); continue; }
+    }
+    const ref = norm(text);
+    const direct = bySlug.get(ref) || byName.get(ref);
+    if (direct) { take(direct); continue; }
+    // No usable label: find the briefing whose text carries that headline.
+    const body = cut > 0 ? norm(text.slice(cut + 1)).replace(/^\(\d+\)\s*/, '') : ref;
+    const needle = body.slice(0, 48);
+    if (needle.length < 12) continue;
+    take(briefs.find((b) => norm(b.content).includes(needle)));
+  }
+  return out;
+}
+
 const OUT = path.resolve(String(arg('out', path.join(os.tmpdir(), 'standard-topic-episode'))));
 const SCRIPT_ONLY = !!arg('script-only');
 const NO_QA = !!arg('no-qa');
@@ -221,20 +260,7 @@ async function main() {
   // ref is resolved three ways now: as a slug, as a topic name, or by finding
   // the briefing whose text actually contains that headline, which is where
   // the desk read it. Then a floor, because the writer must never be starved.
-  const norm = (v) => String(v || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-  const refs = [...wanted].map(norm).filter(Boolean);
-  const bySlug = new Map(briefs.map((b) => [norm(b.slug), b]));
-  const byName = new Map(briefs.map((b) => [norm(b.name), b]));
-  const picked = new Set();
-  for (const ref of refs) {
-    const direct = bySlug.get(ref) || byName.get(ref);
-    if (direct) { picked.add(direct.slug); continue; }
-    // The headline the desk quoted lives in exactly one briefing.
-    const needle = ref.slice(0, 48);
-    if (needle.length < 12) continue;
-    const owner = briefs.find((b) => norm(b.content).includes(needle));
-    if (owner) picked.add(owner.slug);
-  }
+  const picked = new Set(resolveRefs([...wanted], briefs).map((b) => b.slug));
   let selected = briefs.filter((b) => b.isHome || picked.has(b.slug));
   const MATERIAL_FLOOR = 6;
   if (selected.length < MATERIAL_FLOOR) {
@@ -446,11 +472,11 @@ async function publishEpisode({ mp3, script, storyboard, chapters, durationMs, b
   });
 
   // Source links per chapter, resolved from the briefings each segment used.
-  const bySlug = new Map(briefs.map((b) => [b.slug, b]));
+  // revamp1433: through the same resolver as the writer's material — matching
+  // on slug alone left every story on the main briefing with no sources at all.
   const sources = []; const seen = new Set();
   script.segments.forEach((seg, i) => {
-    for (const slug of (seg.brief_refs || [])) {
-      const b = bySlug.get(slug); if (!b) continue;
+    for (const b of resolveRefs(seg.brief_refs || [], briefs)) {
       for (const src of (b.sources || []).slice(0, 6)) {
         const uri = src && (src.uri || src.url); if (!uri || seen.has(uri)) continue;
         seen.add(uri);
