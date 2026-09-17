@@ -38876,11 +38876,15 @@ body.home-search .home-sections.home-v2 > .home-featbriefs--lead[class][class][c
    as the fallback where container queries are unsupported. */
 .dih-groups { container-type: inline-size; container-name: dihgrid; }
 @container dihgrid (min-width: 640px) {
+  body.tt-on #content .dih .dih-group--all .dih-items[class][class][class],
+  #content .dih .dih-group--all .dih-items[class][class][class],
   .dih-group--all .dih-items[class][class][class] {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     column-gap: 22px !important;
   }
 }
 @container dihgrid (max-width: 639.98px) {
+  body.tt-on #content .dih .dih-group--all .dih-items[class][class][class],
+  #content .dih .dih-group--all .dih-items[class][class][class],
   .dih-group--all .dih-items[class][class][class] { grid-template-columns: minmax(0, 1fr) !important; }
 }
