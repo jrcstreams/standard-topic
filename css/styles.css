@@ -38959,7 +38959,10 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side[class][class] .trail-head[cl
 @media (max-width: 899.98px) {
   .ec-head .ec-headrow .ec-stamp[class][class]:not(.ec-stamp--below) {
     display: flex !important;
-    margin-left: auto !important;
+    /* the phone rule gave it a 100% basis, which is what wrapped it */
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin: 0 0 0 auto !important;
   }
   .ec-head .ec-stamp--below[class][class] { display: none !important; }
   .tdi-card--edition .ec--v2 .ec-rule[class]:not(.ec-rule--player) { display: none !important; }
