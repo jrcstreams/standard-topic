@@ -19,15 +19,11 @@
     },
     {
       "topic": "politics",
-      "name": "Global Geopolitical Hotspots Updates"
+      "name": "Geopolitical Hotspots"
     },
     {
       "topic": "business-finance",
       "name": "Crypto Market Snapshot"
-    },
-    {
-      "topic": "politics",
-      "name": "Polling and Public Opinion"
     },
     {
       "topic": "technology",
@@ -43,7 +39,7 @@
     },
     {
       "topic": "entertainment",
-      "name": "What to Watch, Listen To and Play This Week"
+      "name": "Watch, Listen, Play"
     },
     {
       "topic": "science",
@@ -51,7 +47,7 @@
     },
     {
       "topic": "technology",
-      "name": "Recent Major Breaches"
+      "name": "Cybersecurity Snapshot"
     },
     {
       "topic": "business-finance",
