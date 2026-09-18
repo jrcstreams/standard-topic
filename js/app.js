@@ -18,6 +18,7 @@ import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } 
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
 import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief, splitSections } from './components/ai-intelligence.js?v=20260914-revamp1340c';
+import { renderPromptCard } from './components/prompt-card.js?v=20260918-revamp1442';
 import { mountLatestBriefingPlayer, mountBriefingPlayer, loadEpisode, loadEpisodeList } from './components/briefing-player.js?v=20260914-revamp1341';
 import { briefingAudio, mountBriefingDock } from './components/briefing-audio.js';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
@@ -3185,17 +3186,13 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     body.innerHTML = `<div class="topic-home">
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
-      <div class="topic-viewtabs" data-topic-viewtabs role="tablist" aria-label="Topic sections">
-        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-tview="news">${pageTabIcon('news')}<span class="tvt-tx">Feed</span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="tools">${pageTabIcon('tools')}<span class="tvt-tx">Prompts</span></button>
-      </div>
       <div class="topic-top topic-top--lead">
         <section class="topic-top-main">
           <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition tdi-card--topicedition" data-tdi>${topicEditionCardHTML(topic)}
           </div>
         </section>
       </div>
-      <div class="topic-body-cols">
+      <div class="topic-body-cols has-pcard">
         <div class="topic-news-wrap">
           <section id="section-newsfeed" class="layout-section"></section>
         </div>
@@ -3219,16 +3216,12 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // are the accordions, so a prompt opens in place with its Run/Copy/Model
     // panel instead of swapping in a separate library view. Same component the
     // tab view uses, so the behaviour is identical everywhere.
+    // revamp1442: the rail is the prompts CARD — buckets, then a bucket, then
+    // the prompt itself, all inside one card. In tab mode it sits under the
+    // briefing instead of behind a "Prompts" tab.
     {
       const host = body.querySelector('.topic-top-side [data-pr-host]');
-      if (host) {
-        renderAIIntelligence(host, {
-          inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
-          topic: topic.name, label: topic.name,
-          descriptions, icons, shortcuts,
-          topicKey: topic.slug,
-        });
-      }
+      if (host) renderPromptCard(host, { topic: topic.name, slug: topic.slug, shortcuts });
     }
     // Topic view tabs: container classes drive which section shows in the
     // narrow tabbed layout; on wide screens the tabs row is display:none and
@@ -3573,7 +3566,6 @@ function renderLayout(route) {
         <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">${pageTabIcon('news')}<span class="tvt-tx"><span class="tvt-long">News Feed</span><span class="tvt-short">News</span></span></button>
         <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">${pageTabIcon('brief')}<span class="tvt-tx"><span class="tvt-long">AI Briefings</span><span class="tvt-short">AI Briefs</span></span></button>
         <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">${pageTabIcon('trend')}<span class="tvt-tx"><span class="tvt-long">Trending</span><span class="tvt-short">Trends</span></span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="tools">${pageTabIcon('tools')}<span class="tvt-tx"><span class="tvt-long">AI Prompts</span><span class="tvt-short">Prompts</span></span></button>
       </div>
       <div class="home-subfilters" data-home-subfilters></div>`;
     if (!window.__homeScrollWire) {
@@ -5639,6 +5631,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           </div>
           <aside class="home-side">
             <section class="home-trending hs-block" id="home-trending"></section>
+            <!-- revamp1442: the prompts card. Under Trending in the desktop
+                 rail; on a phone it is its own full-width card right under
+                 the briefing. -->
+            <section class="home-pcard hs-block" id="home-pcard" aria-label="AI Prompts"></section>
           </aside>
         </div>
       </div>
@@ -5650,6 +5646,19 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // revamp1104: render the FULL trend set; on desktop the sidebar CSS-caps it to
     // 12 (+ "View more trending"), but in tab mode the Trends tab shows them all.
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 60 });
+    // revamp1442: the homepage's own prompt set (assignments.home), in the
+    // same bucketed card the topic pages carry. {topic} is resolved per pick
+    // because home's prompts span topics and the card mounts one at a time.
+    {
+      const host = container.querySelector('#home-pcard');
+      if (host) {
+        let sc = []; try { sc = (getShortcutsForTopic('home') || []).filter((s) => s && s.prompt); } catch (_) {}
+        renderPromptCard(host, {
+          topic: '', slug: 'home', subtitle: 'Ready-made prompts for today’s news',
+          shortcuts: sc.map((s) => ({ ...s, prompt: resolveTopicPlaceholder(s.prompt, 'the news') })),
+        });
+      }
+    }
     // revamp1031b: one rAF was not enough — the feed renders asynchronously and
     // the browser re-anchors to its remembered offset once the page grows tall
     // enough to allow it. Reset across the settle window instead, and stop as
