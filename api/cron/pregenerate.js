@@ -395,7 +395,12 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
     // refresh anything that has gone past a full day plus slack, capped hard.
     // Under normal operation the wave keeps every brief inside that window, so
     // this finds nothing and costs nothing.
-    const CATCHUP_HOURS = 26;
+    // revamp1435: "stale" means OLDER THAN THE EDITION A READER IS SEEING, not
+    // older than 26 hours. With two editions a day, 26 hours let a briefing be
+    // two whole editions behind and still count as healthy — which is exactly
+    // the quiet failure that reaches a reader, because nothing crashed.
+    const liveEd = EDITION.liveEdition();
+    const CATCHUP_HOURS = 26;   // kept for the old query path below
     if (!onWave) {
       // The catch-up is a WAVE, not a trickle: every briefing on the site is
       // meant to post inside one tight window, so recovery uses the same shape
@@ -412,8 +417,8 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
         const stale = await sql.query(
           `SELECT entity_key FROM ai_insights
             WHERE entity_type='shortcut' AND insight='daily:b'
-              AND created_at < now() - ($1 || ' hours')::interval
-            ORDER BY created_at ASC LIMIT $2`, [String(CATCHUP_HOURS), budgetC]);
+              AND created_at < $1
+            ORDER BY created_at ASC LIMIT $2`, [liveEd.releaseAt.toISOString(), budgetC]);
         for (const r of stale) {
           if (budgetC <= 0 || !timeLeftC()) break;
           const c = byKeyC.get(`${r.entity_key}|daily:b`);
@@ -425,7 +430,11 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       } catch (e) {
         return res.status(200).json({ ok: true, type: 'daily', skipped: 'off-wave-hour', etHour, catchupError: String((e && e.message) || e).slice(0, 200) });
       }
-      return res.status(200).json({ ok: true, type: 'daily', mode: 'catchup', etHour, healed });
+      const left = await sql.query(
+        `SELECT count(*)::int AS n FROM ai_insights
+          WHERE entity_type='shortcut' AND insight='daily:b' AND created_at < $1`,
+        [liveEd.releaseAt.toISOString()]);
+      return res.status(200).json({ ok: true, type: 'daily', mode: 'catchup', etHour, edition: liveEd.key, healed, stale: left[0].n });
     }
     const waveStartISO = dailyWaveStart().toISOString();
     const sleepMs = 600;

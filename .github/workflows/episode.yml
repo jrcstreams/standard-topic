@@ -120,18 +120,36 @@ jobs:
           echo "all attempts failed — the edition stays held and the next catch-up will try again"
           exit 1
 
-      - name: Release the edition if it is whole
-        if: success()
+      - name: Release the edition, and say whether it is whole
+        if: always()
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          # Best effort: the Vercel cron also runs this every few minutes. It is
-          # here so an episode that lands early is published the moment its
-          # release time passes, rather than waiting for the next tick.
-          if [ -n "$CRON_SECRET" ]; then
-            curl -sS -H "Authorization: Bearer $CRON_SECRET" \
-              https://www.standardtopic.com/api/cron/release || true
-          fi
+          # The Vercel cron runs this every ten minutes too; calling it here
+          # publishes an episode that lands early the moment its release time
+          # passes, rather than waiting for the next tick.
+          #
+          # It also reports how many briefings are an edition behind. Nothing
+          # crashes when a briefing fails twice — the topic simply keeps the
+          # text it had — so this is the only place that failure becomes
+          # visible. More than two behind, an hour or more after the release,
+          # fails the run so GitHub emails about it.
+          [ -z "$CRON_SECRET" ] && { echo "no CRON_SECRET — skipping"; exit 0; }
+          OUT=$(curl -sS -H "Authorization: Bearer $CRON_SECRET" \
+            https://www.standardtopic.com/api/cron/release || echo '{}')
+          echo "$OUT"
+          STALE=$(printf '%s' "$OUT" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{process.stdout.write(String(JSON.parse(s).stale??0))}catch(e){process.stdout.write("0")}})')
+          MIN=$(TZ=America/New_York date +%M)
+          HOUR=$(TZ=America/New_York date +%H)
+          case "$HOUR" in
+            06|07|08|18|19|20)
+              if [ "${STALE:-0}" -gt 2 ]; then
+                echo "::error::$STALE briefings are still an edition behind, more than an hour after release"
+                exit 1
+              fi ;;
+          esac
+          echo "$STALE briefings behind the current edition"
+
 
       - name: Upload the run's artefacts on failure
         if: failure()

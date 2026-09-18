@@ -53,7 +53,14 @@ module.exports = async function handler(req, res) {
     const staged = pending[0].n;
 
     if (already.length && staged === 0) {
-      return res.status(200).json({ ok: true, released: false, edition: key, briefs: 0, reason: 'already released' });
+      const behind = await sql.query(
+        `SELECT count(*)::int AS n FROM ai_insights
+          WHERE entity_type='shortcut' AND insight='daily:b' AND created_at < $1`,
+        [live.releaseAt.toISOString()]);
+      return res.status(200).json({
+        ok: true, released: false, edition: key, briefs: 0,
+        stale: behind[0].n, reason: 'already released',
+      });
     }
 
     // The episode is the gate. No episode, no edition.
@@ -91,9 +98,17 @@ module.exports = async function handler(req, res) {
         WHERE kind='flagship' AND family_slug='home' AND edition_date=$1 AND edition=$2
           AND (release_at IS NULL OR release_at > now())`, [date, edition]);
 
+    // revamp1435: say how whole the edition actually is. A briefing that failed
+    // twice keeps its previous text and nothing crashes, so without this number
+    // nobody would ever learn that two topics are an edition behind.
+    const behind = await sql.query(
+      `SELECT count(*)::int AS n FROM ai_insights
+        WHERE entity_type='shortcut' AND insight='daily:b' AND created_at < $1`,
+      [live.releaseAt.toISOString()]);
+
     return res.status(200).json({
       ok: true, released: true, edition: key,
-      briefs: promoted.length, episode: ep[0].id,
+      briefs: promoted.length, episode: ep[0].id, stale: behind[0].n,
     });
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err).slice(0, 300) });
