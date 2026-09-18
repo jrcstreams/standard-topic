@@ -160,6 +160,7 @@ async function main() {
 
   const now = new Date();
   if (arg('edition')) process.env.EPISODE_EDITION = String(arg('edition'));
+  if (arg('date')) process.env.EPISODE_DATE = String(arg('date'));
 
   // revamp1434: choose the edition by what is MISSING, not by the clock hour.
   // GitHub's scheduler is best-effort: tonight's 4:20 PM slot fired at 6:51 PM,
@@ -448,6 +449,7 @@ async function publishOnly() {
   const sql = getSql();
   const now = new Date();
   if (arg('edition')) process.env.EPISODE_EDITION = String(arg('edition'));
+  if (arg('date')) process.env.EPISODE_DATE = String(arg('date'));
   const ed = E.editionFor(now);
   const edition = `${E.editionDate(now)}-${ed}`;
   const dateLabel = E.todayLabel(now);
