@@ -22,6 +22,16 @@
 //   200 — { ok, released|held, edition, briefs, reason? }
 const { getSql } = require('../../lib/db');
 const EDITION = require('../../lib/edition');
+const topicsData = require('../../data/topics.json');
+
+// revamp1435b: only count topics the site still carries. daily:b rows are keyed
+// by topic NAME, and the cut left rows behind for topics that no longer exist —
+// they are never regenerated, so they sit permanently "behind" and would raise
+// an alert every hour about nothing.
+const LIVE_KEYS = (topicsData.topics || [])
+  .filter((t) => t && t.name)
+  .map((t) => String(t.name).toLowerCase())
+  .concat(['home']);
 
 // Kept for the response, not as a gate: make-episode refuses to build below
 // eight briefings for an edition, so a thin episode never reaches this point.
@@ -55,8 +65,9 @@ module.exports = async function handler(req, res) {
     if (already.length && staged === 0) {
       const behind = await sql.query(
         `SELECT count(*)::int AS n FROM ai_insights
-          WHERE entity_type='shortcut' AND insight='daily:b' AND created_at < $1`,
-        [live.releaseAt.toISOString()]);
+          WHERE entity_type='shortcut' AND insight='daily:b' AND created_at < $1
+            AND entity_key = ANY($2)`,
+        [live.releaseAt.toISOString(), LIVE_KEYS]);
       return res.status(200).json({
         ok: true, released: false, edition: key, briefs: 0,
         stale: behind[0].n, reason: 'already released',
@@ -103,8 +114,9 @@ module.exports = async function handler(req, res) {
     // nobody would ever learn that two topics are an edition behind.
     const behind = await sql.query(
       `SELECT count(*)::int AS n FROM ai_insights
-        WHERE entity_type='shortcut' AND insight='daily:b' AND created_at < $1`,
-      [live.releaseAt.toISOString()]);
+        WHERE entity_type='shortcut' AND insight='daily:b' AND created_at < $1
+          AND entity_key = ANY($2)`,
+      [live.releaseAt.toISOString(), LIVE_KEYS]);
 
     return res.status(200).json({
       ok: true, released: true, edition: key,
