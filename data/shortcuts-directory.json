@@ -161,19 +161,10 @@
       "group": "topic-specific"
     },
     {
-      "id": "glossary-key-terms",
-      "name": "Glossary of Key Terms",
-      "icon": "glossary-key-terms",
-      "prompt": "Give me a glossary of the most important terms, acronyms, and jargon used on the topic of: {topic}. Define each clearly and note any terms that are commonly misused or contested.",
-      "description": "Key terms used in this space, plain-language",
-      "group": "learn",
-      "evergreen": true
-    },
-    {
       "id": "industry-deep-dive",
       "name": "Deep Dive",
       "icon": "industry-deep-dive",
-      "prompt": "Give me a deep dive on the topic of: {topic}. Cover the current state of play and the major players and dynamics; the timeline of the key events that shaped it; the broader context — how it connects to other fields and events — and why it matters; the biggest risks, warning signs, and open questions; what to watch over the next 12 months; and the best resources (books, courses, sites, and sources to follow) for going deeper.",
+      "prompt": "Give me a deep dive on the topic of: {topic}. Cover the current state of play and the major players and dynamics; the timeline of the key events that shaped it; the broader context — how it connects to other fields and events — and why it matters; the biggest risks, warning signs, and open questions; and what to watch over the next 12 months.",
       "description": "The full picture: how it works, why it matters, the risks, and where it goes next",
       "group": "learn",
       "evergreen": true
@@ -196,10 +187,10 @@
     },
     {
       "id": "beginners-guide",
-      "name": "The Essentials",
+      "name": "Beginner's Guide",
       "icon": "beginners-guide",
-      "prompt": "Give me a clear, practical primer on the topic of: {topic}. Cover the foundational concepts and how things actually work under the hood, why it matters, how the current situation formed (the major turning points), the key players — people, companies, organizations, institutions — and why each matters, the terms and rules of thumb worth keeping at hand, common starting mistakes, and the best sources to follow for staying current. Don't oversimplify.",
-      "description": "The basics, the key players, how it got here, and who to follow",
+      "prompt": "Give me a clear, practical beginner's guide to the topic of: {topic}. Cover the foundational concepts and how things actually work under the hood, why it matters, how the current situation formed (the major turning points), and the key players — people, companies, organizations, institutions — and why each matters. Include a short glossary of the most important terms, acronyms, and jargon (noting any that are commonly misused), answer the questions a curious newcomer would naturally ask, and finish with common starting mistakes and the best sources to follow for staying current. Don't oversimplify.",
+      "description": "The basics, the key players, the terms, and the questions everyone asks",
       "group": "learn",
       "evergreen": true
     },
@@ -265,14 +256,6 @@
       "icon": "best-rates-personal-finance",
       "prompt": "What are the best current rates I should know about as a consumer? Cover high-yield savings, CDs, money market accounts, mortgages, credit card rewards and 0% APR offers. Note which are limited-time vs. ongoing.",
       "description": "Top picks worth knowing about right now",
-      "group": "topic-specific"
-    },
-    {
-      "id": "finance-tools-resources",
-      "name": "Finance Tools and Resources",
-      "icon": "finance-tools-resources",
-      "prompt": "What are the best current tools and resources for managing personal and business finances? Cover budgeting and tracking apps, investing platforms, tax software, financial calculators, and free educational resources worth knowing. Note which are best for which use case and flag any with notable cost, privacy, or reliability caveats.",
-      "description": "Practical tools for managing money",
       "group": "topic-specific"
     },
     {
@@ -1189,11 +1172,11 @@
       "evergreen": true
     },
     {
-      "id": "frequently-asked-questions",
-      "name": "Frequently Asked Questions",
-      "icon": "frequently-asked-questions",
-      "prompt": "Answer the most common questions people have on the topic of: {topic}. Cover the things a curious newcomer would naturally ask, and answer each directly and concretely rather than in generalities.",
-      "description": "The questions everyone asks",
+      "id": "tools-resources",
+      "name": "Tools and Resources",
+      "icon": "finance-tools-resources",
+      "prompt": "What are the best current tools and resources for the topic of: {topic}? Cover the apps, platforms, software, datasets, calculators, and reference sites practitioners and enthusiasts actually use, plus the best free learning resources (courses, books, documentaries, communities). Note which is best for which use case, and flag any with notable cost, privacy, or reliability caveats.",
+      "description": "The tools, sites and learning resources worth knowing",
       "group": "learn",
       "evergreen": true
     }

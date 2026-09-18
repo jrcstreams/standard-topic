@@ -35,7 +35,6 @@
       "labor-market-snapshot",
       "ai-impact-on-jobs",
       "best-rates-personal-finance",
-      "finance-tools-resources",
       "economic-indicators-roundup",
       "jobs-report-breakdown",
       "us-market-snapshot",
@@ -268,11 +267,10 @@
     }
   },
   "evergreenOrder": [
-    "latest-research-reports",
     "beginners-guide",
-    "glossary-key-terms",
-    "frequently-asked-questions",
-    "industry-deep-dive"
+    "latest-research-reports",
+    "industry-deep-dive",
+    "tools-resources"
   ],
   "evergreenExclusions": {},
   "featuredShortcuts": {
