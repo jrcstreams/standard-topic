@@ -2055,7 +2055,7 @@ function topicEditionCardHTML(topic) {
       <div class="ec ec--v2 ec--topic"${topicColorStyle(topic)}>
         <div class="ec-head">
           <div class="ec-headrow">
-            <h3 class="tdi-brieftitle ec-title">Morning Briefing</h3>
+            <h3 class="tdi-brieftitle ec-title">${escapeHTML(homeEditionTitle())}</h3>
             <div class="ec-stamp" data-ec-stamp></div>
           </div>
           <div class="ec-stamp ec-stamp--below" data-ec-stamp></div>
