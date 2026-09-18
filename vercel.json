@@ -30,7 +30,7 @@
     },
     {
       "path": "/api/cron/release",
-      "schedule": "*/5 9,10,21,22 * * *"
+      "schedule": "*/10 * * * *"
     },
     {
       "path": "/api/cron/pregenerate?type=budget",

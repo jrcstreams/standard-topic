@@ -160,23 +160,52 @@ async function main() {
 
   const now = new Date();
   if (arg('edition')) process.env.EPISODE_EDITION = String(arg('edition'));
-  const ed = E.editionFor(now);
+
+  // revamp1434: choose the edition by what is MISSING, not by the clock hour.
+  // GitHub's scheduler is best-effort: tonight's 4:20 PM slot fired at 6:51 PM,
+  // and an hour-gated job stood down and reported success while the evening
+  // edition sat there with no episode. A run asks two questions instead —
+  // is the edition that has already released still without an episode, and is
+  // the next one due soon — and builds whichever is true. Late is fine. Late is
+  // the whole point of holding an edition.
+  const CLOCK = require('../lib/edition');
+  const CATCHUP_MAX_MS = 7 * 3600 * 1000;   // an edition is catchable for 7h
+  const LEAD_MAX_MS = 110 * 60 * 1000;      // and buildable from 110 min out
+  const hasEpisode = async (e) => {
+    const r = await sql.query(
+      `SELECT id FROM ai_audio WHERE kind='flagship' AND family_slug='home' AND edition_date=$1 AND edition=$2 LIMIT 1`,
+      [e.date, e.edition]);
+    return r.length ? r[0].id : null;
+  };
+  let target = CLOCK.forcedEdition(now);
+  let why = target ? 'forced' : '';
+  if (!target) {
+    const live = CLOCK.liveEdition(now);
+    const next = CLOCK.buildingEdition(now);
+    const lateBy = now.getTime() - live.releaseAt.getTime();
+    if (lateBy <= CATCHUP_MAX_MS && !(await hasEpisode(live))) {
+      target = live; why = `catching up — ${live.key} released ${Math.round(lateBy / 60000)} min ago with no episode`;
+    } else if (next.releaseAt.getTime() - now.getTime() <= LEAD_MAX_MS) {
+      target = next; why = `building ahead — ${next.key} releases in ${Math.round((next.releaseAt - now) / 60000)} min`;
+    }
+  }
+  if (!target) {
+    log('\nNothing due: the released edition has its episode and the next one is not close enough yet.');
+    return;
+  }
+  process.env.EPISODE_EDITION = target.edition;
+  log(`\n${why}`);
+  const ed = target.edition;
   const wave = E.waveStart(now);
   // revamp1433: the edition key the wave staged its briefings under, so this
   // episode is written from the same drafts that will be released beside it.
-  const editionKey = `${E.editionDate(now)}|${ed}`;
-  const edition = `${E.editionDate(now)}-${ed}`;
+  const editionKey = target.key;
+  const edition = `${target.date}-${ed}`;
 
-  // revamp1433: a catch-up run must not make a second episode. If this edition
-  // already has one, exit cleanly so the retry schedule is free to fire often.
+  // A catch-up run must not make a second episode.
   if (!arg('force')) {
-    const done = await sql.query(
-      `SELECT id FROM ai_audio WHERE kind='flagship' AND family_slug='home' AND edition_date=$1 AND edition=$2 LIMIT 1`,
-      [E.editionDate(now), ed]);
-    if (done.length) {
-      log(`\n${edition} already has an episode (#${done[0].id}) — nothing to do.`);
-      return;
-    }
+    const done = await hasEpisode(target);
+    if (done) { log(`\n${edition} already has an episode (#${done}) — nothing to do.`); return; }
   }
   const dateLabel = E.todayLabel(now);
   fs.mkdirSync(OUT, { recursive: true });

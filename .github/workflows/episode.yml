@@ -25,16 +25,18 @@ name: Episode
 
 on:
   schedule:
-    # Morning build, 4:20 ET — 08:20 UTC in summer, 09:20 in winter
-    - cron: '20 8,9 * * *'
-    # Morning catch-ups, 4:40 and 4:55 ET
-    - cron: '40 8,9 * * *'
-    - cron: '55 8,9 * * *'
-    # Evening build, 16:20 ET — 20:20 UTC in summer, 21:20 in winter
-    - cron: '20 20,21 * * *'
-    # Evening catch-ups, 16:40 and 16:55 ET
-    - cron: '40 20,21 * * *'
-    - cron: '55 20,21 * * *'
+    # Every 15 minutes through the two build windows and for hours after them.
+    #
+    # GitHub's scheduler is best effort and routinely late: on the first evening
+    # this ran, the 20:20 UTC slot fired at 22:51, 23:04 and 23:13. Six precise
+    # slots a day are therefore no use. Running often is: make-episode picks the
+    # edition that is actually MISSING, so an early run builds ahead of the
+    # release and a late one catches up, and a run with nothing to do exits in
+    # seconds. Public-repo Actions minutes are free, so frequency costs nothing.
+    #
+    # 08:00-11:59 UTC covers the 4:20 AM ET build in either offset, plus hours
+    # of slack; 20:00-23:59 UTC does the same for 4:20 PM ET.
+    - cron: '*/15 8-11,20-23 * * *'
   workflow_dispatch:
     inputs:
       edition:
@@ -81,28 +83,7 @@ jobs:
           ffmpeg -version | head -1
           ffprobe -version | head -1
 
-      # Each slot is scheduled at both its summer and its winter UTC hour,
-      # because GitHub cron has no timezone. Only one of the pair is the real
-      # 4:20 or 16:20 in New York; the other lands an hour after the release and
-      # would build the NEXT edition early, out of the wrong briefings. So the
-      # job asks what time it is in New York and stands down unless it is in a
-      # build window. A manual run always proceeds.
-      - name: In the build window?
-        id: window
-        run: |
-          H=$(TZ=America/New_York date +%H)
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "manual run — proceeding"
-            echo "go=yes" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          case "$H" in
-            04|16) echo "ET hour $H — build window"; echo "go=yes" >> "$GITHUB_OUTPUT" ;;
-            *)     echo "ET hour $H is not a build window (04 or 16) — standing down"; echo "go=no" >> "$GITHUB_OUTPUT" ;;
-          esac
-
       - name: Build and publish the episode
-        if: steps.window.outputs.go == 'yes'
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -140,7 +121,7 @@ jobs:
           exit 1
 
       - name: Release the edition if it is whole
-        if: success() && steps.window.outputs.go == 'yes'
+        if: success()
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
