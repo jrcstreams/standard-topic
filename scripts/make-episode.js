@@ -359,6 +359,12 @@ async function main() {
     try {
       const { script: checked, usage: u3b, changes, card, dossier } = await E.runFactCheck(fmt, { script, dateLabel, card: { headline: storyboard.title || script.headline || '', teaser: storyboard.teaser || script.summary || '' } }, { model: E.textModel() });
       fs.writeFileSync(path.join(OUT, `factcheck-${edition}.md`), dossier || '');
+      // revamp1436: a rejected reversal is the loudest thing the fact checker
+      // can tell us — it means the checker tried to invert a story and could
+      // not show its working.
+      if (u3b && u3b.reversals && u3b.reversals.length) {
+        console.warn(`  ! fact check tried to REVERSE ${u3b.reversals.length} claim(s) with nothing in the dossier to back it: ${u3b.reversals.join('; ')} — originals kept`);
+      }
       if (card) { if (card.headline) { storyboard.title = card.headline; if (script.headline) script.headline = card.headline; } if (card.teaser) { storyboard.teaser = card.teaser; if (script.summary) script.summary = card.teaser; } }
       micros += (u3b && u3b.micros) || 0;
       if (checked && Array.isArray(checked.segments) && checked.segments.length) {
