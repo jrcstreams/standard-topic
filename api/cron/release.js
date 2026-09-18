@@ -37,6 +37,43 @@ const LIVE_KEYS = (topicsData.topics || [])
 // eight briefings for an edition, so a thin episode never reaches this point.
 const MIN_BRIEFS = 12;
 
+// Dispatch .github/workflows/episode.yml when the scheduled run has not
+// happened. Needs GITHUB_DISPATCH_TOKEN — a fine-grained PAT with Actions
+// read/write on the repo — in the Vercel env; without it this only reports.
+// Paced through a one-row table so ten-minute ticks do not stack kicks.
+const KICK_EVERY_MS = 15 * 60 * 1000;
+const GH_REPO = process.env.GITHUB_REPO || 'jrcstreams/standard-topic';
+async function kickEpisodeJob(sql, editionKey) {
+  const token = process.env.GITHUB_DISPATCH_TOKEN;
+  if (!token) return { skipped: 'no GITHUB_DISPATCH_TOKEN' };
+  try {
+    await sql.query(`CREATE TABLE IF NOT EXISTS ops_kv (key text PRIMARY KEY, value text, updated_at timestamptz NOT NULL DEFAULT now())`);
+    const last = await sql.query(`SELECT value, updated_at FROM ops_kv WHERE key='episode-kick'`);
+    if (last.length && last[0].value === editionKey
+        && Date.now() - Date.parse(last[0].updated_at) < KICK_EVERY_MS) {
+      return { skipped: 'kicked recently', at: last[0].updated_at };
+    }
+    const r = await fetch(`https://api.github.com/repos/${GH_REPO}/actions/workflows/episode.yml/dispatches`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Content-Type': 'application/json',
+        'User-Agent': 'standardtopic-release-cron',
+      },
+      body: JSON.stringify({ ref: 'main' }),
+    });
+    if (r.status !== 204) return { error: `github ${r.status}`, body: (await r.text()).slice(0, 200) };
+    await sql.query(
+      `INSERT INTO ops_kv (key, value, updated_at) VALUES ('episode-kick', $1, now())
+       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`, [editionKey]);
+    return { dispatched: true };
+  } catch (e) {
+    return { error: String((e && e.message) || e).slice(0, 200) };
+  }
+}
+
 module.exports = async function handler(req, res) {
   const secret = process.env.CRON_SECRET;
   const auth = req.headers.authorization || '';
@@ -80,7 +117,16 @@ module.exports = async function handler(req, res) {
         WHERE kind='flagship' AND family_slug='home' AND edition_date=$1 AND edition=$2 LIMIT 1`,
       [date, edition]);
     if (!ep.length) {
-      return res.status(200).json({ ok: true, released: false, held: true, edition: key, briefs: staged, reason: 'no episode yet' });
+      // revamp1439: an edition that is due with no episode is not something to
+      // wait out. GitHub's cron did not fire AT ALL on the morning of
+      // 2026-09-18 — no run between 08:00 and 09:30 UTC — and the hold did its
+      // job, but nothing was going to end it. So this cron, which already runs
+      // every ten minutes, kicks the workflow itself, at most once a quarter
+      // hour. The workflow's concurrency group serialises a kick that lands on
+      // top of a late scheduled run, and the second run exits in seconds when
+      // it finds the episode already built.
+      const kick = await kickEpisodeJob(sql, key);
+      return res.status(200).json({ ok: true, released: false, held: true, edition: key, briefs: staged, reason: 'no episode yet', kick });
     }
     // The episode gates the BRIEFINGS, not the other way round. Whatever is
     // staged for this edition goes live beside it; a topic whose briefing did

@@ -408,9 +408,33 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       // topics as its time budget allows, converging in under an hour. Spread
       // across the day it would leave the site showing briefings stamped hours
       // apart, which is the thing the wave exists to prevent.
+      //
+      // revamp1439: the catch-up must respect the HOLD. On 2026-09-18 the
+      // episode job never ran, so /api/cron/release held the morning edition —
+      // and at 5:00 AM this path measured every briefing against the edition
+      // that was DUE, found all sixteen "stale", and regenerated them straight
+      // into the live columns. The reader got new briefings under last night's
+      // podcast, the exact mismatch the hold exists to prevent, and the staged
+      // drafts sat there untouched. Two rules fix it:
+      //   · "stale" is measured against the edition the reader is actually
+      //     SEEING: the live one only once its episode has released, otherwise
+      //     the one before it;
+      //   · a briefing already staged for the due edition is never stale, and a
+      //     briefing that is genuinely behind while the edition is held is
+      //     STAGED for it, not published ahead of it.
       let healed = 0; let budgetC = total;
       const startedAtC = Date.now();
       const timeLeftC = () => Date.now() - startedAtC < 230 * 1000;
+      let seenEd = liveEd; let released = true;
+      try {
+        const ep = await sql.query(
+          `SELECT 1 FROM ai_audio
+            WHERE kind='flagship' AND family_slug='home' AND edition_date=$1 AND edition=$2
+              AND (release_at IS NULL OR release_at <= now()) LIMIT 1`, [liveEd.date, liveEd.edition]);
+        released = ep.length > 0;
+        if (!released) seenEd = EDITION.previousEdition(liveEd);
+      } catch (_) { /* no ai_audio yet — treat the live edition as released */ }
+      const thresholdISO = seenEd.releaseAt.toISOString();
       try {
         const cands = overviewCandidates();
         const byKeyC = new Map(cands.map((c) => [`${c.topic.toLowerCase()}|${c.insight}`, c]));
@@ -418,12 +442,15 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
           `SELECT entity_key FROM ai_insights
             WHERE entity_type='shortcut' AND insight='daily:b'
               AND created_at < $1
-            ORDER BY created_at ASC LIMIT $2`, [liveEd.releaseAt.toISOString(), budgetC]);
+              AND (pending_edition IS NULL OR pending_edition <> $3)
+            ORDER BY created_at ASC LIMIT $2`, [thresholdISO, budgetC, liveEd.key]);
         for (const r of stale) {
           if (budgetC <= 0 || !timeLeftC()) break;
           const c = byKeyC.get(`${r.entity_key}|daily:b`);
           if (!c) continue;
-          if (await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1, refresh: 1 })) healed++;
+          const req = { type: 'shortcut', topic: c.topic, group: 'daily', builder: 1 };
+          if (released) req.refresh = 1; else req.stage = liveEd.key;
+          if (await call(req)) healed++;
           budgetC--;
           await sleep(600);
         }
@@ -432,9 +459,13 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       }
       const left = await sql.query(
         `SELECT count(*)::int AS n FROM ai_insights
-          WHERE entity_type='shortcut' AND insight='daily:b' AND created_at < $1`,
-        [liveEd.releaseAt.toISOString()]);
-      return res.status(200).json({ ok: true, type: 'daily', mode: 'catchup', etHour, edition: liveEd.key, healed, stale: left[0].n });
+          WHERE entity_type='shortcut' AND insight='daily:b' AND created_at < $1
+            AND (pending_edition IS NULL OR pending_edition <> $2)`,
+        [thresholdISO, liveEd.key]);
+      return res.status(200).json({
+        ok: true, type: 'daily', mode: 'catchup', etHour,
+        edition: liveEd.key, released, measuredAgainst: seenEd.key, healed, stale: left[0].n,
+      });
     }
     const waveStartISO = dailyWaveStart().toISOString();
     // revamp1437: a briefing is fact-checked now, which takes it from ~10s to
