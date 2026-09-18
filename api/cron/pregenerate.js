@@ -437,7 +437,11 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       return res.status(200).json({ ok: true, type: 'daily', mode: 'catchup', etHour, edition: liveEd.key, healed, stale: left[0].n });
     }
     const waveStartISO = dailyWaveStart().toISOString();
-    const sleepMs = 600;
+    // revamp1437: a briefing is fact-checked now, which takes it from ~10s to
+    // ~36s, so about six fit in a run's 230s budget and the wave runs four
+    // passes. The pause between topics comes down because the check itself is
+    // the pacing now.
+    const sleepMs = 250;
     const startedAtD = Date.now();
     const timeLeftD = () => Date.now() - startedAtD < 230 * 1000;
     try {

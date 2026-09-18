@@ -30,6 +30,14 @@
     },
     {
       "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "24 8,9,20,21 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "36 8,9,20,21 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
       "schedule": "35 9,10,21,22 * * *"
     },
     {
