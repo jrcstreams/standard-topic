@@ -124,7 +124,6 @@
       "this-weekends-slate",
       "sports-business-watch",
       "soccer-top-leagues",
-      "soccer-european-competition-watch",
       "mlb-snapshot",
       "nba-league-snapshot-today",
       "nfl-weekly-snapshot",
@@ -289,5 +288,15 @@
       "key-players",
       "how-it-actually-works"
     ]
-  }
+  },
+  "buckets": [
+    {
+      "id": "snapshot",
+      "label": "Snapshots"
+    },
+    {
+      "id": "tracker",
+      "label": "Tools & Trackers"
+    }
+  ]
 }

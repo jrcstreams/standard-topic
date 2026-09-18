@@ -6,7 +6,8 @@
       "icon": "global-headlines-today",
       "prompt": "Give me the most significant international news stories from across the world. Organize by region. For each: what's happening and why it matters globally, not just locally.",
       "description": "The major international stories right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "on-this-day-in-history",
@@ -14,7 +15,8 @@
       "icon": "on-this-day-in-history",
       "prompt": "What are the most significant historical events that occurred on today's date? Cover major events across different eras and regions, with brief context on why each mattered.",
       "description": "Notable events from this date in history",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "business-day-snapshot",
@@ -22,7 +24,8 @@
       "icon": "business-day-snapshot",
       "prompt": "Give me a snapshot of today's business news. Cover the biggest market moves, headline corporate news, economic data releases, and any major deal or earnings stories. Keep it tight and scannable.",
       "description": "Current state of business news",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "ai-latest-news",
@@ -30,7 +33,8 @@
       "icon": "ai-latest-news",
       "prompt": "What's the latest news on the topic of: Artificial Intelligence? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology.",
       "description": "Recent updates worth knowing about",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "economic-indicators-roundup",
@@ -38,7 +42,8 @@
       "icon": "economic-indicators-roundup",
       "prompt": "Summarize the most recent major economic indicators — GDP, jobs report, inflation (CPI/PCE), consumer spending, manufacturing, housing. For each, give the latest reading, the prior reading, what was expected, and what it signals about the economy.",
       "description": "Where the key economic gauges stand",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "us-market-snapshot",
@@ -46,7 +51,8 @@
       "icon": "us-market-snapshot",
       "prompt": "Give me a snapshot of US markets today. Cover where the major indexes stand, biggest sector moves, notable single-stock movers, bond yields, the dollar, and what's driving the day's action.",
       "description": "Current state of US markets",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "us-political-snapshots",
@@ -54,7 +60,8 @@
       "icon": "us-political-snapshots",
       "prompt": "Give me a snapshot of US politics today. Cover the biggest stories, major statements from key figures, polling moves, and the dominant narratives across both parties.",
       "description": "Current state of US politics",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "global-political-snapshots",
@@ -62,7 +69,8 @@
       "icon": "global-political-snapshots",
       "prompt": "Give me a snapshot of global politics today. Cover the biggest stories, major statements from key figures, polling moves, and the dominant narratives across both parties.",
       "description": "Current state of global politics",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "global-market-snapshot",
@@ -70,7 +78,8 @@
       "icon": "global-market-snapshot",
       "prompt": "Give me a snapshot of global markets today. Cover where the major indexes stand, biggest sector moves, notable single-stock movers, bond yields, the dollar, and what's driving the day's action.",
       "description": "Current state of international markets",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "global-hotspots-updates",
@@ -78,7 +87,8 @@
       "icon": "global-hotspots-updates",
       "prompt": "What are the most consequential geopolitical hotspots right now? For each: the current state, the latest developments, the players involved, the risk of escalation, and what to watch for next. Include both active conflicts and situations building toward one.",
       "description": "The situations most likely to shape the world right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "globla-defense-policy-updates",
@@ -86,7 +96,8 @@
       "icon": "globla-defense-policy-updates",
       "prompt": "What are the most important recent developments in global defense policy? Cover budget and authorization, defense departments, priorities, weapons programs, posture decisions, and major debates.",
       "description": "Budgets, weapons programs and posture decisions worldwide",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "climate-snapshot",
@@ -94,7 +105,8 @@
       "icon": "climate-snapshot",
       "prompt": "Give me a snapshot of the most significant climate and environment news right now. Cover policy, science, extreme weather, energy transition, and corporate developments.",
       "description": "Current state of climate and environment",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "public-health-watch",
@@ -102,7 +114,8 @@
       "icon": "public-health-watch",
       "prompt": "What public health threats and trends are most worth attention right now, and what's happening in health policy? Cover infectious and chronic disease, mental health, and environmental health; plus the major policy and political developments — coverage programs, drug pricing, agency leadership, and the fights that will shape care.",
       "description": "Health threats, trends and the political fights around them",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "science-recent-discoveries",
@@ -110,7 +123,8 @@
       "icon": "science-recent-discoveries",
       "prompt": "What are the most consequential scientific discoveries and breakthroughs recently? Cover findings that are well-established (not preliminary) and explain what each changes about how we understand the world.",
       "description": "The most consequential scientific discoveries and breakthroughs recently",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "active-conflicts-tracker",
@@ -118,7 +132,8 @@
       "icon": "active-conflicts-tracker",
       "prompt": "What's the current state of major active armed conflicts globally? Cover the situation on the ground, key developments in the past month, US and allied involvement, and humanitarian dimensions.",
       "description": "Ongoing conflicts to follow",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "lifestyle-snapshot",
@@ -126,7 +141,8 @@
       "icon": "lifestyle-snapshot",
       "prompt": "Give me a snapshot of significant lifestyle stories and trends from the past week across travel, home, relationships, work, and personal life topics.",
       "description": "Current state of lifestyle",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "media-news-snapshot",
@@ -134,7 +150,8 @@
       "icon": "media-news-snapshot",
       "prompt": "Give me a snapshot of the most significant media industry news from the past week across journalism, advertising, and the media business.",
       "description": "Current state of media news",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "sports-snapshot",
@@ -142,7 +159,8 @@
       "icon": "sports-snapshot",
       "prompt": "Give me a snapshot of the most important sports stories happening right now across the major leagues and sports. Cover results, news, and what to watch tonight or this weekend.",
       "description": "Current state of sports",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "what-to-watch-listen-play",
@@ -150,7 +168,8 @@
       "icon": "what-to-watch-listen-play",
       "prompt": "What are the most notable new releases this week across film, TV and streaming, music, podcasts, and games? For each: what it is, where to find it, and how it's being received. Note what's worth prioritizing.",
       "description": "This week's picks across film, TV, music, podcasts and games",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "breaking-news",
@@ -158,7 +177,8 @@
       "icon": "breaking-news",
       "prompt": "What is the most significant breaking news happening right now globally? Identify the 5-10 stories with the most active coverage in the past few hours. For each, explain what's happening, what's confirmed vs. unconfirmed, and what to watch for as the story develops.",
       "description": "The most significant breaking news happening right now globally",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "industry-deep-dive",
@@ -175,7 +195,8 @@
       "icon": "earnings-season-pulse",
       "prompt": "Where are we in the current earnings season across major sectors (banking, tech, consumer, energy, healthcare)? Cover the headline trends, biggest beats and misses, and forward guidance themes.",
       "description": "Recent earnings results that matter",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "interest-rate-watch",
@@ -183,7 +204,8 @@
       "icon": "interest-rate-watch",
       "prompt": "What's the current state of interest rates and bank lending? Cover the Fed's current stance, where rates stand, how banks are responding, and what it means for borrowers, savers, and the broader economy.",
       "description": "Signals worth tracking in interest rate",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "beginners-guide",
@@ -200,7 +222,8 @@
       "icon": "crypto-market-snapshot",
       "prompt": "Give me a snapshot of the crypto market right now. Cover Bitcoin and Ethereum prices and recent moves, top altcoin performers and decliners, total market cap, key technical levels, and the dominant narratives driving sentiment.",
       "description": "Current state of crypto market",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "biggest-deals-weekly",
@@ -208,7 +231,8 @@
       "icon": "biggest-deals-weekly",
       "prompt": "What are the biggest M&A deals announced or closed in the past week? For each: companies involved, deal value, strategic rationale, expected close timeline, and any antitrust or regulatory considerations.",
       "description": "The largest deals announced recently",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "jobs-report-breakdown",
@@ -216,7 +240,8 @@
       "icon": "jobs-report-breakdown",
       "prompt": "Break down the latest US jobs report. Cover headline payroll number, unemployment rate, wage growth, labor force participation, sector breakdowns, and revisions to prior months. Explain what it signals about the economy.",
       "description": "Breaking down latest jobs in plain terms",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "oil-market-snapshot",
@@ -224,7 +249,8 @@
       "icon": "oil-market-snapshot",
       "prompt": "What's the current state of the oil market? Cover crude prices, OPEC+ dynamics, US production, demand outlook, key geopolitical risks, and what's driving the current price level.",
       "description": "Current state of oil market",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "us-housing-market",
@@ -232,7 +258,8 @@
       "icon": "us-housing-market",
       "prompt": "Give me a snapshot of the US housing market right now. Cover home prices, sales volume, inventory levels, mortgage rates, days on market, and which regional markets are heating up or cooling down.",
       "description": "Current state of US housing market",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "labor-market-snapshot",
@@ -240,7 +267,8 @@
       "icon": "labor-market-snapshot",
       "prompt": "Give me a snapshot of the US labor market right now. Cover unemployment, wage growth, job openings, quits and layoffs, labor force participation, and which sectors are hiring or cutting.",
       "description": "Current state of labor market",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "ai-impact-on-jobs",
@@ -248,7 +276,8 @@
       "icon": "ai-impact-on-jobs",
       "prompt": "Where is AI actually affecting jobs right now? Cover sectors and roles seeing real impact, hiring data, comp shifts, and what credible analysis suggests for the next 1-3 years. Distinguish hype from substance.",
       "description": "AI actually affecting jobs right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "best-rates-personal-finance",
@@ -256,7 +285,8 @@
       "icon": "best-rates-personal-finance",
       "prompt": "What are the best current rates I should know about as a consumer? Cover high-yield savings, CDs, money market accounts, mortgages, credit card rewards and 0% APR offers. Note which are limited-time vs. ongoing.",
       "description": "Top picks worth knowing about right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "tech-industry-snapshot",
@@ -264,7 +294,8 @@
       "icon": "tech-industry-snapshot",
       "prompt": "Give me a snapshot of the tech industry today. Cover the biggest stories, major company news, product launches, regulatory developments, and the dominant industry conversations.",
       "description": "Current state of tech industry",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "product-launch-roundup",
@@ -272,7 +303,8 @@
       "icon": "product-launch-roundup",
       "prompt": "What are the most significant tech product launches across consumer, enterprise, and developer-facing products in the past month? For each: what it is, who it's for, and whether it's worth attention.",
       "description": "Recent highlights from product launch",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "tech-earnings-pulse",
@@ -280,7 +312,8 @@
       "icon": "tech-earnings-pulse",
       "prompt": "Where are we in the current tech earnings cycle? Cover the biggest reports, common themes (AI revenue, capex, demand environment), and what reports are still coming.",
       "description": "Recent earnings results that matter",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "tech-policy-updates",
@@ -288,7 +321,8 @@
       "icon": "tech-policy-updates",
       "prompt": "What are the most consequential tech policy and regulatory developments right now? Cover antitrust, AI policy, privacy, content moderation, and trade restrictions across major jurisdictions.",
       "description": "Recent developments in tech policy",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "new-model-releases",
@@ -296,7 +330,8 @@
       "icon": "new-model-releases",
       "prompt": "What are the most significant AI model releases and updates from the past month? Cover top models from and major open-source releases. For each: capabilities, benchmarks, pricing, and how it compares to alternatives.",
       "description": "Notable model launches worth knowing about",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "frontier-lab-watch",
@@ -304,7 +339,8 @@
       "icon": "frontier-lab-watch",
       "prompt": "What are the major AI labs up to right now? Cover their latest releases, leadership and strategic moves, funding, and how their positioning is shifting.",
       "description": "Signals worth tracking in frontier AI lab",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "where-ai-is-being-used",
@@ -312,7 +348,8 @@
       "icon": "where-ai-is-being-used",
       "prompt": "Where is AI adoption actually happening in the real world? Cover enterprise deployments, consumer apps, specific industries seeing meaningful uptake, and where adoption is hyped but slow.",
       "description": "Where AI adoption is actually happening, and where it's still hype",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "ai-safety-updates",
@@ -320,7 +357,8 @@
       "icon": "ai-safety-updates",
       "prompt": "What are the most important recent developments in AI safety and alignment research? Cover technical advances, lab safety policies, government initiatives, and active debates within the research community.",
       "description": "Recent developments in AI safety",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "open-source-ai-watch",
@@ -328,7 +366,8 @@
       "icon": "open-source-ai-watch",
       "prompt": "What's happening in open-source AI right now? Cover the most capable open models, the leading labs, licensing developments, and how the open vs. closed gap is evolving.",
       "description": "Signals worth tracking in open source AI",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "global-ai-regulation-tracking",
@@ -336,7 +375,8 @@
       "icon": "global-ai-regulation-tracking",
       "prompt": "Give me a current snapshot of AI policy and regulation around the world. Cover the major jurisdictions' approaches, new laws and enforcement actions, government AI strategies and investment, and the key debates (safety, copyright, competition, jobs). Note what's in force vs. proposed, and where approaches are diverging.",
       "description": "How governments are approaching AI, and what's in force vs. pending",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "best-tech-deals-right-now",
@@ -344,7 +384,8 @@
       "icon": "best-tech-deals-right-now",
       "prompt": "What are the best current deals on consumer electronics? Note any seasonal sales context, products worth waiting for vs. buying now, and patterns to know about pricing throughout the year.",
       "description": "Top picks worth knowing about right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "recent-major-breaches",
@@ -352,7 +393,8 @@
       "icon": "recent-major-breaches",
       "prompt": "Give me a current snapshot of cybersecurity. Cover the most significant recent breaches and incidents (target, scale, attack vector, attribution if known), the most active threat actors and ransomware groups, critical recently disclosed vulnerabilities that need urgent patching, how AI is changing both attack and defense, and the practical steps individuals and organizations should take right now.",
       "description": "Breaches, active threats and what to patch right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "robotics-frontier-updates",
@@ -360,7 +402,8 @@
       "icon": "robotics-frontier-updates",
       "prompt": "What's at the frontier of robotics right now? Cover humanoid robots, autonomous vehicles, drones, robots in healthcare and logistics, and how AI advances are changing what's possible. Note what's actually deployed vs. still a demo.",
       "description": "Recent developments in robotics frontier",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "space-tech-watch",
@@ -368,7 +411,8 @@
       "icon": "space-tech-watch",
       "prompt": "What's happening in space technology right now? Cover launch providers and cadence, satellite constellations, lunar and Mars programs, in-space services, and the commercial space landscape. Note notable upcoming launches and missions.",
       "description": "Signals worth tracking in space tech",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "ai-and-privacy",
@@ -376,7 +420,8 @@
       "icon": "ai-and-privacy",
       "prompt": "How is AI creating new privacy challenges? Cover training data, inference-time data exposure, deepfakes and biometric concerns, employer monitoring, and what regulators are doing about it.",
       "description": "Privacy challenges emerging from AI use",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "ai-coding-tools",
@@ -384,7 +429,8 @@
       "icon": "ai-coding-tools",
       "prompt": "What are the best AI coding tools right now? Cover IDE integrations, agentic coding, and code review tools. Note what each does best and how they compare.",
       "description": "Top picks worth knowing about right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "open-source-watch",
@@ -392,7 +438,8 @@
       "icon": "open-source-watch",
       "prompt": "What's happening in major open source projects right now? Cover notable releases, governance changes, license disputes, and where new projects are gaining significant adoption.",
       "description": "Signals worth tracking in open source",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "industrial-automation-updates",
@@ -400,7 +447,8 @@
       "icon": "industrial-automation-updates",
       "prompt": "What's happening in industrial automation? Cover collaborative robots, warehouse and logistics automation, manufacturing applications, the workforce impact, and how AI advances are changing what's possible.",
       "description": "Recent developments in industrial automation",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "social-platforms-snapshot",
@@ -408,7 +456,8 @@
       "icon": "social-platforms-snapshot",
       "prompt": "Give me a snapshot of social media right now. Cover user and product trends across the major and emerging platforms, monetization and the creator economy, content moderation and youth safety developments, and the competitive positioning shifts worth knowing.",
       "description": "The platforms, creators and controversies right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "funding-roundup",
@@ -416,7 +465,8 @@
       "icon": "funding-roundup",
       "prompt": "What are the most notable venture funding rounds from the past week? Cover the largest rounds, sectors getting the most capital, valuation trends, lead investors, and any notable down rounds or shutdowns.",
       "description": "Recent highlights from funding",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "vc-hot-sectors",
@@ -424,7 +474,8 @@
       "icon": "vc-hot-sectors",
       "prompt": "What sectors are getting the most VC attention and capital right now? For each, cover the thesis, leading startups, valuation environment, and the bull and bear cases. Note notable recent IPOs and what the most active firms are backing.",
       "description": "Where venture capital is most active",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "science-results-to-watch-for",
@@ -432,7 +483,8 @@
       "icon": "science-results-to-watch-for",
       "prompt": "What major scientific results, mission outcomes, or trial readouts are expected in the next 6-12 months? For each, cover what's being tested and what would be a meaningful result.",
       "description": "Major results expected in the months ahead",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "space-mission-updates",
@@ -440,7 +492,8 @@
       "icon": "space-mission-updates",
       "prompt": "Give me a current snapshot of space exploration and spaceflight. Cover active and upcoming missions from government and commercial programs, notable recent and upcoming launches, lunar and Mars programs, the commercial space sector, and what we're learning. For each major mission: status and the next milestone.",
       "description": "Missions, launches and the state of space exploration",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "astronomy-discoveries",
@@ -448,7 +501,8 @@
       "icon": "astronomy-discoveries",
       "prompt": "What are the most exciting recent discoveries in astronomy and cosmology? Cover new findings on exoplanets, black holes, gravitational waves, the early universe and the open questions in cosmology, plus notable upcoming sky events worth watching. Note which results change how we understand the universe.",
       "description": "The most exciting recent astronomy discoveries",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "biology-breakthrough-watch",
@@ -456,7 +510,8 @@
       "icon": "biology-breakthrough-watch",
       "prompt": "What are the most significant recent advances in biology and the life sciences? Cover gene editing and genomics, synthetic biology, neuroscience, the microbiome, and major journal publications and conference highlights. Note which findings change how we understand a field.",
       "description": "The most significant recent advances across the life sciences",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "chemistry-highlights",
@@ -464,7 +519,8 @@
       "icon": "chemistry-highlights",
       "prompt": "What are the most important recent advances in chemistry and materials science? Cover new materials, catalysis, batteries and energy storage, green chemistry, and any developments with significant practical implications.",
       "description": "The advances with real practical implications",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "physics-breakthrough-watch",
@@ -472,7 +528,8 @@
       "icon": "physics-breakthrough-watch",
       "prompt": "What are the most significant recent results in physics? Cover the major subfields — from particle physics and condensed matter to astrophysics and fusion — and distinguish solid findings from preliminary or contested results. Explain why each matters.",
       "description": "The most significant recent results in physics",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "quantum-frontier-updates",
@@ -480,7 +537,8 @@
       "icon": "quantum-frontier-updates",
       "prompt": "What's happening in quantum science and quantum computing right now? Cover computing milestones and the leading hardware approaches, quantum sensing and communication, theoretical advances, and where the field stands on the path to practical use. Separate real progress from hype.",
       "description": "Milestones in quantum computing, sensing and communication",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "academic-publishing-updates",
@@ -488,7 +546,8 @@
       "icon": "academic-publishing-updates",
       "prompt": "What's happening in the world of research right now? Cover research funding and science policy, academic publishing (open access, peer review, retractions), universities in the news, research integrity, how AI is changing the research process, and the state of research careers.",
       "description": "Funding, publishing, universities and research careers",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "evidence-based-fitness-updates",
@@ -496,7 +555,8 @@
       "icon": "evidence-based-fitness-updates",
       "prompt": "What are the most important recent findings in exercise and recovery science? Cover what the strongest evidence supports on strength, cardio, longevity, sleep, mobility and injury prevention — and which popular beliefs and trendy modalities are not well-supported.",
       "description": "What the strongest evidence supports on training, recovery and longevity",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "health-insurance-landscape",
@@ -504,7 +564,8 @@
       "icon": "health-insurance-landscape",
       "prompt": "What's happening in health insurance and coverage right now? Cover enrollment and pricing, employer coverage trends, Medicare and Medicaid, insurer dynamics, and the key regulatory and political developments.",
       "description": "Enrollment, pricing, employer plans and the rules that shape them",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "healthcare-ai-in-practice",
@@ -512,7 +573,8 @@
       "icon": "healthcare-ai-in-practice",
       "prompt": "Where is AI actually being deployed in healthcare right now? Cover clinical documentation, imaging, diagnostics, revenue cycle, drug discovery, and what's getting traction vs. still piloting.",
       "description": "Where AI is actually being used in care, and where it's still piloting",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "nutrition-science-updates",
@@ -520,7 +582,8 @@
       "icon": "nutrition-science-updates",
       "prompt": "What are the most significant recent findings in nutrition science? Distinguish solid evidence from preliminary or weak findings. Cover any results that should change conventional wisdom.",
       "description": "Recent developments in nutrition science",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "diet-approach-comparisons",
@@ -528,7 +591,8 @@
       "icon": "diet-approach-comparisons",
       "prompt": "Compare the major diet and nutrition approaches people are following right now on the dimensions that matter — the evidence base, sustainability, who each works best for, and the trade-offs. Include current guidance on protein and macros, and note which popular claims are not well-supported.",
       "description": "How the major eating approaches actually compare on evidence",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "food-industry-policy-watch",
@@ -536,7 +600,8 @@
       "icon": "food-industry-policy-watch",
       "prompt": "What's happening in food policy and the food industry? Cover dietary guideline updates, regulatory actions, food labeling, ultra-processed food debates, school food, and major industry shifts.",
       "description": "Dietary guidance, labeling, regulation and the food business",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "drug-pipeline-highlights",
@@ -544,7 +609,8 @@
       "icon": "drug-pipeline-highlights",
       "prompt": "What's most important in drug development right now? Cover the most promising drugs in late-stage development, the most consequential recent clinical trial readouts, recent FDA and major regulatory approvals, and vaccine development. For each: what it is, the result or status, and what it means for patients and clinicians.",
       "description": "The trials, readouts and approvals that matter most",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "disease-outbreak-watch",
@@ -552,7 +618,8 @@
       "icon": "disease-outbreak-watch",
       "prompt": "What infectious disease outbreaks and concerning trends are active globally right now? Cover major outbreaks, the seasonal respiratory picture, vaccination coverage, and surveillance signals worth tracking. Distinguish real risks from low-risk situations getting attention.",
       "description": "Active outbreaks, seasonal viruses and surveillance signals",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "substance-use-overdose",
@@ -560,7 +627,8 @@
       "icon": "substance-use-overdose",
       "prompt": "What's happening with substance use and the overdose crisis? Cover overdose trends, fentanyl and emerging synthetics, treatment access, harm reduction, and policy developments.",
       "description": "Overdose trends, treatment access and policy",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "global-political-calendar",
@@ -568,7 +636,8 @@
       "icon": "global-political-calendar",
       "prompt": "What are the most important political dates and events coming up in the next 30-90 days? Cover elections, key legislative deadlines, court hearings, summits, and major political moments.",
       "description": "What's coming up on the global political",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "this-week-in-washington",
@@ -576,7 +645,8 @@
       "icon": "this-week-in-washington",
       "prompt": "What's happening in US politics this week? Cover Congress, the White House, federal agencies, the courts, and notable state-level and campaign developments. Note what's likely to actually happen vs. what will dominate coverage.",
       "description": "What's actually moving in Washington and the states",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "most-consequental-stories",
@@ -584,7 +654,8 @@
       "icon": "most-consequental-stories",
       "prompt": "What are the most consequential political stories right now, in the US and globally — the ones that will actually shape policy, power, or election outcomes, distinguished from stories that are simply loud? For each: what's at stake and what to watch next.",
       "description": "The political stories that shape outcomes, not just headlines",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "key-bills-to-watch",
@@ -592,7 +663,8 @@
       "icon": "key-bills-to-watch",
       "prompt": "What are the most important bills currently moving (or stalled) in Congress? For each: what it would do, the political dynamics around it, the realistic probability of passage, and timing.",
       "description": "The bills moving now, and what they'd change",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "us-politics-media-narratives-check",
@@ -600,7 +672,8 @@
       "icon": "us-politics-media-narratives-check",
       "prompt": "What are the dominant political narratives and media frames right now, in the US and internationally? Cover what each side is emphasizing, where coverage is converging or diverging, and what's not getting attention that probably should be.",
       "description": "The frames driving political coverage right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "global-economy-pulse",
@@ -608,7 +681,8 @@
       "icon": "global-economy-pulse",
       "prompt": "What's happening in the global economy right now? Cover growth and inflation across major economies, central bank moves, currency dynamics, commodity prices, trade flows and tariff developments, and where the biggest risks are concentrated.",
       "description": "Where things stand on global economy",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "conflict-and-crisis-update",
@@ -616,7 +690,8 @@
       "icon": "conflict-and-crisis-update",
       "prompt": "What are the most significant active conflicts and humanitarian crises globally right now? Cover the current state, recent developments, and how the international community is responding.",
       "description": "Latest movement on conflict and crisis",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "authoritarianism-democracy-watch",
@@ -624,7 +699,8 @@
       "icon": "authoritarianism-democracy-watch",
       "prompt": "What's happening with democracy and diplomacy around the world right now? Cover democratic backsliding and contested elections, press freedom and civil society crackdowns, where democratic movements are gaining ground, and the major diplomatic developments in motion — active negotiations, summits and state visits, and any ceasefire, treaty, or normalization talks worth tracking.",
       "description": "Where democracy is gaining or losing ground, and the diplomacy in motion",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "global-tech-ai-race",
@@ -632,7 +708,8 @@
       "icon": "global-tech-ai-race",
       "prompt": "How are different countries and blocs competing on tech and AI right now? Cover US, China, EU, UK, India, and Gulf state strategies — chips and compute, AI models and policy, digital infrastructure, and the geopolitics of tech supply chains.",
       "description": "Who's ahead in the global tech and AI race",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "content-wide-snapshot",
@@ -640,7 +717,8 @@
       "icon": "content-wide-snapshot",
       "prompt": "Give me a current snapshot of Africa. Cover the biggest political, economic, security, and tech stories across the major regions (West, East, Southern, North, and the Sahel), and the continent's key global partnerships.",
       "description": "The biggest stories across the continent right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "asia-pacfic-snapshot",
@@ -648,7 +726,8 @@
       "icon": "asia-pacfic-snapshot",
       "prompt": "Give me a snapshot of the most significant developments across Asia (excluding China and India, which have their own pages). Cover Japan, Korea, Southeast Asia, and the broader region.",
       "description": "Current state of Asia-Pacific",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "canadian-political-snapshot",
@@ -656,7 +735,8 @@
       "icon": "canadian-political-snapshot",
       "prompt": "Give me a current snapshot of Canadian politics. Cover federal politics, the prime minister and major party leaders, current polling, and the issues dominating debate.",
       "description": "Current state of Canadian political",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "china-snapshot",
@@ -664,7 +744,8 @@
       "icon": "china-snapshot",
       "prompt": "Give me a current snapshot of China — the most significant political, economic, and foreign policy developments right now. Note signal vs. noise in interpreting state media coverage.",
       "description": "Current state of China",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "us-snapshot",
@@ -672,7 +753,8 @@
       "icon": "us-snapshot",
       "prompt": "Give me a current snapshot of the United States from an international perspective. Cover the major political, economic, and foreign policy stories shaping how the US is acting in the world right now, and how the rest of the world is reading those signals.",
       "description": "Current state of united states",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "eu-snapshot",
@@ -680,7 +762,8 @@
       "icon": "eu-snapshot",
       "prompt": "Give me a current snapshot of the EU — major Commission and Council developments, Parliament activity, the dominant policy debates, and how member-state politics is shaping the agenda.",
       "description": "Current state of EU",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "india-snapshot",
@@ -688,7 +771,8 @@
       "icon": "india-snapshot",
       "prompt": "Give me a current snapshot of India — major political, economic, and foreign policy developments. Cover the central government, state-level developments worth knowing, and dominant policy debates.",
       "description": "Current state of India",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "latin-america-snapshot",
@@ -696,7 +780,8 @@
       "icon": "latin-america-snapshot",
       "prompt": "Give me a current snapshot of Latin America. Cover the most significant political, economic, and security developments across the major countries and sub-regions.",
       "description": "Current state of Latin America",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "middle-east-snapshot",
@@ -704,7 +789,8 @@
       "icon": "middle-east-snapshot",
       "prompt": "Give me a snapshot of the most significant developments across the Middle East right now — the major conflicts, diplomacy, and regional dynamics.",
       "description": "Current state of Middle East",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "australia-snapshot",
@@ -712,7 +798,8 @@
       "icon": "australia-snapshot",
       "prompt": "Give me a current snapshot of Australia and Oceania. Cover Australian federal politics and the economy, New Zealand's government and major issues, developments across the Pacific Islands, China relations and security partnerships (including AUKUS), and climate impacts in the region.",
       "description": "Australia, New Zealand and the Pacific right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "this-weekends-slate",
@@ -720,7 +807,8 @@
       "icon": "this-weekends-slate",
       "prompt": "What are the most compelling sporting events happening in the next few days across leagues and sports? For each: stakes, key matchups, viewing info, and what to watch for.",
       "description": "The most compelling events on the slate this week",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "sports-business-watch",
@@ -728,7 +816,8 @@
       "icon": "sports-business-watch",
       "prompt": "What's happening in the business of sports right now? Cover media rights, league valuations, expansion, ownership changes, and gambling-related developments.",
       "description": "Media rights, valuations, ownership and gambling",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "soccer-top-leagues",
@@ -736,15 +825,8 @@
       "icon": "soccer-top-leagues",
       "prompt": "Give me a snapshot of world soccer right now. Cover the top European leagues (title races, European places, relegation battles), MLS and the other major leagues across the Americas, Asia and Africa, the international picture (qualifiers, upcoming windows and tournaments), transfer news, and the biggest global storylines.",
       "description": "The top leagues and biggest storylines around the world",
-      "group": "topic-specific"
-    },
-    {
-      "id": "soccer-european-competition-watch",
-      "name": "European Competition Snapshot",
-      "icon": "soccer-european-competition-watch",
-      "prompt": "What's happening in the Champions League, Europa League, and Conference League? Cover the current stage, biggest matchups upcoming, and standout teams.",
-      "description": "Current state of European competition",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "mlb-snapshot",
@@ -752,7 +834,8 @@
       "icon": "mlb-snapshot",
       "prompt": "Give me a snapshot of MLB right now. Cover the biggest recent results and standout performances, the standings and playoff picture, notable trades, injuries and roster moves, the awards and stat-leader races, and the league-wide storylines.",
       "description": "The biggest stories, results and races in baseball right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "nba-league-snapshot-today",
@@ -760,7 +843,8 @@
       "icon": "nba-league-snapshot-today",
       "prompt": "Give me a snapshot of the NBA right now. Cover the biggest recent results and standout performances, the standings and playoff picture, notable trades, injuries and roster moves, the awards races and stat trends, and the league-wide storylines.",
       "description": "The biggest stories, results and races in the NBA right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "nfl-weekly-snapshot",
@@ -768,7 +852,8 @@
       "icon": "nfl-weekly-snapshot",
       "prompt": "Give me a snapshot of the NFL right now. Cover the biggest recent results and standout performances, the standings and playoff picture, notable injuries, quarterback and coaching situations, roster moves, the awards races, and what to watch in the upcoming slate.",
       "description": "The biggest stories, results and races in the NFL right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "nhl-league-snapshot",
@@ -776,7 +861,8 @@
       "icon": "nhl-league-snapshot",
       "prompt": "Give me a snapshot of the NHL right now. Cover the biggest recent results and standout performances, the standings and playoff picture, notable trades, injuries and roster moves, the awards and stat-leader races, and the league-wide storylines.",
       "description": "The biggest stories, results and races in the NHL right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "ncaab-rankings-and-movers",
@@ -784,7 +870,8 @@
       "icon": "ncaab-rankings-and-movers",
       "prompt": "Give me a snapshot of college basketball right now. Cover the Top 25 and the biggest movers, conference races and the tournament picture, standout players and the player-of-the-year race, coaching news, transfer portal and NIL developments, and the biggest upcoming games.",
       "description": "Rankings, conference races and the tournament picture",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "ncaaf-top-25-movers",
@@ -792,7 +879,8 @@
       "icon": "ncaaf-top-25-movers",
       "prompt": "Give me a snapshot of college football right now. Cover the Top 25 and the biggest movers, conference races and the playoff picture, standout players and the Heisman race, the coaching carousel, transfer portal and NIL developments, and the biggest upcoming games.",
       "description": "Rankings, conference races and the playoff picture",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "ufc-snapshot",
@@ -800,7 +888,8 @@
       "icon": "ufc-snapshot",
       "prompt": "Give me a snapshot of combat sports right now. Cover the UFC and MMA, boxing, and other major promotions: recent major events and results, current and upcoming title fights, the pound-for-pound debate, and the biggest storylines and business developments.",
       "description": "UFC, boxing and the fight world right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "endangered-species-updates",
@@ -808,7 +897,8 @@
       "icon": "endangered-species-updates",
       "prompt": "What are the most significant recent developments on endangered species? Cover species reaching critical status, recovery successes, listing decisions, and major habitat protection developments.",
       "description": "Recent developments in endangered species",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "ocean-marine-watch",
@@ -816,7 +906,8 @@
       "icon": "ocean-marine-watch",
       "prompt": "What's happening in ocean conservation right now? Cover coral reef health, fisheries, marine protected areas, plastic pollution, and major scientific findings about ocean systems.",
       "description": "Reefs, fisheries, pollution and ocean science",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "forests-land-use",
@@ -824,7 +915,8 @@
       "icon": "forests-land-use",
       "prompt": "What's happening with forests, land use and biodiversity globally? Cover deforestation and reforestation, wildfires, indigenous land rights, protected areas and conservation wins, wildlife trafficking, and the major biodiversity findings and policy moves.",
       "description": "Deforestation, conservation and the biodiversity picture",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "energy-transition-snapshot",
@@ -832,7 +924,8 @@
       "icon": "energy-transition-snapshot",
       "prompt": "Give me a current snapshot of the global energy transition. Cover deployment trends in solar, wind, batteries and storage, EVs and heat pumps; hydrogen and emerging clean tech; investment and climate-tech funding; corporate commitments; and where the transition is accelerating or stalling.",
       "description": "Solar, wind, batteries, EVs and where the transition stands",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "international-climate-policy-updates",
@@ -840,7 +933,8 @@
       "icon": "international-climate-policy-updates",
       "prompt": "What's happening in international climate policy? Cover developments, progress and gaps, climate finance discussions, and major bilateral and regional initiatives.",
       "description": "Recent developments in international climate policy",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "severe-weather-watch",
@@ -848,7 +942,8 @@
       "icon": "severe-weather-watch",
       "prompt": "What significant weather events and threats are happening or imminent right now? Cover hurricanes, severe thunderstorms, winter storms, flooding, wildfires, and extreme heat or cold. Note affected regions and timing.",
       "description": "Signals worth tracking in severe weather",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "cultural-moments-right-now",
@@ -856,7 +951,8 @@
       "icon": "cultural-moments-right-now",
       "prompt": "What's dominating the entertainment and pop culture conversation right now? Cover the people and moments getting the most attention, what's blowing up, what's generating debate, and the broader stories these moments tap into.",
       "description": "What everyone in entertainment is talking about right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "celebrity-news-snapshot",
@@ -864,7 +960,8 @@
       "icon": "celebrity-news-snapshot",
       "prompt": "What are the most significant celebrity news stories from the past week? Cover major announcements, breakups, scandals, public statements, and career moves. Skip pure tabloid noise.",
       "description": "Current state of celebrity news",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "influencer-creator-watch",
@@ -872,7 +969,8 @@
       "icon": "influencer-creator-watch",
       "prompt": "What's happening in the influencer and creator economy right now? Cover the biggest creators, viral moments worth knowing about, brand deal trends, and platform dynamics.",
       "description": "Signals worth tracking in influencer and creator",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "gaming-industry-snapshot",
@@ -880,7 +978,8 @@
       "icon": "gaming-industry-snapshot",
       "prompt": "Give me a snapshot of gaming right now. Cover the biggest recent and upcoming releases across platforms and how they're being received, hardware news, the live-service and esports landscape, and the business of the industry — studio news, M&A, layoffs, and platform strategy.",
       "description": "The biggest releases and the business of games",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "new-music-this-week",
@@ -888,7 +987,8 @@
       "icon": "new-music-this-week",
       "prompt": "What are the most notable new music releases this week? Cover albums, major singles, and reissues across genres. Note what's getting the strongest critical and audience reception.",
       "description": "The most notable new music releases this week",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "top-podcasts-right-now",
@@ -896,7 +996,8 @@
       "icon": "top-podcasts-right-now",
       "prompt": "What podcasts are most popular and most-discussed right now? Cover the charts across major platforms, shows having a cultural moment, standout recent episodes worth hearing, notable new launches, and the industry developments shaping the medium.",
       "description": "What's topping the charts and worth hearing right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "arts-culture-culturual-conversations",
@@ -904,7 +1005,8 @@
       "icon": "arts-culture-culturual-conversations",
       "prompt": "What are the dominant arts and culture conversations right now? Cover the books, exhibitions, restaurants, films, and ideas that the cultural conversation is centered on.",
       "description": "The books, exhibitions, films and ideas driving the conversation",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "arts-culture-awards-lists",
@@ -912,7 +1014,8 @@
       "icon": "arts-culture-awards-lists",
       "prompt": "What major awards, prizes, and lists across the arts and culture have been recently announced — literature, film, design, architecture, restaurants, music, and more? Cover the winners, the surprises, and what they signal about where each field is heading.",
       "description": "Recent winners across the arts, and what they signal",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "arts-culture-cultural-calendar",
@@ -920,7 +1023,8 @@
       "icon": "arts-culture-cultural-calendar",
       "prompt": "What major cultural events are upcoming in the next few months? Cover exhibitions, festivals, book releases, fashion weeks, and other significant moments worth knowing about.",
       "description": "Exhibitions, festivals, releases and moments worth planning for",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "architecture-design-urbanism-cities",
@@ -928,7 +1032,8 @@
       "icon": "architecture-design-urbanism-cities",
       "prompt": "What's happening in design and architecture right now? Cover notable new buildings and urban projects, housing and transit design, interior design directions and materials, product and industrial design, design awards, and the designers and studios shaping the field.",
       "description": "Buildings, cities, interiors and product design right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "new-releases-worth-reading",
@@ -936,7 +1041,8 @@
       "icon": "new-releases-worth-reading",
       "prompt": "What are the most notable recent and upcoming book releases? Cover fiction and nonfiction across major categories, what's topping the bestseller lists, and recent literary prize news. Note what's getting strong critical and reader reception.",
       "description": "Notable recent and upcoming releases, bestsellers and prizes",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "publishing-industry-watch",
@@ -944,7 +1050,8 @@
       "icon": "publishing-industry-watch",
       "prompt": "What's happening in book publishing right now? Cover Big Five dynamics, AI and copyright, the audiobook boom, indie publishing, and the bookstore landscape.",
       "description": "Publishers, bookstores, audiobooks and AI",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "food-trends-watch",
@@ -952,7 +1059,8 @@
       "icon": "food-trends-watch",
       "prompt": "What's happening in food and dining right now? Cover the dominant food trends (ingredients, cuisines, formats), the restaurant industry (notable openings and closures, chains, fine dining), and the latest major restaurant awards and lists.",
       "description": "Food trends, the restaurant world and the latest lists",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "home-cooking-trends",
@@ -960,7 +1068,8 @@
       "icon": "home-cooking-trends",
       "prompt": "What are the dominant home cooking and drinks trends right now? Cover techniques, ingredients, equipment and food media shaping how people cook at home, plus what's happening in coffee, wine, spirits, and cocktail culture.",
       "description": "How people are cooking and drinking at home right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "cost-of-living-watch",
@@ -968,7 +1077,8 @@
       "icon": "cost-of-living-watch",
       "prompt": "What's happening in the cost of living right now? Cover housing, food, healthcare, childcare, travel, and entertainment. Note where prices are rising or falling and how it's affecting households.",
       "description": "Signals worth tracking in cost of living",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "lifestyle-best-new-tools-apps",
@@ -976,7 +1086,8 @@
       "icon": "lifestyle-best-new-tools-apps",
       "prompt": "What are the most useful new lifestyle tools and apps right now? Cover productivity, finance, health, home, travel, and other categories where tools meaningfully improve daily life.",
       "description": "New tools that meaningfully improve daily life",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "auto-industry-snapshot",
@@ -984,7 +1095,8 @@
       "icon": "auto-industry-snapshot",
       "prompt": "What's happening in the auto world right now? Cover automaker news and sales, the EV transition and the best current EVs, competition and pricing, and what matters for buyers and owners — deals, incentives, recalls, and ownership costs.",
       "description": "The auto industry, EVs and what matters for buyers",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "travel-industry-updates",
@@ -992,7 +1104,8 @@
       "icon": "travel-industry-updates",
       "prompt": "What's happening in travel right now? Cover airlines, hotels and cruise lines, the loyalty program landscape, disruptions or rule changes affecting travelers, and current strategy for booking flights and hotels well.",
       "description": "Airlines, hotels, loyalty and what's affecting travelers",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "job-market-snapshot",
@@ -1000,7 +1113,8 @@
       "icon": "job-market-snapshot",
       "prompt": "What's the current state of the job market? Cover hiring trends across major industries, layoff activity, comp trends, the AI impact on white-collar work, and where opportunities are growing or shrinking.",
       "description": "Current state of job market",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "ai-impact-media",
@@ -1008,7 +1122,8 @@
       "icon": "ai-impact-media",
       "prompt": "How is AI reshaping media right now? Cover the impact on journalism, advertising, content creation, search and distribution, and the key lawsuits and licensing deals.",
       "description": "How AI is reshaping journalism, advertising and distribution",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "ad-industry-snapshot",
@@ -1016,7 +1131,8 @@
       "icon": "ad-industry-snapshot",
       "prompt": "Give me a snapshot of the ad industry right now. Cover holding company performance, big brand account moves, growth in different ad formats, and the dominant industry conversations.",
       "description": "Current state of ad industry",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "best-marketing-tools",
@@ -1024,7 +1140,8 @@
       "icon": "best-marketing-tools",
       "prompt": "What are the best marketing tools and platforms right now? Cover by category (CRM, marketing automation, analytics, content, SEO, social, email, ad platforms). Note the industry standards, notable AI-native challengers, and the tools gaining or losing ground.",
       "description": "Top picks worth knowing about right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "ai-in-marketing",
@@ -1032,7 +1149,8 @@
       "icon": "ai-in-marketing",
       "prompt": "How is AI being used in marketing and advertising right now? Cover content creation, personalization, media buying and ad platforms, analytics and measurement, and what's actually delivering results vs. still hype.",
       "description": "Where AI is delivering results in marketing, and where it's still hype",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "journalism-industry-watch",
@@ -1040,7 +1158,8 @@
       "icon": "journalism-industry-watch",
       "prompt": "What's happening in journalism right now? Cover the industry (outlet finances, layoffs and closures, leadership and business model changes), the standout recent investigative and long-form work being widely shared, awards and recognition, and press freedom developments affecting reporters.",
       "description": "The industry, the standout work and the pressures on the press",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "independent-media-watch",
@@ -1048,7 +1167,8 @@
       "icon": "independent-media-watch",
       "prompt": "What's happening in newsletter and independent media right now? Cover the leading platforms, prominent independent journalists' moves, and how the model is evolving.",
       "description": "Signals worth tracking in independent media",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "linear-tv-watch",
@@ -1056,7 +1176,8 @@
       "icon": "linear-tv-watch",
       "prompt": "What's the current state of the television business? Cover linear TV and the pace of cord-cutting, streaming economics (pricing, bundling, profitability), sports rights as the holdout, and how networks and platforms are repositioning.",
       "description": "Cord-cutting, streaming economics and sports rights",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "audio-podcast-business",
@@ -1064,7 +1185,8 @@
       "icon": "audio-podcast-business",
       "prompt": "What's happening in the audio business? Cover podcast platform and creator strategy, video podcasting, music streaming economics, the audiobook market, radio, and how the audio ecosystem is shifting.",
       "description": "Podcasts, music streaming, audiobooks and radio as businesses",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "education-news-snapshot",
@@ -1072,7 +1194,8 @@
       "icon": "education-news-snapshot",
       "prompt": "Give me a snapshot of the most significant education news right now across K-12, higher ed, and learning more broadly. Cover policy, institutional, and major sector stories.",
       "description": "Current state of education news",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "ai-in-education-watch",
@@ -1080,7 +1203,8 @@
       "icon": "ai-in-education-watch",
       "prompt": "How is AI being used in education right now across K-12, higher ed, and self-directed learning? Cover student use, teacher use, institutional policy responses, and what early evidence suggests.",
       "description": "Signals worth tracking in AI in education",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "federal-education-policy",
@@ -1088,7 +1212,8 @@
       "icon": "federal-education-policy",
       "prompt": "What's happening in federal education policy right now? Cover Department of Education actions, congressional activity, court cases, and major regulatory developments.",
       "description": "How policy is currently shaping this area",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "learning-trends",
@@ -1096,7 +1221,8 @@
       "icon": "learning-trends",
       "prompt": "What are the dominant trends in how people are learning right now? Cover emerging modalities, alternative credentials, employer-led training, and how AI is reshaping who learns what and how.",
       "description": "The dominant trends in how people are learning right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "higher-ed-snapshot",
@@ -1104,7 +1230,8 @@
       "icon": "higher-ed-snapshot",
       "prompt": "Give me a snapshot of higher education right now. Cover the dominant policy debates, financial pressures, enrollment trends, and the major stories at high-profile institutions.",
       "description": "Current state of higher ed",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "college-affordability-value",
@@ -1112,7 +1239,8 @@
       "icon": "college-affordability-value",
       "prompt": "What's the current conversation around college affordability and value? Cover ROI data by institution and major, sticker price vs. net price dynamics, and the alternatives gaining ground.",
       "description": "Current conversation around college affordability and value",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "edtech-snapshot",
@@ -1120,7 +1248,8 @@
       "icon": "edtech-snapshot",
       "prompt": "Give me a snapshot of the edtech sector right now. Cover the leading companies and platforms, funding environment, where consolidation is happening, and what's getting traction in K-12 vs. higher ed vs. corporate.",
       "description": "Current state of edtech",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "skills-based-learning",
@@ -1128,7 +1257,8 @@
       "icon": "skills-based-learning",
       "prompt": "What's happening in skills-based learning and alternative credentials? Cover bootcamps, certificate programs, apprenticeships, employer-led training, online learning platforms, and how employers are evaluating these credentials against degrees.",
       "description": "Bootcamps, certificates and how employers value them",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "ideas-in-the-air",
@@ -1136,7 +1266,8 @@
       "icon": "ideas-in-the-air",
       "prompt": "What are the most discussed ideas and intellectual conversations happening right now? Cover the essays, books, and debates getting traction across the cultural and intellectual landscape, recently published work introducing ideas worth knowing, and the most-discussed opinion and commentary from across the political spectrum. Note what each is arguing and what's driving the conversation.",
       "description": "The ideas and arguments gaining traction right now",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "best-long-reads",
@@ -1144,7 +1275,8 @@
       "icon": "best-long-reads",
       "prompt": "What are the best recent long-form essays and articles worth reading right now? Cover pieces from major publications and independent writers across topics — politics, ideas, culture, history, science.",
       "description": "The best recent essays and long-form journalism",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "tracker"
     },
     {
       "id": "religion-news-snapshot",
@@ -1152,7 +1284,8 @@
       "icon": "religion-news-snapshot",
       "prompt": "Give me a snapshot of significant recent developments across the world's religions and the religious landscape. Cover institutional news (including the Vatican and other major bodies), theological debates, shifts in religious identity and practice, and intersections with politics and culture.",
       "description": "Major developments across world religions",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "spirituality-meaning-trends",
@@ -1160,7 +1293,8 @@
       "icon": "spirituality-meaning-trends",
       "prompt": "What's happening in non-institutional spirituality and meaning-making? Cover trends in mindfulness, secular ritual, \"spiritual but not religious\" identities, and the cultural conversations around meaning.",
       "description": "Mindfulness, secular ritual and the search for meaning",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "bucket": "snapshot"
     },
     {
       "id": "latest-research-reports",
