@@ -39163,3 +39163,18 @@ body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: flex
   .pdir-topichost .pc--home .pc-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.6rem; }
   .pdir-topichost .pc--home .pc-link { border-top: 0; border-bottom: 1px solid #f0f3f8; }
 }
+/* revamp1443b — the card's list, weighted right: the bucket head is the
+   heavier line (a step larger, a rule under it that is also the first row's
+   top edge), the prompt names a plain medium weight so a list of thirteen
+   reads as links rather than thirteen headings. */
+.pc-sechead { padding: 2px 0 8px; border-bottom: 1.5px solid #dfe5ef; margin-bottom: 2px; }
+.pc-seclabel { font-size: 0.84rem; letter-spacing: 0.06em; }
+.pc-seccount { font-size: 0.8rem; }
+.pc-sec-ic { width: 20px; height: 20px; border-radius: 6px; }
+.pc-sec-ic svg { width: 13px; height: 13px; }
+.pc-sec { padding: 14px 0 6px; }
+.pc-sec + .pc-sec { border-top: 0; }
+.pc-sec:first-of-type { padding-top: 10px; }
+.pc-link { font-weight: 500; color: #2b3a55; padding: 7px 2px; }
+.pc-link + .pc-link { border-top: 1px solid #eef1f6; }
+.pc-title { border-bottom: 1.5px solid #dfe5ef; }
