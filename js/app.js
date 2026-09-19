@@ -1235,13 +1235,11 @@ function wirePromptDirectory(root, ctls) {
       const host = bodyEl.querySelector('.pdir-topichost');
       let shortcuts = [];
       try { shortcuts = getShortcutsForTopic(slug) || []; } catch (_) {}
-      const descriptions = {}; const icons = {};
-      shortcuts.forEach((sc) => { if (sc && sc.name) { descriptions[sc.name] = sc.description || ''; icons[sc.name] = sc.icon || ''; } });
+      // revamp1443: the same card the topic pages carry, opened flat — every
+      // bucket in full (Snapshots · Tools & Trackers · Evergreen), the card's
+      // own head left off because the accordion head already names the topic.
       try {
-        const c = renderAIIntelligence(host, {
-          inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
-          topic: name, label: name, descriptions, icons, shortcuts, topicKey: slug,
-        });
+        const c = renderPromptCard(host, { topic: name, slug, shortcuts, peek: Infinity, head: false });
         if (ctls) ctls.push(c);
       } catch (err) {
         console.error('prompt directory mount failed', slug, err);
@@ -1524,11 +1522,17 @@ function wirePromptsDropdown(panel, initialView) {
         // Copy / Settings / Run, instead of swapping the section into a
         // single-prompt "focus" view. {topic} is resolved per pick because the
         // featured set spans topics.
+        // revamp1443: the featured picks are text links in the prompts card,
+        // each with its topic beside it; a pick opens in place, the same
+        // three-level card the topic pages use.
         try {
-          dirCtls.push(renderAIIntelligence(rail, promptEmbedScope(picks.map((pk) => ({
-            ...pk.sh, evergreen: false,
-            prompt: resolveTopicPlaceholder(pk.sh.prompt, pk.topic.name),
-          })))));
+          dirCtls.push(renderPromptCard(rail, {
+            topic: '', slug: '', head: false, flat: true, topicTag: true, peek: Infinity,
+            shortcuts: picks.map((pk) => ({
+              ...pk.sh, evergreen: false, _topic: pk.topic.name,
+              prompt: resolveTopicPlaceholder(pk.sh.prompt, pk.topic.name),
+            })),
+          }));
         } catch (_) {}
         sec.hidden = false;
         const moreBtn = sec.querySelector('[data-ph-more]');
@@ -4680,10 +4684,11 @@ function renderPageNavBar(kind) {
   // glyph didn't match the thing it opens (#img1324/1325).
   const PV_IC = { featured: PROMPTS_FEAT_HEAD_IC, topics: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>', build: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 21 7-7"/><path d="m15 3.5 1.1 2.9 2.9 1.1-2.9 1.1L15 11.5l-1.1-2.9L11 7.5l2.9-1.1z"/><path d="M19.5 13.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z"/></svg>' };
   const pTab = (v, label) => `<button type="button" class="pst-tab${pView === v ? ' is-active' : ''}" data-pview="${v}" role="tab" aria-selected="${pView === v}"><span class="pst-ic" aria-hidden="true">${PV_IC[v]}</span>${label}</button>`;
-  const promptsTabs = kind === 'prompts' ? `
-    <div class="prompts-subnav-tabs" data-prompts-subnav-tabs role="tablist" aria-label="Prompts sections">
-      ${pTab('featured', 'Featured Prompts')}${pTab('topics', 'Prompts by Topic')}
-    </div>` : '';
+  // revamp1443: the Prompts page has no section tabs any more — Featured and
+  // By Topic stack under their own heads at every width, the way the wide
+  // layout always showed them.
+  const promptsTabs = '';
+  void pTab;
   // revamp1172 gave the Topics page a Featured / All tab strip in tab mode;
   // revamp1205 removed it. Featured is six rows and All Topics is a closed
   // accordion list, so both fit one stacked page under their own section heads

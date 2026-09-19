@@ -39102,3 +39102,64 @@ body.tt-on .topic-band .topic-home > .topic-body-cols.has-pcard[class] { margin-
    the clamp stated at every level. */
 #home-pcard, .pc, .pc-sec, .pc-rows, .pc-row, .pc-row-tx, .pc-ptitle, .pc-ptitle-tx, .pc-phost { min-width: 0; max-width: 100%; }
 .pc-row-desc, .pc-row-name { display: block; min-width: 0; }
+
+/* ═══ revamp1443 — prompts as text links; the Prompts page loses its tabs ═══
+
+   The rows in the card are text links now: no icon, no summary. The bucket
+   head carries one small mark (frame · pulse · leaf) and the name carries the
+   meaning. A bucket of twelve reads as a list. */
+.pc-seclabel { display: inline-flex; align-items: center; gap: 7px; }
+.pc-sec-ic { width: 18px; height: 18px; border-radius: 5px; flex: none; display: inline-flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--tc, #2f4d9e) 12%, #fff); color: var(--tc, #2f4d9e); }
+.pc-sec-ic svg { width: 12px; height: 12px; }
+[data-pc-bucket="evergreen"] .pc-sec-ic { background: #eef2fb; color: #3a5698; }
+.pc-sec-ic--title { width: 24px; height: 24px; border-radius: 7px; margin-right: 8px; vertical-align: -5px; }
+.pc-sec-ic--title svg { width: 14px; height: 14px; }
+.pc-links { display: flex; flex-direction: column; padding: 2px 0 0; }
+.pc-link {
+  display: flex; align-items: baseline; gap: 8px; width: 100%; text-align: left;
+  border: 0; background: none; cursor: pointer;
+  padding: 6px 2px; margin: 0; border-radius: 6px;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: #26375a; line-height: 1.35;
+}
+.pc-link-name { min-width: 0; }
+.pc-link-topic { font-size: 0.74rem; font-weight: 550; color: #8a98b0; white-space: nowrap; }
+.pc-link + .pc-link { border-top: 1px solid #f0f3f8; border-radius: 0; }
+@media (hover: hover) {
+  .pc-link:hover { color: #1d4ed8; }
+  .pc-link:hover .pc-link-name { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+}
+.pc-link:focus-visible { outline: 2px solid #2f4d9e; outline-offset: -2px; }
+.pc-ptitle { gap: 0; }
+.pc-ptitle-name .pc-link-topic { margin-left: 8px; }
+/* The old row rules stand down where the new rows are. */
+.pc .pc-row { display: none; }
+
+/* The Prompts page. Featured and By Topic under their own heads at every
+   width; the sub-header strip that switched between them is gone. The two
+   rules from 1148/1169 that hid one section or the other in tab mode, and the
+   heads with them, are overridden here rather than deleted — their selectors
+   carry `#content` and `!important`, so this has to match them exactly. */
+body.tt-on #content .prompts-home--v2 .ph-featured:not([hidden]) { display: block !important; }
+/* 1148's hide carries a :not() — one class of specificity this has to meet. */
+body.tt-on:not(.pview-topics):not(.pview-build) #content .prompts-home--v2 .ph-lib { display: block !important; }
+body.tt-on #content .prompts-home--v2 .ph-featured .ph-sec-head--card,
+body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: block !important; }
+body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: flex !important; }
+.prompts-subnav-tabs { display: none !important; }
+/* Featured: the flat card in columns, no frame of its own (the section is the
+   frame); an open prompt takes the full width. */
+#content .prompts-home--v2 .ph-featured .pc { border: 0; border-radius: 0; padding: 0; box-shadow: none; background: none; }
+#content .prompts-home--v2 .ph-featured .pc--home .pc-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2rem; }
+@media (min-width: 1100px) { #content .prompts-home--v2 .ph-featured .pc--home .pc-links { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { #content .prompts-home--v2 .ph-featured .pc--home .pc-links { grid-template-columns: 1fr; } }
+#content .prompts-home--v2 .ph-featured .pc--home .pc-link { border-top: 0; border-bottom: 1px solid #eef1f7; padding: 0.6rem 2px; }
+#content .prompts-home--v2 .ph-featured .pc--home .pc-link-topic { display: block; width: 100%; margin-top: 1px; }
+#content .prompts-home--v2 .ph-featured .pc--home .pc-link { flex-wrap: wrap; gap: 0 8px; }
+/* By Topic: the card inside the accordion body, frameless, buckets in full. */
+.pdir-topichost .pc { border: 0; border-radius: 0; padding: 2px 0 0; box-shadow: none; background: none; }
+.pdir-topichost .pc-sec { padding: 12px 0 8px; }
+.pdir-topichost .pc-sec + .pc-sec { border-top: 1px solid #eef1f6; }
+@media (min-width: 720px) {
+  .pdir-topichost .pc--home .pc-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.6rem; }
+  .pdir-topichost .pc--home .pc-link { border-top: 0; border-bottom: 1px solid #f0f3f8; }
+}
