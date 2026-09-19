@@ -96,6 +96,22 @@ async function afterResponse(sql, input, out) {
   // the surface where the loop was worst: builders never carry per-section
   // citations, so EVERY cached daily brief matched the sourceless trigger and
   // re-generated on essentially every view.
+  // revamp1444: a trend brief older than the trend's own start is about the
+  // LAST time the term trended. A reader opening it is the best moment to fix
+  // that — one cheap RAG call in the background, and the cron would have got
+  // to it within the hour anyway.
+  if (input.type === 'trend' && out.generatedAt && sql) {
+    try {
+      const r = await sql.query(
+        `SELECT started_at FROM trending_items
+          WHERE geo = 'US' AND lower(query) = lower($1)
+            AND snapshot_at = (SELECT max(snapshot_at) FROM trending_items WHERE geo = 'US')
+          LIMIT 1`, [String(input.query || '')]);
+      const startMs = r && r[0] && r[0].started_at ? new Date(r[0].started_at).getTime() : 0;
+      const genMs = new Date(out.generatedAt).getTime();
+      if (startMs && Number.isFinite(genMs) && genMs < startMs) doRefresh = true;
+    } catch (_) { /* no snapshot — nothing to compare against */ }
+  }
   const dailyBrief = input.type === 'shortcut' && input.group === 'daily';
   const healable = !dailyBrief && input.type !== 'trend' && cachedBefore(out.generatedAt);
   if (!doRefresh && healable && sourcesEmpty(out.sources)

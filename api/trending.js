@@ -130,9 +130,16 @@ module.exports = async function handler(req, res) {
         const byKey = new Map(rows.map((r) => [r.entity_key, r]));
         topics.forEach((t) => {
           const row = byKey.get(String(t.query || '').toLowerCase());
-          t.summary = (row && row.summary) || null;
-          t.sources = (row && row.sources) || null; // for the AI provenance ("N sources") on the card
           t._briefAt = (row && row.created_at) || null; // drives staleness refresh below
+          // revamp1444: a brief written BEFORE this trend started is about a
+          // previous time the term trended — a different reason. Showing it
+          // is worse than showing nothing, so the card goes out without a
+          // summary until the re-brief (queued below, and by the cron) lands.
+          const briefMs = t._briefAt ? new Date(t._briefAt).getTime() : 0;
+          const startMs = t.startedAt ? new Date(t.startedAt).getTime() : 0;
+          t._predates = !!(briefMs && startMs && briefMs < startMs);
+          t.summary = (row && !t._predates && row.summary) || null;
+          t.sources = (row && !t._predates && row.sources) || null; // for the AI provenance ("N sources") on the card
         });
       }
     } catch (_) { /* DB optional — render without summaries */ }
@@ -147,12 +154,12 @@ module.exports = async function handler(req, res) {
     // the grounding-budget gate still falls back to ungrounded before any cap.
     try {
       const now = Date.now();
-      const isStale = (t) => t._briefAt && (now - new Date(t._briefAt).getTime() > STALE_MS);
+      const isStale = (t) => t._predates || (t._briefAt && (now - new Date(t._briefAt).getTime() > STALE_MS));
       const healList = sql && waitUntil
         ? topics
           .filter((t) => String(t.query || '').trim() && (!t.summary || isStale(t)))
           .slice(0, HEAL_MAX)
-          .map((t) => ({ query: t.query, refresh: t.summary ? 1 : 0 }))
+          .map((t) => ({ query: t.query, refresh: t._briefAt ? 1 : 0 }))
         : [];
       if (healList.length) {
         waitUntil((async () => {

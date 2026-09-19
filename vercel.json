@@ -5,8 +5,12 @@
       "schedule": "0 */4 * * *"
     },
     {
-      "path": "/api/cron/pregenerate?type=trends&n=10",
+      "path": "/api/cron/pregenerate?type=trends&n=80",
       "schedule": "5 */4 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=trends&n=80",
+      "schedule": "25 */4 * * *"
     },
     {
       "path": "/api/cron/news",

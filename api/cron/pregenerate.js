@@ -596,21 +596,55 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
 
     // 1. Top current trends missing a brief.
     if (which === 'all' || which === 'trends') {
+      // revamp1444: the trends pass is intent-driven — it briefs what the
+      // CURRENT snapshot needs, not the first ten un-briefed rows. Measured
+      // on 2026-09-19: 28 of 100 trends had no summary and 30 of the 72
+      // briefed had a brief OLDER THAN THE TREND ITSELF — the term had
+      // re-trended for a new reason ("clemson football" at #2 with a 21-day-
+      // old depth-chart summary) and nothing ever re-briefed it. A brief is
+      // $0.0007, so the fix is to do the work, in this order:
+      //   1. missing — no brief at all, top rank first;
+      //   2. re-trending — brief.created_at < the trend's started_at;
+      //   3. in progress — the summary says a game/event is happening
+      //      ("today", "is set to", "is playing") and is 4h+ old: the
+      //      outcome exists now, the summary should say it;
+      //   4. top 20 older than 6h — the reason the #1 trend is up moves.
+      // One query, one ordered list, budget and clock decide how far it goes.
       const rows = await sql.query(
-        `SELECT query FROM trending_items ti
-          WHERE ti.snapshot_at = (SELECT max(snapshot_at) FROM trending_items WHERE geo = 'US')
-            AND ti.geo = 'US'
-            AND NOT EXISTS (
-              SELECT 1 FROM ai_insights ai
-               WHERE ai.entity_type='trend' AND ai.entity_key = lower(ti.query) AND ai.insight='brief')
-          ORDER BY ti.rank
-          LIMIT $1`, [Math.min(budget, 40)]);
+        `WITH cur AS (
+           SELECT lower(query) AS q, query, rank, started_at
+             FROM trending_items
+            WHERE geo = 'US' AND snapshot_at = (SELECT max(snapshot_at) FROM trending_items WHERE geo = 'US'))
+         SELECT cur.query, cur.rank,
+                CASE
+                  WHEN ai.id IS NULL THEN 1
+                  WHEN cur.started_at IS NOT NULL AND ai.created_at < cur.started_at THEN 2
+                  WHEN ai.created_at < now() - interval '4 hours'
+                       AND ai.summary ~* '\\m(today|tonight|this (morning|afternoon|evening)|is set to|are set to|will face|is playing|are playing|is facing|are facing|faces off|face off|kicks off|kick off|tips off|is scheduled|are scheduled|upcoming)\\M' THEN 3
+                  WHEN cur.rank <= 20 AND ai.created_at < now() - interval '6 hours' THEN 4
+                END AS why
+           FROM cur
+           LEFT JOIN ai_insights ai
+             ON ai.entity_type = 'trend' AND ai.insight = 'brief' AND ai.entity_key = cur.q
+          WHERE ai.id IS NULL
+             OR (cur.started_at IS NOT NULL AND ai.created_at < cur.started_at)
+             OR (ai.created_at < now() - interval '4 hours'
+                 AND ai.summary ~* '\\m(today|tonight|this (morning|afternoon|evening)|is set to|are set to|will face|is playing|are playing|is facing|are facing|faces off|face off|kicks off|kick off|tips off|is scheduled|are scheduled|upcoming)\\M')
+             OR (cur.rank <= 20 AND ai.created_at < now() - interval '6 hours')
+          ORDER BY why, cur.rank
+          LIMIT $1`, [Math.min(budget, 120)]);
+      const why = { 1: 0, 2: 0, 3: 0, 4: 0 };
       for (const r of rows) {
         if (budget <= 0 || !timeLeft()) break;
-        if (await call({ type: 'trend', query: r.query, internal: 1 })) trends++;
+        const isNew = r.why === 1;
+        if (await call({ type: 'trend', query: r.query, internal: 1, refresh: isNew ? 0 : 1 })) {
+          if (isNew) trends++; else refreshed++;
+          why[r.why] = (why[r.why] || 0) + 1;
+        }
         budget--;
         await sleep(600);
       }
+      res.setHeader('X-Trend-Pass', JSON.stringify({ queued: rows.length, missing: why[1], retrending: why[2], outcome: why[3], top20: why[4] }));
     }
 
     // 2. Recent news stories missing a brief (newest first, sub-budget).
