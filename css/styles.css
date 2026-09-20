@@ -39340,3 +39340,10 @@ body #section-newsfeed .news-card .news-card-foot--lead[class][class][class] { p
    places; pulling the meta row up 4px is the one change that lands everywhere. */
 .topic-band .topic-home #section-newsfeed .news-card .news-card-foot--lead[class][class],
 body #section-newsfeed .news-card .news-card-foot--lead[class][class][class] { margin-top: -4px !important; }
+/* revamp1447f — the same inset on every card, first or not: the first card's
+   extra link padding (a tab-mode rule at (1,7,1)) is zeroed, and the row's
+   4px lift applies only where the first card's larger inset needs it. */
+.topic-band .topic-home #section-newsfeed .news-card .news-card-foot--lead[class][class],
+body #section-newsfeed .news-card .news-card-foot--lead[class][class][class] { padding: 0 0 14px !important; }
+body #section-newsfeed .news-card:not(:first-child) .news-card-foot--lead[class][class][class] { margin-top: 0 !important; }
+html body #section-newsfeed .news-card .news-card-foot--lead + .news-card-link[class][class][class][class] { padding-top: 0 !important; margin-top: 0 !important; }
