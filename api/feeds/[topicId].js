@@ -22,6 +22,7 @@
 
 const topicsData = require('../../data/topics.json');
 const { getSql } = require('../../lib/db');
+const { rankHomeStories } = require('../../lib/top-news');
 
 const RSSAPP_BASE = 'https://api.rss.app/v1/feeds';
 // Edge cache window: 15 minutes fresh, 1 hour stale-while-revalidate.
@@ -81,6 +82,31 @@ module.exports = async function handler(req, res) {
   const apiSecret = process.env.RSSAPP_API_SECRET;
   if (!apiKey || !apiSecret) {
     return res.status(500).json({ error: 'Server misconfiguration' });
+  }
+
+  // revamp1450: the homepage is the front page, not the firehose. Its bundle
+  // holds ~27 top-story feeds; the last 36 hours of them are clustered by
+  // headline and ranked by how many publishers ran the story. Served from the
+  // DB the news cron fills every 30 minutes; the rss.app path below is the
+  // fallback if the DB is unreachable.
+  if (topic.slug === 'home') {
+    try {
+      const sql = getSql();
+      if (sql) {
+        const rows = await sql.query(
+          `SELECT ns.url, ns.title, ns.description, ns.source_name, ns.source_url, ns.image_url, ns.published_at
+             FROM news_stories ns JOIN topics t ON t.id = ns.topic_id
+            WHERE t.slug = 'home' AND ns.dup_of IS NULL AND ns.quality IS DISTINCT FROM 'junk'
+              AND coalesce(ns.published_at, ns.fetched_at) > now() - interval '36 hours'
+            ORDER BY coalesce(ns.published_at, ns.fetched_at) DESC LIMIT 900`);
+        const items = rankHomeStories(rows, { limit: 60 });
+        if (items.length >= 10) {
+          res.setHeader('Cache-Control', CACHE_HEADER);
+          res.setHeader('Vercel-Cache-Tag', cacheTags(topic.slug));
+          return res.status(200).json({ slug: topic.slug, title: topic.name, items, ranked: true, fetched });
+        }
+      }
+    } catch (_) { /* fall through to the live bundle */ }
   }
 
   try {

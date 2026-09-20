@@ -996,6 +996,8 @@ export function newsCardHTML(item) {
     : `<span class="news-card-source">${escapeHTML(host)}</span>`);
   if (host && rel) metaParts.push(`<span class="news-card-meta-sep" aria-hidden="true">·</span>`);
   if (rel) metaParts.push(`<time class="news-card-time">${escapeHTML(rel)}</time>`);
+  // revamp1450: on the ranked home feed, how many publishers ran the story.
+  if (item && Number.isFinite(item._coverage) && item._coverage > 1) metaParts.push(`<span class="news-card-cov" title="${escapeAttr((item._sources || []).join(', '))}">${item._coverage} sources</span>`);
 
   // Layout (#img163/164): title on top, then ONE meta line (source · time ·
   // share), then a body row — summary left, View Story / AI Insights pills to
@@ -1061,6 +1063,7 @@ function filterBarHTML(label) {
       </label>
       <label class="nf-field nf-sortfield">
         <select class="nf-sort nf-select" aria-label="Sort and filter news">
+          <option value="top">Top stories</option>
           <option value="newest">Newest</option>
           <option value="oldest">Oldest</option>
           <option value="day">Past 24 hours</option>
@@ -1100,7 +1103,7 @@ function startFeed(ctx) {
     sort: card.querySelector('.nf-sort'),
   };
   const state = {
-    q: '', time: 'all', source: 'all', sort: 'newest',
+    q: '', time: 'all', source: 'all', sort: isHome ? 'top' : 'newest',
     stories: [], urls: new Set(), exhausted: false, loading: false,
     liveCache: null, noFeed: false,
     // How many of the loaded stories the homepage is currently showing. Topic
@@ -1132,7 +1135,11 @@ function startFeed(ctx) {
     let arr = state.stories.slice();
     const win = TIME_WINDOWS[state.time];
     if (win) { const cut = Date.now() - win; arr = arr.filter(s => itemPubMs(s) >= cut); }
-    arr.sort((a, b) => state.sort === 'oldest' ? itemPubMs(a) - itemPubMs(b) : itemPubMs(b) - itemPubMs(a));
+    // revamp1450: 'top' keeps the server's ranked order (home); stories that
+    // arrive unranked (archive pages) follow, newest first.
+    const rk = (s) => (s && Number.isFinite(s._rank) ? s._rank : Infinity);
+    if (state.sort === 'top') arr.sort((a, b) => (rk(a) - rk(b)) || (itemPubMs(b) - itemPubMs(a)));
+    else arr.sort((a, b) => state.sort === 'oldest' ? itemPubMs(a) - itemPubMs(b) : itemPubMs(b) - itemPubMs(a));
     return arr;
   }
 
@@ -1305,6 +1312,7 @@ function startFeed(ctx) {
   els.sort?.addEventListener('change', () => {
     const v = els.sort.value;
     if (v === 'oldest') { state.sort = 'oldest'; state.time = 'all'; }
+    else if (v === 'top') { state.sort = 'top'; state.time = 'all'; }
     else if (v === 'newest') { state.sort = 'newest'; state.time = 'all'; }
     else { state.sort = 'newest'; state.time = v; } // day | week | month
     renderList();

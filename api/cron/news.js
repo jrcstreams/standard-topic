@@ -126,7 +126,9 @@ module.exports = withHealthcheck('HC_PING_NEWS', async function handler(req, res
     const batch = Number.isInteger(override)
       ? ((override % totalBatches) + totalBatches) % totalBatches
       : Math.floor(Date.now() / ROTATE_MS) % totalBatches;
-    const slice = all ? topics : topics.slice(batch * BATCH_SIZE, batch * BATCH_SIZE + BATCH_SIZE);
+    // revamp1450: ?slug=home runs one topic — the homepage cron every 30 min.
+    const only = String(req.query.slug || '').trim();
+    const slice = only ? topics.filter((t) => t.slug === only) : (all ? topics : topics.slice(batch * BATCH_SIZE, batch * BATCH_SIZE + BATCH_SIZE));
 
     let inserted = 0;
     const newIds = []; // Phase 6: ids of genuinely-new stories, graded by the junk gate below
@@ -146,7 +148,12 @@ module.exports = withHealthcheck('HC_PING_NEWS', async function handler(req, res
         returnIds: true,
       });
       inserted += ids.length;
-      newIds.push(...ids);
+      // revamp1450: the home bundle is vetted publishers only, and the junk
+      // gate — written for PR-wire spam — was flagging a third of it, including
+      // real news ("Meta launches legal challenge", "Bachelet withdraws from UN
+      // race"). Home skips the gate; the ranking does the curating.
+      if (topic.slug !== 'home') newIds.push(...ids);
+      else if (ids.length) await sql.query(`UPDATE news_stories SET quality='ok' WHERE id = ANY($1::int[]) AND quality IS NULL`, [ids]);
 
       // Prune to the newest KEEP_PER_TOPIC for this topic.
       await sql.query(

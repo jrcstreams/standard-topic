@@ -39398,3 +39398,5 @@ body #section-newsfeed .news-card .news-card-foot--lead[class][class][class] { p
 /* News: the head names it; the section's own top rule is redundant. */
 .sr-sec--news .search-news-section[class] { padding-top: 0 !important; margin-top: 0 !important; }
 .search-stickzone .search-topzone-tabs:empty { display: none !important; }
+/* revamp1450 — the coverage mark on a ranked home story. */
+.news-card .news-card-foot--lead .news-card-cov { font-size: 0.76rem; font-weight: 600; color: #2f4d9e; background: #eaf0fd; border-radius: 6px; padding: 3px 8px; white-space: nowrap; }

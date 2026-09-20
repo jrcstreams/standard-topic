@@ -22,7 +22,9 @@ module.exports = withHealthcheck('HC_PING_EMBED', async function handler(req, re
   const sql = getSql();
   if (!sql || !process.env.GEMINI_API_KEY) return res.status(200).json({ ok: true, skipped: true });
 
-  const n = Math.min(Math.max(parseInt(req.query.n, 10) || 64, 1), 100);
+  // revamp1450: 64 every 12h against ~4,000 stories a day meant dup_of never
+  // caught up (3.8k of 43k rows embedded). 400 an hour keeps pace.
+  const n = Math.min(Math.max(parseInt(req.query.n, 10) || 400, 1), 500);
 
   try {
     // Only news_stories embeddings are queried (semantic search in api/news-search).
@@ -41,7 +43,9 @@ module.exports = withHealthcheck('HC_PING_EMBED', async function handler(req, re
     let embedded = 0;
     let error = null;
     try {
-      const vecs = await embed(rows.map(r => r.text));
+      // batchEmbedContents takes 100 at a time.
+      const vecs = [];
+      for (let i = 0; i < rows.length; i += 100) { const part = await embed(rows.slice(i, i + 100).map(r => r.text)); if (!part) break; vecs.push(...part); }
       if (vecs) {
         const tuples = [];
         const params = [];
