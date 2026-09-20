@@ -17,6 +17,10 @@
 //   flat       one unlabelled list (the Featured rail)
 //   topicTag   show each prompt's `_topic` beside it (a cross-topic list)
 //   openAll    sections open regardless of width (the Prompts page directory)
+//   collapsed  sections folded at every width (the homepage)
+//   peek       on the wide layout, show this many rows of Snapshots and Tools &
+//              Trackers with a "View all N" under them (topic pages: 3);
+//              Evergreen always shows all four
 import { renderAIIntelligence } from './ai-intelligence.js?v=20260914-revamp1340c';
 
 const SPARK = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg>';
@@ -46,7 +50,7 @@ function bucketLabels() {
 }
 function bucketOf(s) { return s.evergreen ? 'evergreen' : (s.bucket || 'snapshot'); }
 
-export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head = true, flat = false, topicTag = false, openAll = false } = {}) {
+export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head = true, flat = false, topicTag = false, openAll = false, collapsed = false, peek = 0 } = {}) {
   const labels = bucketLabels();
   const list = (shortcuts || []).filter((s) => s && s.name && s.prompt);
   const groups = flat
@@ -54,7 +58,9 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
     : ORDER.map((id) => ({ id, label: labels[id], sub: SUB[id], items: list.filter((s) => bucketOf(s) === id) })).filter((g) => g.items.length);
   const topicName = topic || '';
   let ctl = null; let openKey = null;
-  const openSecs = new Set(openAll || flat || !NARROW() ? groups.map((g) => g.id) : []);
+  const defaultOpen = () => new Set((flat || openAll || (!collapsed && !NARROW())) ? groups.map((g) => g.id) : []);
+  let openSecs = defaultOpen();
+  const expanded = new Set();   // sections whose "View all" was pressed
 
   const rowHTML = (s) => `<div class="pc-item" data-pc-item="${esc(s.id || s.name)}">
       <button type="button" class="pc-row" data-pc-prompt="${esc(s.id || s.name)}" aria-expanded="false">
@@ -73,6 +79,9 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
   const secHTML = (g) => {
     if (flat) return `<div class="pc-sec pc-sec--flat" data-pc-bucket="all"><div class="pc-links">${g.items.map(rowHTML).join('')}</div></div>`;
     const open = openSecs.has(g.id);
+    const peeking = peek > 0 && !NARROW() && g.id !== 'evergreen' && g.items.length > peek && !expanded.has(g.id);
+    const rows = peeking ? g.items.slice(0, peek) : g.items;
+    const more = peeking ? `<button type="button" class="pc-more" data-pc-more="${g.id}">View all ${g.items.length} ${esc(g.label.toLowerCase())}${ARROW_R}</button>` : '';
     return `<section class="pc-sec${open ? ' is-open' : ''}" data-pc-bucket="${g.id}">
       <button type="button" class="pc-sechead" data-pc-sec="${g.id}" aria-expanded="${open}">
         <span class="pc-sec-ic" aria-hidden="true">${BUCKET_ICON[g.id] || SPARK}</span>
@@ -80,7 +89,7 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
         <span class="pc-seccount">${g.items.length}</span>
         <span class="pc-sec-chev" aria-hidden="true">${CHEV_D}</span>
       </button>
-      <div class="pc-links"${open ? '' : ' hidden'}>${g.items.map(rowHTML).join('')}</div>
+      <div class="pc-links"${open ? '' : ' hidden'}>${rows.map(rowHTML).join('')}${more}</div>
     </section>`;
   };
 
@@ -112,6 +121,7 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
       links.hidden = !open; sec.classList.toggle('is-open', open); b.setAttribute('aria-expanded', String(open));
       if (open) openSecs.add(sec.dataset.pcBucket); else { openSecs.delete(sec.dataset.pcBucket); if (sec.querySelector('.pc-item.is-open')) closeOpen(); }
     }));
+    host.querySelectorAll('[data-pc-more]').forEach((b) => b.addEventListener('click', () => { expanded.add(b.dataset.pcMore); render(); }));
     host.querySelectorAll('[data-pc-prompt]').forEach((b) => b.addEventListener('click', () => {
       const key = b.dataset.pcPrompt; const s = list.find((x) => (x.id || x.name) === key); if (!s) return;
       const item = b.closest('.pc-item');
@@ -121,5 +131,11 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
   }
 
   render();
-  return { destroy() { unmount(); host.innerHTML = ''; }, reset() { render(); } };
+  // The layout crossing 900px changes what "open by default" means; the card
+  // re-renders to the new default (a rendered-wide card carried its open
+  // sections into the stacked layout otherwise).
+  let mq = null;
+  try { mq = window.matchMedia('(max-width: 899.98px)'); mq.addEventListener('change', onCross); } catch (_) {}
+  function onCross() { if (!host.isConnected) { try { mq.removeEventListener('change', onCross); } catch (_) {} return; } openSecs = defaultOpen(); expanded.clear(); render(); }
+  return { destroy() { unmount(); try { mq && mq.removeEventListener('change', onCross); } catch (_) {} host.innerHTML = ''; }, reset() { openSecs = defaultOpen(); expanded.clear(); render(); } };
 }

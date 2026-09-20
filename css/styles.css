@@ -39501,3 +39501,11 @@ body.tt-on .topic-band .topic-home:not(.tview-brief):not(.tview-tools) #section-
 /* Home: 32px from the head's rule to the first card was four small margins stacked; 12 now. */
 body.home-search .home-v2 #section-newsfeed .newsfeed-head[class][class] { margin-bottom: 6px !important; }
 body.home-search .home-v2 #section-newsfeed .news-list[class][class] { margin-top: 0 !important; }
+/* revamp1454 — "View all N snapshots" under a peeked section; the homepage
+   feed gets 18px from its head's rule to the first card (12 read as tight
+   with the two-column cards); the prompts card leads the home rail. */
+.pc--v2 .pc-more { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin: 4px 0 6px; padding: 8px 10px; border: 1px dashed #cfd8e8; border-radius: 8px; background: none; color: #2f4d9e; font-family: var(--font-family); font-size: 0.8rem; font-weight: 650; cursor: pointer; }
+@media (hover: hover) { .pc--v2 .pc-more:hover { background: #f1f4fa; border-color: #b9c6dd; } }
+body.home-search .home-v2 #section-newsfeed .newsfeed-head[class][class][class] { margin-bottom: 12px !important; }
+body.home-search #home-pcard { order: 0; }
+body.home-search #home-trending { order: 1; }

@@ -3227,7 +3227,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // briefing instead of behind a "Prompts" tab.
     {
       const host = body.querySelector('.topic-top-side [data-pr-host]');
-      if (host) renderPromptCard(host, { topic: topic.name, slug: topic.slug, shortcuts });
+      if (host) renderPromptCard(host, { topic: topic.name, slug: topic.slug, shortcuts, peek: 3 });
     }
     // Topic view tabs: container classes drive which section shows in the
     // narrow tabbed layout; on wide screens the tabs row is display:none and
@@ -5637,11 +5637,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <section class="layout-section" id="section-newsfeed"></section>
           </div>
           <aside class="home-side">
-            <section class="home-trending hs-block" id="home-trending"></section>
-            <!-- revamp1442: the prompts card. Under Trending in the desktop
-                 rail; on a phone it is its own full-width card right under
-                 the briefing. -->
+            <!-- revamp1454: the prompts card leads the rail, folded; Trending under it. -->
             <section class="home-pcard hs-block" id="home-pcard" aria-label="AI Prompts"></section>
+            <section class="home-trending hs-block" id="home-trending"></section>
           </aside>
         </div>
       </div>
@@ -5661,7 +5659,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       if (host) {
         let sc = []; try { sc = (getShortcutsForTopic('home') || []).filter((s) => s && s.prompt); } catch (_) {}
         renderPromptCard(host, {
-          topic: '', slug: 'home',
+          topic: '', slug: 'home', collapsed: true,
           shortcuts: sc.map((s) => ({ ...s, prompt: resolveTopicPlaceholder(s.prompt, 'the news') })),
         });
       }
