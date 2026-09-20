@@ -39350,3 +39350,14 @@ html body #section-newsfeed .news-card .news-card-foot--lead + .news-card-link[c
 /* revamp1447g — the first card's 4px lift is a tab-mode correction only; on
    the wide layout its inset was already the others' and the lift undershot. */
 body:not(.tt-on) #section-newsfeed .news-card:first-child .news-card-foot--lead[class][class][class] { margin-top: 0 !important; }
+/* revamp1447h — the gap a touch tighter, the buttons a touch smaller, no dot
+   between source and time, and the share panel anchored to the RIGHT edge now
+   that its button lives there (left-anchored it opened off the card and got
+   clipped). */
+.topic-band .topic-home #section-newsfeed .news-card .news-card-foot--lead[class][class],
+body #section-newsfeed .news-card .news-card-foot--lead[class][class][class] { padding: 0 0 11px !important; }
+#section-newsfeed .news-card .news-act[class][class][class] { padding: 5px 12px !important; font-size: 0.78rem !important; }
+.news-card .news-card-foot--lead .news-card-meta-sep[class][class][class] { display: none !important; }
+.news-card .news-card-foot--lead .news-card-meta { gap: 9px; }
+.news-card .news-card-foot--lead .news-share-wrap { position: relative; }
+.news-card .news-card-foot--lead .news-share-panel[class] { left: auto !important; right: 0 !important; }
