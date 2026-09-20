@@ -890,11 +890,10 @@ ${A}`),S.length?S.join(`
       <div class="pc-head-row"><span class="pc-head-ic" aria-hidden="true">${kc}</span><span class="pc-head-title">AI Prompts</span></div>
       <p class="pc-head-lead">${Gt(s||(f?`Explore ${f} with AI`:"Explore today\u2019s news with AI"))}</p>
       <p class="pc-head-sub">Use curated prompts to get deeper insights, find ideas, and explore new angles.</p>
-    </div>`:"",$=C=>{if(r)return`<div class="pc-sec pc-sec--flat" data-pc-bucket="all"><div class="pc-links">${C.items.map(q).join("")}</div></div>`;let W=B.has(C.id),re=p>0&&!Zn()&&C.id!=="evergreen"&&C.items.length>p&&!M.has(C.id),G=re?C.items.slice(0,p):C.items,R=re?`<button type="button" class="pc-more" data-pc-more="${C.id}">View all ${C.items.length} ${Gt(C.label.toLowerCase())}${vp}</button>`:"";return`<section class="pc-sec${W?" is-open":""}" data-pc-bucket="${C.id}">
+    </div>`:"",$=C=>{if(r)return`<div class="pc-sec pc-sec--flat" data-pc-bucket="all"><div class="pc-links">${C.items.map(q).join("")}</div></div>`;let W=B.has(C.id),re=p>0&&!Zn()&&C.id!=="evergreen"&&C.items.length>p&&!M.has(C.id),G=re?C.items.slice(0,p):C.items,R=re?`<button type="button" class="pc-more" data-pc-more="${C.id}">View all ${Gt(C.label.toLowerCase())}${vp}</button>`:"";return`<section class="pc-sec${W?" is-open":""}" data-pc-bucket="${C.id}">
       <button type="button" class="pc-sechead" data-pc-sec="${C.id}" aria-expanded="${W}">
         <span class="pc-sec-ic" aria-hidden="true">${fp[C.id]||kc}</span>
         <span class="pc-sec-tx"><span class="pc-seclabel">${Gt(C.label)}</span><span class="pc-secsub">${Gt(C.sub)}</span></span>
-        <span class="pc-seccount">${C.items.length}</span>
         <span class="pc-sec-chev" aria-hidden="true">${mp}</span>
       </button>
       <div class="pc-links"${W?"":" hidden"}>${G.map(q).join("")}${R}</div>

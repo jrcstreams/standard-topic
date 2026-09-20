@@ -87,12 +87,11 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
     const open = openSecs.has(g.id);
     const peeking = peek > 0 && !NARROW() && g.id !== 'evergreen' && g.items.length > peek && !expanded.has(g.id);
     const rows = peeking ? g.items.slice(0, peek) : g.items;
-    const more = peeking ? `<button type="button" class="pc-more" data-pc-more="${g.id}">View all ${g.items.length} ${esc(g.label.toLowerCase())}${ARROW_R}</button>` : '';
+    const more = peeking ? `<button type="button" class="pc-more" data-pc-more="${g.id}">View all ${esc(g.label.toLowerCase())}${ARROW_R}</button>` : '';
     return `<section class="pc-sec${open ? ' is-open' : ''}" data-pc-bucket="${g.id}">
       <button type="button" class="pc-sechead" data-pc-sec="${g.id}" aria-expanded="${open}">
         <span class="pc-sec-ic" aria-hidden="true">${BUCKET_ICON[g.id] || SPARK}</span>
         <span class="pc-sec-tx"><span class="pc-seclabel">${esc(g.label)}</span><span class="pc-secsub">${esc(g.sub)}</span></span>
-        <span class="pc-seccount">${g.items.length}</span>
         <span class="pc-sec-chev" aria-hidden="true">${CHEV_D}</span>
       </button>
       <div class="pc-links"${open ? '' : ' hidden'}>${rows.map(rowHTML).join('')}${more}</div>
