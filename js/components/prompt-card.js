@@ -106,7 +106,7 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
 
   function render() {
     unmount();
-    host.innerHTML = `<div class="pc pc--v2${flat ? ' pc--flat' : ''}${head ? '' : ' pc--nohead'}">${headHTML()}${groups.length ? groups.map(secHTML).join('') : '<p class="pc-empty">No prompts for this page yet.</p>'}${head && !flat && slug && slug !== 'home' ? `<a class="pc-browse" href="#/prompts">Browse all ${esc(topicName)} prompts${ARROW_R}</a>` : ''}</div>`;
+    host.innerHTML = `<div class="pc pc--v2${flat ? ' pc--flat' : ''}${head ? '' : ' pc--nohead'}">${headHTML()}${groups.length ? groups.map(secHTML).join('') : '<p class="pc-empty">No prompts for this page yet.</p>'}</div>`;
     host.querySelectorAll('[data-pc-sec]').forEach((b) => b.addEventListener('click', () => {
       const sec = b.closest('.pc-sec'); const links = sec.querySelector('.pc-links'); const open = links.hidden;
       links.hidden = !open; sec.classList.toggle('is-open', open); b.setAttribute('aria-expanded', String(open));

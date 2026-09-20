@@ -39483,3 +39483,21 @@ body:not(.tt-on) .topic-body-cols > .topic-top-side .pc--v2 .pc-head[class] { di
    "Settings" in the narrower host. */
 @media (max-width: 899.98px) { .pc--v2 .pc-seccount[class] { display: inline-block !important; } }
 .pc--v2 .pc-item-host .aii-pc-tools { flex-wrap: wrap; row-gap: 6px; }
+/* revamp1453 — the prompts card condensed; one icon colour; the topic page's
+   feed keeps its head in tab mode; home's feed sits closer to its head. */
+.pc--v2 { gap: 8px; padding: 16px 14px 14px; }
+.pc--v2 .pc-head { padding-bottom: 4px; }
+.pc--v2 .pc-sechead { padding: 9px 10px 9px 10px; gap: 9px; }
+.pc--v2 .pc-sec-ic, .pc--v2 [data-pc-bucket="evergreen"] .pc-sec-ic { width: 28px; height: 28px; border-radius: 8px; background: #e8eefb; color: #1e3a8a; }
+.pc--v2 .pc-sec-ic svg { width: 15px; height: 15px; }
+.pc--v2 .pc-seclabel { font-size: 0.74rem; letter-spacing: 0.07em; }
+.pc--v2 .pc-secsub { font-size: 0.76rem; }
+.pc--v2 .pc-links { padding: 0 10px 4px; }
+.pc--v2 .pc-row { padding: 8px 2px; }
+.pc--v2 .pc-row-name { font-size: 0.9rem; }
+.pc--v2 .pc-row-desc { font-size: 0.77rem; }
+/* The Feed tab is gone (1442), so the topic page's feed carries its head in tab mode too. */
+body.tt-on .topic-band .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head[class] { display: block !important; }
+/* Home: 32px from the head's rule to the first card was four small margins stacked; 12 now. */
+body.home-search .home-v2 #section-newsfeed .newsfeed-head[class][class] { margin-bottom: 6px !important; }
+body.home-search .home-v2 #section-newsfeed .news-list[class][class] { margin-top: 0 !important; }
