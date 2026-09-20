@@ -39258,3 +39258,59 @@ body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: flex
 .ec-stamp-pill .ec-stamp-moon, .ec-stamp .ec-stamp-moon { color: #d97706; }
 .ec-head .ec-headrow .ec-stamp-pill[class][class][class] svg.ec-stamp-moon,
 .dih-item .ec-stamp-pill[class][class] svg.ec-stamp-moon { width: 14px !important; height: 14px !important; }
+
+/* ═══ revamp1447 — the news card: source first, squarer buttons, level rows ═══
+   The meta line leads: the source pill (a step larger and darker — it is the
+   thing a reader scans for), a dot, the time, and the share mark on the right
+   edge. The headline sits under it. AI Insights takes a blue tint with a blue
+   spark; Read keeps its arrow; both lose most of their rounding. In the
+   two-column grid every card in a row stands the same height, with the
+   buttons on a shared baseline. */
+.news-card .news-card-foot--lead[class][class] {
+  padding: 0 0 8px !important; margin: 0 !important; border: 0 !important; width: 100%;
+}
+.news-card .news-card-foot--lead .news-card-meta {
+  display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0;
+}
+.news-card .news-card-foot--lead .news-card-source[class] {
+  font-size: 0.82rem !important; font-weight: 600 !important; color: #2b3a55 !important;
+  background: #eef1f6 !important; padding: 4px 10px !important; border-radius: 7px !important;
+  max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.news-card .news-card-foot--lead .news-card-meta-sep[class] { display: inline-block !important; color: #b3bccb; font-weight: 700; }
+.news-card .news-card-foot--lead .news-card-time[class] { font-size: 0.82rem; color: #7b8aa1; font-weight: 500; }
+.news-card .news-card-foot--lead .news-share-wrap { margin-left: auto; display: inline-flex; }
+.news-card .news-card-foot--lead .news-share-toggle[class] { width: 30px; height: 30px; color: #7b8aa1; }
+.news-card .news-card-foot--lead .news-share-toggle[class] svg { width: 18px; height: 18px; }
+#section-newsfeed .news-card .news-card-foot--lead + .news-card-link .news-card-title[class][class][class] { margin-top: 0 !important; }
+#section-newsfeed .news-list .news-card:first-child .news-card-link[class][class][class] { padding-top: 0 !important; }
+
+/* Buttons. */
+#section-newsfeed .news-card .news-act[class][class] {
+  border-radius: 8px !important; padding: 7px 13px !important; font-size: 0.82rem !important; font-weight: 600 !important;
+  color: #26375a !important; border-color: #cfd8e8 !important;
+}
+#section-newsfeed .news-card .news-act.news-act-ai[class][class]:not([aria-expanded="true"]) {
+  background: #eaf0fd !important; border-color: #c5d5f7 !important; color: #1d4ed8 !important;
+}
+#section-newsfeed .news-card .news-act.news-act-ai[class][class] .news-act-ai-spark,
+#section-newsfeed .news-card .news-act.news-act-ai[class][class] .news-ai-spark-filled { color: #1d4ed8; }
+@media (hover: hover) {
+  #section-newsfeed .news-card .news-act.news-act-ai[class][class]:not([aria-expanded="true"]):hover { background: #dfe8fb !important; border-color: #a9c0f2 !important; }
+  #section-newsfeed .news-card .news-act[class][class]:not(.news-act-ai):hover { background: #f1f4fa !important; border-color: #b9c6dd !important; color: #1e3a8a !important; }
+}
+
+/* Level rows: cards fill their grid row and pin the buttons to the bottom.
+   Only while closed — an open card grows into its insight panel. */
+@media (min-width: 720px) {
+  .topic-band #section-newsfeed .news-list[class][class] { align-items: stretch !important; }
+  .topic-band #section-newsfeed .news-list > .news-card:not(:has(.news-act-ai[aria-expanded="true"])) {
+    display: flex !important; flex-direction: column !important;
+  }
+  .topic-band #section-newsfeed .news-list > .news-card:not(:has(.news-act-ai[aria-expanded="true"])) > .news-card-body[class][class] {
+    flex: 1 1 auto !important; display: flex !important; flex-direction: column !important;
+  }
+  .topic-band .topic-home #section-newsfeed .news-list > .news-card:not(:has(.news-act-ai[aria-expanded="true"])) .news-card-actions[class][class][class][class] {
+    margin: auto 0 0 !important; padding-top: 18px !important;
+  }
+}

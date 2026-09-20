@@ -1002,13 +1002,11 @@ export function newsCardHTML(item) {
   // its right on wide screens (stacking below on phones via CSS).
   return `
     <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descFull.slice(0, 500))}" data-url="${escapeAttr(url)}" data-date="${escapeAttr(pubDate)}">
-      <a class="news-card-link"
-         href="${escapeAttr(safeUrl(url))}"
-         target="_blank"
-         rel="noopener noreferrer">
-        <h4 class="news-card-title">${escapeHTML(title)}</h4>
-      </a>
-      <div class="news-card-foot">
+      <!-- revamp1447: the meta line LEADS the card — source pill · time on the
+           left, share on the right — and the title sits under it. Same DOM
+           nodes as before, reordered, so the share panel and the open-state
+           rules keep working. -->
+      <div class="news-card-foot news-card-foot--lead">
         <div class="news-card-meta">
           ${metaParts.join('')}
           <span class="news-share-wrap">
@@ -1022,11 +1020,17 @@ export function newsCardHTML(item) {
           </span>
         </div>
       </div>
+      <a class="news-card-link"
+         href="${escapeAttr(safeUrl(url))}"
+         target="_blank"
+         rel="noopener noreferrer">
+        <h4 class="news-card-title">${escapeHTML(title)}</h4>
+      </a>
       <div class="news-card-body">
         ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
         <div class="news-card-actions">
-          ${aiEligible(pubDate) ? `<button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false"><span class="news-act-ai-spark" aria-hidden="true">${AI_SPARK_BTN}</span><span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close Insight</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>` : ''}
-          ${url ? `<a class="news-act" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
+          ${aiEligible(pubDate) ? `<button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false"><span class="news-act-ai-spark" aria-hidden="true">${AI_SPARK_BTN}</span><span class="news-act-ai-open">AI Insights</span><span class="news-act-ai-close">Close Insight</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>` : ''}
+          ${url ? `<a class="news-act" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span>Read</span>${NI_VIEW_SVG}</a>` : ''}
         </div>
       </div>
       <div class="news-panel" data-news-panel-body hidden></div>
