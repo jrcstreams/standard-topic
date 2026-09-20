@@ -39541,3 +39541,7 @@ body.tt-on #topic-tab-body .topic-home:not(.tview-brief):not(.tview-tools) #sect
 .ec--v2 .ec-btn--read[class][class][class] .ec-btn-chev { display: none !important; }
 html body.tt-on.app-mode.sticky-always.has-subnav:not(.home-search):has(.topic-home) #content[class][class],
 html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content[class][class] { padding-top: calc(var(--nav-h) + var(--subnav-height, 56px)) !important; }
+/* revamp1460b — #content carries no class attribute, so `#content[class]`
+   never matches (memory: reference_css_override_traps). :not(#_) adds the
+   weight without needing an attribute. */
+html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content:not(#_) { padding-top: calc(var(--nav-h) + var(--subnav-height, 56px)) !important; }
