@@ -39336,3 +39336,7 @@ body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: flex
 .topic-band .topic-home #section-newsfeed .news-card .news-card-foot--lead[class][class],
 body #section-newsfeed .news-card .news-card-foot--lead[class][class][class] { padding: 0 0 10px !important; }
 #section-newsfeed .news-list > .news-card[class][class][class] { padding-top: 12px !important; }
+/* revamp1447e — the card's top inset is set per first-child/tab-mode in six
+   places; pulling the meta row up 4px is the one change that lands everywhere. */
+.topic-band .topic-home #section-newsfeed .news-card .news-card-foot--lead[class][class],
+body #section-newsfeed .news-card .news-card-foot--lead[class][class][class] { margin-top: -4px !important; }
