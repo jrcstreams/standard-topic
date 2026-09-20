@@ -2021,7 +2021,7 @@ function editionCardHTML(o) {
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
         </div>
         <div class="ec-actions">
-          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Listen to Briefing</span><span class="ec-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span><span class="ec-btn-x" aria-hidden="true">${X}</span></button>
+          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Listen</span><span class="ec-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span><span class="ec-btn-x" aria-hidden="true">${X}</span></button>
           <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
             ${BOOK}<span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}<span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>
           </button>
@@ -2162,7 +2162,7 @@ function bindListen(card, ctl) {
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
     const stacked = window.matchMedia('(max-width: 639.98px)').matches;
     btn.classList.toggle('is-drop', open && stacked);
-    if (lbl) lbl.textContent = (open && !stacked) ? 'Close audio player' : 'Listen to Briefing';
+    if (lbl) lbl.textContent = (open && !stacked) ? 'Close player' : 'Listen';
   };
   btn._ecSync = sync;
   btn.addEventListener('click', () => {
@@ -2381,7 +2381,9 @@ function applyBriefArt(root, iso) {
 // edition, "Mon, Sep 15 • 5:00 AM ET". No calendar glyph.
 const EC_SUN = '<svg class="ec-stamp-sun" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
 // revamp1433: the evening edition wears a moon.
-const EC_MOON = '<svg class="ec-stamp-sun ec-stamp-moon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a7 7 0 1 0 10.5 10.5z"/></svg>';
+// revamp1446: the moon is filled — a hairline crescent at 15px read as a
+// smudge beside the sun's rays; a solid one at 16px reads as night.
+const EC_MOON = '<svg class="ec-stamp-sun ec-stamp-moon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 function ecStampHTML(iso) {
   try {
     const d = new Date(iso);

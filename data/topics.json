@@ -32,14 +32,15 @@
     },
     {
       "slug": "business-finance",
-      "name": "Business & Finance",
+      "name": "Business",
       "parent": null,
       "color": "#1d4ed8",
       "rssFeedId": "_kZkFaljmg10MQaf4",
       "webhookEnabled": false,
       "icon": "briefcase",
       "featured": true,
-      "tier": 1
+      "tier": 1,
+      "scope": "business, finance, markets and the economy"
     },
     {
       "slug": "technology",
@@ -54,14 +55,15 @@
     },
     {
       "slug": "artificial-intelligence",
-      "name": "Artificial Intelligence",
+      "name": "AI",
       "parent": null,
       "color": "#0891b2",
       "rssFeedId": "_8jzF02HttCpLy5ce",
       "webhookEnabled": false,
       "icon": "sparkles",
       "featured": true,
-      "tier": 1
+      "tier": 1,
+      "scope": "artificial intelligence — models, labs, policy, research and how AI is used"
     },
     {
       "slug": "sports",
@@ -131,25 +133,27 @@
     },
     {
       "slug": "arts-culture",
-      "name": "Arts & Culture",
+      "name": "Culture",
       "parent": null,
       "color": "#be185d",
       "rssFeedId": "_CZeepr2xz5bDZqP4",
       "webhookEnabled": false,
       "icon": "palette",
       "featured": true,
-      "tier": 1
+      "tier": 1,
+      "scope": "arts, books, design, fashion, food and the wider world of culture"
     },
     {
       "slug": "health-wellness",
-      "name": "Health & Wellness",
+      "name": "Health",
       "parent": null,
       "color": "#0f766e",
       "rssFeedId": "_bIG9BwtK6iHQAWl4",
       "webhookEnabled": false,
       "icon": "heart-pulse",
       "featured": true,
-      "tier": 1
+      "tier": 1,
+      "scope": "health, medicine, wellness, fitness and nutrition"
     },
     {
       "slug": "education",
