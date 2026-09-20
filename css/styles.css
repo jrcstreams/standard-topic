@@ -39324,3 +39324,7 @@ body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: flex
 .news-card .news-card-foot--lead .news-card-meta-sep[class][class] { font-size: 1.15em; line-height: 1; color: #9aa6ba; margin: 0 2px; }
 .news-card .news-card-foot--lead .news-card-time[class][class] { font-size: 0.86rem; color: #6b7a92; }
 #section-newsfeed .news-card .news-act[class][class][class] { padding: 6px 13px !important; }
+/* revamp1447c — no count beside the bucket heads (the "All N" link already
+   says it where it matters); the source label a touch smaller. */
+.pc-seccount { display: none !important; }
+.news-card .news-card-foot--lead .news-card-source[class][class][class] { font-size: 0.78rem !important; padding: 4px 11px !important; }
