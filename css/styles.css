@@ -39509,3 +39509,7 @@ body.home-search .home-v2 #section-newsfeed .news-list[class][class] { margin-to
 body.home-search .home-v2 #section-newsfeed .newsfeed-head[class][class][class] { margin-bottom: 12px !important; }
 body.home-search #home-pcard { order: 0; }
 body.home-search #home-trending { order: 1; }
+/* revamp1455 — Prompts page: no topic tag on featured rows; the first topic
+   accordions clear the section rule. */
+#content .prompts-home--v2 .ph-lib .ph-body[class] { padding-top: 6px; }
+#content .prompts-home--v2 .ph-lib .ph-sec-head[class][class] { margin-bottom: 22px !important; }

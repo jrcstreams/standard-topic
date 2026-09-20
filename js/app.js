@@ -1527,7 +1527,7 @@ function wirePromptsDropdown(panel, initialView) {
         // three-level card the topic pages use.
         try {
           dirCtls.push(renderPromptCard(rail, {
-            topic: '', slug: '', head: false, flat: true, topicTag: true,
+            topic: '', slug: '', head: false, flat: true,
             shortcuts: picks.map((pk) => ({
               ...pk.sh, evergreen: false, _topic: pk.topic.name,
               prompt: resolveTopicPlaceholder(pk.sh.prompt, pk.topic.name),
