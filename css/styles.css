@@ -39328,3 +39328,11 @@ body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: flex
    says it where it matters); the source label a touch smaller. */
 .pc-seccount { display: none !important; }
 .news-card .news-card-foot--lead .news-card-source[class][class][class] { font-size: 0.78rem !important; padding: 4px 11px !important; }
+/* revamp1447d — measured on prod: the foot's 14px never landed. Line 18179's
+   `.topic-band .topic-home #section-newsfeed .news-card .news-card-foot`
+   carries an id and !important, (1,4,0), and out-ranks a class-only chain.
+   Same shape, one class heavier. And the card's top inset comes down 4px so
+   the meta row does not float. */
+.topic-band .topic-home #section-newsfeed .news-card .news-card-foot--lead[class][class],
+body #section-newsfeed .news-card .news-card-foot--lead[class][class][class] { padding: 0 0 10px !important; }
+#section-newsfeed .news-list > .news-card[class][class][class] { padding-top: 12px !important; }
