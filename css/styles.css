@@ -39513,3 +39513,11 @@ body.home-search #home-trending { order: 1; }
    accordions clear the section rule. */
 #content .prompts-home--v2 .ph-lib .ph-body[class] { padding-top: 6px; }
 #content .prompts-home--v2 .ph-lib .ph-sec-head[class][class] { margin-bottom: 22px !important; }
+/* revamp1457 — Prompts page: 24px from the By Topic rule to the first
+   accordion (12 was tight, 40 too far); on phones Featured shows five rows
+   and a "View more prompts" button. */
+#content .prompts-home--v2 .ph-lib .ph-sec-head[class][class][class] { margin-bottom: 6px !important; }
+@media (max-width: 899.98px) {
+  #content .prompts-home--v2 .ph-featured:not(.is-expanded) .pc--v2 .pc-item:nth-child(n+6) { display: none !important; }
+  #content .prompts-home--v2 .ph-featured .ph-flist-more:not([hidden]) { display: inline-flex !important; margin-top: 12px; }
+}

@@ -1537,10 +1537,10 @@ function wirePromptsDropdown(panel, initialView) {
         sec.hidden = false;
         const moreBtn = sec.querySelector('[data-ph-more]');
         if (moreBtn) {
-          const CAP = 6;
+          const CAP = 5;   // revamp1457: phones show five, then "View more prompts"
           if (picks.length > CAP) {
             moreBtn.hidden = false;
-            const sync = () => { moreBtn.textContent = sec.classList.contains('is-expanded') ? 'Show less' : 'Show more'; };
+            const sync = () => { moreBtn.textContent = sec.classList.contains('is-expanded') ? 'Show fewer' : 'View more prompts'; };
             sync();
             moreBtn.addEventListener('click', () => { sec.classList.toggle('is-expanded'); sync(); });
           }

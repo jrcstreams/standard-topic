@@ -42,7 +42,11 @@ const SUB = {
   tracker: 'Helpful tools, comparisons and lists.',
   evergreen: 'Timeless prompts for deeper exploration.',
 };
-const NARROW = () => { try { return window.matchMedia('(max-width: 899.98px)').matches; } catch (_) { return false; } };
+// "Stacked" is the page's call, not the viewport's: the topic page goes
+// single-column (body.tt-on) on CONTENT width, so a docked sidebar stacks
+// the page at viewports the media query still calls wide. Either signal
+// means folded.
+const NARROW = () => { try { return document.body.classList.contains('tt-on') || window.matchMedia('(max-width: 899.98px)').matches; } catch (_) { return false; } };
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 function bucketLabels() {
@@ -136,8 +140,13 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
   // The layout crossing 900px changes what "open by default" means; the card
   // re-renders to the new default (a rendered-wide card carried its open
   // sections into the stacked layout otherwise).
-  let mq = null;
+  let mq = null; let mo = null; let wasNarrow = NARROW();
+  function onCross() {
+    if (!host.isConnected) { try { mq && mq.removeEventListener('change', onCross); mo && mo.disconnect(); } catch (_) {} return; }
+    const now = NARROW(); if (now === wasNarrow) return; wasNarrow = now;
+    openSecs = defaultOpen(); expanded.clear(); render();
+  }
   try { mq = window.matchMedia('(max-width: 899.98px)'); mq.addEventListener('change', onCross); } catch (_) {}
-  function onCross() { if (!host.isConnected) { try { mq.removeEventListener('change', onCross); } catch (_) {} return; } openSecs = defaultOpen(); expanded.clear(); render(); }
-  return { destroy() { unmount(); try { mq && mq.removeEventListener('change', onCross); } catch (_) {} host.innerHTML = ''; }, reset() { openSecs = defaultOpen(); expanded.clear(); render(); } };
+  try { mo = new MutationObserver(onCross); mo.observe(document.body, { attributes: true, attributeFilter: ['class'] }); } catch (_) {}
+  return { destroy() { unmount(); try { mq && mq.removeEventListener('change', onCross); mo && mo.disconnect(); } catch (_) {} host.innerHTML = ''; }, reset() { openSecs = defaultOpen(); expanded.clear(); render(); } };
 }
