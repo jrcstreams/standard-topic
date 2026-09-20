@@ -1239,7 +1239,7 @@ function wirePromptDirectory(root, ctls) {
       // bucket in full (Snapshots · Tools & Trackers · Evergreen), the card's
       // own head left off because the accordion head already names the topic.
       try {
-        const c = renderPromptCard(host, { topic: name, slug, shortcuts, peek: Infinity, head: false });
+        const c = renderPromptCard(host, { topic: name, slug, shortcuts, head: false, openAll: true });
         if (ctls) ctls.push(c);
       } catch (err) {
         console.error('prompt directory mount failed', slug, err);
@@ -1527,7 +1527,7 @@ function wirePromptsDropdown(panel, initialView) {
         // three-level card the topic pages use.
         try {
           dirCtls.push(renderPromptCard(rail, {
-            topic: '', slug: '', head: false, flat: true, topicTag: true, peek: Infinity,
+            topic: '', slug: '', head: false, flat: true, topicTag: true,
             shortcuts: picks.map((pk) => ({
               ...pk.sh, evergreen: false, _topic: pk.topic.name,
               prompt: resolveTopicPlaceholder(pk.sh.prompt, pk.topic.name),
@@ -5661,7 +5661,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       if (host) {
         let sc = []; try { sc = (getShortcutsForTopic('home') || []).filter((s) => s && s.prompt); } catch (_) {}
         renderPromptCard(host, {
-          topic: '', slug: 'home', subtitle: 'Ready-made prompts for today’s news',
+          topic: '', slug: 'home',
           shortcuts: sc.map((s) => ({ ...s, prompt: resolveTopicPlaceholder(s.prompt, 'the news') })),
         });
       }
