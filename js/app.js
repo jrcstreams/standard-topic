@@ -617,14 +617,12 @@ function topicPickerPanelHTML(topic, panelId) {
     <div class="tsp-panelwrap">
       <div class="tsp-panel" id="${escapeHTML(panelId)}" role="region" aria-label="Browse topics">
         <div class="tsp-panel-inner">
-          <div class="tsp-actions">
-            <a href="#" class="tsp-foot-btn" data-tsp-all>${GRID_IC}<span>View All Topics</span></a>
-            <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary" data-tsp-search><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
-            <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${TSP_X_IC}</button>
-          </div>
           <div class="tsp-scroll">
             <div class="tsp-group-label">${flat ? 'All Topics' : 'Related Topics'}</div>
-            <div class="tsp-grid">${(() => {
+            <div class="tsp-grid"><a href="#/search" class="tsp-cell tsp-cell--search" data-tsp-search>
+      <span class="tsp-cell-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <span class="tsp-cell-name">Search Custom Topic</span>
+    </a>${(() => {
               // ACTIVE page first, parent second (unless the parent IS active),
               // then the rest in their designated order (#img121).
               const rest = family.filter((t) => t.slug !== parent.slug && t.slug !== topic.slug);
@@ -668,14 +666,12 @@ function homeSubnavPickerHTML() {
       <div class="tsp-panelwrap">
         <div class="tsp-panel" id="tsp-panel-home" role="region" aria-label="Browse topics">
           <div class="tsp-panel-inner">
-            <div class="tsp-actions">
-              <a href="#" class="tsp-foot-btn" data-tsp-all>${GRID_IC}<span>View All Topics</span></a>
-              <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary" data-tsp-search><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
-              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${TSP_X_IC}</button>
-            </div>
             <div class="tsp-scroll">
               <div class="tsp-group-label">Featured Topics</div>
-              <div class="tsp-grid">${featured.map(cellHTML).join('')}</div>
+              <div class="tsp-grid"><a href="#/search" class="tsp-cell tsp-cell--search" data-tsp-search>
+      <span class="tsp-cell-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <span class="tsp-cell-name">Search Custom Topic</span>
+    </a>${featured.map(cellHTML).join('')}</div>
             </div>
           </div>
         </div>
@@ -710,6 +706,9 @@ const PAGE_PICKER_ITEMS = [
   { key: 'intelligence', name: 'AI Briefings', href: '#/intelligence' },
   { key: 'trending', name: 'Trending', href: '#/trending' },
   { key: 'prompts', name: 'AI Prompts', href: '#/prompts' },
+  // revamp1461: Topics and Search are rows in the list, not a bar above it.
+  { key: 'topics', name: 'Topics', href: '#/topics' },
+  { key: 'search', name: 'Search', href: '#/search' },
 ];
 // revamp1278: the panel on its own, so a hero can host a second instance of the
 // picker without duplicating the trigger markup.
@@ -778,11 +777,6 @@ function pagePickerPanelOnlyHTML(activeKey, panelId) {
   return `<div class="tsp-panelwrap">
         <div class="tsp-panel" id="${escapeAttr(panelId)}" role="region" aria-label="Choose page">
           <div class="tsp-panel-inner">
-            <div class="tsp-actions">
-              <a href="#/topics" class="tsp-foot-btn"${activeKey === 'topics' ? ' aria-current="page"' : ''}>${PAGE_PICKER_ICONS.topics || ''}<span>View All Topics</span></a>
-              <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary"${activeKey === 'search' ? ' aria-current="page"' : ''}>${SEARCH_IC}<span>Search Custom Topic</span></a>
-              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${TSP_X_IC}</button>
-            </div>
             <div class="tsp-scroll">
               <div class="tsp-group-label">Choose Page</div>
               <div class="tsp-grid">${PAGE_PICKER_ITEMS.map(cell).join('')}</div>
@@ -2010,7 +2004,10 @@ function editionCardHTML(o) {
       <div class="ec ec--v2">
         <div class="ec-head">
           <div class="ec-headrow">
-            <h3 class="tdi-brieftitle ec-title">${escapeHTML(o.cardTitle || homeEditionTitle())}</h3>
+            <div class="ec-titlewrap">
+              <h3 class="tdi-brieftitle ec-title">The Main Briefing</h3>
+              <span class="ec-edlabel" data-ec-edlabel>${escapeHTML(homeEditionTitle().replace(/Briefing$/, 'Edition'))}</span>
+            </div>
             <div class="ec-stamp" data-ec-stamp></div>
           </div>
           <div class="ec-stamp ec-stamp--below" data-ec-stamp></div>
@@ -2399,6 +2396,8 @@ function ecStampHTML(iso) {
 }
 function fillEcStamp(card, iso) {
   if (!card || !iso) return;
+  // revamp1461: the edition sub-label follows the brief that loaded.
+  try { const el = card.querySelector('[data-ec-edlabel]'); if (el) el.textContent = editionTitleFor(iso).replace(/Briefing$/, 'Edition'); } catch (_) {}
   const html = ecStampHTML(iso);
   if (html) card.querySelectorAll('[data-ec-stamp]').forEach((el) => { el.innerHTML = html; });
 }
@@ -2943,7 +2942,17 @@ function renderIntelligenceHub(container) {
         // the section it sits in, and the topic/date it carried are now the
         // briefing's own masthead line (topic pill · date · updated).
         if (title) title.innerHTML = '';
-        if (host) { host.innerHTML = ''; renderDailyIntelligence(host, { topic: name, label: name, slug, inline: true }); }
+        // revamp1461: the open briefing's masthead is the TOPIC — its tile and
+        // name, the sun/moon stamp on the right — with the edition as the small
+        // caps kicker under it, the way the topic page's card reads.
+        const tObj = getTopicBySlug(slug) || { name, slug, icon: 'globe' };
+        const mastHTML = (iso) => `<div class="di-mast-toprow">
+            <span class="di-mast-ic" aria-hidden="true">${topicIconSVG(tObj.icon || 'globe', '')}</span>
+            <h2 class="di-mast-name">${escapeHTML(tObj.name || name)}</h2>
+            ${iso ? `<span class="ec-stamp di-mast-stamp">${ecStampHTML(iso)}</span>` : ''}
+          </div>
+          <div class="di-mast-kicker">${escapeHTML(editionTitleFor(iso))}</div>`;
+        if (host) { host.innerHTML = ''; renderDailyIntelligence(host, { topic: name, label: name, slug, inline: true, mastHTML, mastStyle: topicColorStyle(tObj) }); }
         group.querySelectorAll('[data-dih-item].is-openitem').forEach((b) => b.classList.remove('is-openitem'));
         btn.classList.add('is-openitem');
         placeBrief(group, btn);

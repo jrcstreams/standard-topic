@@ -39545,3 +39545,45 @@ html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content[
    never matches (memory: reference_css_override_traps). :not(#_) adds the
    weight without needing an attribute. */
 html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content:not(#_) { padding-top: calc(var(--nav-h) + var(--subnav-height, 56px)) !important; }
+
+/* ═══ revamp1461 ═══════════════════════════════════════════════════════════
+   (1) The page and topic pickers: no grey bar. Topics and Search are rows in
+       the page list; Search Custom Topic is the first row of the topic list.
+   (2) The Main Briefing: home and the hub lead say so, with the edition as a
+       sub-label under the standfirst; the stamp keeps its place on the row.
+   (3) The hub's opened topic briefing: tile + name + stamp, edition kicker.
+   (4) Smaller Read / Listen on phones; the ✕ clears the stamp when open.
+   (5) The prompts card wears the briefing card's frame. */
+.tsp-actions { display: none !important; }
+.tsp-cell--search .tsp-cell-ic { color: #1e3a8a; }
+.tsp-cell--search .tsp-cell-name { color: #1e3a8a; font-weight: 650; }
+.tsp-cell--search { border-bottom: 1px solid #e6ebf4; margin-bottom: 4px; padding-bottom: 6px; border-radius: 0; }
+
+.ec-titlewrap { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ec-edlabel { font-family: var(--font-family); font-size: 0.82rem; font-weight: 550; color: #6b7a92; letter-spacing: 0.01em; text-transform: none; }
+.ec-head .ec-headrow:has(.ec-titlewrap)[class][class] { align-items: flex-start !important; }
+.ec-head .ec-headrow:has(.ec-titlewrap) .ec-stamp[class][class] { margin-top: 1px; }
+.dih-edition .ec-btn--topics[class][class][class][class][class][class][class][class][class] { display: none !important; }
+
+.di-mast--topic .di-mast-toprow { display: flex; align-items: center; gap: 10px; }
+.di-mast-ic { width: 34px; height: 34px; border-radius: 9px; flex: none; display: inline-flex; align-items: center; justify-content: center; background: var(--tc, #1e3a8a); color: #fff; }
+.di-mast-ic svg { width: 18px; height: 18px; }
+.di-mast-name { margin: 0; flex: 1 1 auto; min-width: 0; font-family: var(--font-display, var(--font-family)); font-size: 1.4rem; font-weight: 750; letter-spacing: -0.01em; color: #14213d; line-height: 1.15; }
+.di-mast-stamp { margin-left: auto; flex: none; }
+.di-mast-kicker { margin: 10px 0 0; font-family: var(--font-family); font-size: 0.84rem; font-weight: 750; letter-spacing: 0.085em; text-transform: uppercase; color: #4c5c80; }
+.di-mast--topic .di-metaline .di-metagrp, .di-mast--topic .di-metaline .di-metasep--prov { display: none !important; }
+.di-mast--topic .di-metaline { margin-top: 10px; }
+.di-focus .di-dayhead[class][class][class] { margin-bottom: 8px !important; }
+.di-focus .di-dayhead + *[class] { margin-top: 0 !important; }
+
+@media (max-width: 899.98px) {
+  .ec--v2 .ec-actions .ec-btn--listen[class][class][class][class][class][class][class],
+  .ec--v2 .ec-actions .ec-btn--read[class][class][class][class][class][class][class] {
+    height: 36px !important; min-height: 36px !important; font-size: 0.84rem !important; padding: 0 14px !important; gap: 6px !important;
+  }
+  .ec--v2 .ec-actions .ec-btn--read[class][class][class][class][class][class][class] > svg,
+  .ec--v2 .ec-actions .ec-btn--listen[class][class][class][class][class][class][class] > svg { width: 15px !important; height: 15px !important; }
+}
+.tdi-card--edition.is-open .ec-head[class][class] { padding-right: 46px !important; }
+
+.pc--v2, .home-v2 .home-side #home-pcard .pc--v2 { border: 1px solid #ccd5e4 !important; border-radius: 6px !important; }

@@ -2648,9 +2648,9 @@ export function renderDailyIntelligence(container, scope) {
     // so the briefing opens straight into Top Stories.
     const chrome = scope.chrome !== false;
     body.innerHTML = `
-      ${chrome ? `<div class="di-mast di-mast--v2">
-        ${mastEyebrow}
-        <h2 class="di-title">${briefTitle}</h2>
+      ${chrome ? `<div class="di-mast di-mast--v2${typeof scope.mastHTML === 'function' ? ' di-mast--topic' : ''}"${scope.mastStyle || ''}>
+        ${typeof scope.mastHTML === 'function' ? scope.mastHTML(data.generatedAt || '') : `${mastEyebrow}
+        <h2 class="di-title">${briefTitle}</h2>`}
         <div class="di-metaline">
           ${whenHTML ? `<span class="di-metagrp">${whenHTML}</span><span class="di-metasep di-metasep--prov" aria-hidden="true"></span>` : ''}
           ${provBtn}
