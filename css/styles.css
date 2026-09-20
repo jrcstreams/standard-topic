@@ -39361,3 +39361,13 @@ body #section-newsfeed .news-card .news-card-foot--lead[class][class][class] { p
 .news-card .news-card-foot--lead .news-card-meta { gap: 9px; }
 .news-card .news-card-foot--lead .news-share-wrap { position: relative; }
 .news-card .news-card-foot--lead .news-share-panel[class] { left: auto !important; right: 0 !important; }
+/* revamp1448 — the search page's tabs went underlined in 1337, but the old
+   pill era left `.stz-tab.is-active[class][class]:hover` (solid navy) at a
+   weight the reset never matched: hovering the tab you just clicked filled
+   it blue. Every state of an underlined tab has no fill. */
+.stz-tab.is-active[class][class][class],
+.stz-tab.is-active[class][class][class]:hover,
+.stz-tab.is-active[class][class][class]:focus,
+.stz-tab[class][class][class]:focus,
+.stz-tab[class][class][class]:active { background: none !important; box-shadow: none !important; }
+.stz-tab[class][class][class]:focus-visible { outline: 2px solid #2c4f9e; outline-offset: 2px; }
