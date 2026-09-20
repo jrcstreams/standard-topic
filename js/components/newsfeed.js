@@ -997,7 +997,8 @@ export function newsCardHTML(item) {
   if (host && rel) metaParts.push(`<span class="news-card-meta-sep" aria-hidden="true">·</span>`);
   if (rel) metaParts.push(`<time class="news-card-time">${escapeHTML(rel)}</time>`);
   // revamp1450: on the ranked home feed, how many publishers ran the story.
-  if (item && Number.isFinite(item._coverage) && item._coverage > 1) metaParts.push(`<span class="news-card-cov" title="${escapeAttr((item._sources || []).join(', '))}">${item._coverage} sources</span>`);
+  // revamp1452: the coverage count stays server-side — John does not want it on the card.
+  if (false && item && Number.isFinite(item._coverage) && item._coverage > 1) metaParts.push(`<span class="news-card-cov" title="${escapeAttr((item._sources || []).join(', '))}">${item._coverage} sources</span>`);
 
   // Layout (#img163/164): title on top, then ONE meta line (source · time ·
   // share), then a body row — summary left, View Story / AI Insights pills to
