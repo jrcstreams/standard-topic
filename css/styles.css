@@ -39521,3 +39521,12 @@ body.home-search #home-trending { order: 1; }
   #content .prompts-home--v2 .ph-featured:not(.is-expanded) .pc--v2 .pc-item:nth-child(n+6) { display: none !important; }
   #content .prompts-home--v2 .ph-featured .ph-flist-more:not([hidden]) { display: inline-flex !important; margin-top: 12px; }
 }
+/* revamp1459 — the stacked topic page. Two leftovers from the tab strip that
+   revamp1442 removed:
+   (1) #content still reserved var(--tt-tabstrip-h) — 56px of nothing above
+       the briefing;
+   (2) the feed head was hidden by a rule with two ids (the Feed tab named
+       the section then). The strip is gone, so both stand down. */
+html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content[class],
+html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content { padding-top: calc(var(--nav-h) + var(--subnav-height, 56px)) !important; }
+body.tt-on #topic-tab-body .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head[class][class] { display: block !important; }
