@@ -39530,3 +39530,14 @@ body.home-search #home-trending { order: 1; }
 html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content[class],
 html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content { padding-top: calc(var(--nav-h) + var(--subnav-height, 56px)) !important; }
 body.tt-on #topic-tab-body .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head[class][class] { display: block !important; }
+/* revamp1460 — "View all snapshots" is a plain centred link, like "View all
+   trending"; Read Briefing is never full width (the phone stack stretched it
+   when it stood alone); the stacked page's reserved tab-strip space is
+   cleared at every width the old rules reached. */
+.pc--v2 .pc-more { border: 0; background: none; padding: 8px 4px 4px; margin: 2px 0 2px; font-size: 0.86rem; font-weight: 650; color: #1d4ed8; }
+@media (hover: hover) { .pc--v2 .pc-more:hover { background: none; text-decoration: underline; text-underline-offset: 3px; } }
+.ec--v2 .ec-actions .ec-btn--read[class][class][class][class][class][class][class] { width: auto !important; flex: 0 0 auto !important; padding: 0 16px !important; }
+.ec--v2 .ec-btn--read[class][class][class] > svg:last-of-type { display: inline-block !important; }
+.ec--v2 .ec-btn--read[class][class][class] .ec-btn-chev { display: none !important; }
+html body.tt-on.app-mode.sticky-always.has-subnav:not(.home-search):has(.topic-home) #content[class][class],
+html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content[class][class] { padding-top: calc(var(--nav-h) + var(--subnav-height, 56px)) !important; }
