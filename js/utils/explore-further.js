@@ -197,7 +197,9 @@ export function exploreFurtherHTML(opts = {}) {
       return `<a class="xf-web-row" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="xf-web-tx"><span class="xf-web-name">${esc(s.name)}</span>${s.description ? `<span class="xf-web-desc">${esc(s.description)}</span>` : ''}</span>${EXT}</a>`;
     }).join('');
     // revamp1302: no subtext on the row — the name says it, as the prompts list's rows do.
-    const desc = '';
+    // revamp1449: the search page asks for it back (opts.catDesc) — its rows are
+    // the whole section, and a category name alone does not say what opens.
+    const desc = opts.catDesc ? (cat.description || cat.blurb || '') : '';
     const icon = CAT_ICON[cat.key] || CAT_ICON.__other;
     // The category blurb rides in the SUMMARY as row subtext (matching the topic
     // page's AI Insights rows) rather than hiding inside the open panel — so a

@@ -7109,33 +7109,44 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     if (aiiSearchCtl && aiiSearchCtl.destroy) { try { aiiSearchCtl.destroy(); } catch (_) {} }
     aiiSearchCtl = null;
   }
+  // revamp1449: the search results are ONE page, not three tabs. Prompts,
+  // then Web Resources, then News, each under its own head — the four
+  // evergreen prompts as name-and-subtext rows that open in place, the web
+  // categories as rows that open to their platforms, the news as the feed.
+  // The tab strip in the top zone is gone; syncSearchTabs is kept as a no-op
+  // for the callers that still ask.
   function mountAii(t, opts) {
     destroyAii();
-    resultsInner.innerHTML = '';
-    const aiHost = document.createElement('div');
-    aiHost.className = 'search-aii-host';
-    resultsInner.appendChild(aiHost);
-    aiiSearchCtl = renderAIIntelligence(aiHost, customAiiScope(t, opts));
-    // revamp1054: relocate the results-filter tabs into the search top-zone
-    // (centered under the bar, on the coloured band) as icon pills. The
-    // component's own flat-nav is hidden; these mirror + drive it.
-    requestAnimationFrame(() => syncSearchTabs(aiHost));
+    resultsInner.innerHTML = `
+      <div class="sr" data-sr>
+        <section class="sr-sec sr-sec--prompts">
+          <h3 class="sr-h"><span class="sr-h-ic" aria-hidden="true">${SEARCH_TAB_ICON.external || ''}</span><span>Prompts</span></h3>
+          <div class="sr-body prompts-topic-host" data-sr-prompts></div>
+        </section>
+        <section class="sr-sec sr-sec--web">
+          <h3 class="sr-h"><span class="sr-h-ic" aria-hidden="true">${SEARCH_TAB_ICON.explore || ''}</span><span>Web Resources</span></h3>
+          <div class="sr-body search-xf" data-sr-web></div>
+        </section>
+        <section class="sr-sec sr-sec--news"${opts && opts.news ? '' : ' hidden'}>
+          <h3 class="sr-h"><span class="sr-h-ic" aria-hidden="true">${SEARCH_TAB_ICON.news || ''}</span><span>News</span></h3>
+          <div class="sr-body" data-sr-news></div>
+        </section>
+      </div>`;
+    const scope = customAiiScope(t, opts);
+    const pHost = resultsInner.querySelector('[data-sr-prompts]');
+    aiiSearchCtl = renderAIIntelligence(pHost, {
+      inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+      promptsOnly: 'evergreen',
+      topic: t, label: t, descriptions: scope.descriptions, icons: scope.icons,
+      shortcuts: (scope.shortcuts || []).map((sc) => ({ ...sc, prompt: resolveTopicPlaceholder(sc.prompt, t) })),
+    });
+    const wHost = resultsInner.querySelector('[data-sr-web]');
+    wHost.innerHTML = exploreFurtherHTML({ webTerm: t, name: t, omitAI: true, catDesc: true });
+    try { wireExploreFurther(wHost); } catch (_) {}
+    if (opts && opts.news) renderSearchNewsInto(resultsInner.querySelector('[data-sr-news]'), t);
+    const slot = panelEl.querySelector('[data-search-tabs-slot]'); if (slot) slot.innerHTML = '';
   }
-  // Mirror the component's flat-nav as centered icon-pill tabs in the top zone.
-  function syncSearchTabs(aiHost) {
-    const slot = panelEl.querySelector('[data-search-tabs-slot]');
-    if (!slot || !aiHost.isConnected) return;
-    const flatnav = aiHost.querySelector('.aii-flatnav');
-    if (!flatnav) { slot.innerHTML = ''; return; }
-    const tabs = [...flatnav.querySelectorAll('.aii-ftab')].map((b) => ({
-      group: b.dataset.tabGroup, label: b.textContent.trim(), active: b.classList.contains('is-active'),
-    }));
-    slot.innerHTML = tabs.map((tb) => `<button type="button" class="stz-tab${tb.active ? ' is-active' : ''}" data-stz-group="${escapeAttr(tb.group)}">${SEARCH_TAB_ICON[tb.group] || ''}<span>${escapeHTML(tb.label)}</span></button>`).join('');
-    slot.querySelectorAll('[data-stz-group]').forEach((btn) => btn.addEventListener('click', () => {
-      aiHost.querySelector(`.aii-ftab[data-tab-group="${btn.dataset.stzGroup}"]`)?.click();
-      requestAnimationFrame(() => syncSearchTabs(aiHost));
-    }));
-  }
+  function syncSearchTabs() { /* revamp1449: no tabs */ }
   // (Re)render the results for a term. External Insights + Web Search are always
   // present; News + Trending tabs are added only when they have items, so we fetch
   // both first (cached per term), then mount the card with the right tab set.

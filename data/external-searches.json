@@ -2,23 +2,28 @@
   "categories": [
     {
       "key": "search",
-      "label": "Search & Reference"
+      "label": "Search & Reference",
+      "description": "DuckDuckGo News, Google News, Wikipedia and 3 more"
     },
     {
       "key": "noai",
-      "label": "No AI Web Sources"
+      "label": "No AI Web Sources",
+      "description": "NoAI DuckDuckGo Search, NoAI DuckDuckGo News, Startpage and 1 more"
     },
     {
       "key": "social",
-      "label": "Social, Discussion & Writing"
+      "label": "Social, Discussion & Writing",
+      "description": "Reddit, X (Twitter), Bluesky and 5 more"
     },
     {
       "key": "media",
-      "label": "Audio & Video"
+      "label": "Audio & Video",
+      "description": "YouTube, TikTok, Apple Podcasts and 3 more"
     },
     {
       "key": "factcheck",
-      "label": "Media Bias & Fact-Check"
+      "label": "Media Bias & Fact-Check",
+      "description": "Ground News, AllSides, Snopes and 1 more"
     }
   ],
   "searches": [
