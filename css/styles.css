@@ -39314,3 +39314,13 @@ body.tt-on #content .prompts-home--v2 .ph-lib .ph-sec-head--card { display: flex
     margin: auto 0 0 !important; padding-top: 18px !important;
   }
 }
+/* revamp1447b — the meta row, by the mock: more air under it (14px to the
+   headline), the source at a medium weight in a softer navy on a paler pill,
+   a real dot between it and the time, and the buttons a hair shorter. */
+.news-card .news-card-foot--lead[class][class][class] { padding: 2px 0 14px !important; }
+.news-card .news-card-foot--lead .news-card-source[class][class] {
+  font-weight: 500 !important; color: #3a4a66 !important; background: #f0f3f9 !important; padding: 5px 12px !important;
+}
+.news-card .news-card-foot--lead .news-card-meta-sep[class][class] { font-size: 1.15em; line-height: 1; color: #9aa6ba; margin: 0 2px; }
+.news-card .news-card-foot--lead .news-card-time[class][class] { font-size: 0.86rem; color: #6b7a92; }
+#section-newsfeed .news-card .news-act[class][class][class] { padding: 6px 13px !important; }
