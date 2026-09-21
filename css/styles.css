@@ -39774,3 +39774,15 @@ body.nav-docked .trail--hero { display: none !important; }
 @media (max-width: 899.98px) {
   .di-focus--bare .di-summary[class][class][class] { font-size: 0.94rem; line-height: 1.6; }
 }
+
+/* ── revamp1466: the briefings page takes the site's reading measure ───────
+   revamp1420 gave this one page a 1720px cap, on the reasoning that it was a
+   two-column directory with somewhere to put the width. It is not that any
+   more: the main briefing opens full-width, and since revamp1465 it opens
+   with a paragraph of prose, so at 1900px the summary ran to ~180 characters
+   a line while every other page held 1280px. The two-column grid of topic
+   cards still fits at 1280 (two 597px tracks), so nothing is lost by taking
+   the same measure as Home, Topics and the topic pages.
+   `#content` has NO class attribute — `[class]` never matches it — so the
+   weight comes from a second id in `:not()`. */
+#content:not(#_):has(> .dih) { max-width: var(--max-width, 1280px) !important; }
