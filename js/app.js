@@ -701,14 +701,14 @@ const PAGE_PICKER_ICONS = {
 // revamp1181: View All Topics / Search Custom Topic are no longer rows in the
 // page list — they are the actions row above the separator, exactly as the topic
 // pages' "Change Topic" picker has them. The list below is pages only.
+// revamp1463: the sidebar's order, so the two readings of the site agree.
 const PAGE_PICKER_ITEMS = [
   { key: 'home', name: 'Home', href: '#/' },
+  { key: 'search', name: 'Search', href: '#/search' },
+  { key: 'topics', name: 'Topics', href: '#/topics' },
   { key: 'intelligence', name: 'AI Briefings', href: '#/intelligence' },
   { key: 'trending', name: 'Trending', href: '#/trending' },
   { key: 'prompts', name: 'AI Prompts', href: '#/prompts' },
-  // revamp1461: Topics and Search are rows in the list, not a bar above it.
-  { key: 'topics', name: 'Topics', href: '#/topics' },
-  { key: 'search', name: 'Search', href: '#/search' },
 ];
 // revamp1278: the panel on its own, so a hero can host a second instance of the
 // picker without duplicating the trigger markup.
@@ -720,6 +720,61 @@ const PAGE_PICKER_ITEMS = [
 // rather than the nav-dd head, so they need their own version of the same
 // control — the title opens the page picker, and the icon rides inside the
 // button so the two move together.
+// ── revamp1463: the topic rail ──────────────────────────────────────────────
+// Every featured topic on one horizontal track: it scrolls with a wheel, a
+// trackpad or the arrows, and fades at whichever end still has more. Two
+// hosts: the homepage hero (only while the sidebar is CLOSED — when it is
+// open the same list is already down the left edge) and the home ident bar,
+// which is where it lives once the hero has scrolled away.
+const RAIL_CHEV_L = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+const RAIL_CHEV_R = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
+function homeRailTopics() {
+  try { return (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home'); } catch (_) { return []; }
+}
+function topicRailHTML(topics, extraClass = '') {
+  if (!topics || !topics.length) return '';
+  const chips = topics.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="home-hero-chip trail-chip"${topicColorStyle(t)}><span class="home-hero-chip-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>${escapeHTML(t.name)}</a>`).join('');
+  return `<div class="trail ${extraClass}" data-topic-rail>
+      <button type="button" class="trail-arrow trail-arrow--prev" data-rail-prev aria-label="Scroll topics left" hidden>${RAIL_CHEV_L}</button>
+      <div class="trail-track" data-rail-track>${chips}</div>
+      <button type="button" class="trail-arrow trail-arrow--next" data-rail-next aria-label="Scroll topics right" hidden>${RAIL_CHEV_R}</button>
+    </div>`;
+}
+function wireTopicRail(root) {
+  (root || document).querySelectorAll('[data-topic-rail]:not([data-rail-wired])').forEach((rail) => {
+    rail.dataset.railWired = '1';
+    const track = rail.querySelector('[data-rail-track]');
+    const prev = rail.querySelector('[data-rail-prev]');
+    const next = rail.querySelector('[data-rail-next]');
+    if (!track) return;
+    const sync = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      const x = track.scrollLeft;
+      const more = max > 4;
+      rail.classList.toggle('has-prev', more && x > 4);
+      rail.classList.toggle('has-next', more && x < max - 4);
+      if (prev) prev.hidden = !(more && x > 4);
+      if (next) next.hidden = !(more && x < max - 4);
+    };
+    const step = () => Math.max(160, Math.round(track.clientWidth * 0.7));
+    prev?.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+    next?.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+    track.addEventListener('scroll', sync, { passive: true });
+    // A vertical wheel over the rail scrolls it sideways — the gesture a
+    // trackpad user expects from a horizontal track.
+    track.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      const max = track.scrollWidth - track.clientWidth;
+      if (max <= 4) return;
+      const x = track.scrollLeft;
+      if ((e.deltaY < 0 && x <= 0) || (e.deltaY > 0 && x >= max - 1)) return;
+      track.scrollLeft = x + e.deltaY; e.preventDefault();
+    }, { passive: false });
+    try { new ResizeObserver(sync).observe(track); } catch (_) {}
+    requestAnimationFrame(sync); setTimeout(sync, 400);
+  });
+}
+
 function pageHeroHeadHTML(iconSVG, title, pickerKey) {
   const ic = `<span class="page-hero-ic" aria-hidden="true">${iconSVG}</span>`;
   if (!pickerKey) {
@@ -3571,17 +3626,11 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-banner"><div class="topic-banner-row home-ident-row">
         ${pagePickerHTML('home', 'tsp-panel-page-home', `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>`, 'Home')}
+        <!-- revamp1463b: the rail rides the ident row itself, after a
+             hairline. Home keeps its name and chevron but drops its icon —
+             that square is the width the first topic needs. -->
+        ${topicRailHTML(homeRailTopics(), 'trail--bar')}
       </div></div>
-      <!-- revamp1025: the tab rows live INSIDE the subnav, not in #content.
-           In #content they inherited four levels of padding, were clipped by
-           overflow-x: clip, and could never line up with the bar above them.
-           Here they are part of the same fixed, full-width, sidebar-offset
-           element by construction. -->
-      <div class="home-viewtabs topic-viewtabs" data-home-viewtabs role="tablist" aria-label="Home sections">
-        <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-hview="news">${pageTabIcon('news')}<span class="tvt-tx"><span class="tvt-long">News Feed</span><span class="tvt-short">News</span></span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="brief">${pageTabIcon('brief')}<span class="tvt-tx"><span class="tvt-long">AI Briefings</span><span class="tvt-short">AI Briefs</span></span></button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-hview="trend">${pageTabIcon('trend')}<span class="tvt-tx"><span class="tvt-long">Trending</span><span class="tvt-short">Trends</span></span></button>
-      </div>
       <div class="home-subfilters" data-home-subfilters></div>`;
     if (!window.__homeScrollWire) {
       window.__homeScrollWire = true;
@@ -3595,6 +3644,7 @@ function renderLayout(route) {
     if (heroEl) heroEl.innerHTML = '';
     setupResponsiveNav();
     wireSubnavPicker(subHeader);
+    wireTopicRail(subHeader);
     return;
   }
 
@@ -5615,7 +5665,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // revamp1085: a blue hero band at the top of Home, mirroring the topic-page
     // header — title + subtext + a row of featured-topic chips to jump straight in.
     let heroTopics = [];
-    try { heroTopics = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 10); } catch (_) {}
+    heroTopics = homeRailTopics();
     const HOME_HERO_IC = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>';
     const homeHeroHTML = `
       <section class="home-hero home-hero--noic" data-home-hero>
@@ -5624,7 +5674,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <h1 class="home-hero-title">Real news. AI insights. On any topic.</h1>
           </div>
           <p class="home-hero-sub">Live news, a morning AI briefing, and prompts to dig deeper.</p>
-          ${heroTopics.length ? `<div class="home-hero-chips">${heroTopics.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="home-hero-chip"${topicColorStyle(t)}><span class="home-hero-chip-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>${escapeHTML(t.name)}</a>`).join('')}</div>` : ''}
+          ${topicRailHTML(heroTopics, 'trail--hero')}
         </div>
       </section>`;
     container.innerHTML = `
@@ -5653,6 +5703,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         </div>
       </div>
     `;
+    wireTopicRail(container);
     homeSearchPanelCtl = null;
     // Trending is now the only sidebar card, so it can run much longer.
     // revamp981: a shorter sidebar list — "View more trending" carries the rest

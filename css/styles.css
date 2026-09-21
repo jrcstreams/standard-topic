@@ -39644,3 +39644,76 @@ body.tt-on .dih .dih-edition[class][class][class][class] { margin-top: 24px !imp
 /* revamp1462e — the AI label's row hugs the label: 8px of slack in that flex
    box was sitting above the headline and below the kicker. */
 .di-mast--topic .di-metaline[class][class][class] { padding: 0 !important; min-height: 0 !important; margin-top: 6px !important; }
+
+/* ═══ revamp1463 — the topic rail ═════════════════════════════════════════
+   One horizontal track of every featured topic. In the hero it shows only
+   while the sidebar is CLOSED — with the sidebar open the same list is down
+   the left edge and repeating it says nothing. In the home ident bar it is
+   how you reach a topic once the hero has scrolled away; it replaces the tab
+   strip, which had nothing left to switch between and flashed in on load. */
+.trail { position: relative; display: flex; align-items: center; min-width: 0; }
+.trail-track {
+  display: flex; align-items: center; gap: 8px; overflow-x: auto; scroll-behavior: smooth;
+  scrollbar-width: none; -ms-overflow-style: none; padding: 2px 0; min-width: 0; flex: 1 1 auto;
+}
+.trail-track::-webkit-scrollbar { display: none; }
+.trail-track > .trail-chip { flex: 0 0 auto; }
+/* The fades say there is more in that direction; they never sit over a chip
+   you could otherwise tap (pointer-events: none). */
+.trail::before, .trail::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 44px; pointer-events: none;
+  opacity: 0; transition: opacity .18s ease; z-index: 2;
+}
+.trail::before { left: 0; background: linear-gradient(to right, var(--trail-fade, #fff) 30%, transparent); }
+.trail::after { right: 0; background: linear-gradient(to left, var(--trail-fade, #fff) 30%, transparent); }
+.trail.has-prev::before, .trail.has-next::after { opacity: 1; }
+.trail-arrow {
+  position: absolute; z-index: 3; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px; border-radius: 50%; border: 1px solid #d7dfee; background: #fff;
+  color: #2f4d9e; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+  box-shadow: 0 2px 8px -3px rgba(15, 26, 46, .26);
+}
+.trail-arrow[hidden] { display: none !important; }
+.trail-arrow--prev { left: -2px; }
+.trail-arrow--next { right: -2px; }
+@media (hover: hover) { .trail-arrow:hover { background: #f1f4fa; border-color: #b9c6dd; } }
+/* The hero sits on the blue band; the bar on the grey one. */
+.trail--hero { --trail-fade: #e8eefb; margin-top: 4px; }
+.trail--bar { --trail-fade: #eef1f7; padding: 0 2rem 10px; }
+.trail--bar .trail-arrow--prev { left: 1.35rem; }
+.trail--bar .trail-arrow--next { right: 1.35rem; }
+.trail--bar .trail-chip { background: #fff; }
+/* On the ident row: a hairline after the page name, then the rail. Home's
+   icon goes — that square is the width the first topic needs. */
+#sub-header.is-home-ident .home-ident-row[class] {
+  display: flex !important; align-items: center !important; flex-wrap: nowrap !important;
+  gap: 12px; min-width: 0; width: 100%;
+}
+#sub-header.is-home-ident .topic-banner[class], #sub-header.is-home-ident .topic-banner-row[class] { min-width: 0; }
+#sub-header.is-home-ident .home-ident-row .subnav-ident-name { white-space: nowrap; }
+#sub-header.is-home-ident .home-ident-row > .topic-subnav-picker { flex: 0 0 auto; }
+#sub-header.is-home-ident .home-ident-row .subnav-ident-ico[class] { display: none !important; }
+#sub-header.is-home-ident .trail--bar {
+  flex: 1 1 auto; min-width: 0; padding: 0 0 0 12px; margin: 0;
+  border-left: 1px solid #d7dfee;
+}
+#sub-header.is-home-ident .trail--bar .trail-arrow--prev { left: 10px; }
+#sub-header.is-home-ident .trail--bar .trail-arrow--next { right: -2px; }
+#sub-header.is-home-ident .trail--bar::before { left: 12px; }
+#sub-header.is-home-ident .trail--bar .trail-chip { padding: 5px 11px; font-size: 0.84rem; }
+/* Sidebar open → the hero rail stands down (the sidebar IS the topic list). */
+body.nav-docked .trail--hero { display: none !important; }
+/* The old tab strip is gone from the markup; drop any reserved space for it. */
+.home-viewtabs { display: none !important; }
+
+/* Narrow: the name, the hairline and the rail share one line — the bar keeps
+   its height and nothing wraps below it. */
+@media (max-width: 899.98px) {
+  #sub-header.is-home-ident .trail--bar { padding-left: 10px; }
+  #sub-header.is-home-ident .trail--bar .trail-chip { padding: 4px 10px; font-size: 0.8rem; }
+  #sub-header.is-home-ident .home-ident-row[class] { gap: 10px; }
+  #sub-header.is-home-ident .home-ident-row .tsp-btn--ident[class] { padding-left: 2px !important; padding-right: 4px !important; }
+}
+/* revamp1463c — the page panel opened 9px over the grey bar's own edge; it
+   clears it now. */
+#sub-header .topic-subnav-picker .tsp-panelwrap[class] { padding-top: 8px; }
