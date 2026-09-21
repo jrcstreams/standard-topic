@@ -40674,3 +40674,23 @@ body.tt-on .pc--v2 .pc-links[class][class] { padding: 6px 14px 12px !important; 
 .pc--v2 .pc-sechead[class][class] { padding-left: 14px !important; padding-right: 14px !important; }
 /* A little air between a section's header and its first name. */
 .pc--v2 .pc-sec.is-open .pc-links[class][class] { padding-top: 8px !important; }
+
+/* ═══ revamp1484 — the stamp stays beside the edition, and the day starts
+       closer to its headline ═════════════════════════════════════════════
+   Under 900px a rule gave the stamp `margin-left: auto`, so the moon and
+   the time flew to the far right of the row while "Evening Edition" sat
+   alone on the left. On a phone that reads as two unrelated things. It
+   belongs to the edition line, at every width. */
+.ec--topic .ec-head .ec-headrow .ec-stamp[class][class][class][class]:not(.ec-stamp--below),
+.ec--topic .ec-headrow .ec-stamp[class][class][class][class] {
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  justify-content: flex-start !important;
+}
+/* 26px of air under the headline read as a dropped paragraph. The day's
+   first sentence belongs to the headline above it. */
+.tdi-card--topicedition.is-open .tdi-expand-inner[class][class][class][class] { padding-top: 0 !important; }
+.tdi-card--topicedition.is-open .ec-headline[class][class][class][class] { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+.tdi-card--topicedition.is-open .ec-lead[class][class][class] { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+.tdi-card--topicedition.is-open .di-focus--bare .di-summary[class][class][class][class][class][class] { margin-top: 0 !important; }
