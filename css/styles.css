@@ -40282,9 +40282,13 @@ body.tt-on .home-grid > .family-tabs[class][class] {
 .ec--topic .ec-head .ec-stamp--below[class] { display: none !important; }
 .tdi-card--topicedition.is-open .tdi-openx[class][class] { top: 14px !important; }
 
-/* Open: the teaser goes. */
-.tdi-card--topicedition.is-open .ec-summary[class][class],
-.tdi-card--topicedition.is-open [data-ec-summary][class][class] { display: none !important; }
+/* Open: the teaser goes. revamp1421's
+   `.tdi-card--edition.is-open .ec-summary[class][class][class][class]`
+   forces it back with six classes and !important, so this needs more. */
+.tdi-card--topicedition.is-open .ec-summary[class][class][class][class][class],
+.tdi-card--topicedition.is-open [data-ec-summary][class][class][class][class][class] {
+  display: none !important; max-height: 0 !important; margin: 0 !important;
+}
 
 /* …and the long read takes the size the teaser had. */
 .tdi-card--topicedition.is-open .di-focus--bare .di-summary[class][class][class][class] {
