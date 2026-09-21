@@ -728,17 +728,38 @@ const PAGE_PICKER_ITEMS = [
 // which is where it lives once the hero has scrolled away.
 const RAIL_CHEV_L = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const RAIL_CHEV_R = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
+const RAIL_HOME_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>';
+// revamp1467: Home leads the rail, on every page. It is the way back, and it
+// is also what makes the strip legible as a LIST: on a topic page the track is
+// scrolled so Home sits off to the left, which tells you there is more behind
+// you as well as ahead.
 function homeRailTopics() {
-  try { return (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home'); } catch (_) { return []; }
+  try {
+    const rest = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home');
+    return [{ slug: 'home', name: 'Home', icon: '__home', href: '#/' }].concat(rest);
+  } catch (_) { return []; }
 }
-function topicRailHTML(topics, extraClass = '') {
+function topicRailHTML(topics, extraClass = '', activeSlug = '') {
   if (!topics || !topics.length) return '';
-  const chips = topics.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="home-hero-chip trail-chip"${topicColorStyle(t)}><span class="home-hero-chip-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>${escapeHTML(t.name)}</a>`).join('');
+  const chips = topics.map((t) => {
+    const on = !!activeSlug && t.slug === activeSlug;
+    const href = t.href || `#/topic/${escapeAttr(t.slug)}`;
+    const ic = t.icon === '__home' ? RAIL_HOME_SVG : topicIconSVG(t.icon || 'globe', '');
+    // Home has no topic colour of its own; it takes the site blue.
+    const tint = t.slug === 'home' ? ' style="--tc: #2f4d9e"' : topicColorStyle(t);
+    return `<a href="${href}" class="home-hero-chip trail-chip${on ? ' is-active' : ''}"${on ? ' aria-current="page"' : ''}${tint} data-rail-slug="${escapeAttr(t.slug)}"><span class="home-hero-chip-ic" aria-hidden="true">${ic}</span>${escapeHTML(t.name)}</a>`;
+  }).join('');
   return `<div class="trail ${extraClass}" data-topic-rail>
       <button type="button" class="trail-arrow trail-arrow--prev" data-rail-prev aria-label="Scroll topics left" hidden>${RAIL_CHEV_L}</button>
       <div class="trail-track" data-rail-track>${chips}</div>
       <button type="button" class="trail-arrow trail-arrow--next" data-rail-next aria-label="Scroll topics right" hidden>${RAIL_CHEV_R}</button>
     </div>`;
+}
+// revamp1467: the rail rides every page's subnav row, after the page name and
+// a hairline — the same lockup home has carried since revamp1463, now the
+// site's topic navigation rather than a homepage flourish.
+function railBarHTML(activeSlug = '') {
+  return topicRailHTML(homeRailTopics(), 'trail--bar', activeSlug);
 }
 function wireTopicRail(root) {
   (root || document).querySelectorAll('[data-topic-rail]:not([data-rail-wired])').forEach((rail) => {
@@ -770,8 +791,29 @@ function wireTopicRail(root) {
       if ((e.deltaY < 0 && x <= 0) || (e.deltaY > 0 && x >= max - 1)) return;
       track.scrollLeft = x + e.deltaY; e.preventDefault();
     }, { passive: false });
+    // revamp1467: park the active chip where the strip reads as SCROLLED —
+    // one chip in from the left edge, never flush against it. Flush-left says
+    // the list starts here; an offset says there is more behind you. Set
+    // without smooth behaviour so a load or a refresh lands there rather than
+    // animating across the whole track.
+    const parkActive = () => {
+      const on = track.querySelector('.trail-chip.is-active');
+      if (!on) return;
+      const max = track.scrollWidth - track.clientWidth;
+      if (max <= 4) return;
+      const before = on.previousElementSibling;
+      const lead = before ? Math.min(before.offsetWidth + 8, 140) : 0;
+      const target = Math.max(0, Math.min(max, on.offsetLeft - lead - 4));
+      const prior = track.style.scrollBehavior;
+      track.style.scrollBehavior = 'auto';
+      track.scrollLeft = target;
+      track.style.scrollBehavior = prior || '';
+      sync();
+    };
+    rail._railPark = parkActive;
     try { new ResizeObserver(sync).observe(track); } catch (_) {}
-    requestAnimationFrame(sync); setTimeout(sync, 400);
+    requestAnimationFrame(() => { parkActive(); sync(); });
+    setTimeout(() => { parkActive(); sync(); }, 400);
   });
 }
 
@@ -3629,7 +3671,7 @@ function renderLayout(route) {
         <!-- revamp1463b: the rail rides the ident row itself, after a
              hairline. Home keeps its name and chevron but drops its icon —
              that square is the width the first topic needs. -->
-        ${topicRailHTML(homeRailTopics(), 'trail--bar')}
+        ${topicRailHTML(homeRailTopics(), 'trail--bar', 'home')}
       </div></div>
       <div class="home-subfilters" data-home-subfilters></div>`;
     if (!window.__homeScrollWire) {
@@ -3670,8 +3712,9 @@ function renderLayout(route) {
     // the grey bar and OVERLAYS the control bar (controls are lower in hierarchy).
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
-        <div class="topic-subnav-inner">
+        <div class="topic-subnav-inner is-railrow">
           ${subnavPickerHTML(topic)}
+          ${railBarHTML(topic.slug)}
         </div>
       </div>
       ${(() => {
@@ -3692,6 +3735,7 @@ function renderLayout(route) {
     observeSubnavHeight();
     setupResponsiveNav();
     wireSubnavPicker(subHeader);
+    wireTopicRail(subHeader);
   }
 
   if (route.type === 'intelligence') {
@@ -3706,12 +3750,14 @@ function renderLayout(route) {
     const briefTabs = '';
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
-        <div class="topic-subnav-inner">
+        <div class="topic-subnav-inner is-railrow">
           ${pagePickerHTML('intelligence', 'tsp-panel-page-brief', `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg>`, 'AI Briefings')}
+          ${railBarHTML('')}
         </div>
       </div>${briefTabs}`;
     observeSubnavHeight();
     wireSubnavPicker(subHeader);
+    wireTopicRail(subHeader);
     wirePageNavReveal();
     return;
   }
@@ -4756,12 +4802,14 @@ function renderPageNavBar(kind) {
   // — the same page the wide layout shows, just one column.
   subHeader.innerHTML = `
     <div class="topic-subnav-title">
-      <div class="topic-subnav-inner">
+      <div class="topic-subnav-inner is-railrow">
         ${pagePickerHTML(kind === 'topics' ? 'topics' : kind, `tsp-panel-page-${kind}`, ICONS[kind], name, kind === 'trending' ? 'is-trend' : '')}
+        ${railBarHTML('')}
         ${action}
       </div>
     </div>${promptsTabs}`;
   wireSubnavPicker(subHeader);
+  wireTopicRail(subHeader);
   // revamp1168: drive the SAME state the in-page control drives — the trending
   // component owns it and re-renders both the list and its own toggle.
   subHeader.querySelector('[data-trend-sports-nav]')?.addEventListener('click', () => {
@@ -5674,7 +5722,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <h1 class="home-hero-title">Real news. AI insights. On any topic.</h1>
           </div>
           <p class="home-hero-sub">Live news, a morning AI briefing, and prompts to dig deeper.</p>
-          ${topicRailHTML(heroTopics, 'trail--hero')}
+          ${topicRailHTML(heroTopics, 'trail--hero', 'home')}
         </div>
       </section>`;
     container.innerHTML = `
