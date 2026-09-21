@@ -2644,9 +2644,13 @@ export function renderDailyIntelligence(container, scope) {
 
     // revamp1351: the edition card already carries the name, the date, the
     // day's headline, its summary and the player. Opening it must not repeat
-    // any of that — `chrome: false` drops the masthead and the In Focus block
-    // so the briefing opens straight into Top Stories.
+    // any of that — `chrome: false` drops the masthead and the day headline.
+    // revamp1465: it no longer drops the OVERVIEW. The card's own summary is
+    // the teaser; the overview is the briefing's long read of the day, and
+    // dropping it made an opened briefing jump from the AI chip to Top
+    // Stories. With no chrome it renders bare, under the provenance row.
     const chrome = scope.chrome !== false;
+    const focusable = chrome ? (dayHeadline || overview) : overview;
     body.innerHTML = `
       ${chrome ? `<div class="di-mast di-mast--v2${typeof scope.mastHTML === 'function' ? ' di-mast--topic' : ''}"${scope.mastStyle || ''}>
         ${typeof scope.mastHTML === 'function' ? scope.mastHTML(data.generatedAt || '') : `${mastEyebrow}
@@ -2656,12 +2660,12 @@ export function renderDailyIntelligence(container, scope) {
           ${provBtn}
         </div>
       </div>` : ''}
-      ${(chrome && (dayHeadline || overview)) ? `<section class="di-focus">
-        ${dayHeadline ? `<h3 class="di-dayhead">${esc(dayHeadline)}</h3>` : ''}
-        ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
-        ${isHome ? '<div class="di-player" data-briefing-player hidden></div>' : ''}
-      </section>` : ''}
       ${(!chrome && scope.prov) ? `<div class="di-provrow">${provBtn}</div>` : ''}
+      ${focusable ? `<section class="di-focus${chrome ? '' : ' di-focus--bare'}">
+        ${(chrome && dayHeadline) ? `<h3 class="di-dayhead">${esc(dayHeadline)}</h3>` : ''}
+        ${overview ? `<div class="di-summary aii-sec-body">${renderBriefBody(overview, null)}</div>` : ''}
+        ${(chrome && isHome) ? '<div class="di-player" data-briefing-player hidden></div>' : ''}
+      </section>` : ''}
       ${items.length ? `<section class="di-briefs di-briefs--v2">
         <h3 class="di-lbl di-lbl--rule">Top Stories</h3>
         ${(() => {

@@ -39752,3 +39752,25 @@ body.nav-docked .trail--hero { display: none !important; }
   }
   #sub-header.is-home-ident .trail--bar .trail-chip[class][class]:hover .home-hero-chip-ic { color: #3a5698 !important; }
 }
+
+/* ── revamp1465: the opened briefing's long summary, back in the cards ─────
+   The edition cards (home, the hub, topic pages) render the briefing with
+   `chrome: false` so it does not repeat the head's title, date and headline.
+   That also dropped the OVERVIEW — the briefing's long read of the day —
+   leaving an opened briefing to jump straight from the AI-generated chip
+   into Top Stories. It renders again, bare: no rule above it, no heading,
+   just the paragraph sitting between the chip and the first story. */
+.di-focus--bare[class][class][class] { margin: 0 !important; padding: 0 !important; border: 0 !important; }
+.di-focus--bare .di-summary[class][class][class] {
+  margin: 0 !important;
+  padding-top: 0 !important;
+  border-top: 0 !important;
+  font-size: 0.97rem;
+  line-height: 1.62;
+  color: #2b3853;
+}
+.di-provrow[class][class][class] + .di-focus--bare[class][class][class] { margin-top: 10px !important; }
+.di-focus--bare[class][class][class] + .di-briefs[class][class][class] { margin-top: 14px !important; }
+@media (max-width: 899.98px) {
+  .di-focus--bare .di-summary[class][class][class] { font-size: 0.94rem; line-height: 1.6; }
+}
