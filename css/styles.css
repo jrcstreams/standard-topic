@@ -39990,3 +39990,30 @@ body.tt-on .home-viewtabs[class][class] { display: flex !important; }
 /* The page's own hero is hidden in tab mode, so the strip is the first thing
    under the bar — it needs no margin above it. */
 body.tt-on .topic-viewtabs[class][class] { margin-top: 0 !important; }
+/* revamp1468c: the strip is an underline, not a row of pills. The pill
+   treatment (revamp1122) was for a strip that floated in the page body; this
+   one is attached under the rail, where a filled pill competes with the
+   active rail chip right above it. */
+body.tt-on .topic-viewtabs .tvt[class][class],
+body.tt-on .topic-viewtabs .tvt.is-active[class][class] {
+  background: none !important; border-radius: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  padding: 11px 12px 9px !important; margin: 0 !important;
+}
+body.tt-on .topic-viewtabs .tvt.is-active[class][class] {
+  color: #1d4ed8 !important; border-bottom-color: #1d4ed8 !important;
+}
+body.tt-on .topic-viewtabs .tvt.is-active[class][class] .tvt-ic { color: #1d4ed8 !important; }
+body.tt-on .topic-viewtabs[class][class] {
+  gap: 2px !important; border-bottom: 1px solid #e3e8f2 !important;
+  margin: 0 -1rem !important; padding: 0 1rem !important;
+}
+@media (hover: hover) {
+  body.tt-on .topic-viewtabs .tvt:not(.is-active):hover[class][class] {
+    background: none !important; color: #1d3a8a !important;
+    border-bottom-color: #c7d3ea !important;
+  }
+}
+@media (max-width: 480px) {
+  body.tt-on .topic-viewtabs .tvt[class][class] { padding: 11px 9px 9px !important; font-size: 0.88rem !important; }
+}

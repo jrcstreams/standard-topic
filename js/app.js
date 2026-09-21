@@ -2459,6 +2459,26 @@ const VIEW_TABS = {
   home: [['brief', 'Briefing', 'brief'], ['news', 'News', 'news'], ['tools', 'Prompts', 'tools'], ['trend', 'Trending', 'trend']],
   topic: [['brief', 'Briefing', 'brief'], ['news', 'News', 'news'], ['tools', 'Prompts', 'tools']],
 };
+// revamp1468: in tab mode the Briefing tab lands OPEN. Closed, the tab is a
+// headline, two lines of summary and then a screen of nothing — the page reads
+// as cut off. Open, it is the briefing, which is what the tab is for. Runs
+// once per card; the toggle itself is idempotent.
+function openBriefWhenTabbed(root, delay = 60) {
+  const go = () => {
+    try {
+      if (!document.body.classList.contains('tt-on')) return;
+      const scope = root || document;
+      const card = scope.querySelector('.tdi-card--edition, [data-tdi]');
+      if (!card || card.classList.contains('is-open') || card.dataset.autoOpened === '1') return;
+      const btn = card.querySelector('[data-di-toggle]');
+      if (!btn || btn.getAttribute('aria-expanded') === 'true') return;
+      card.dataset.autoOpened = '1';
+      btn.click();
+    } catch (_) {}
+  };
+  setTimeout(go, delay);
+  setTimeout(go, delay + 700);
+}
 function viewTabsHTML(kind, active = 'brief') {
   const attr = kind === 'home' ? 'data-hview' : 'data-tview';
   const rows = (VIEW_TABS[kind] || VIEW_TABS.topic).map(([v, label, ic]) => {
@@ -3355,6 +3375,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       const host = body.querySelector('.topic-top-side [data-pr-host]');
       if (host) renderPromptCard(host, { topic: topic.name, slug: topic.slug, shortcuts, peek: 3 });
     }
+    openBriefWhenTabbed(body, 120);
     // Topic view tabs: container classes drive which section shows in the
     // narrow tabbed layout; on wide screens the tabs row is display:none and
     // the classes are inert (all sections show in the two-column grid).
@@ -3371,6 +3392,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         home.classList.toggle('tview-brief', v === 'brief');
         home.classList.toggle('tview-news', v === 'news');
         home.classList.toggle('tview-tools', v === 'tools');
+        if (v === 'brief') openBriefWhenTabbed(home, 40);
         body.querySelectorAll('[data-tview]').forEach((x) => {
           const on = x === b;
           x.classList.toggle('is-active', on);
@@ -5869,6 +5891,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>',
       moreHref: '#/intelligence', moreLabel: 'Explore all briefings (200+)',
     });
+    openBriefWhenTabbed(container.querySelector('[data-home-featbriefs]'), 120);
     {
       const tWrap = container.querySelector('[data-hq-topics]');
       if (tWrap) {
