@@ -40946,3 +40946,9 @@ body.tt-on .family-tabs .tvt[class][class][class][class][class] { border-radius:
   white-space: nowrap !important;
   display: block !important;
 }
+/* revamp1491b: "View more" lines up with the names above it. */
+.pc--v2 .pc-more[class][class][class][class] {
+  justify-content: flex-start !important;
+  justify-self: stretch !important;
+  margin-left: 0 !important; margin-right: 0 !important;
+}
