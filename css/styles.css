@@ -40796,3 +40796,50 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead[class][class][class][class] {
 }
 body:not(.tt-on):has(.topic-home) .topic-bodyhead > .tsp-panelwrap:not(.is-open) { display: none !important; }
 body:not(.tt-on):has(.topic-home) .tbh-desc[class][class] { margin-bottom: 0 !important; }
+
+/* ═══ revamp1489 — the opened prompt fits its column ══════════════════════
+   The prompt panel embeds the full AI Intelligence view, which sizes to
+   its own content. In the 286px rail it ran straight past the edge — the
+   prompt text, the Settings control and the model picker were all clipped.
+   The host clamps it now, and the panel's rows wrap instead of pushing. */
+.pc--v2 .pc-item-host[class][class] { min-width: 0; max-width: 100%; overflow: hidden; }
+.pc--v2 .pc-item-host .aii[class],
+.pc--v2 .pc-item-host .aii-flow[class],
+.pc--v2 .pc-item-host .aii-stage[class],
+.pc--v2 .pc-item-host .aii-content[class],
+.pc--v2 .pc-item-host .aii-ext-block[class],
+.pc--v2 .pc-item-host .aii-fi[class] {
+  width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+}
+.pc--v2 .pc-item-host .aii-pc-tools[class][class] { flex-wrap: wrap !important; row-gap: 8px; column-gap: 10px; }
+.pc--v2 .pc-item-host pre, .pc--v2 .pc-item-host textarea { max-width: 100%; white-space: pre-wrap; word-break: break-word; }
+
+/* ═══ revamp1489b — each section gets its own colour ══════════════════════
+   The icons and the rule were taking `--tc`, the page's topic colour, so
+   the three sections read as three shades of one thing. They are three
+   different KINDS of prompt, so each takes a colour of its own: a warm
+   amber for the day's snapshots, a teal for the things you track, a green
+   for the evergreen. The rule stays neutral — it separates, it does not
+   compete — and the label lightens and comes up a step in size. */
+.pc--v2 .pc-sec[data-pc-bucket="snapshot"] { --pcc: #c2680c; }
+.pc--v2 .pc-sec[data-pc-bucket="tracker"]  { --pcc: #0f766e; }
+.pc--v2 .pc-sec[data-pc-bucket="evergreen"]{ --pcc: #15803d; }
+.pc--v2 .pc-sechead--static[class][class][class] {
+  border-bottom: 1.5px solid #e6eaf3 !important;
+  padding-bottom: 8px !important;
+}
+.pc--v2 .pc-sec-ic[class][class][class] {
+  background: color-mix(in srgb, var(--pcc, #2f4d9e) 14%, #fff) !important;
+  color: var(--pcc, #2f4d9e) !important;
+  width: 24px; height: 24px; border-radius: 7px;
+}
+.pc--v2 .pc-sec-ic[class][class][class] svg { width: 14px; height: 14px; }
+.pc--v2 .pc-seclabel[class][class][class] {
+  font-size: 0.8rem !important; font-weight: 700 !important;
+  letter-spacing: 0.07em; color: #46567c !important;
+}
+/* The row dividers are quieter than the section rule above them, so the
+   header reads as the break and the rows as one run. */
+.pc--v2 .pc-item[class][class] { border-bottom: 1px solid #f0f3f8 !important; }
+.pc--v2 .pc-sec .pc-links[class][class][class] { padding-top: 2px !important; }
+.pc--v2 .pc-item:last-of-type[class][class] { border-bottom: 0 !important; }
