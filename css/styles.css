@@ -40537,3 +40537,42 @@ body.tt-on .home-v2 #section-newsfeed .newsfeed-head[class][class][class][class]
 #section-newsfeed .news-card-desc[class][class],
 #section-newsfeed .news-card-actions[class][class] { text-align: left !important; }
 #section-newsfeed .news-card-actions[class][class] { justify-content: flex-start !important; }
+
+/* ═══ revamp1479 — the active tab is a filled cell, not just a line ════════
+   An underline alone is a thin thing to carry "you are here" on a phone,
+   and at a glance the strip read as four labels with a rule under one of
+   them. The tabs now divide the strip evenly and the active one fills its
+   whole cell with a tint, the underline sitting under it — so the thing
+   you are in is a block you can see, not a detail you have to find.
+
+   `flex: 1 1 0` makes the cells equal; `min-width: fit-content` stops a
+   long label (home's "AI Briefings") being squeezed under its own text,
+   and the strip falls back to scrolling if four labels genuinely will not
+   fit. Hover lights the cell for mouse users; the fill is reserved for
+   the tab you actually chose. */
+body.tt-on .topic-viewtabs[class][class],
+body.tt-on .family-tabs[class][class] {
+  gap: 0 !important;
+  align-items: stretch !important;
+}
+body.tt-on .topic-viewtabs .tvt[class][class],
+body.tt-on .family-tabs .tvt[class][class] {
+  flex: 1 1 0 !important;
+  min-width: fit-content;
+  justify-content: center !important;
+  text-align: center;
+  border-radius: 9px 9px 0 0 !important;
+  transition: background .13s ease, color .13s ease, border-color .13s ease;
+}
+body.tt-on .topic-viewtabs .tvt.is-active[class][class],
+body.tt-on .family-tabs .tvt.is-active[class][class] {
+  background: #e7eefc !important;
+}
+@media (hover: hover) {
+  body.tt-on .topic-viewtabs .tvt:not(.is-active)[class][class][class]:hover,
+  body.tt-on .family-tabs .tvt:not(.is-active)[class][class][class]:hover {
+    background: #f0f3fa !important;
+    color: #1e3a8a !important;
+    border-bottom-color: transparent !important;
+  }
+}
