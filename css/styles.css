@@ -40576,3 +40576,60 @@ body.tt-on .family-tabs .tvt.is-active[class][class] {
     border-bottom-color: transparent !important;
   }
 }
+
+/* ═══ revamp1480 — the prompt list is a list of links ══════════════════════
+   Each row was a two-line block — name, then a sentence describing it —
+   with a chevron, which made a section of eight prompts a page of prose.
+   The names say what they are; the sentence belongs to the prompt you
+   opened, not to the menu. So: names only, lighter and a step smaller than
+   the section header above them (they were competing), in a grid that
+   fits two or three columns wherever there is room and one where there
+   isn't. Opening a prompt still expands it in place, and the open row
+   spans the full width so the panel isn't trapped in a column. */
+.pc--v2 .pc-links[class] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0 24px;
+  padding: 2px 10px 6px;
+}
+.pc--v2 .pc-item[class] { min-width: 0; border-bottom: 1px solid #eff2f7; }
+.pc--v2 .pc-item.is-open[class] { grid-column: 1 / -1; border-bottom-color: transparent; }
+.pc--v2 .pc-row[class] {
+  width: 100%; display: flex; align-items: center; gap: 8px;
+  padding: 7px 2px !important; text-align: left;
+  background: none; border: 0; cursor: pointer;
+}
+.pc--v2 .pc-row-tx[class] { min-width: 0; flex: 1 1 auto; display: block; }
+.pc--v2 .pc-row-name[class] {
+  display: block; min-width: 0;
+  font-family: var(--font-family);
+  font-size: 0.855rem !important;
+  font-weight: 500 !important;
+  line-height: 1.35;
+  color: #33436a;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pc--v2 .pc-row-desc[class] { display: none !important; }
+.pc--v2 .pc-row-chev[class] { flex: none; opacity: 0.5; }
+.pc--v2 .pc-row-chev svg { width: 13px; height: 13px; }
+.pc--v2 .pc-item.is-open .pc-row-name[class] { color: #1e3a8a; font-weight: 640 !important; }
+@media (hover: hover) {
+  .pc--v2 .pc-row[class]:hover .pc-row-name { color: #1d4ed8; }
+  .pc--v2 .pc-row[class]:hover .pc-row-chev { opacity: 1; }
+}
+/* The section header keeps its weight, so the gap between it and a row
+   reads as hierarchy rather than as two things shouting. */
+.pc--v2 .pc-seclabel[class] { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; }
+.pc--v2 .pc-secsub[class] { font-size: 0.75rem; }
+
+/* Narrow: one column, and the card drops its frame — on a phone the page
+   IS the card, and a border inside a border is just a line. */
+@media (max-width: 560px) {
+  .pc--v2 .pc-links[class] { grid-template-columns: 1fr; gap: 0; }
+}
+body.tt-on .pc.pc--v2[class][class] {
+  border: 0 !important; background: none !important; box-shadow: none !important;
+  padding-left: 0 !important; padding-right: 0 !important;
+}
+body.tt-on .pc--v2 .pc-links[class] { padding-left: 0 !important; padding-right: 0 !important; }
+body.tt-on .pc--v2 .pc-head[class] { padding-left: 0 !important; padding-right: 0 !important; }

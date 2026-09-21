@@ -36,11 +36,14 @@ const BUCKET_ICON = {
 };
 
 const ORDER = ['snapshot', 'tracker', 'evergreen'];
-const FALLBACK_LABEL = { snapshot: 'Snapshots', tracker: 'Tools & Trackers', evergreen: 'Evergreen' };
+const FALLBACK_LABEL = { snapshot: 'Snapshots', tracker: 'Tracking', evergreen: 'Evergreen' };
+// revamp1480: only Snapshots carries a line of explanation. Three blurbs in a
+// column of three headers is a paragraph nobody reads; one, on the section a
+// newcomer meets first, is a hint.
 const SUB = {
   snapshot: 'Quick overviews of what’s happening now.',
-  tracker: 'Helpful tools, comparisons and lists.',
-  evergreen: 'Timeless prompts for deeper exploration.',
+  tracker: '',
+  evergreen: '',
 };
 // "Stacked" is the page's call, not the viewport's: the topic page goes
 // single-column (body.tt-on) on CONTENT width, so a docked sidebar stacks
@@ -70,17 +73,19 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
 
   const rowHTML = (s) => `<div class="pc-item" data-pc-item="${esc(s.id || s.name)}">
       <button type="button" class="pc-row" data-pc-prompt="${esc(s.id || s.name)}" aria-expanded="false">
-        <span class="pc-row-tx"><span class="pc-row-name">${esc(s.name)}${topicTag && s._topic ? `<span class="pc-row-topic">${esc(s._topic)}</span>` : ''}</span>${s.description ? `<span class="pc-row-desc">${esc(s.description)}</span>` : ''}</span>
+        <span class="pc-row-tx"><span class="pc-row-name">${esc(s.name)}${topicTag && s._topic ? `<span class="pc-row-topic">${esc(s._topic)}</span>` : ''}</span></span>
         <span class="pc-row-chev" aria-hidden="true">${CHEV_R}</span>
       </button>
       <div class="pc-item-host prompts-topic-host" data-pc-host hidden></div>
     </div>`;
 
+  // revamp1480: the head is the name. "Explore {Topic} with AI" restated the
+  // page you were already on, and the sentence under it explained a list that
+  // explains itself.
   const headHTML = () => (head ? `<div class="pc-head">
       <div class="pc-head-row"><span class="pc-head-ic" aria-hidden="true">${SPARK}</span><span class="pc-head-title">AI Prompts</span></div>
-      <p class="pc-head-lead">${esc(subtitle || (topicName ? `Explore ${topicName} with AI` : 'Explore today’s news with AI'))}</p>
-      <p class="pc-head-sub">Use curated prompts to get deeper insights, find ideas, and explore new angles.</p>
     </div>` : '');
+  void subtitle;
 
   const secHTML = (g) => {
     if (flat) return `<div class="pc-sec pc-sec--flat" data-pc-bucket="all"><div class="pc-links">${g.items.map(rowHTML).join('')}</div></div>`;
@@ -91,7 +96,7 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
     return `<section class="pc-sec${open ? ' is-open' : ''}" data-pc-bucket="${g.id}">
       <button type="button" class="pc-sechead" data-pc-sec="${g.id}" aria-expanded="${open}">
         <span class="pc-sec-ic" aria-hidden="true">${BUCKET_ICON[g.id] || SPARK}</span>
-        <span class="pc-sec-tx"><span class="pc-seclabel">${esc(g.label)}</span><span class="pc-secsub">${esc(g.sub)}</span></span>
+        <span class="pc-sec-tx"><span class="pc-seclabel">${esc(g.label)}</span>${g.sub ? `<span class="pc-secsub">${esc(g.sub)}</span>` : ''}</span>
         <span class="pc-sec-chev" aria-hidden="true">${CHEV_D}</span>
       </button>
       <div class="pc-links"${open ? '' : ' hidden'}>${rows.map(rowHTML).join('')}${more}</div>

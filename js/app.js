@@ -18,7 +18,7 @@ import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } 
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
 import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief, splitSections } from './components/ai-intelligence.js?v=20260920-revamp1465';
-import { renderPromptCard } from './components/prompt-card.js?v=20260918-revamp1442';
+import { renderPromptCard } from './components/prompt-card.js?v=20260921-revamp1480';
 import { mountLatestBriefingPlayer, mountBriefingPlayer, loadEpisode, loadEpisodeList } from './components/briefing-player.js?v=20260914-revamp1341';
 import { briefingAudio, mountBriefingDock } from './components/briefing-audio.js';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
@@ -2482,7 +2482,7 @@ const pageTabIcon = (k) => PAGE_TAB_ICON[k] ? `<span class="tvt-ic" aria-hidden=
 // tab, Trending, which it has its own section for; a topic page does not.
 const VIEW_TABS = {
   home: [['news', 'News', 'news'], ['brief', 'Briefing', 'brief'], ['tools', 'Prompts', 'tools'], ['trend', 'Trending', 'trend']],
-  topic: [['news', 'News', 'news'], ['brief', 'AI Briefing', 'brief'], ['tools', 'Prompts', 'tools']],
+  topic: [['news', 'News', 'news'], ['brief', 'AI Briefing', 'brief'], ['tools', 'AI Prompts', 'tools']],
 };
 // revamp1468: in tab mode the Briefing tab lands OPEN. Closed, the tab is a
 // headline, two lines of summary and then a screen of nothing — the page reads
@@ -2517,7 +2517,7 @@ function openBriefWhenTabbed(root, delay = 60) {
 const FAMILY_TABS = [
   ['news', 'News', 'news', '#/'],
   ['brief', 'AI Briefings', 'brief', '#/intelligence'],
-  ['tools', 'Prompts', 'tools', '#/prompts'],
+  ['tools', 'AI Prompts', 'tools', '#/prompts'],
   ['trend', 'Trending', 'trend', '#/trending'],
 ];
 function familyTabsHTML(active = 'news') {
