@@ -40433,3 +40433,31 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
       color-mix(in srgb, var(--tc, #2f4d9e) 2.5%, #fff) 38%,
       rgba(255, 255, 255, 0) 100%) !important;
 }
+
+/* ═══ revamp1476 — the rail's active chip takes the sidebar's colour ═══════
+   The sidebar softens every topic tile the same way: `color-mix(in srgb,
+   var(--tc) 82%, #fff)` — the topic's own colour, eighteen per cent of the
+   way to white. Firm, but it isn't shouting. The rail was filling its
+   active chip with raw `--tc`, so choosing a topic went off like a flare
+   next to the muted list of the same colours down the left edge. Same
+   formula here, and the icons match it in both states. */
+.trail-chip.is-active[class][class][class] {
+  background: color-mix(in srgb, var(--tc, #2f4d9e) 82%, #fff) !important;
+  border-color: color-mix(in srgb, var(--tc, #2f4d9e) 82%, #fff) !important;
+  box-shadow: 0 1px 6px -2px color-mix(in srgb, var(--tc, #2f4d9e) 40%, transparent) !important;
+}
+@media (hover: hover) {
+  .trail-chip.is-active[class][class][class]:hover {
+    background: color-mix(in srgb, var(--tc, #2f4d9e) 90%, #fff) !important;
+    border-color: color-mix(in srgb, var(--tc, #2f4d9e) 90%, #fff) !important;
+  }
+}
+/* Resting chips take the same softened ink as the sidebar's tiles. */
+.trail-chip:not(.is-active)[class][class] .home-hero-chip-ic,
+.trail-chip:not(.is-active)[class][class] .home-hero-chip-ic svg {
+  color: color-mix(in srgb, var(--tc, #2f4d9e) 82%, #fff) !important;
+  stroke: color-mix(in srgb, var(--tc, #2f4d9e) 82%, #fff) !important;
+}
+.trail-chip:not(.is-active)[class][class] .home-hero-chip-ic svg[fill]:not([fill="none"]) {
+  fill: color-mix(in srgb, var(--tc, #2f4d9e) 82%, #fff) !important;
+}
