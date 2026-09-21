@@ -40461,3 +40461,12 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
 .trail-chip:not(.is-active)[class][class] .home-hero-chip-ic svg[fill]:not([fill="none"]) {
   fill: color-mix(in srgb, var(--tc, #2f4d9e) 82%, #fff) !important;
 }
+/* revamp1476b: the News tab drops the "News Feed" head — the tab is the
+   label. revamp1459 re-shows it with
+   `…​.topic-home:not(.tview-brief):not(.tview-tools) … .newsfeed-head[class][class]`,
+   which matches `.tview-news` too, so this needs more weight than that. */
+body.tt-on #topic-tab-body #section-newsfeed .newsfeed-head[class][class][class][class],
+body.tt-on .topic-band #section-newsfeed .newsfeed-head[class][class][class][class],
+body.tt-on .home-v2 #section-newsfeed .newsfeed-head[class][class][class][class] {
+  display: none !important;
+}
