@@ -39641,3 +39641,6 @@ body.tt-on .dih .dih-edition[class][class][class][class] { margin-top: 24px !imp
 .di-page .di-mast.di-mast--v2.di-mast--topic[class][class][class][class] { margin-bottom: 10px !important; }
 .di-mast--topic + *[class][class] { margin-top: 0 !important; padding-top: 0 !important; }
 .di-mast--topic .di-metaline[class][class][class] { align-items: center !important; }
+/* revamp1462e — the AI label's row hugs the label: 8px of slack in that flex
+   box was sitting above the headline and below the kicker. */
+.di-mast--topic .di-metaline[class][class][class] { padding: 0 !important; min-height: 0 !important; margin-top: 6px !important; }
