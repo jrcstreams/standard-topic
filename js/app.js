@@ -2166,6 +2166,10 @@ function topicEditionCardHTML(topic) {
         <div class="ec-lead">
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
+          <!-- revamp1470: the briefing's long read, on the CLOSED card. A
+               topic page opened on a headline and two lines, and everything
+               that made it worth reading was behind a button. -->
+          <div class="ec-overview" data-ec-overview hidden></div>
         </div>
         <div class="ec-actions">
           <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
@@ -3435,6 +3439,8 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       if (!d || !body.isConnected) return;
       const sEl = body.querySelector('[data-tdi-summary]');
       const dEl = body.querySelector('[data-tdi-date]');
+      { const ov = body.querySelector('[data-ec-overview]'); const tx = briefOverview(d);
+        if (ov && tx) { ov.textContent = tx; ov.hidden = false; } }
       if (sEl && d.summary) { sEl.textContent = d.summary; sEl.hidden = false; }
       else if (sEl && d.content) { sEl.textContent = String(d.content).replace(/^##.+$/gm, '').replace(/^\s*HEADLINE:.*$/gmi, '').replace(/\*\*/g, '').trim().split(/(?<=[.!?])\s/)[0] || ''; sEl.hidden = !sEl.textContent; }
       // revamp1387: the topic card's headline and stamp pill.
@@ -5231,7 +5237,7 @@ function renderStickyHeroBar(container, route) {
       </div>
       <button type="button" class="navbtn nav-searchbar" id="nav-search" aria-label="Search">
         <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-        <span class="navbtn-label nav-searchbar-ph">Search</span>
+        <span class="navbtn-label nav-searchbar-ph">Search news, topics…</span>
       </button>
       <button type="button" class="navbtn navbtn--topics-right" id="nav-topics" aria-label="Topics" aria-haspopup="dialog">
         <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>

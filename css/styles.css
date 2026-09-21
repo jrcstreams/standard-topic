@@ -40030,3 +40030,86 @@ body.tt-on .topic-viewtabs[class][class] {
    is the reason the band exists now, so that is what the exemption reads. */
 #sub-header.is-subnav:has(.trail)[class] { display: flex !important; align-items: center !important; }
 #sub-header.is-subnav:has(.trail)[class] > .topic-subnav-title { flex: 1 1 auto; min-width: 0; }
+
+/* ═══ revamp1469 — the nav search reads as a field ═════════════════════════
+   It was a solid blue button labelled "Search", the same weight as Topics
+   beside it, so it read as one more destination rather than the place you
+   type. A field says what it is: a wide translucent well on the navy bar,
+   the glyph quiet at its left, the placeholder in placeholder grey and
+   LEFT-aligned with room after it. It still opens the search page — but a
+   control shaped like an input is one people reach for. */
+#nav-search.navbtn.nav-searchbar[class][class] {
+  justify-content: flex-start !important;
+  width: clamp(220px, 22vw, 340px) !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+}
+@media (hover: hover) {
+  #nav-search.navbtn.nav-searchbar[class][class]:hover {
+    background: rgba(255, 255, 255, 0.18) !important;
+    border-color: rgba(255, 255, 255, 0.38) !important;
+  }
+}
+#nav-search.navbtn.nav-searchbar[class][class] .navbtn-ico { color: rgba(255, 255, 255, 0.62) !important; flex: none; }
+#nav-search.navbtn.nav-searchbar[class][class] .nav-searchbar-ph {
+  color: rgba(255, 255, 255, 0.66) !important;
+  font-weight: 500 !important; font-size: 0.87rem !important;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+}
+/* Narrower nav: the field gives up its width before it gives up its text. */
+@media (max-width: 1100px) {
+  #nav-search.navbtn.nav-searchbar[class][class] { width: clamp(160px, 18vw, 240px) !important; }
+}
+@media (max-width: 899.98px) {
+  #nav-search.navbtn.nav-searchbar[class][class] { width: auto !important; padding: 8px !important; }
+  #nav-search.navbtn.nav-searchbar[class][class] .nav-searchbar-ph { display: none !important; }
+}
+
+/* ── revamp1469b: the rail's arrows sit in clear air ──────────────────────
+   A 46px mask left a sliver of the chip behind each arrow showing beside
+   it, which read as a clipped label rather than a fade. The fade runs the
+   arrow's full width plus its shadow. */
+.trail.has-next:not(.has-prev) .trail-track[class] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 64px), transparent);
+          mask-image: linear-gradient(to right, #000 calc(100% - 64px), transparent);
+}
+.trail.has-prev:not(.has-next) .trail-track[class] {
+  -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 64px), transparent);
+          mask-image: linear-gradient(to left, #000 calc(100% - 64px), transparent);
+}
+.trail.has-prev.has-next .trail-track[class] {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 64px, #000 calc(100% - 64px), transparent);
+          mask-image: linear-gradient(to right, transparent, #000 64px, #000 calc(100% - 64px), transparent);
+}
+
+/* ── revamp1469c: Trending's sports switch stops crowding the rail ────────
+   It shares the band with the rail now. It keeps its switch and its noun
+   and drops the word "Include" — the control's state says the rest. */
+.topic-subnav-inner.is-railrow .trend-sports-toggle .tst-lead[class] { display: none !important; }
+.topic-subnav-inner.is-railrow .trend-sports-toggle[class] {
+  gap: 8px !important; padding-left: 10px !important;
+  border-left: 1px solid #d7dfee; margin-left: 8px !important;
+}
+.topic-subnav-inner.is-railrow .trend-sports-toggle .trend-sports-toggle-label[class] {
+  font-size: 0.8rem !important; white-space: nowrap;
+}
+@media (max-width: 899.98px) {
+  .topic-subnav-inner.is-railrow .trend-sports-toggle .trend-sports-toggle-label[class] { display: none !important; }
+}
+
+/* ── revamp1470: the closed topic card carries the briefing's long read ────
+   A topic page opened on a headline and a two-line teaser, and the passage
+   that made the briefing worth reading sat behind a button. It reads in
+   place now, under the combo headline, and "Read Briefing" goes on to the
+   stories. In tab mode the card opens on arrival (revamp1468), so the
+   opened briefing renders it and this copy stands down. */
+.ec-overview[hidden] { display: none !important; }
+.ec-overview {
+  margin: 10px 0 0; font-family: var(--font-family);
+  font-size: 0.95rem; line-height: 1.62; color: #3c4a68;
+}
+body.tt-on .ec-overview[class] { display: none !important; }
+.tdi-card.is-open .ec-overview[class] { display: none !important; }
+@media (max-width: 899.98px) { .ec-overview { font-size: 0.92rem; } }
