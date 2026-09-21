@@ -8,7 +8,7 @@ import { topicIconSVG } from './utils/topic-icons.js?v=20260716-revamp588';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp574';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js?v=20260728-revamp668';
 import { installHowItWorks, howItWorksLinkHTML } from './utils/how-it-works.js?v=20260914-revamp1340';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260817-revamp772';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260921-revamp1478';
 // splits out of the initial bundle — see B3.4. (prompt-builder-modal.js was a retired
 // no-op takeover; removed.)
 import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp574';

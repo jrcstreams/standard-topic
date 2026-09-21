@@ -979,14 +979,22 @@ export function newsCardHTML(item) {
   const descFull = deglue((tmp.textContent || '').trim());
   // #img245: end the preview at a SENTENCE boundary — run past the soft cap to
   // finish the sentence unless that would be egregious; only then ellipsize.
-  const sentenceTrim = (t, soft = 150, hard = 300) => {
+  const sentenceTrim = (t, soft = 185, hard = 320) => {
     if (t.length <= soft) return t;
     const ends = [];
     const re = /[.!?](?:["'\u2019\u201d)\]]*)(?=\s|$)/g; let m;
     while ((m = re.exec(t))) ends.push(m.index + m[0].length);
     let cut = 0;
     for (const e of ends) { if (e <= hard) cut = e; if (e >= soft && e <= hard) { cut = e; break; } if (e > hard) break; }
-    return cut >= 60 ? t.slice(0, cut).trim() : (t.slice(0, soft).trim() + '\u2026');
+    if (cut >= 60) return t.slice(0, cut).trim();
+    // revamp1478: no sentence ends inside the window, so the preview has to be
+    // cut — but on a WORD, never through the middle of one. It used to slice at
+    // exactly `soft`, which is how "Secretary Kristi No…" and "trying to motiv…"
+    // reached the page.
+    const head = t.slice(0, soft);
+    const sp = head.lastIndexOf(' ');
+    const stem = (sp >= 60 ? head.slice(0, sp) : head).replace(/[\s,;:.\u2013\u2014-]+$/, '');
+    return stem + '\u2026';
   };
   const descText = sentenceTrim(descFull);
 

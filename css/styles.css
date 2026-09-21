@@ -40518,3 +40518,22 @@ body.tt-on .home-v2 #section-newsfeed .newsfeed-head[class][class][class][class]
 
 /* The track needs room for the shadow, or it clips on the top and bottom. */
 .trail-track[class][class] { padding: 5px 0 !important; }
+
+/* ═══ revamp1478 — the news card stops centring itself ════════════════════
+   `.news-card-body` is a flex ROW by default, `align-items: center`, so the
+   summary sits beside the buttons. Three later rules turn it into a column,
+   and two of them remember to reset the alignment. The third —
+   `(min-width: 720px)` on `.topic-band … > .news-card-body` — sets
+   `flex-direction: column !important` and nothing else, so between 720 and
+   1023px the base `center` survived into a column: the buttons centred, and
+   a summary short enough to fit one line centred with them while a wrapping
+   one filled the width and looked left-aligned. That is the "weird
+   centering" — one rule, two symptoms. */
+@media (min-width: 720px) {
+  .topic-band #section-newsfeed .news-list > .news-card > .news-card-body[class][class] {
+    align-items: stretch !important;
+  }
+}
+#section-newsfeed .news-card-desc[class][class],
+#section-newsfeed .news-card-actions[class][class] { text-align: left !important; }
+#section-newsfeed .news-card-actions[class][class] { justify-content: flex-start !important; }
