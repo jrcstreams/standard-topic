@@ -3712,8 +3712,7 @@ function renderLayout(route) {
     // the grey bar and OVERLAYS the control bar (controls are lower in hierarchy).
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
-        <div class="topic-subnav-inner is-railrow">
-          ${subnavPickerHTML(topic)}
+        <div class="topic-subnav-inner is-railrow is-railrow--full">
           ${railBarHTML(topic.slug)}
         </div>
       </div>

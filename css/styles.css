@@ -39879,3 +39879,23 @@ html body.home-search.app-mode.home-mode.nav-docked[class] #content:not(#_) {
 }
 /* The hero band no longer has to stretch up into space the bar left empty. */
 body:not(.tt-on):not(.home-scrolled) .home-hero[class][class][class] { padding-top: 14px !important; }
+
+/* ── revamp1467d: the topic band stands, and the rail is all of it ─────────
+   The topic subnav used to hide until the page hero condensed on scroll —
+   it was an identity label, and the page already said its own name. It
+   carries the rail now, so it stands from the first paint. The topic PICKER
+   is gone from it: every topic is in the rail, and the active chip names the
+   page, so a dropdown saying the same word beside it was saying it twice. */
+html body.app-mode:not(.home-mode) #sub-header.is-subnav:not(#_)[class][class] {
+  opacity: 1 !important; visibility: visible !important;
+  pointer-events: auto !important; transform: none !important;
+}
+html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).has-subnav[class][class][class] #content:not(#_),
+html body.app-mode.nav-docked:not(.tt-on):not(.home-search).has-subnav[class][class][class] #content:not(#_) {
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 56px) + 18px) !important;
+}
+/* Full-width rail: no page name on its left, so no hairline and no inset. */
+.topic-subnav-inner.is-railrow--full > .trail--bar[class] {
+  padding-left: 0; border-left: 0;
+}
+.topic-subnav-inner.is-railrow--full > .trail--bar .trail-arrow--prev { left: -2px; }
