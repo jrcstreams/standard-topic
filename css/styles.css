@@ -40470,3 +40470,51 @@ body.tt-on .topic-band .topic-home #section-newsfeed .newsfeed-head[class][class
 body.tt-on .home-v2 #section-newsfeed .newsfeed-head[class][class][class][class][class] {
   display: none !important;
 }
+
+/* ═══ revamp1477 — the rail's chips are cards, not pills ═══════════════════
+   A 999px pill reads as a filter tag; these are the site's topics, so they
+   take a card's corner. White, no hairline, lifted on a soft shadow —
+   the border was doing the separating work a shadow does better at this
+   size. The label goes up a step in weight and down a hair in size, which
+   is what makes a small chip read as firm rather than faint. And the band
+   under them lightens, so white chips sit ON something rather than nearly
+   matching it. */
+.trail-chip[class][class] {
+  border-radius: 11px !important;
+  height: 34px !important;
+  padding: 0 13px !important;
+  gap: 8px !important;
+  font-size: 0.82rem !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.005em;
+  color: #26334f !important;
+  background: #fff !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 1px 2px rgba(20, 33, 61, 0.06), 0 2px 7px -3px rgba(20, 33, 61, 0.14) !important;
+}
+.trail-chip[class][class] .home-hero-chip-ic svg { width: 16px; height: 16px; }
+
+@media (hover: hover) {
+  .trail-chip:not(.is-active)[class][class][class]:hover {
+    background: #fff !important;
+    border-color: transparent !important;
+    color: #16223d !important;
+    box-shadow: 0 2px 4px rgba(20, 33, 61, 0.08), 0 5px 14px -4px rgba(20, 33, 61, 0.22) !important;
+    transform: translateY(-1px);
+  }
+}
+/* Active keeps revamp1476's softened topic colour — just the new corner,
+   and a shadow tinted by the topic rather than a grey one. */
+.trail-chip.is-active[class][class][class][class] {
+  border-radius: 11px !important;
+  border-color: transparent !important;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--tc, #2f4d9e) 22%, transparent),
+              0 4px 12px -4px color-mix(in srgb, var(--tc, #2f4d9e) 48%, transparent) !important;
+}
+
+/* The band: a shade lighter, so a white chip has something to sit on. */
+#sub-header.is-subnav[class][class] { background: #eceff6 !important; }
+#sub-header.is-home-ident[class][class] { background: #eceff6 !important; }
+
+/* The track needs room for the shadow, or it clips on the top and bottom. */
+.trail-track[class][class] { padding: 5px 0 !important; }
