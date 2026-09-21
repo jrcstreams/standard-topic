@@ -39587,3 +39587,35 @@ html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content:
 .tdi-card--edition.is-open .ec-head[class][class] { padding-right: 46px !important; }
 
 .pc--v2, .home-v2 .home-side #home-pcard .pc--v2 { border: 1px solid #ccd5e4 !important; border-radius: 6px !important; }
+
+/* ═══ revamp1462 — the hub's opened briefing, at the card's own scale ═══
+   Measured on the live page: the name was 22.4px over a 34px tile beside a
+   36px-tall stamp, then 24px to the kicker, 32px to the AI label, 25px to the
+   headline and 13px to the summary — five gaps, each set by a different
+   component's default. The lockup is the briefing CARD's: a 30px tile, a
+   1.15rem name, the compact stamp pill, and one 8-to-12px rhythm down the
+   column. */
+.di-mast--topic .di-mast-toprow[class] { align-items: center !important; gap: 10px !important; }
+.di-mast--topic .di-mast-ic[class] { width: 30px !important; height: 30px !important; border-radius: 8px !important; }
+.di-mast--topic .di-mast-ic[class] svg { width: 16px !important; height: 16px !important; display: block !important; }
+.di-mast--topic .di-mast-name[class] { font-size: 1.15rem !important; line-height: 1.2 !important; }
+/* The stamp is the card's pill, not a second, larger one. */
+.di-mast--topic .di-mast-stamp .ec-stamp-pill[class][class][class] {
+  font-size: 0.7rem !important; font-weight: 650 !important; padding: 3px 9px !important;
+  gap: 6px !important; border-radius: 6px !important; letter-spacing: 0.01em !important; line-height: 1.35 !important;
+}
+.di-mast--topic .di-mast-stamp .ec-stamp-pill[class][class][class] svg { width: 12px !important; height: 12px !important; }
+.di-mast--topic .di-mast-stamp[class] { display: inline-flex !important; align-items: center !important; }
+/* The column: name → kicker → AI label → headline → summary. */
+.di-mast--topic .di-mast-kicker[class][class] { margin-top: 8px !important; font-size: 0.78rem !important; }
+.di-mast--topic .di-metaline[class][class] { margin-top: 10px !important; }
+.di-mast--topic .di-prov2[class][class] { margin: 0 !important; }
+.di-mast--topic[class][class] { margin-bottom: 12px !important; }
+.di-mast--topic + .di-focus .di-dayhead[class][class][class][class] { margin-top: 0 !important; margin-bottom: 6px !important; }
+.di-mast--topic + .di-focus[class] { margin-top: 0 !important; }
+
+/* The hub's list: the lead card clears the subnav, and the first topic card
+   sits the same 22px below it that the topic cards sit from each other. */
+.dih .dih-edition[class][class] { margin-bottom: 22px !important; }
+.dih .dih-groups[class][class] { margin-top: 0 !important; }
+body.tt-on .dih .dih-edition[class][class][class] { margin-top: 8px !important; }
