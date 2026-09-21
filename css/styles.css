@@ -40465,8 +40465,8 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
    label. revamp1459 re-shows it with
    `…​.topic-home:not(.tview-brief):not(.tview-tools) … .newsfeed-head[class][class]`,
    which matches `.tview-news` too, so this needs more weight than that. */
-body.tt-on #topic-tab-body #section-newsfeed .newsfeed-head[class][class][class][class],
-body.tt-on .topic-band #section-newsfeed .newsfeed-head[class][class][class][class],
-body.tt-on .home-v2 #section-newsfeed .newsfeed-head[class][class][class][class] {
+body.tt-on #topic-tab-body .topic-home #section-newsfeed .newsfeed-head[class][class][class][class][class],
+body.tt-on .topic-band .topic-home #section-newsfeed .newsfeed-head[class][class][class][class][class],
+body.tt-on .home-v2 #section-newsfeed .newsfeed-head[class][class][class][class][class] {
   display: none !important;
 }
