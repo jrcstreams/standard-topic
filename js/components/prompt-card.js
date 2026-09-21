@@ -86,19 +86,23 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
     </div>` : '');
   void subtitle;
 
+  // revamp1486: the sections are not accordions any more. Three folds in a
+  // column of three is a menu of menus — every one had to be opened before
+  // the card said anything. They stand open; the HEADER does the work of
+  // telling you which list you are reading, which matters most when two
+  // sections are both showing a partial list under a "View all".
   const secHTML = (g) => {
     if (flat) return `<div class="pc-sec pc-sec--flat" data-pc-bucket="all"><div class="pc-links">${g.items.map(rowHTML).join('')}</div></div>`;
-    const open = openSecs.has(g.id);
-    const peeking = peek > 0 && !NARROW() && g.id !== 'evergreen' && g.items.length > peek && !expanded.has(g.id);
-    const rows = peeking ? g.items.slice(0, peek) : g.items;
+    const cap = peek > 0 ? peek : (collapsed ? 4 : 0);
+    const peeking = cap > 0 && g.id !== 'evergreen' && g.items.length > cap && !expanded.has(g.id);
+    const rows = peeking ? g.items.slice(0, cap) : g.items;
     const more = peeking ? `<button type="button" class="pc-more" data-pc-more="${g.id}">View all ${esc(g.label.toLowerCase())}${ARROW_R}</button>` : '';
-    return `<section class="pc-sec${open ? ' is-open' : ''}" data-pc-bucket="${g.id}">
-      <button type="button" class="pc-sechead" data-pc-sec="${g.id}" aria-expanded="${open}">
+    return `<section class="pc-sec is-open is-static" data-pc-bucket="${g.id}">
+      <div class="pc-sechead pc-sechead--static">
         <span class="pc-sec-ic" aria-hidden="true">${BUCKET_ICON[g.id] || SPARK}</span>
         <span class="pc-sec-tx"><span class="pc-seclabel">${esc(g.label)}</span>${g.sub ? `<span class="pc-secsub">${esc(g.sub)}</span>` : ''}</span>
-        <span class="pc-sec-chev" aria-hidden="true">${CHEV_D}</span>
-      </button>
-      <div class="pc-links"${open ? '' : ' hidden'}>${rows.map(rowHTML).join('')}${more}</div>
+      </div>
+      <div class="pc-links">${rows.map(rowHTML).join('')}${more}</div>
     </section>`;
   };
 
@@ -125,11 +129,6 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
   function render() {
     unmount();
     host.innerHTML = `<div class="pc pc--v2${flat ? ' pc--flat' : ''}${head ? '' : ' pc--nohead'}">${headHTML()}${groups.length ? groups.map(secHTML).join('') : '<p class="pc-empty">No prompts for this page yet.</p>'}</div>`;
-    host.querySelectorAll('[data-pc-sec]').forEach((b) => b.addEventListener('click', () => {
-      const sec = b.closest('.pc-sec'); const links = sec.querySelector('.pc-links'); const open = links.hidden;
-      links.hidden = !open; sec.classList.toggle('is-open', open); b.setAttribute('aria-expanded', String(open));
-      if (open) openSecs.add(sec.dataset.pcBucket); else { openSecs.delete(sec.dataset.pcBucket); if (sec.querySelector('.pc-item.is-open')) closeOpen(); }
-    }));
     host.querySelectorAll('[data-pc-more]').forEach((b) => b.addEventListener('click', () => { expanded.add(b.dataset.pcMore); render(); }));
     host.querySelectorAll('[data-pc-prompt]').forEach((b) => b.addEventListener('click', () => {
       const key = b.dataset.pcPrompt; const s = list.find((x) => (x.id || x.name) === key); if (!s) return;

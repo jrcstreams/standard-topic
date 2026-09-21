@@ -40715,3 +40715,59 @@ body.tt-on .family-tabs .tvt[class][class][class] {
   body.tt-on .topic-viewtabs .tvt[class][class][class],
   body.tt-on .family-tabs .tvt[class][class][class] { font-size: 0.9rem !important; }
 }
+
+/* ═══ revamp1486 — the prompt sections stand open, and say what they are ═══
+   Three accordions in a column of three is a menu of menus: every one had
+   to be opened before the card said anything. They stand open now, and the
+   header carries the weight instead — a lettered label over a rule, so
+   when two sections are each showing a partial list under a "View all",
+   you always know which list you are in. */
+.pc--v2 .pc-sechead--static[class][class] {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; background: none !important; border: 0; cursor: default;
+  padding: 16px 14px 7px !important;
+  border-bottom: 2px solid color-mix(in srgb, var(--tc, #2f4d9e) 30%, #dde3ef) !important;
+  border-radius: 0 !important;
+}
+.pc--v2 .pc-sec:first-child .pc-sechead--static[class][class] { padding-top: 6px !important; }
+.pc--v2 .pc-seclabel[class][class] {
+  font-size: 0.74rem !important; font-weight: 750 !important;
+  letter-spacing: 0.085em; text-transform: uppercase;
+  color: #1a2c66 !important;
+}
+.pc--v2 .pc-sec-ic[class][class] {
+  width: 22px; height: 22px; border-radius: 6px;
+  background: color-mix(in srgb, var(--tc, #2f4d9e) 13%, #fff) !important;
+  color: color-mix(in srgb, var(--tc, #2f4d9e) 82%, #fff) !important;
+}
+.pc--v2 .pc-sec-ic[class][class] svg { width: 13px; height: 13px; }
+/* The section is a run of rows under its rule, not a boxed card. */
+.pc--v2 .pc-sec[class][class] {
+  background: none !important; border: 0 !important; box-shadow: none !important;
+  border-radius: 0 !important; margin: 0 !important; padding: 0 !important;
+}
+.pc--v2 .pc-sec .pc-links[class][class] { padding-top: 6px !important; }
+.pc--v2 .pc-sec-chev { display: none !important; }
+/* "View all" sits with the list it belongs to. */
+.pc--v2 .pc-more[class][class] {
+  grid-column: 1 / -1; justify-self: start;
+  margin: 6px 0 2px; padding: 4px 2px !important;
+  background: none; border: 0; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #1d4ed8;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+@media (hover: hover) { .pc--v2 .pc-more[class][class]:hover { color: #16307a; } }
+
+/* ═══ revamp1486b — the prompt rail never falls under the feed ═════════════
+   The two-column grid collapsed at a 1023px VIEWPORT while tab mode starts
+   at a 900px CONTENT width — so with the sidebar closed, anything between
+   900 and 1023 stacked the rail beneath the news feed without giving you
+   tabs to switch with. Stacking IS the signal to go tabbed, so the columns
+   hold until then and the rail just narrows. */
+@media (max-width: 1023px) {
+  body:not(.tt-on) .topic-body-cols[class][class] {
+    grid-template-columns: minmax(0, 1fr) 286px !important;
+    gap: 18px !important;
+  }
+}
+body.tt-on .topic-body-cols[class][class] { grid-template-columns: minmax(0, 1fr) !important; }
