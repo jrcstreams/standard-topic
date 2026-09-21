@@ -40926,3 +40926,23 @@ body.tt-on #home-pcard .pc-head[class][class] { display: none !important; }
    read as a floating chip rather than a cell of the bar. */
 body.tt-on .topic-viewtabs .tvt[class][class][class][class][class],
 body.tt-on .family-tabs .tvt[class][class][class][class][class] { border-radius: 0 !important; }
+
+/* ═══ revamp1491 — the search field keeps its text inside it ══════════════
+   The field is a flex button with a fixed width and a nowrap label. The
+   label had the ellipsis but the BUTTON never clipped, so at widths where
+   the placeholder was longer than the field the text simply ran out past
+   the rounded edge and sat on the navy bar. The button clips, and the
+   label is the part that gives. */
+#nav-search.navbtn.nav-searchbar[class][class][class] {
+  overflow: hidden !important;
+  min-width: 0 !important;
+}
+#nav-search.navbtn.nav-searchbar[class][class][class] .navbtn-ico { flex: 0 0 auto; }
+#nav-search.navbtn.nav-searchbar[class][class][class] .nav-searchbar-ph {
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  display: block !important;
+}
