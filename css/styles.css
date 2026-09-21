@@ -40164,8 +40164,10 @@ body:not(.tt-on):has(.topic-home) .topic-top--lead.is-di-open .ec[class],
 body:not(.tt-on):has(.topic-home) .topic-top--lead.is-di-open .tdi-card[class] {
   background: #fff !important; backdrop-filter: none;
 }
-body:not(.tt-on):has(.topic-home:has(.topic-top--lead.is-di-open)) .topic-bodyhead::before { height: 300px !important; }
-body:not(.tt-on):has(.topic-home:has(.topic-top--lead.is-di-open)) .topic-bodyhead::after { opacity: 0.10; height: 300px; }
+/* `:has()` cannot be nested inside `:has()` — the whole selector is dropped.
+   Match the open card directly from the body instead. */
+body:not(.tt-on):has(.topic-top--lead.is-di-open) .topic-bodyhead::before { height: 300px !important; }
+body:not(.tt-on):has(.topic-top--lead.is-di-open) .topic-bodyhead::after { opacity: 0.10 !important; height: 300px !important; }
 
 /* ── tab mode: the intro is gone, so the band leads the Briefing tab ─────── */
 body.tt-on .topic-home.tview-brief { position: relative; }
