@@ -39894,11 +39894,15 @@ html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).has-subnav[cla
 html body.app-mode.nav-docked:not(.tt-on):not(.home-search).has-subnav[class][class][class] #content:not(#_) {
   padding-top: calc(var(--nav-h) + var(--subnav-height, 56px) + 18px) !important;
 }
-/* Full-width rail: no page name on its left, so no hairline and no inset. */
-.topic-subnav-inner.is-railrow--full > .trail--bar[class] {
-  padding-left: 0; border-left: 0;
+/* Full-width rail: no page name on its left, so no hairline and no inset.
+   revamp1472 put every band in this state, home's ident row included — that
+   row is a `.topic-banner-row`, not a `.topic-subnav-inner`, so the rule is
+   written on the modifier alone. */
+.is-railrow--full > .trail--bar[class] {
+  padding-left: 0 !important; border-left: 0 !important; flex: 1 1 auto; min-width: 0;
 }
-.topic-subnav-inner.is-railrow--full > .trail--bar .trail-arrow--prev { left: -2px; }
+.is-railrow--full > .trail--bar .trail-arrow--prev { left: -2px; }
+#sub-header.is-home-ident .home-ident-row.is-railrow--full[class] { gap: 0 !important; }
 
 /* ═══ revamp1468 — tabular navigation, back, on home and topic pages ═══════
    Under 900 content px every page is one column, and a column that stacks

@@ -3735,11 +3735,11 @@ function renderLayout(route) {
     document.body.classList.add('home-mode');
     subHeader.classList.add('is-subnav', 'is-home-ident', 'home-mode');
     subHeader.innerHTML = `
-      <div class="topic-banner"><div class="topic-banner-row home-ident-row">
-        ${pagePickerHTML('home', 'tsp-panel-page-home', `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>`, 'Home')}
-        <!-- revamp1463b: the rail rides the ident row itself, after a
-             hairline. Home keeps its name and chevron but drops its icon —
-             that square is the width the first topic needs. -->
+      <!-- revamp1472: the band is the rail, and only the rail. The page name
+           with its chevron said what the page already said, and every one of
+           its destinations is a button somewhere you can already see: Home
+           leads the rail, Topics and Search sit in the main nav. -->
+      <div class="topic-banner"><div class="topic-banner-row home-ident-row is-railrow is-railrow--full">
         ${topicRailHTML(homeRailTopics(), 'trail--bar', 'home')}
       </div></div>
       <div class="home-subfilters" data-home-subfilters></div>`;
@@ -3818,9 +3818,8 @@ function renderLayout(route) {
     const briefTabs = '';
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
-        <div class="topic-subnav-inner is-railrow">
-          ${pagePickerHTML('intelligence', 'tsp-panel-page-brief', `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg>`, 'AI Briefings')}
-          ${railBarHTML('')}
+        <div class="topic-subnav-inner is-railrow is-railrow--full">
+          ${railBarHTML('home')}
         </div>
       </div>${briefTabs}`;
     observeSubnavHeight();
@@ -4870,9 +4869,8 @@ function renderPageNavBar(kind) {
   // — the same page the wide layout shows, just one column.
   subHeader.innerHTML = `
     <div class="topic-subnav-title">
-      <div class="topic-subnav-inner is-railrow">
-        ${pagePickerHTML(kind === 'topics' ? 'topics' : kind, `tsp-panel-page-${kind}`, ICONS[kind], name, kind === 'trending' ? 'is-trend' : '')}
-        ${railBarHTML('')}
+      <div class="topic-subnav-inner is-railrow${action ? '' : ' is-railrow--full'}">
+        ${railBarHTML('home')}
         ${action}
       </div>
     </div>${promptsTabs}`;
@@ -5894,14 +5892,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         // tab left ~50px of phantom reserved space above the section (the
         // "empty band" on brief/trend/tools). Re-measure once the layout settles.
         requestAnimationFrame(() => { try { setSubnavHeightVar(true); } catch (_) {} });
-        // The tab IS the destination: AI Briefing lands with the brief open
-        // rather than a teaser you then have to click (matches topic pages).
-        if (v === 'brief') {
-          const card = container.querySelector('.home-featbriefs .tdi-card');
-          if (card && !card.classList.contains('is-open')) {
-            container.querySelector('.home-featbriefs [data-di-toggle]')?.click();
-          }
-        }
+        // revamp1472: the Briefing tab is the BRIEFINGS PAGE, not one opened
+        // briefing — the main card with its headline, summary, edition stamp
+        // and its two buttons, and the rest of the day's briefings under it.
+        // Opening it on arrival buried all of that.
       }));
     }
     // revamp949: the homepage leads with a Featured AI Briefings row built from
@@ -5914,7 +5908,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>',
       moreHref: '#/intelligence', moreLabel: 'Explore all briefings (200+)',
     });
-    openBriefWhenTabbed(container.querySelector('[data-home-featbriefs]'), 120);
     {
       const tWrap = container.querySelector('[data-hq-topics]');
       if (tWrap) {
