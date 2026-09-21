@@ -41590,3 +41590,61 @@ body.tt-on .tpr-inline .pc.pc--v2[class][class] {
   .pc--v2 .pc-more[class][class][class][class][class][class]:hover { color: #16307a !important; text-decoration: underline; }
   .pc--v2 .pc-more[class][class][class][class][class][class]:hover .pc-more-ic { color: #1d4ed8 !important; }
 }
+
+/* ═══ revamp1500 — the tab strip sticks, and condenses as you read ═════════
+   On a long feed the tab you want next is the one you cannot reach: the
+   strip scrolled away with the first story and the only way back was to
+   scroll the whole column up. It sticks under the band now.
+
+   Fading it out on scroll was the other option, and it loses exactly the
+   thing the strip is for. It stays visible and CONDENSES instead: two
+   thirds the height, the glyphs dropped, the labels a step down — enough
+   chrome to switch with, little enough to read past. */
+
+/* Sticky needs a scrollport, and `#content` was one: revamp1043 gives it
+   `overflow-y: auto` with `overflow-x: hidden` under 900px, which makes it a
+   scroll container that never scrolls, so a sticky child inside it could
+   never stick (revamp1468e read that as sticky "painting over" the card and
+   went static). `clip` on one axis with `visible` on the other clips the same
+   horizontal overflow WITHOUT creating a scroll box — the treatment the
+   wrapper above it already uses. */
+/* (`#content` carries no class, so `[class]` would never match it — the file's
+   own `#content:not(#_)` idiom is how you out-specify a rule on it.) */
+@media (max-width: 899.98px) {
+  body.app-mode #content:not(#_):has(.topic-layout.topic-band),
+  body.tt-on #content:not(#_) {
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+  }
+}
+
+body.tt-on[class][class][class] .topic-viewtabs[class][class],
+body.tt-on[class][class][class] .family-tabs[class][class] {
+  position: sticky !important;
+  top: calc(var(--nav-h, 0px) + var(--subnav-height, 56px)) !important;
+  z-index: 60 !important;
+  background: #fff !important;
+  transition: min-height .18s ease, box-shadow .18s ease;
+}
+
+/* ── condensed ───────────────────────────────────────────────────────────── */
+body.tt-on.tt-cond[class][class][class] .topic-viewtabs[class][class],
+body.tt-on.tt-cond[class][class][class] .family-tabs[class][class] {
+  min-height: 34px !important;
+  box-shadow: 0 6px 14px -12px rgba(15, 26, 46, 0.5);
+}
+body.tt-on.tt-cond[class][class][class] .topic-viewtabs[class][class] .tvt,
+body.tt-on.tt-cond[class][class][class] .family-tabs[class][class] .tvt {
+  font-size: 0.79rem !important;
+  gap: 0 !important;
+  transition: font-size .18s ease;
+}
+body.tt-on.tt-cond[class][class][class] .topic-viewtabs .tvt .tvt-ic[class][class],
+body.tt-on.tt-cond[class][class][class] .family-tabs .tvt .tvt-ic[class][class] {
+  display: none !important;
+}
+/* The active underline thins with the bar it sits in. */
+body.tt-on.tt-cond[class][class][class] .topic-viewtabs .tvt[class][class][class][class],
+body.tt-on.tt-cond[class][class][class] .family-tabs .tvt[class][class][class][class] {
+  border-bottom-width: 2.5px !important;
+}

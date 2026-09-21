@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   preloadIcons(getAllShortcutIconKeys());
   initPromptModal();
   initScrollFades();
+  wireTabStripCondense();
   initTrendingDetailModal();
   initInsightModal();
   installHowItWorks();
@@ -463,6 +464,36 @@ function setSubnavHeightVar(force) {
 // reflow, viewport resize) and keep --subnav-height in lockstep so
 // the body's padding-top tracks smoothly when the Content Shortcuts
 // bar collapses/expands.
+// revamp1500: the tab strip sticks under the band and CONDENSES as you read.
+// Fading it out was the other option and it loses the thing the strip is for:
+// on a long feed the tab you want next is the one you cannot reach. It stays,
+// at two thirds the height, with the glyphs dropped and the labels a step
+// down — enough chrome to switch with, little enough to read past.
+//
+// Hysteresis (on at 120, off at 70) so a strip does not flicker between the
+// two states while a finger rests mid-scroll.
+function wireTabStripCondense() {
+  if (window.__tabCondenseWire) return;
+  window.__tabCondenseWire = true;
+  let on = false;
+  const sync = () => {
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    if (!on && y > 120) { on = true; document.body.classList.add('tt-cond'); }
+    else if (on && y < 70) { on = false; document.body.classList.remove('tt-cond'); }
+  };
+  window.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('hashchange', () => { on = false; document.body.classList.remove('tt-cond'); });
+  // The family tabs are links to four different routes. Each is its own page,
+  // and a page opens at its top — never at the scroll position the tab you
+  // came from happened to be left at. Delegated, so it survives every
+  // re-render of the strip.
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.family-tabs [data-familytab]')) return;
+    on = false; document.body.classList.remove('tt-cond', 'home-scrolled');
+    try { (document.scrollingElement || document.documentElement).scrollTop = 0; window.scrollTo(0, 0); } catch (_) {}
+  }, true);
+  sync();
+}
 function observeSubnavHeight() {
   const sub = document.getElementById('sub-header');
   if (!sub || typeof ResizeObserver === 'undefined') return;
@@ -3438,6 +3469,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         // revamp1098: each tab is its own state — switching tabs always opens at
         // the top, never carrying the previous tab's scroll position.
         try { (document.scrollingElement || document.documentElement).scrollTop = 0; window.scrollTo(0, 0); } catch (_) {}
+        document.body.classList.remove('tt-cond');
         // revamp1468: News is its own class now, not "no class". The old
         // scheme read the news view as the absence of a state, which every
         // later rule had to restate as a pile of :not()s.
