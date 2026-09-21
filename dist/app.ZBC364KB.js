@@ -1123,7 +1123,7 @@ ${C}`),A.length?A.join(`
           <!-- revamp1492: the card says what it IS before it says which one.
                The edition line alone left "Evening Edition" to stand for the
                whole thing, which only works if you already knew. -->
-          <p class="ec-kicker">AI Briefing</p>
+          <p class="ec-whatis">AI Briefing</p>
           <div class="ec-headrow">
             <!-- revamp1474: a topic's card names the EDITION. "Evening
                  Briefing" said "briefing" twice over \u2014 the tab above it

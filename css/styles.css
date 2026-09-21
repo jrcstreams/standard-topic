@@ -40958,14 +40958,14 @@ body.tt-on .family-tabs .tvt[class][class][class][class][class] { border-radius:
    card was. A quiet line above it says so. It sits tight to the edition
    line — one lockup, two levels — and stays out of the way of the stamp
    beside it. */
-.ec--topic .ec-kicker[class] {
+.ec--topic .ec-whatis[class] {
   margin: 0 0 3px;
   font-family: var(--font-family);
   font-size: 0.68rem; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase;
   color: color-mix(in srgb, var(--tc, #2f4d9e) 62%, #7d8aa6);
 }
-@media (max-width: 899.98px) { .ec--topic .ec-kicker[class] { font-size: 0.65rem; } }
+@media (max-width: 899.98px) { .ec--topic .ec-whatis[class] { font-size: 0.65rem; } }
 
 /* revamp1488 closed the gap to the topic description and took it a little
    far: the briefing now sat on the intro above and the feed below. A
