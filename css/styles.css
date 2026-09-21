@@ -39985,7 +39985,13 @@ body.tt-on #home-trending .trending-topics-titlerow[class][class] { display: non
    whenever the bar above it changed. Sticky occupies normal flow, so it
    reserves itself. Beats both the earlier fixed rule and revamp1463's
    blanket hide of `.home-viewtabs`. */
-body.tt-on .topic-viewtabs[class][class] { position: sticky !important; top: calc(var(--nav-h) + var(--subnav-height, 56px)) !important; }
+/* revamp1468e: the strip sits in normal flow. Sticky here was pinning against
+   a containing block inside the flex column and painting OVER the briefing
+   card instead of above it — the strip rendered at 224px while the card it
+   was supposed to head started at 186. An older `position: fixed` rule under
+   900px was in the same fight. In flow it reserves its own height and the
+   order is simply the DOM's. */
+body.tt-on .topic-viewtabs[class][class] { position: static !important; top: auto !important; }
 body.tt-on .home-viewtabs[class][class] { display: flex !important; }
 /* The page's own hero is hidden in tab mode, so the strip is the first thing
    under the bar — it needs no margin above it. */
