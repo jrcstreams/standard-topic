@@ -40323,3 +40323,8 @@ body.tt-on .home-grid > .family-tabs[class][class] {
 .tdi-card--topicedition.is-open .tdi-expand[class][class] { margin-top: 0 !important; }
 .tdi-card--topicedition.is-open .tdi-expand-inner[class][class] { padding-top: 14px !important; }
 .tdi-card--topicedition.is-open .di-focus--bare[class][class][class][class] { margin-top: 0 !important; }
+/* revamp1474d: the headline-to-body gap, measured. It was 42px built from
+   four stacked contributions — 14 above the expand, 2, a 14px inner pad and
+   a 12px margin on the inline page. Two of those go. */
+.tdi-card--topicedition.is-open .tdi-expand-inner[class][class][class] { padding-top: 6px !important; }
+.tdi-card--topicedition.is-open .di-page--inline[class][class][class] { margin-top: 0 !important; }
