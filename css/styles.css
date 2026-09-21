@@ -39636,3 +39636,8 @@ body.tt-on .dih .dih-edition[class][class][class][class] { margin-top: 24px !imp
 /* revamp1462c — the gap is held by `.di-page .di-mast.di-mast--v2[class]x3`
    (six classes, !important). Match it and add one. */
 .di-page .di-mast.di-mast--v2.di-mast--topic[class][class][class][class] { gap: 0 !important; row-gap: 0 !important; }
+/* revamp1462d — the mast's own margin-bottom is held at the same six-class
+   weight as its gap was; and the body below it starts on its own margin. */
+.di-page .di-mast.di-mast--v2.di-mast--topic[class][class][class][class] { margin-bottom: 10px !important; }
+.di-mast--topic + *[class][class] { margin-top: 0 !important; padding-top: 0 !important; }
+.di-mast--topic .di-metaline[class][class][class] { align-items: center !important; }
