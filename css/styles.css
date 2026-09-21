@@ -40198,3 +40198,57 @@ body.tt-on .topic-home.tview-brief::after {
 }
 body.tt-on .topic-home.tview-brief .topic-top--lead .ec[class],
 body.tt-on .topic-home.tview-brief .topic-top--lead .tdi-card[class] { background: transparent !important; }
+
+/* ═══ revamp1473 — the home family's four pages are four tabs ══════════════
+   Under 900 content px, Briefing / News / Prompts / Trending are the same
+   four things they are on desktop — the briefings page, home's feed, the
+   prompts page, the trending page — reached as tabs instead of as separate
+   destinations. The strip is LINKS, so the router does the work and the
+   sidebar's own links land on the matching tab.
+
+   Each page then drops the chrome that says what the tab already says: its
+   hero, its title block, its picker. */
+.family-tabs { display: none; }
+body.tt-on .family-tabs[class][class] {
+  display: flex !important; align-items: stretch !important;
+  position: static !important; top: auto !important;
+  gap: 2px !important; margin: 0 0 2px !important; padding: 0 1rem !important;
+  background: #fff !important; border-bottom: 1px solid #e3e8f2 !important;
+  overflow-x: auto; scrollbar-width: none; z-index: 60;
+}
+body.tt-on .family-tabs[class][class]::-webkit-scrollbar { display: none; }
+body.tt-on .family-tabs .tvt[class][class] {
+  flex: 0 0 auto; display: inline-flex !important; align-items: center !important; gap: 6px !important;
+  background: none !important; border: 0 !important; border-radius: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  padding: 11px 12px 9px !important; margin: 0 !important;
+  font-family: var(--font-family) !important; font-size: 0.92rem !important; font-weight: 600 !important;
+  color: #5b6b8f !important; text-decoration: none !important; white-space: nowrap;
+}
+body.tt-on .family-tabs .tvt.is-active[class][class] {
+  color: #1d4ed8 !important; border-bottom-color: #1d4ed8 !important; font-weight: 680 !important;
+}
+body.tt-on .family-tabs .tvt.is-active[class][class] .tvt-ic { color: #1d4ed8 !important; }
+body.tt-on .family-tabs .tvt .tvt-ic[class] { display: inline-flex !important; }
+@media (max-width: 480px) {
+  body.tt-on .family-tabs .tvt[class][class] { padding: 11px 9px 9px !important; font-size: 0.88rem !important; }
+  body.tt-on .family-tabs .tvt .tvt-ic[class] { display: none !important; }
+}
+
+/* The tab is the label: each page's own title block goes. */
+body.tt-on .dih .page-hero[class][class],
+body.tt-on .dih .page-hero--dih[class][class],
+body.tt-on .ndp .aii-nav-dd-head[class][class],
+body.tt-on .ndp > .aii-nav-dd-inner > .page-backbar[class][class] { display: none !important; }
+/* The briefings page keeps its edition control — it changes what you read. */
+body.tt-on .dih .dih-edition-bar[class] { margin-top: 6px !important; }
+/* The strip is the first thing under the band on all four. */
+body.tt-on #content > .family-tabs[class][class] { margin: 0 -1rem 2px !important; }
+body.tt-on .dih[class], body.tt-on .ndp[class] { padding-top: 8px !important; }
+
+/* Home in tab mode is the NEWS tab and nothing else — the other three
+   sections are their own routes now, so the copies here stand down. */
+body.tt-on .home-v2 .home-featbriefs[class][class],
+body.tt-on .home-v2 #home-pcard[class][class],
+body.tt-on .home-v2 #home-trending[class][class] { display: none !important; }
+body.tt-on .home-v2 .home-main[class][class] { display: block !important; }

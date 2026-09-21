@@ -1737,6 +1737,7 @@ function wirePromptsDropdown(panel, initialView) {
 
 function promptsNavDdCfg(view) {
   return {
+    familyTab: 'tools',
     key: 'prompts', pickerKey: 'prompts', triggerId: 'nav-prompts', className: 'aii-nav-dd-prompts',
     title: 'Prompts', ariaLabel: 'Prompts',
     subtitle: 'Ready-made prompts for every topic, or build your own.',
@@ -1882,6 +1883,7 @@ function openTopicsNavDropdown() { if (!(navDdOpen && navDdOpen.key === 'topics'
 function trendingNavDdCfg(expandQuery) {
   if (!expandQuery && pendingTrendingExpand) { expandQuery = pendingTrendingExpand; pendingTrendingExpand = null; }
   return {
+    familyTab: 'trend',
     key: 'trending', pickerKey: 'trending', triggerId: 'nav-trending', className: 'aii-nav-dd-trending',
     title: 'Trending', ariaLabel: 'Trending now',
     icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
@@ -2500,6 +2502,26 @@ function openBriefWhenTabbed(root, delay = 60) {
   setTimeout(go, delay);
   setTimeout(go, delay + 700);
 }
+// revamp1473: in tab mode the home family's four sections ARE four pages, and
+// the strip is how you move between them. Briefing is the briefings page,
+// Prompts the prompts page, Trending the trending page; News is home itself.
+// They are LINKS, so the router does the work, the back button behaves, and
+// the sidebar's own links land on the same tab — there is only ever one copy
+// of each page, which is what keeps the edition card, the trending grid and
+// the prompts directory from fighting over their singletons and ids.
+const FAMILY_TABS = [
+  ['brief', 'Briefing', 'brief', '#/intelligence'],
+  ['news', 'News', 'news', '#/'],
+  ['tools', 'Prompts', 'tools', '#/prompts'],
+  ['trend', 'Trending', 'trend', '#/trending'],
+];
+function familyTabsHTML(active = 'news') {
+  const rows = FAMILY_TABS.map(([v, label, ic, href]) => {
+    const on = v === active;
+    return `<a href="${href}" class="tvt${on ? ' is-active' : ''}" role="tab" aria-selected="${on}"${on ? ' aria-current="page"' : ''} data-familytab="${v}">${pageTabIcon(ic)}<span class="tvt-tx">${escapeHTML(label)}</span></a>`;
+  }).join('');
+  return `<div class="topic-viewtabs home-viewtabs family-tabs" data-viewtabs role="tablist" aria-label="Sections">${rows}</div>`;
+}
 function viewTabsHTML(kind, active = 'brief') {
   const attr = kind === 'home' ? 'data-hview' : 'data-tview';
   const rows = (VIEW_TABS[kind] || VIEW_TABS.topic).map(([v, label, ic]) => {
@@ -2582,6 +2604,7 @@ function diEditionStampHTML(iso) {
 // Same cfg, same contentHTML, same wire(): just mounted into #content.
 function renderNavDdPage(container, cfg) {
   container.innerHTML = `
+    ${cfg.familyTab ? familyTabsHTML(cfg.familyTab) : ''}
     <div class="ndp aii-nav-dd-pagelike ${cfg.className || ''}">
       <div class="aii-nav-dd-inner">
         ${backBarHTML()}
@@ -2864,6 +2887,7 @@ function renderIntelligenceHub(container) {
   </div>`;
   const SEC_IC_BYTOPIC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
   container.innerHTML = `
+    ${familyTabsHTML('brief')}
     <div class="dih">
       ${backBarHTML()}
       <section class="page-hero page-hero--dih">
@@ -5805,8 +5829,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
              Home no longer has a tab strip either — the briefing card links
              out to briefings by topic and trending links to its own page, so
              there is nothing left for tabs to switch between. -->
-        ${viewTabsHTML('home', 'brief')}
-        <div class="home-sections home-v2 hview-brief">
+        ${familyTabsHTML('news')}
+        <div class="home-sections home-v2 hview-news">
           <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Morning Briefing"></section>
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
