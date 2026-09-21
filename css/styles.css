@@ -40303,3 +40303,23 @@ body.tt-on .home-grid > .family-tabs[class][class] {
 }
 /* The expanded body starts on the long read now — its own chip row is gone. */
 .tdi-card--topicedition.is-open .di-focus--bare[class][class][class] { margin-top: 2px !important; }
+/* revamp1474c: the three measurements the open card got wrong.
+   (1) the long read takes the teaser's exact size (1.02rem), at every width —
+       a narrow override had it a notch smaller;
+   (2) the close button's ink centre sat 6px below the edition line's;
+   (3) 30px between the headline and the day's first sentence, which read as
+       a missing paragraph. */
+.tdi-card--topicedition.is-open .di-focus--bare .di-summary[class][class][class][class][class] {
+  font-size: 1.02rem !important; line-height: 1.58 !important;
+}
+@media (max-width: 899.98px) {
+  .tdi-card--topicedition.is-open .di-focus--bare .di-summary[class][class][class][class][class] {
+    font-size: 1.02rem !important; line-height: 1.56 !important;
+  }
+}
+.tdi-card--topicedition.is-open .tdi-openx[class][class][class] { top: 8px !important; }
+.tdi-card--topicedition.is-open .ec-lead[class][class] { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+.tdi-card--topicedition.is-open .ec-headline[class][class][class] { margin-bottom: 0 !important; }
+.tdi-card--topicedition.is-open .tdi-expand[class][class] { margin-top: 0 !important; }
+.tdi-card--topicedition.is-open .tdi-expand-inner[class][class] { padding-top: 14px !important; }
+.tdi-card--topicedition.is-open .di-focus--bare[class][class][class][class] { margin-top: 0 !important; }
