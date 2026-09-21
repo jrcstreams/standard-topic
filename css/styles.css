@@ -40657,3 +40657,20 @@ body.tt-on .family-tabs .tvt.is-active[class][class][class] {
   border-bottom-color: #1e40af !important;
   box-shadow: inset 0 -3.5px 0 #1e40af;
 }
+
+/* ═══ revamp1483 — the prompt rows get their margins back ══════════════════
+   revamp1480 made the rows links and revamp1481 dropped the card frame on
+   a phone — and the frame was carrying the only horizontal padding those
+   rows had, so the names ended up flush against the edge while the section
+   header above them stayed inset. They also sat too tight: 7px above and
+   below a name reads as a table, not a list you tap.
+
+   The list keeps its own inset now, independent of the frame, and the rows
+   breathe. Both at every width, so the phone and the rail agree. */
+.pc--v2 .pc-links[class][class] { padding: 6px 14px 10px !important; }
+.pc--v2 .pc-row[class][class] { padding: 11px 2px !important; }
+body.tt-on .pc--v2 .pc-links[class][class] { padding: 6px 14px 12px !important; }
+/* The section header and the names below it start on the same line. */
+.pc--v2 .pc-sechead[class][class] { padding-left: 14px !important; padding-right: 14px !important; }
+/* A little air between a section's header and its first name. */
+.pc--v2 .pc-sec.is-open .pc-links[class][class] { padding-top: 8px !important; }
