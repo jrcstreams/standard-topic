@@ -40017,3 +40017,10 @@ body.tt-on .topic-viewtabs[class][class] {
 @media (max-width: 480px) {
   body.tt-on .topic-viewtabs .tvt[class][class] { padding: 11px 9px 9px !important; font-size: 0.88rem !important; }
 }
+
+/* revamp1468d: a band carrying the rail always shows. The mobile hide at
+   styles.css:592 exempted a band that held a topic picker — which the topic
+   band no longer does, because the rail replaced it (revamp1467d). The rail
+   is the reason the band exists now, so that is what the exemption reads. */
+#sub-header.is-subnav:has(.trail)[class] { display: flex !important; align-items: center !important; }
+#sub-header.is-subnav:has(.trail)[class] > .topic-subnav-title { flex: 1 1 auto; min-width: 0; }

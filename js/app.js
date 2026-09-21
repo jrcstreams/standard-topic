@@ -2474,6 +2474,9 @@ function openBriefWhenTabbed(root, delay = 60) {
       if (!btn || btn.getAttribute('aria-expanded') === 'true') return;
       card.dataset.autoOpened = '1';
       btn.click();
+      // Opening reflows the card under a sticky strip; land at the top of the
+      // page rather than wherever that reflow left the scroller.
+      try { (document.scrollingElement || document.documentElement).scrollTop = 0; window.scrollTo(0, 0); } catch (_) {}
     } catch (_) {}
   };
   setTimeout(go, delay);
