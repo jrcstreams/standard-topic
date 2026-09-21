@@ -39633,3 +39633,6 @@ body.tt-on .dih .dih-edition[class][class][class] { margin-top: 8px !important; 
 body.tt-on .dih .dih-edition[class][class][class][class] { margin-top: 24px !important; }
 .dih .dih-groups[class][class][class] { margin-top: 0 !important; }
 .dih .dih-group--all > .dih-groupbody[class][class] { padding-top: 0 !important; }
+/* revamp1462c — the gap is held by `.di-page .di-mast.di-mast--v2[class]x3`
+   (six classes, !important). Match it and add one. */
+.di-page .di-mast.di-mast--v2.di-mast--topic[class][class][class][class] { gap: 0 !important; row-gap: 0 !important; }
