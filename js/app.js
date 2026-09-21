@@ -1838,7 +1838,7 @@ function topicsTreeHTML() {
 function topicsNavDdCfg() {
   return {
     key: 'topics', pickerKey: 'topics', triggerId: 'nav-topics', className: 'aii-nav-dd-topics',
-    title: 'Topics', ariaLabel: 'All topics',
+    title: 'All Topics', ariaLabel: 'All topics',
     // The glyph the condensed bar shows beside the name (revamp810).
     icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
     subtitle: 'Browse every topic.',
@@ -4838,6 +4838,17 @@ function wireNavDdCondense(panel) {
 function renderPageNavBar(kind) {
   const subHeader = document.getElementById('sub-header');
   if (!subHeader) return;
+  // revamp1497: the Topics page carries no band. The band's whole content is
+  // the topic rail, and the page under it is a list of the same topics — the
+  // rail said them twice, whichever way you arrived (the nav's Topics button,
+  // the sidebar's, a link). The page's own "All Topics" head names it.
+  if (kind === 'topics') {
+    document.body.classList.remove('has-subnav', 'pagenav-mode', 'pagenav-on');
+    subHeader.className = '';
+    subHeader.innerHTML = '';
+    try { document.documentElement.style.setProperty('--subnav-height', '0px'); } catch (_) {}
+    return;
+  }
   const ICONS = {
     topics: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
     trending: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
@@ -5207,6 +5218,8 @@ function renderStickyHeroBar(container, route) {
   // via a prominent "All {name}" link at the top of the nested list. Parents
   // with no subtopics stay a plain link.
   const NAVMENU_SUB_ARROW = '<svg class="navmenu-subtopic-arrow" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
+  // revamp1497: the sidebar no longer lists the topics (the rail does, on every
+  // page). Kept built because the same rows feed the collapsed-nav flyout.
   const featuredLinksHTML = featured.map(t => {
     const subs = getSubtopics(t.slug);
     // revamp1209: the sidebar carries the topic's colour like every other
@@ -5434,18 +5447,29 @@ function renderStickyHeroBar(container, route) {
       </button>
     </nav>
     <div class="navmenu-scroll">
-      <div class="navmenu-topics-label">Topics</div>
-      <div class="navmenu-topics">${featuredLinksHTML}</div>
-    </div>
-    <div class="navmenu-footer-sticky">
-      <div class="navmenu-footer-links">
-        <a href="#/about" class="navmenu-link">About</a>
-        <a href="#/terms" class="navmenu-link">Terms</a>
-        <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="navmenu-link">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
+      <!-- revamp1497: the topic list is gone from here. Every topic rides the
+           rail in the band at the top of every page, and Topics above opens
+           the full list — three copies of one list was two too many. The
+           space belongs to the pages that had nowhere else to sit. -->
+      <div class="navmenu-topics-label">About &amp; Info</div>
+      <nav class="navmenu-quicklinks navmenu-quicklinks--about">
+        <a href="#/about" class="navmenu-quicklink navmenu-cta" data-nav-key="about">
+          <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+          </svg>
+          <span class="navmenu-cta-label">About</span>
         </a>
-      </div>
+        <a href="#/terms" class="navmenu-quicklink navmenu-cta" data-nav-key="terms">
+          <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/>
+          </svg>
+          <span class="navmenu-cta-label">Terms</span>
+        </a>
+        <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="navmenu-quicklink navmenu-cta">
+          <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span class="navmenu-cta-label">GitHub</span>
+        </a>
+      </nav>
     </div>
   `;
 

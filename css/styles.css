@@ -41053,7 +41053,10 @@ body.tt-on .home-grid > .family-tabs[class][class][class] {
   width: auto !important; max-width: none !important;
   margin-left: -16px !important; margin-right: -16px !important;
   margin-top: 0 !important; margin-bottom: 0 !important;
-  padding-left: 16px !important; padding-right: 16px !important;
+  /* No padding: the cells divide the WHOLE bar, the way the topic strip's
+     three do. 16px of padding here put the first cell 16px in and stopped
+     the last one 16px short, which is the inset revamp1482 removed. */
+  padding-left: 0 !important; padding-right: 0 !important;
 }
 
 /* ── the rail runs the full width of the band ────────────────────────────── */
@@ -41088,41 +41091,20 @@ body.tt-on .newsfeed-card .news-card:first-child[class][class][class][class] {
 body.tt-on .newsfeed-scroll-wrap[class][class],
 body.tt-on .news-list[class][class][class] { padding-top: 0 !important; margin-top: 0 !important; }
 
-/* ── the briefings run edge to edge ──────────────────────────────────────── */
-/* In tab mode the page IS the list, so the cards stop being cards: no side
-   border, no corner radius, no inset — the same full-bleed run the news feed
-   reads as. (The 16px gutter stays as the cards' own padding, so the text
-   still starts on the page's margin.) */
-body.tt-on .dih[class][class] { padding-top: 0 !important; }
-body.tt-on .dih .dih-edition[class][class][class][class] { margin: 0 -16px 0 !important; }
+/* ── the briefings keep their top edge under the strip ──────────────────── */
+/* They stay CARDS — a run of edge-to-edge blocks read as one undifferentiated
+   column. Only the 24px of air above the first one goes, so the list starts
+   on the strip's line like every other tab. */
+body.tt-on .dih[class][class] { padding-top: 10px !important; }
+body.tt-on .dih .dih-edition[class][class][class][class] { margin-top: 0 !important; }
 body.tt-on .dih .dih-groups[class][class] { margin-top: 0 !important; }
-body.tt-on .dih .dih-items[class][class] { margin-left: -16px !important; margin-right: -16px !important; }
-body.tt-on .dih .dih-edition > .tdi-card[class][class],
-body.tt-on .dih .dih-items > .dib[class][class],
-body.tt-on .dih .dih-items > *[class][class] {
-  border-left: 0 !important; border-right: 0 !important;
-  border-radius: 0 !important;
-  margin-left: 0 !important; margin-right: 0 !important;
-  width: auto !important; max-width: none !important;
-}
-body.tt-on .dih .dih-edition > .tdi-card[class][class] { border-top: 0 !important; }
-body.tt-on .dih .dih-edition > .tdi-card > *[class],
-body.tt-on .dih .dih-items > .dib > *[class] { padding-left: 16px !important; padding-right: 16px !important; }
-
-/* The topic page's own briefing card, same treatment on the Briefing tab. */
-body.tt-on .topic-home .topic-top--lead[class][class] { margin: 0 -16px !important; }
-body.tt-on .topic-home .topic-top--lead .tdi-card[class][class] {
-  border-left: 0 !important; border-right: 0 !important; border-top: 0 !important;
-  border-radius: 0 !important;
-}
 
 /* ── the tab already says "AI Briefings" ─────────────────────────────────── */
 /* "THE MAIN BRIEFING" over "Morning Edition" is the strip's own label,
    repeated one line lower. */
-body.tt-on .dih .tdi-brieftitle[class][class],
-body.tt-on .dih .ec-title[class][class],
-body.tt-on .home-v2 .tdi-brieftitle[class][class],
-body.tt-on .home-v2 .ec-title[class][class],
+/* The one that goes is revamp1492's eyebrow over the edition line — the strip
+   above it already says AI Briefings. The card's own title ("The Main
+   Briefing") stays: it names WHICH briefing, which the tab does not. */
 body.tt-on .ec--topic .ec-whatis[class][class] { display: none !important; }
 
 /* revamp1301's rule put a border, 16px of padding and 16px of margin on the
@@ -41339,3 +41321,171 @@ body.tt-on .home-v2 .home-main .newsfeed-scroll-wrap[class] { margin-top: 0 !imp
 .aii-pc [data-pc-settings][aria-expanded="true"][class] {
   background: #e8edf6 !important; border-color: #b9c8e4 !important; color: #16307a !important;
 }
+
+/* ═══ revamp1495 — the strip's text, and what sits under it ════════════════ */
+
+/* The labels were set at the size of a section header. The strip is
+   navigation: four words in a 42px bar, so they come down a step and the
+   glyphs keep their size. */
+body.tt-on[class][class][class] .topic-viewtabs[class][class] .tvt,
+body.tt-on[class][class][class] .family-tabs[class][class] .tvt {
+  font-size: 0.86rem !important;
+  letter-spacing: -0.004em;
+}
+@media (max-width: 480px) {
+  body.tt-on[class][class][class] .topic-viewtabs[class][class] .tvt,
+  body.tt-on[class][class][class] .family-tabs[class][class] .tvt {
+    font-size: 0.83rem !important;
+  }
+}
+
+/* The first thing under the strip gets a little air — the feed's first story
+   butts onto the line because the line IS its border, but a section HEAD
+   sitting on it reads as a caption for the tab above. */
+body.tt-on .prompts-home--v2 > .ph-featured[class][class] { margin-top: 14px !important; }
+body.tt-on .prompts-home--v2 .ph-lib[class][class] { margin-top: 26px !important; }
+/* Trending's switch sits closer to the strip it hangs under. */
+body.tt-on .trend-sports-toggle[class][class] { margin-top: 0 !important; }
+body.tt-on #content .trending-wrap[class][class],
+body.tt-on #content .trending-topics[class][class],
+body.tt-on .ndp .trend-sports-row[class][class] { padding-top: 8px !important; margin-top: 0 !important; }
+
+/* ── "View more prompts" is a link, not a button ─────────────────────────── */
+/* It ends a list; a filled pill gave it the weight of a call to action. Plain
+   text in the link blue, with the + carrying the only colour beside it. */
+.prompts-home--v2 .ph-flist-more[class][class][class] {
+  display: inline-flex !important; align-items: center; gap: 7px;
+  margin: 12px 0 0 !important;
+  padding: 4px 0 !important;
+  background: none !important; border: 0 !important; border-radius: 0 !important;
+  box-shadow: none !important;
+  font-family: var(--font-family); font-size: 0.9rem !important; font-weight: 600 !important;
+  color: #1d4ed8 !important; cursor: pointer;
+}
+.prompts-home--v2 .ph-flist-more[class][class][class]::before {
+  content: '+';
+  font-size: 1.02rem; font-weight: 700; line-height: 1;
+  color: #7c8ba8;
+}
+@media (hover: hover) {
+  .prompts-home--v2 .ph-flist-more[class][class][class]:hover { color: #16307a !important; text-decoration: underline; }
+  .prompts-home--v2 .ph-flist-more[class][class][class]:hover::before { color: #1d4ed8; }
+}
+
+/* ═══ revamp1496 — the search page holds still ═════════════════════════════
+   Empty, the hero was pulled 34px up under the band, so "Search" sat almost
+   on the rail; with a term typed the pull came off and the whole lockup —
+   title, line, field — dropped 24px. The field is the thing you are aiming
+   at, so it cannot move between the two states. One geometry for both:
+   a little air off the band, the sublede tight to the field it introduces,
+   and the field in the same place whether there are results under it or not. */
+body.tt-on .search-page .search-panel-topfold[class][class][class],
+body.tt-on .search-page .search-topzone[class][class][class] {
+  margin-top: 0 !important;
+  /* The fold's own top padding was 10px collapsed and 34px expanded, which is
+     the other half of the jump. One value. */
+  padding-top: 14px !important;
+  padding-bottom: 18px !important;
+}
+body.tt-on .search-page .search-panel-hero[class][class][class],
+body.custom-mode.tt-on .search-page .search-panel-hero[class][class][class] {
+  padding-top: 18px !important;
+  padding-bottom: 10px !important;
+}
+/* "Find the insights and resources you need." belongs to the field under it,
+   not to the title above it — 30px of air read as two separate things. */
+body.tt-on .search-page .search-panel-sublede[class][class] {
+  margin-top: 4px !important; margin-bottom: 0 !important;
+}
+body.tt-on .search-page .search-panel-barrow[class][class] { padding-top: 0 !important; margin-top: 0 !important; }
+
+/* One rule under the field, not two. The stickzone drew a 2px line 33px
+   below the bar and the first result head drew its own directly under it. */
+body.tt-on .search-page .search-stickzone[class][class] {
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* ── search results: the prompts are a list, like everywhere else ───────── */
+/* Beginner's Guide, Research and Trends, Deep Dive and Tools and Resources
+   were four bordered cards, each two lines tall with a sentence under its
+   name. They are the same four prompts the rest of the site shows as rows:
+   a name, a chevron, a hairline between them, and the section rule above
+   the first one doing the work of its top border. */
+.sr-sec--prompts .aii-fi-acclist[class][class] > .aii-fi-acc[class][class] {
+  background: none !important;
+  border: 0 !important;
+  border-bottom: 1px solid #f0f3f8 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+.sr-sec--prompts .aii-fi-acclist[class][class] > .aii-fi-acc:last-child[class] { border-bottom: 0 !important; }
+.sr-sec--prompts .aii-fi-accsum[class][class] {
+  padding: 12px 0 !important;
+  background: none !important; border: 0 !important; border-radius: 0 !important;
+  gap: 8px !important; align-items: center !important;
+}
+/* revamp1264's `.aii-fi-acclist > .aii-fi-acc[class][class] .aii-fi-acc-desc`
+   forces the sentence back at four classes, so this needs the same path. */
+.sr-sec--prompts .aii-fi-acclist > .aii-fi-acc[class][class] .aii-fi-acc-desc[class],
+.sr-sec--prompts .aii-fi-acclist > .aii-fi-acc[class][class] .aii-fi-acc-ic[class],
+.sr-sec--prompts .aii-fi-acc-desc[class][class],
+.sr-sec--prompts .aii-fi-acc-ic[class][class] { display: none !important; }
+.sr-sec--prompts .aii-fi-acclist > .aii-fi-acc[class][class] .aii-fi-acc-name[class] {
+  font-size: 0.95rem !important; font-weight: 550 !important; color: #2b3a5e !important;
+}
+.sr-sec--prompts .aii-fi-acc-name[class][class] {
+  font-family: var(--font-family);
+  font-size: 0.95rem !important; font-weight: 550 !important;
+  color: #2b3a5e !important;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sr-sec--prompts .aii-fi-acc.is-open .aii-fi-acc-name[class][class] { color: #16307a !important; font-weight: 680 !important; }
+.sr-sec--prompts .aii-fi-acc-chev[class][class] { flex: none; opacity: 0.5; color: #5b6b8f !important; }
+.sr-sec--prompts .aii-fi-acc-chev svg { width: 14px; height: 14px; }
+@media (hover: hover) {
+  .sr-sec--prompts .aii-fi-accsum[class][class]:hover .aii-fi-acc-name { color: #1d4ed8 !important; }
+  .sr-sec--prompts .aii-fi-accsum[class][class]:hover .aii-fi-acc-chev { opacity: 1; }
+}
+/* Open, the panel takes the same grey head-and-body the prompt card uses. */
+.sr-sec--prompts .aii-fi-acc.is-open > .aii-fi-accsum[class][class] {
+  background: #f4f6f9 !important;
+  border-radius: 10px 10px 0 0 !important;
+  padding: 12px 14px !important;
+  border-bottom: 1px solid #e1e6ef !important;
+}
+.sr-sec--prompts .aii-fi-acc.is-open .aii-emenu-host.is-open[class][class] {
+  margin-top: 0 !important;
+  border-radius: 0 0 10px 10px !important;
+  background: #f4f6f9 !important;
+  border-top: 0 !important;
+  padding: 0 0 12px !important;
+}
+
+/* ═══ revamp1497 — the Topics page needs no rail above it ══════════════════
+   The band's entire content is the topic rail, and the Topics page IS the
+   list of those topics. Whichever way you arrive — the header's Topics
+   button, the sidebar's, a link — the rail was the page's own content
+   repeated in a scroller above it. The band goes (in the router), and the
+   page's own head comes back to name it. */
+body.tt-on .ndp.aii-nav-dd-topics .aii-nav-dd-head[class][class][class] {
+  display: flex !important;
+  padding-top: 18px !important;
+}
+body.tt-on .ndp.aii-nav-dd-topics .aii-nav-dd-title[class][class] { font-size: 1.28rem !important; }
+body.tt-on .ndp.aii-nav-dd-topics .aii-nav-dd-sub[class] { display: none !important; }
+/* Without a band there is nothing to reserve for. */
+body.tt-on .ndp.aii-nav-dd-topics[class] { padding-top: 0 !important; }
+
+/* ── the sidebar's About & Info block ────────────────────────────────────── */
+.navmenu-quicklinks--about { padding-top: 2px; }
+.navmenu-quicklinks--about .navmenu-cta-label { font-weight: 560; }
+
+/* The first result head sits closer to the field that produced it. */
+body.tt-on .search-page .search-panel-results[class][class] { padding-top: 4px !important; }
+body.tt-on .search-page .sr[class][class] { padding-top: 0 !important; }
+body.tt-on .search-page .sr > .sr-sec:first-child[class][class] { margin-top: 0 !important; }
+/* Trending's switch hangs a little closer to the strip it belongs under. */
+body.tt-on .ndp.aii-nav-dd-trend[class][class] { padding-top: 0 !important; }
+body.tt-on .ndp.aii-nav-dd-trend .aii-nav-dd-subbar[class][class] { padding-top: 8px !important; margin-bottom: 4px !important; }
