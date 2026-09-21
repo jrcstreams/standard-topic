@@ -5782,8 +5782,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     const HQ_ARROW = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
     // revamp1085: a blue hero band at the top of Home, mirroring the topic-page
     // header — title + subtext + a row of featured-topic chips to jump straight in.
-    let heroTopics = [];
-    heroTopics = homeRailTopics();
     const HOME_HERO_IC = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>';
     const homeHeroHTML = `
       <section class="home-hero home-hero--noic" data-home-hero>
@@ -5792,7 +5790,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <h1 class="home-hero-title">Real news. AI insights. On any topic.</h1>
           </div>
           <p class="home-hero-sub">Live news, a morning AI briefing, and prompts to dig deeper.</p>
-          ${topicRailHTML(heroTopics, 'trail--hero', 'home')}
+          <!-- revamp1472b: no rail here. It used to appear in the hero while
+               the sidebar was closed and again in the bar once you scrolled;
+               the bar stands from the first paint now (revamp1467), so this
+               copy was the same list twice on one screen. -->
         </div>
       </section>`;
     container.innerHTML = `
