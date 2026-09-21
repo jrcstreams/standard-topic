@@ -1120,6 +1120,10 @@ ${C}`),A.length?A.join(`
       </div></div>`}function h0(e){let t='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';return`
       <div class="ec ec--v2 ec--topic"${Ge(e)}>
         <div class="ec-head">
+          <!-- revamp1492: the card says what it IS before it says which one.
+               The edition line alone left "Evening Edition" to stand for the
+               whole thing, which only works if you already knew. -->
+          <p class="ec-kicker">AI Briefing</p>
           <div class="ec-headrow">
             <!-- revamp1474: a topic's card names the EDITION. "Evening
                  Briefing" said "briefing" twice over \u2014 the tab above it

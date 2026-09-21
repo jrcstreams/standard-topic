@@ -40952,3 +40952,29 @@ body.tt-on .family-tabs .tvt[class][class][class][class][class] { border-radius:
   justify-self: stretch !important;
   margin-left: 0 !important; margin-right: 0 !important;
 }
+
+/* ═══ revamp1492 — the card names itself, and gets its air back ═══════════
+   "Evening Edition" on its own only reads if you already knew what the
+   card was. A quiet line above it says so. It sits tight to the edition
+   line — one lockup, two levels — and stays out of the way of the stamp
+   beside it. */
+.ec--topic .ec-kicker[class] {
+  margin: 0 0 3px;
+  font-family: var(--font-family);
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--tc, #2f4d9e) 62%, #7d8aa6);
+}
+@media (max-width: 899.98px) { .ec--topic .ec-kicker[class] { font-size: 0.65rem; } }
+
+/* revamp1488 closed the gap to the topic description and took it a little
+   far: the briefing now sat on the intro above and the feed below. A
+   little room on both sides. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead[class][class][class][class][class] {
+  padding-bottom: 6px !important;
+  margin-bottom: 16px !important;
+}
+body:not(.tt-on):has(.topic-home) .topic-top--lead[class][class][class] {
+  margin-bottom: 30px !important;
+}
+body.tt-on .topic-home .topic-top--lead[class][class][class] { margin-bottom: 22px !important; }
