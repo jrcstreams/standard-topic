@@ -912,6 +912,20 @@ function topicHeroArt(topic) {
   return `/assets/hero/topics/${(topic && topic.slug) || 'world'}.webp?v=2`;
 }
 
+// revamp1471: the topic page's art. `--tc` tints the wash behind the intro and
+// the briefing so the two read as one block; `--topic-art` is an optional
+// image for the same band, faded almost out at the right-hand side. The image
+// is a DATA drop-in — a topic with no `art` field gets the wash alone, which
+// is a finished look rather than a placeholder. Files live at
+// /img/topics/<slug>.webp and are named by topics.json.
+function topicArtStyle(topic) {
+  const c = (topicColorStyle(topic).match(/--tc:\s*([^;"]+)/) || [])[1] || '';
+  const art = topic && typeof topic.art === 'string' && topic.art ? topic.art : '';
+  const bits = [];
+  if (c) bits.push(`--tc: ${c}`);
+  if (art) bits.push(`--topic-art: url('${escapeAttr(art)}')`);
+  return bits.length ? ` style="${bits.join('; ')}"` : '';
+}
 function topicBodyHeadHTML(topic) {
   const related = (getRelatedTopics(topic) || []).filter((t) => t && t.slug);
   const desc = getTopicDescription(topic.slug) || '';
@@ -929,7 +943,7 @@ function topicBodyHeadHTML(topic) {
   // revamp1207: each pill carries its topic's icon, in that topic's colour (wide layout only — CSS).
   const pills = ordered.map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}"${topicColorStyle(t)}><span class="tbh-sub-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>${escapeHTML(t.name)}</a>`).join('');
   return `
-    <header class="topic-bodyhead topic-subnav-picker" data-topic-picker${topicColorStyle(topic)}>
+    <header class="topic-bodyhead topic-subnav-picker" data-topic-picker${topicArtStyle(topic)}>
       <a class="tbh-back" href="#/topics">${TBH_BACK_CHEV}<span>Topics</span></a>
       <div class="tbh-titlerow">
         <button type="button" class="tbh-titlebtn tsp-btn" aria-expanded="false" aria-controls="tsp-panel-body" aria-label="Change topic">
@@ -3341,7 +3355,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // last component in the right column, so it can simply run long (John:
     // "whether there's 30 or 100").
     const featuredPrompts = shortcuts;
-    body.innerHTML = `<div class="topic-home tview-brief">
+    body.innerHTML = `<div class="topic-home tview-brief"${topicArtStyle(topic)}>
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
       ${viewTabsHTML('topic', 'brief')}

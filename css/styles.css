@@ -40113,3 +40113,82 @@ body.tt-on .topic-viewtabs[class][class] {
 body.tt-on .ec-overview[class] { display: none !important; }
 .tdi-card.is-open .ec-overview[class] { display: none !important; }
 @media (max-width: 899.98px) { .ec-overview { font-size: 0.92rem; } }
+
+/* ═══ revamp1471 — the topic intro and its briefing are one block ══════════
+   The intro sat on a fixed blue wash that stopped at its own bottom edge,
+   and the briefing card began below it as a separate white object. They are
+   the same thing — the page saying what it is and what happened today — so
+   the wash is tinted with the topic's own colour and runs down THROUGH the
+   briefing, fading out before the feed.
+
+   `--topic-art` is an optional image for the same band, set per topic in
+   topics.json. Without it the wash stands alone, which is a finished look
+   rather than a gap waiting for a file. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
+  left: -48px; right: -48px; top: -64px; bottom: auto;
+  height: 520px;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--tc, #2f4d9e) 15%, #fff) 0%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 7%, #fff) 34%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 2.5%, #fff) 66%,
+      #ffffff 100%) !important;
+}
+/* The art rides the same band, pinned right, faded almost out. At this
+   weight a texture reads and a literal photograph does not, which is why
+   the wash under it carries the colour. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::after {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: -48px; right: -48px; top: -64px; height: 520px;
+  background-image: var(--topic-art, none);
+  background-repeat: no-repeat;
+  background-position: right -40px top -30px;
+  background-size: min(48%, 560px) auto;
+  opacity: 0.20;
+  -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 78%), linear-gradient(to bottom, #000 42%, transparent 92%);
+          mask-image: linear-gradient(to left, #000 0%, transparent 78%), linear-gradient(to bottom, #000 42%, transparent 92%);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
+/* The briefing card sits ON the band rather than punching a white hole in
+   it: translucent ground, and a border that reads against the tint. */
+body:not(.tt-on):has(.topic-home) .topic-top--lead .ec[class],
+body:not(.tt-on):has(.topic-home) .topic-top--lead .tdi-card[class] {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: saturate(1.15) blur(2px);
+  border-color: color-mix(in srgb, var(--tc, #2f4d9e) 18%, #e3e9f4) !important;
+}
+/* Open, the briefing is a document, not a hero — it takes the band back to
+   a hairline of tint and reads on white. */
+body:not(.tt-on):has(.topic-home) .topic-top--lead.is-di-open ~ * .ec,
+body:not(.tt-on):has(.topic-home) .topic-top--lead.is-di-open .ec[class],
+body:not(.tt-on):has(.topic-home) .topic-top--lead.is-di-open .tdi-card[class] {
+  background: #fff !important; backdrop-filter: none;
+}
+body:not(.tt-on):has(.topic-home:has(.topic-top--lead.is-di-open)) .topic-bodyhead::before { height: 300px !important; }
+body:not(.tt-on):has(.topic-home:has(.topic-top--lead.is-di-open)) .topic-bodyhead::after { opacity: 0.10; height: 300px; }
+
+/* ── tab mode: the intro is gone, so the band leads the Briefing tab ─────── */
+body.tt-on .topic-home.tview-brief { position: relative; }
+body.tt-on .topic-home.tview-brief::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: -16px; right: -16px; top: -8px; height: 340px;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--tc, #2f4d9e) 14%, #fff) 0%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 5%, #fff) 45%,
+      #ffffff 100%);
+}
+body.tt-on .topic-home.tview-brief::after {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: -16px; right: -16px; top: -8px; height: 340px;
+  background-image: var(--topic-art, none);
+  background-repeat: no-repeat;
+  background-position: right -30px top -20px;
+  background-size: min(62%, 420px) auto;
+  opacity: 0.17;
+  -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 72%), linear-gradient(to bottom, #000 40%, transparent 90%);
+          mask-image: linear-gradient(to left, #000 0%, transparent 72%), linear-gradient(to bottom, #000 40%, transparent 90%);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
+body.tt-on .topic-home.tview-brief .topic-top--lead .ec[class],
+body.tt-on .topic-home.tview-brief .topic-top--lead .tdi-card[class] { background: transparent !important; }
