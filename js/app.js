@@ -2173,11 +2173,18 @@ function topicEditionCardHTML(topic) {
       <div class="ec ec--v2 ec--topic"${topicColorStyle(topic)}>
         <div class="ec-head">
           <div class="ec-headrow">
-            <h3 class="tdi-brieftitle ec-title">${escapeHTML(homeEditionTitle())}</h3>
+            <!-- revamp1474: a topic's card names the EDITION. "Evening
+                 Briefing" said "briefing" twice over — the tab above it
+                 already does. -->
+            <h3 class="tdi-brieftitle ec-title" data-ec-edtitle>${escapeHTML(homeEditionTitle().replace(/Briefing$/, 'Edition'))}</h3>
             <div class="ec-stamp" data-ec-stamp></div>
           </div>
           <div class="ec-stamp ec-stamp--below" data-ec-stamp></div>
         </div>
+        <!-- revamp1474: the provenance chip rides the head, under the edition
+             line, so an opened briefing says what it is before it says what
+             happened. Open only — closed, the card is a preview. -->
+        <div class="ec-provrow" data-ec-provrow><button type="button" class="tdi-cardprov how-aigen" data-how-it-works>${DI_SPARK}<span>AI-generated content included</span>${DI_INFO_ICON}</button></div>
         <div class="ec-rule" aria-hidden="true"></div>
         <div class="ec-lead">
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
@@ -2477,7 +2484,7 @@ const pageTabIcon = (k) => PAGE_TAB_ICON[k] ? `<span class="tvt-ic" aria-hidden=
 // tab, Trending, which it has its own section for; a topic page does not.
 const VIEW_TABS = {
   home: [['brief', 'Briefing', 'brief'], ['news', 'News', 'news'], ['tools', 'Prompts', 'tools'], ['trend', 'Trending', 'trend']],
-  topic: [['brief', 'Briefing', 'brief'], ['news', 'News', 'news'], ['tools', 'Prompts', 'tools']],
+  topic: [['brief', 'AI Briefing', 'brief'], ['news', 'News', 'news'], ['tools', 'Prompts', 'tools']],
 };
 // revamp1468: in tab mode the Briefing tab lands OPEN. Closed, the tab is a
 // headline, two lines of summary and then a screen of nothing — the page reads
@@ -2510,7 +2517,7 @@ function openBriefWhenTabbed(root, delay = 60) {
 // of each page, which is what keeps the edition card, the trending grid and
 // the prompts directory from fighting over their singletons and ids.
 const FAMILY_TABS = [
-  ['brief', 'Briefing', 'brief', '#/intelligence'],
+  ['brief', 'AI Briefings', 'brief', '#/intelligence'],
   ['news', 'News', 'news', '#/'],
   ['tools', 'Prompts', 'tools', '#/prompts'],
   ['trend', 'Trending', 'trend', '#/trending'],
@@ -2577,6 +2584,7 @@ function fillEcStamp(card, iso) {
   if (!card || !iso) return;
   // revamp1461: the edition sub-label follows the brief that loaded.
   try { const el = card.querySelector('[data-ec-edlabel]'); if (el) el.textContent = editionTitleFor(iso).replace(/Briefing$/, 'Edition'); } catch (_) {}
+  try { const t = card.querySelector('[data-ec-edtitle]'); if (t) t.textContent = editionTitleFor(iso).replace(/Briefing$/, 'Edition'); } catch (_) {}
   const html = ecStampHTML(iso);
   if (html) card.querySelectorAll('[data-ec-stamp]').forEach((el) => { el.innerHTML = html; });
 }
@@ -3315,7 +3323,7 @@ function wireTopicLandingCards(root, topic, ctx) {
       // Render into the host, not the wrapper — the wrapper also holds the
       // bottom Close Briefing so it rides the same open/close animation.
       renderDailyIntelligence(inner.querySelector('[data-di-host]') || inner, {
-        topic: topic.name, label: topic.name, slug: topic.slug, inline: true, chrome: false, prov: true,
+        topic: topic.name, label: topic.name, slug: topic.slug, inline: true, chrome: false,
       });
     } else {
       renderAIIntelligence(inner.querySelector('[data-pr-host]') || inner, {
@@ -5927,7 +5935,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // the same cards as the AI Briefings page.
     renderFeaturedBriefings(container.querySelector('[data-home-featbriefs]'), {
       compact: true,
-      title: 'AI Briefing',
+      title: 'AI Briefings',
       // A briefing page with a spark — reads at chip size, unlike the bare
       // sparkle, and sits with the grid/wand marks on the cards below.
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>',

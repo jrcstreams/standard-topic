@@ -40258,3 +40258,44 @@ body.tt-on .home-grid > .family-tabs[class][class] {
   margin-left: -16px !important; margin-right: -16px !important;
   padding-left: 1rem !important; padding-right: 1rem !important;
 }
+
+/* ═══ revamp1474 — the opened topic briefing, in reading order ═════════════
+   Open, the card was saying the day twice: a short teaser under the
+   headline, then the long read further down past the provenance chip. The
+   teaser goes, the long read takes its place and its size, and the chip
+   moves up under the edition line — so the card reads edition, provenance,
+   headline, the day. */
+
+/* The chip belongs to the OPEN card only; closed, this is a preview. */
+.ec-provrow { display: none; }
+.tdi-card.is-open .ec-provrow[class] { display: block; margin: 7px 0 0; }
+.ec-provrow .tdi-cardprov[class] { margin: 0; }
+
+/* Edition line, stamp and close button share one baseline. */
+.ec--topic .ec-headrow[class][class][class] {
+  display: flex !important; align-items: center !important;
+  flex-wrap: nowrap !important; gap: 12px !important;
+  min-height: 26px;
+}
+.ec--topic .ec-headrow .ec-stamp[class] { display: inline-flex !important; align-items: center; }
+.ec--topic .ec-headrow .ec-stamp--below[class] { display: none !important; }
+.ec--topic .ec-head .ec-stamp--below[class] { display: none !important; }
+.tdi-card--topicedition.is-open .tdi-openx[class][class] { top: 14px !important; }
+
+/* Open: the teaser goes. */
+.tdi-card--topicedition.is-open .ec-summary[class][class],
+.tdi-card--topicedition.is-open [data-ec-summary][class][class] { display: none !important; }
+
+/* …and the long read takes the size the teaser had. */
+.tdi-card--topicedition.is-open .di-focus--bare .di-summary[class][class][class][class] {
+  font-size: 1.02rem !important;
+  line-height: 1.58 !important;
+  color: #3a4864 !important;
+}
+@media (max-width: 899.98px) {
+  .tdi-card--topicedition.is-open .di-focus--bare .di-summary[class][class][class][class] {
+    font-size: 0.98rem !important; line-height: 1.56 !important;
+  }
+}
+/* The expanded body starts on the long read now — its own chip row is gone. */
+.tdi-card--topicedition.is-open .di-focus--bare[class][class][class] { margin-top: 2px !important; }
