@@ -40784,3 +40784,15 @@ body.tt-on .topic-home #section-newsfeed .news-card:first-child[class][class][cl
 }
 body.tt-on .topic-home #section-newsfeed .news-list[class][class] { padding-top: 0 !important; margin-top: 0 !important; }
 body.tt-on .topic-home #section-newsfeed .news-card:first-child[class][class][class] { padding-top: 14px !important; }
+
+/* ═══ revamp1488 — the briefing sits closer to the topic it belongs to ═════
+   42px between the topic's one-line description and the top of its
+   briefing card: the head's own 14px bottom padding, its 16px margin, and
+   the picker panel's leftover 2px, stacked. They are one block — the page
+   saying what it is, then what happened today — so they close up. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead[class][class][class][class] {
+  padding-bottom: 4px !important;
+  margin-bottom: 10px !important;
+}
+body:not(.tt-on):has(.topic-home) .topic-bodyhead > .tsp-panelwrap:not(.is-open) { display: none !important; }
+body:not(.tt-on):has(.topic-home) .tbh-desc[class][class] { margin-bottom: 0 !important; }
