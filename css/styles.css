@@ -41489,3 +41489,19 @@ body.tt-on .search-page .sr > .sr-sec:first-child[class][class] { margin-top: 0 
 /* Trending's switch hangs a little closer to the strip it belongs under. */
 body.tt-on .ndp.aii-nav-dd-trend[class][class] { padding-top: 0 !important; }
 body.tt-on .ndp.aii-nav-dd-trend .aii-nav-dd-subbar[class][class] { padding-top: 8px !important; margin-bottom: 4px !important; }
+
+/* ═══ revamp1498 — the briefing tabs, measured ═════════════════════════════
+   Two things the eye caught that a rule had not:
+
+   · On the AI Briefings tab the first card sat 10px under the strip while
+     the cards below it were 22px apart, so the top of the list read as
+     cramped against the bar. One gap, used everywhere in the column.
+   · On a topic page's AI Briefing tab the card was 8px narrower on each
+     side than everything else on the page: `.topic-top-main` carries a
+     0 8px padding from the two-column layout, where it separated the
+     briefing from the rail beside it. In tab mode there is no rail — the
+     card takes the page's own gutter, like the feed and the strip. */
+body.tt-on .dih[class][class] { padding-top: 22px !important; }
+body.tt-on .topic-home .topic-top--lead .topic-top-main[class][class] {
+  padding-left: 0 !important; padding-right: 0 !important;
+}
