@@ -40771,3 +40771,16 @@ body.tt-on .family-tabs .tvt[class][class][class] {
   }
 }
 body.tt-on .topic-body-cols[class][class] { grid-template-columns: minmax(0, 1fr) !important; }
+
+/* ═══ revamp1487 — the feed's first story has no line above it ═════════════
+   The cards are separated by a top border, which is right between two
+   stories and wrong above the first one: under the tab strip it landed a
+   second hairline a few pixels below the strip's own, and read as an empty
+   row waiting for a story. The first card starts on spacing instead.
+   (revamp1425 painted it deliberately at seven classes; this needs more.) */
+.topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child[class][class][class],
+body.tt-on .topic-home #section-newsfeed .news-card:first-child[class][class][class] {
+  border-top: 0 !important;
+}
+body.tt-on .topic-home #section-newsfeed .news-list[class][class] { padding-top: 0 !important; margin-top: 0 !important; }
+body.tt-on .topic-home #section-newsfeed .news-card:first-child[class][class][class] { padding-top: 14px !important; }
