@@ -39619,3 +39619,17 @@ html body.tt-on.app-mode.has-subnav:not(.home-search):has(.topic-home) #content:
 .dih .dih-edition[class][class] { margin-bottom: 22px !important; }
 .dih .dih-groups[class][class] { margin-top: 0 !important; }
 body.tt-on .dih .dih-edition[class][class][class] { margin-top: 8px !important; }
+
+/* revamp1462b — the masthead is a flex column with `gap: 14px`, so every
+   margin I set was ADDED to 14px. Zero the gap and let the margins be the
+   spacing; and the list's 36px is lead-margin + groups-margin + groupbody
+   padding stacked, so the last two go. */
+.di-mast--topic[class][class][class] { gap: 0 !important; margin-bottom: 12px !important; }
+.di-mast--topic .di-mast-kicker[class][class][class] { margin-top: 8px !important; }
+.di-mast--topic .di-metaline[class][class][class] { margin-top: 10px !important; }
+.di-mast--topic .di-prov2[class][class][class] { padding-top: 0 !important; padding-bottom: 0 !important; }
+.di-mast--topic + .di-focus .di-dayhead[class][class][class][class] + *[class] { margin-top: 0 !important; }
+.dih .dih-edition[class][class][class] { margin-top: 24px !important; }
+body.tt-on .dih .dih-edition[class][class][class][class] { margin-top: 24px !important; }
+.dih .dih-groups[class][class][class] { margin-top: 0 !important; }
+.dih .dih-group--all > .dih-groupbody[class][class] { padding-top: 0 !important; }
