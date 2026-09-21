@@ -40402,3 +40402,34 @@ body.tt-on .topic-home::before,
 body.tt-on .topic-home::after { display: none !important; content: none !important; }
 body.tt-on .topic-home .topic-top--lead .ec[class][class],
 body.tt-on .topic-home .topic-top--lead .tdi-card[class][class] { background: #fff !important; }
+
+/* ═══ revamp1475b — the wash paints BEHIND the page, properly ══════════════
+   `.topic-bodyhead::before` is `z-index: -1` on a `position: relative` host
+   with `z-index: auto` — which creates no stacking context, so the pseudo
+   escaped to the nearest one. revamp1471 had also grown it from the head's
+   own height to a 520px band so it could reach the briefing, and that band
+   runs down over the columns: its white tail was erasing the top of the AI
+   Prompts card, leaving a sheared line where the gradient was still part
+   transparent.
+
+   The content below it takes a layer of its own, so nothing the wash does
+   can reach it. */
+body:not(.tt-on):has(.topic-home) .topic-top[class],
+body:not(.tt-on):has(.topic-home) .topic-body-cols[class],
+body:not(.tt-on):has(.topic-home) .topic-bodyhead > *[class] {
+  position: relative; z-index: 1;
+}
+/* The art layer stands down until a topic actually has art. With no image
+   it drew nothing but a masked compositing layer over the same region —
+   cost without a picture. It comes back as a real element, not a pseudo,
+   when the files land. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::after { display: none !important; }
+/* And lighter again: this is a tint on the page, not a colour field. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
+  height: 430px !important;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--tc, #2f4d9e) 6%, #fff) 0%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 2.5%, #fff) 38%,
+      rgba(255, 255, 255, 0) 100%) !important;
+}
