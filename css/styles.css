@@ -40633,3 +40633,27 @@ body.tt-on .pc.pc--v2[class][class] {
 }
 body.tt-on .pc--v2 .pc-links[class] { padding-left: 0 !important; padding-right: 0 !important; }
 body.tt-on .pc--v2 .pc-head[class] { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* ═══ revamp1482 — the tab strip actually spans the width ═════════════════
+   The cells were equal and the strip was full-bleed, but the strip itself
+   still carried a 2rem horizontal inset from the old floating version of
+   this component — so the first cell started 32px in and the last stopped
+   32px short, and the row read as three buttons rather than a bar. The
+   inset goes; the cells divide the whole bar.
+
+   And the active underline gets weight. At 2.5px under a filled cell it
+   was the quietest part of the state it was supposed to announce. */
+body.tt-on .topic-viewtabs[class][class][class],
+body.tt-on .family-tabs[class][class][class] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+body.tt-on .topic-viewtabs .tvt[class][class][class],
+body.tt-on .family-tabs .tvt[class][class][class] {
+  border-bottom-width: 3.5px !important;
+}
+body.tt-on .topic-viewtabs .tvt.is-active[class][class][class],
+body.tt-on .family-tabs .tvt.is-active[class][class][class] {
+  border-bottom-color: #1e40af !important;
+  box-shadow: inset 0 -3.5px 0 #1e40af;
+}
