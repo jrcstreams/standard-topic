@@ -41505,3 +41505,26 @@ body.tt-on .dih[class][class] { padding-top: 22px !important; }
 body.tt-on .topic-home .topic-top--lead .topic-top-main[class][class] {
   padding-left: 0 !important; padding-right: 0 !important;
 }
+
+/* revamp1498b — the topic briefing starts where the feed starts ────────────
+   The card is the page's width, but the words inside it were not: `.ec`
+   carries a 16px side padding (the frame it has on the wide layout, where
+   the card is a card), so the briefing's text began 32px in while the feed
+   on the next tab begins at 18. And an 18px margin over it put the first
+   line 30px under the strip against the feed's 13. Switching tabs moved
+   the page's left edge and its first line — both now sit still. */
+/* revamp1301's `body.tt-on #topic-tab-body .topic-viewtabs + *` puts 18px
+   over whatever follows the strip, and an ID beats any number of classes. */
+body.tt-on #topic-tab-body .topic-viewtabs + .topic-top--lead[class],
+body.tt-on .topic-home .topic-top--lead[class][class][class][class] { margin-top: 0 !important; }
+body.tt-on .topic-home .topic-top--lead .tdi-card[class][class][class] { padding-top: 13px !important; }
+body.tt-on .topic-home .topic-top--lead .ec[class][class][class] {
+  padding-left: 2px !important; padding-right: 2px !important; padding-top: 0 !important;
+}
+/* …and the opened body with it. `.tdi-expand-inner` carries the card's own
+   16px, so the day's read, TOP STORIES and every story under it started
+   14px right of the headline above them. */
+body.tt-on .topic-home .topic-top--lead .tdi-expand[class][class][class],
+body.tt-on .topic-home .topic-top--lead .tdi-expand-inner[class][class][class] {
+  padding-left: 2px !important; padding-right: 2px !important;
+}
