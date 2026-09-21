@@ -40252,3 +40252,9 @@ body.tt-on .home-v2 .home-featbriefs[class][class],
 body.tt-on .home-v2 #home-pcard[class][class],
 body.tt-on .home-v2 #home-trending[class][class] { display: none !important; }
 body.tt-on .home-v2 .home-main[class][class] { display: block !important; }
+/* revamp1473b: the strip starts at the same place on all four tabs. Home's
+   copy sits inside the home grid's own padding, which pushed it in. */
+body.tt-on .home-grid > .family-tabs[class][class] {
+  margin-left: -16px !important; margin-right: -16px !important;
+  padding-left: 1rem !important; padding-right: 1rem !important;
+}
