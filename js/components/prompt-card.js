@@ -40,11 +40,10 @@ const FALLBACK_LABEL = { snapshot: 'Snapshots', tracker: 'Tracking', evergreen: 
 // revamp1480: only Snapshots carries a line of explanation. Three blurbs in a
 // column of three headers is a paragraph nobody reads; one, on the section a
 // newcomer meets first, is a hint.
-const SUB = {
-  snapshot: 'Quick overviews of what’s happening now.',
-  tracker: '',
-  evergreen: '',
-};
+// revamp1481: no section carries a blurb. One did, which made its header two
+// lines tall beside two that were one — the uneven thing on the card was the
+// explanation, not the list.
+const SUB = { snapshot: '', tracker: '', evergreen: '' };
 // "Stacked" is the page's call, not the viewport's: the topic page goes
 // single-column (body.tt-on) on CONTENT width, so a docked sidebar stacks
 // the page at viewports the media query still calls wide. Either signal

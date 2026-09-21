@@ -7,15 +7,15 @@
     },
     {
       "topic": "artificial-intelligence",
-      "name": "Frontier AI Lab Watch"
+      "name": "Frontier Labs"
     },
     {
       "topic": "business-finance",
-      "name": "US Markets Snapshot"
+      "name": "US Markets"
     },
     {
       "topic": "business-finance",
-      "name": "Economic Indicators Roundup"
+      "name": "Economic Indicators"
     },
     {
       "topic": "politics",
@@ -23,19 +23,19 @@
     },
     {
       "topic": "business-finance",
-      "name": "Crypto Market Snapshot"
+      "name": "Crypto Market"
     },
     {
       "topic": "technology",
-      "name": "Tech Industry Snapshot"
+      "name": "Tech Industry"
     },
     {
       "topic": "climate-environment",
-      "name": "Climate and Environment Snapshot"
+      "name": "Climate and Environment"
     },
     {
       "topic": "sports",
-      "name": "Sports Snapshot"
+      "name": "Sports"
     },
     {
       "topic": "entertainment",
@@ -47,11 +47,11 @@
     },
     {
       "topic": "technology",
-      "name": "Cybersecurity Snapshot"
+      "name": "Cybersecurity"
     },
     {
       "topic": "business-finance",
-      "name": "Oil Market Snapshot"
+      "name": "Oil Market"
     }
   ]
 }
