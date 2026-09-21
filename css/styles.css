@@ -41528,3 +41528,65 @@ body.tt-on .topic-home .topic-top--lead .tdi-expand[class][class][class],
 body.tt-on .topic-home .topic-top--lead .tdi-expand-inner[class][class][class] {
   padding-left: 2px !important; padding-right: 2px !important;
 }
+
+/* ═══ revamp1499 — the prompt card's vertical rhythm ═══════════════════════
+   On a phone the card opened 36px under the strip (its own 16px of padding
+   plus the first header's 20), and a section's last name sat 51px from the
+   next section's label — a page of three lists reading as three pages. And
+   "View more" was a grey row under a rule with the + in a bordered box:
+   the heaviest thing in a list of plain names, for the least important
+   line in it.
+
+   The card starts where the feed starts, the breaks are breaks rather than
+   gaps, and "View more" is a link — blue text, a quiet +, on the same left
+   edge as the names above it. */
+
+/* the card opens on the strip's line */
+body.tt-on .topic-top-side .pc.pc--v2[class][class],
+body.tt-on #home-pcard .pc.pc--v2[class][class],
+body.tt-on .tpr-inline .pc.pc--v2[class][class] {
+  padding-top: 0 !important;
+  gap: 0 !important; row-gap: 0 !important;
+}
+.pc--v2[class][class] { gap: 0 !important; row-gap: 0 !important; }
+/* the break between two sections */
+.pc--v2 .pc-sechead--static[class][class][class][class][class][class] {
+  padding-top: 22px !important;
+}
+/* …and the first one, which has no section above it to break from: it opens
+   where the feed's first headline opens, 13px under the strip.
+   `:first-child` never matched — the card's own head is the first child, and
+   it is only display:none in tab mode, so it still holds the position. The
+   sections are <section> elements and the head is a <div>, so first-of-type
+   is the test, with the sibling form as a belt. */
+.pc--v2 .pc-sec:first-of-type .pc-sechead--static[class][class][class][class][class][class][class],
+.pc--v2 .pc-sec:not(.pc-sec ~ .pc-sec) .pc-sechead--static[class][class][class][class][class][class][class] {
+  padding-top: 13px !important;
+}
+.pc--v2 .pc-links[class][class][class][class][class] { padding-bottom: 4px !important; }
+
+/* ── "View more" is a link ───────────────────────────────────────────────── */
+.pc--v2 .pc-more[class][class][class][class][class][class] {
+  display: inline-flex !important; align-items: center; gap: 7px;
+  width: auto !important;
+  margin: 8px 0 2px !important;
+  padding: 2px 0 !important;
+  /* revamp1491b stretched it across the grid row so its rule would span the
+     list; there is no rule any more, so it takes only the width of its words. */
+  justify-self: start !important; justify-content: flex-start !important;
+  border: 0 !important; border-top: 0 !important; background: none !important;
+  font-family: var(--font-family);
+  font-size: 0.88rem !important; font-weight: 600 !important;
+  color: #1d4ed8 !important;
+  text-align: left; cursor: pointer;
+}
+.pc--v2 .pc-more-ic[class][class][class] {
+  width: auto !important; height: auto !important;
+  border: 0 !important; border-radius: 0 !important; background: none !important;
+  font-size: 1.02rem !important; font-weight: 700; line-height: 1;
+  color: #7c8ba8 !important;
+}
+@media (hover: hover) {
+  .pc--v2 .pc-more[class][class][class][class][class][class]:hover { color: #16307a !important; text-decoration: underline; }
+  .pc--v2 .pc-more[class][class][class][class][class][class]:hover .pc-more-ic { color: #1d4ed8 !important; }
+}
