@@ -1586,9 +1586,8 @@ function wirePromptsDropdown(panel, initialView) {
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head ph-sec-head--card">
             <div class="ph-sec-headrow">
-              <h3 class="ph-sec-title">Featured Prompts</h3>
+              <h3 class="ph-sec-title">Featured</h3>
             </div>
-            <p class="ph-sec-sub">Handpicked to get you started.</p>
           </div>
           <div class="ph-flist" data-ph-rail></div>
           <button type="button" class="ph-flist-more" data-ph-more hidden></button>
@@ -1598,10 +1597,9 @@ function wirePromptsDropdown(panel, initialView) {
           <div class="ph-sec-head ph-sec-head--card ph-sec-head--hastoggle">
             <div class="ph-sec-head-tx">
               <div class="ph-sec-headrow">
-                <h3 class="ph-sec-title">Prompts by Topic</h3>
+                <h3 class="ph-sec-title">By Topic</h3>
               </div>
               <div class="ph-sec-subrow">
-                <p class="ph-sec-sub">Explore by category. Open one to run any prompt right here.</p>
                 <button type="button" class="trend-sports-toggle pdir-expandall" data-pdir-expandall role="switch" aria-checked="false" title="Expand every category"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
               </div>
             </div>

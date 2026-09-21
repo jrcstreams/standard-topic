@@ -40978,3 +40978,364 @@ body:not(.tt-on):has(.topic-home) .topic-top--lead[class][class][class] {
   margin-bottom: 30px !important;
 }
 body.tt-on .topic-home .topic-top--lead[class][class][class] { margin-bottom: 22px !important; }
+
+/* ═══ revamp1493 — tabular navigation: one bar, one strip, edge to edge ════
+   Four faults in the phone's navigation, all of them geometry:
+
+   · A gap. #content reserves `--subnav-height + 18px` on home, so the tab
+     strip floated 18px under the standing band instead of hanging off it.
+     In tab mode the strip belongs TO the band — no daylight between them.
+   · Two heights. Home's strip measured 46px, every other page's 37.3px, so
+     moving between the four tabs resized the bar and shoved the rail's
+     chips sideways. One height, 42px, on all of them.
+   · The rail was inset 16px on both sides, which is 32px of the track gone
+     and the arrows sitting over the chips rather than beside them. The rail
+     runs the full width now; the track carries the gutter as its own
+     padding, so the first chip still starts on the page's margin, and the
+     arrows sit in the corners with the mask fading the chips under them.
+   · The family strip (AI Briefings / AI Prompts / Trending) was 358px wide
+     inside a 390px page: full-bleed margins with a 100% width can only
+     shift an element, never widen it. */
+
+/* ── no daylight between the band and the strip ──────────────────────────── */
+html body.tt-on.home-search.app-mode.home-mode:not(.nav-docked)[class][class] #content:not(#_),
+html body.tt-on.home-search.app-mode.home-mode.nav-docked[class][class] #content:not(#_),
+html body.tt-on:not(.tt-off).pagenav-mode.sticky-always.has-subnav[class][class][class] #content:not(#_),
+html body.tt-on.app-mode:not(.nav-docked):not(.home-search).has-subnav[class][class][class][class] #content:not(#_),
+html body.tt-on.app-mode.nav-docked:not(.home-search).has-subnav[class][class][class][class] #content:not(#_) {
+  padding-top: calc(var(--nav-h, 0px) + var(--subnav-height, 56px)) !important;
+}
+body.tt-on .topic-layout.home-grid[class][class] { margin-top: 0 !important; padding-top: 0 !important; }
+body.tt-on .topic-layout.home-grid > .home-hero[class][class] { display: none !important; }
+body.tt-on #content > .family-tabs[class][class][class] { margin-top: 0 !important; }
+
+/* ── one strip height, on every page that has a strip ────────────────────── */
+body.tt-on[class][class][class] .topic-viewtabs[class][class],
+body.tt-on[class][class][class] .home-viewtabs[class][class],
+body.tt-on[class][class][class] .family-tabs[class][class] {
+  min-height: 42px !important;
+  height: auto !important;
+  align-items: stretch !important;
+  margin-bottom: 0 !important;
+}
+body.tt-on[class][class][class] .topic-viewtabs[class][class] .tvt,
+body.tt-on[class][class][class] .family-tabs[class][class] .tvt {
+  padding-top: 0 !important; padding-bottom: 0 !important;
+  align-items: center !important; justify-content: center !important;
+}
+
+/* ── the band itself is one height, whatever page it stands on ───────────── */
+/* Every page's band is 56px tall and holds nothing but the rail, so moving
+   between the four tabs cannot resize the bar under the header. --subnav-height
+   is measured off this element, so the reserve follows it exactly. */
+body.tt-on #sub-header.is-subnav[class][class],
+body.tt-on #sub-header.pagenav[class][class],
+body.tt-on #sub-header.home-mode[class][class] {
+  height: 56px !important; min-height: 56px !important; max-height: 56px !important;
+  padding-top: 0 !important; padding-bottom: 0 !important;
+  display: flex !important; align-items: center !important;
+}
+body.tt-on #sub-header .topic-banner[class][class],
+body.tt-on #sub-header .topic-subnav-title[class][class] {
+  flex: 1 1 auto; min-width: 0;
+  padding-left: 0 !important; padding-right: 0 !important;
+  padding-top: 0 !important; padding-bottom: 0 !important;
+}
+body.tt-on #sub-header .topic-banner-row[class][class],
+body.tt-on #sub-header .topic-subnav-inner[class][class] {
+  padding-top: 0 !important; padding-bottom: 0 !important;
+}
+body.tt-on #sub-header .home-subfilters[class] { display: none !important; }
+
+/* ── the family strip spans the page ─────────────────────────────────────── */
+body.tt-on #content > .family-tabs[class][class][class],
+body.tt-on .home-grid > .family-tabs[class][class][class] {
+  width: auto !important; max-width: none !important;
+  margin-left: -16px !important; margin-right: -16px !important;
+  margin-top: 0 !important; margin-bottom: 0 !important;
+  padding-left: 16px !important; padding-right: 16px !important;
+}
+
+/* ── the rail runs the full width of the band ────────────────────────────── */
+body.tt-on #sub-header .topic-subnav-inner.is-railrow[class][class],
+body.tt-on #sub-header .topic-banner-row.is-railrow[class][class] {
+  padding-left: 0 !important; padding-right: 0 !important;
+}
+body.tt-on #sub-header .trail--bar[class][class] {
+  padding-left: 0 !important; padding-right: 0 !important;
+  border-left: 0 !important;
+}
+body.tt-on #sub-header .trail--bar .trail-track[class][class] {
+  padding-left: 16px !important; padding-right: 16px !important;
+  scroll-padding-inline: 16px;
+}
+/* The arrows live in the corners, clear of the chips they scroll past. */
+body.tt-on #sub-header .trail--bar .trail-arrow--prev[class][class] { left: 4px !important; }
+body.tt-on #sub-header .trail--bar .trail-arrow--next[class][class] { right: 4px !important; }
+
+/* ── the feed starts ON the strip's line ─────────────────────────────────── */
+/* The strip draws a hairline across the page. A first story 34px below it
+   with a hairline of its own is two rules and an empty row between them —
+   the strip's line IS the first story's top border. */
+body.tt-on .topic-home[class] > .topic-body-cols[class][class],
+body.tt-on .home-v2[class] > .home-main[class][class] { margin-top: 0 !important; }
+body.tt-on .news-list > .news-card:first-child[class][class][class][class],
+body.tt-on .newsfeed-card .news-card:first-child[class][class][class][class] {
+  margin-top: 0 !important;
+  border-top: 0 !important;
+  padding-top: 15px !important;
+}
+body.tt-on .newsfeed-scroll-wrap[class][class],
+body.tt-on .news-list[class][class][class] { padding-top: 0 !important; margin-top: 0 !important; }
+
+/* ── the briefings run edge to edge ──────────────────────────────────────── */
+/* In tab mode the page IS the list, so the cards stop being cards: no side
+   border, no corner radius, no inset — the same full-bleed run the news feed
+   reads as. (The 16px gutter stays as the cards' own padding, so the text
+   still starts on the page's margin.) */
+body.tt-on .dih[class][class] { padding-top: 0 !important; }
+body.tt-on .dih .dih-edition[class][class][class][class] { margin: 0 -16px 0 !important; }
+body.tt-on .dih .dih-groups[class][class] { margin-top: 0 !important; }
+body.tt-on .dih .dih-items[class][class] { margin-left: -16px !important; margin-right: -16px !important; }
+body.tt-on .dih .dih-edition > .tdi-card[class][class],
+body.tt-on .dih .dih-items > .dib[class][class],
+body.tt-on .dih .dih-items > *[class][class] {
+  border-left: 0 !important; border-right: 0 !important;
+  border-radius: 0 !important;
+  margin-left: 0 !important; margin-right: 0 !important;
+  width: auto !important; max-width: none !important;
+}
+body.tt-on .dih .dih-edition > .tdi-card[class][class] { border-top: 0 !important; }
+body.tt-on .dih .dih-edition > .tdi-card > *[class],
+body.tt-on .dih .dih-items > .dib > *[class] { padding-left: 16px !important; padding-right: 16px !important; }
+
+/* The topic page's own briefing card, same treatment on the Briefing tab. */
+body.tt-on .topic-home .topic-top--lead[class][class] { margin: 0 -16px !important; }
+body.tt-on .topic-home .topic-top--lead .tdi-card[class][class] {
+  border-left: 0 !important; border-right: 0 !important; border-top: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* ── the tab already says "AI Briefings" ─────────────────────────────────── */
+/* "THE MAIN BRIEFING" over "Morning Edition" is the strip's own label,
+   repeated one line lower. */
+body.tt-on .dih .tdi-brieftitle[class][class],
+body.tt-on .dih .ec-title[class][class],
+body.tt-on .home-v2 .tdi-brieftitle[class][class],
+body.tt-on .home-v2 .ec-title[class][class],
+body.tt-on .ec--topic .ec-whatis[class][class] { display: none !important; }
+
+/* revamp1301's rule put a border, 16px of padding and 16px of margin on the
+   feed's first story so it would read as the item after the briefing card
+   above it. In tab mode there is no card above it — there is the tab strip,
+   whose own hairline is that border. Two IDs, so this needs the same. */
+body.tt-on #topic-tab-body #section-newsfeed .news-card:first-child[class],
+body.tt-on #topic-tab-body #section-newsfeed .newsfeed-list > *:first-child[class],
+body.tt-on #topic-tab-body #section-newsfeed .newsrow:first-child[class],
+body.tt-on #content #section-newsfeed .news-list > .news-card:first-child[class],
+body.tt-on #content #section-newsfeed .newsfeed-list > *:first-child[class] {
+  border-top: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 15px !important;
+}
+body.tt-on .home-v2 .home-main > *:first-child[class],
+body.tt-on .home-v2 .home-main .newsfeed-card[class],
+body.tt-on .home-v2 .home-main .newsfeed-scroll-wrap[class] { margin-top: 0 !important; padding-top: 0 !important; }
+
+/* ═══ revamp1494 — the prompt list, and the prompt you opened ══════════════
+   The card was still wearing the accordion it stopped being in revamp1486:
+   `.pc-links` kept a `border-top` from the days when the list appeared under
+   a clickable header, so every section drew its rule TWICE — the header's
+   own line, two pixels of white, then the list's. One line per section.
+
+   With that gone the header's rule does the job it was written for: it is
+   the first row's top border. */
+.pc--v2 .pc-links[class][class][class][class],
+.pc--v2 .pc-sec .pc-links[class][class][class][class] { border-top: 0 !important; }
+
+/* ── the rows run the full width of what holds them ──────────────────────── */
+/* A 14px inset inside a card that already sits on the page's margin is a
+   second margin. The names start where the header above them starts, and
+   the row's rule runs the whole way. */
+.pc--v2 .pc-links[class][class][class][class],
+.pc--v2 .pc-sec .pc-links[class][class][class][class] {
+  padding-left: 0 !important; padding-right: 0 !important;
+}
+.pc--v2 .pc-sechead[class][class][class],
+.pc--v2 .pc-sechead--static[class][class][class][class][class] {
+  padding-left: 0 !important; padding-right: 0 !important;
+}
+.pc--v2 .pc-row[class][class][class] { padding-left: 0 !important; padding-right: 0 !important; }
+.pc--v2 .pc-more[class][class][class][class][class] { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* ── one muted mark, a header with some weight ───────────────────────────── */
+/* Three sections in three colours read as three different products. They are
+   three kinds of prompt on one card: each keeps its own glyph — a camera, a
+   tool, a leaf — and they all take the same quiet slate, so the colour stops
+   competing with the topic tint in the rail above. */
+.pc--v2 .pc-sec[data-pc-bucket="snapshot"][class],
+.pc--v2 .pc-sec[data-pc-bucket="tracker"][class],
+.pc--v2 .pc-sec[data-pc-bucket="evergreen"][class] { --pcc: #4a5a7d; }
+.pc--v2 .pc-sec-ic[class][class][class][class][class] {
+  background: none !important;
+  color: #4a5a7d !important;
+  width: 22px; height: 22px; border-radius: 0;
+}
+.pc--v2 .pc-sec-ic[class][class][class][class][class] svg { width: 21px; height: 21px; }
+.pc--v2 .pc-seclabel[class][class][class][class][class] {
+  font-size: 0.96rem !important;
+  font-weight: 750 !important;
+  letter-spacing: 0.045em;
+  color: #14224a !important;
+}
+.pc--v2 .pc-sechead--static[class][class][class][class][class] {
+  gap: 10px;
+  padding-top: 20px !important; padding-bottom: 9px !important;
+  border-bottom: 1.5px solid #dfe5f0 !important;
+}
+.pc--v2 .pc-sec:first-child .pc-sechead--static[class][class][class][class][class] { padding-top: 4px !important; }
+
+/* ── the names, a step up ────────────────────────────────────────────────── */
+.pc--v2 .pc-row-name[class][class][class] {
+  font-size: 0.95rem !important;
+  font-weight: 550 !important;
+  color: #2b3a5e !important;
+}
+.pc--v2 .pc-item.is-open .pc-row-name[class][class][class] { font-weight: 680 !important; color: #16307a !important; }
+.pc--v2 .pc-row[class][class][class] { padding-top: 12px !important; padding-bottom: 12px !important; }
+.pc--v2 .pc-row-chev svg[class], .pc--v2 .pc-row-chev[class] svg { width: 14px; height: 14px; }
+
+/* ── the opened prompt: its name is the panel's header ───────────────────── */
+/* Open, the name sat above the panel on white while the panel started below
+   it in grey — so the thing you opened looked detached from what opened. The
+   row becomes the panel's head: same surface, a rule under it, square with
+   the body beneath. */
+.pc--v2 .pc-item.is-open[class][class] {
+  border-bottom-color: transparent !important;
+  background: none !important;
+}
+.pc--v2 .pc-item.is-open > .pc-row[class][class][class][class] {
+  background: #f4f6f9 !important;
+  border-radius: 10px 10px 0 0 !important;
+  padding: 12px 14px !important;
+  border-bottom: 1px solid #e1e6ef !important;
+  margin: 0 !important;
+}
+.pc--v2 .pc-item.is-open > .pc-item-host[class][class] {
+  padding-top: 0 !important; padding-bottom: 14px !important;
+}
+.pc--v2 .pc-item.is-open .aii-emenu-host.is-open[class][class] {
+  margin-top: 0 !important;
+  border-radius: 0 0 10px 10px !important;
+  background: #f4f6f9 !important;
+  padding: 0 0 12px !important;
+}
+.pc--v2 .pc-item.is-open .aii-pc[class][class] { padding: 0 !important; }
+
+/* The panel is a grid with one auto column, and a grid item cannot shrink
+   below its min-content unless told to — which is why the prompt block, the
+   control row and the settings drawer all measured wider than the 302px rail
+   that held them, and were clipped by its overflow. */
+.pc--v2 .pc-item-host .aii-pc[class][class][class] {
+  grid-template-columns: minmax(0, 1fr) !important;
+  width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+}
+.pc--v2 .pc-item-host .aii-pc > *[class] { min-width: 0 !important; max-width: 100% !important; }
+
+/* ── Settings opens off the Settings button ──────────────────────────────── */
+/* It was a narrow box that appeared below the controls, inset on one side and
+   short of the panel on the other, reading as something that had fallen out
+   of the card. It is a popover now: the full width of the panel, directly
+   under the row it belongs to, on the same white surface as the model menu,
+   with a notch pointing back at the button that opened it. */
+.pc--v2 .pc-item-host .aii-pc-foot[class][class] { position: relative; }
+.pc--v2 .pc-item-host .aii-pc-set[class][class][class] {
+  position: relative;
+  width: 100% !important; max-width: 100% !important;
+  margin: 12px 0 4px !important;
+  padding: 14px !important;
+  background: #fff !important;
+  border: 1px solid #dde4ef !important;
+  border-top: 1px solid #dde4ef !important;
+  border-radius: 12px !important;
+  box-shadow: 0 14px 34px -20px rgba(15, 26, 46, 0.45) !important;
+}
+.pc--v2 .pc-item-host .aii-pc-set[class][class][class]::before {
+  content: ''; position: absolute; top: -6px; right: 30px;
+  width: 11px; height: 11px; transform: rotate(45deg);
+  background: #fff; border-left: 1px solid #dde4ef; border-top: 1px solid #dde4ef;
+  border-radius: 2px 0 0 0;
+}
+.pc--v2 .pc-item-host .aii-pc-sethead[class][class] { margin-bottom: 10px !important; }
+.pc--v2 .pc-item-host .aii-review-grid[class][class] {
+  display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 10px !important;
+}
+.pc--v2 .pc-item-host .aii-review-fld[class][class] { min-width: 0 !important; width: 100% !important; }
+.pc--v2 .pc-item-host .aii-review-fld select[class],
+.pc--v2 .pc-item-host .aii-review-fld input[class],
+.pc--v2 .pc-item-host .aii-review-fld textarea[class],
+.pc--v2 .pc-item-host .aii-explore-select-wrap[class] { width: 100% !important; max-width: 100% !important; min-width: 0 !important; }
+/* The Settings button reads as held open while its popover is up. */
+.pc--v2 .pc-item-host [data-pc-settings][aria-expanded="true"][class][class] {
+  background: #e8edf6 !important; border-color: #b9c8e4 !important; color: #16307a !important;
+}
+
+/* ── the Prompts page's two section heads ────────────────────────────────── */
+/* "Featured Prompts" and "Prompts by Topic" on a page called Prompts, each
+   with a sentence under it explaining a list that explains itself. The
+   words that carry meaning are "Featured" and "By Topic" (revamp1494, in the
+   markup); the sentences are gone, and the heads come down a step — they
+   label two runs on one page, they are not the page's title. */
+.prompts-home--v2 .ph-sec-title[class][class] {
+  font-size: 1.02rem !important;
+  font-weight: 760 !important;
+  letter-spacing: -0.005em;
+}
+.prompts-home--v2 .ph-sec-head[class][class] { padding-bottom: 8px !important; }
+.prompts-home--v2 .ph-sec-sub[class] { display: none !important; }
+@media (max-width: 560px) {
+  .prompts-home--v2 .ph-sec-title[class][class] { font-size: 0.98rem !important; }
+}
+/* The directory's open topic holds the same list; it was inset 16px inside a
+   card that is already inset, so the names started 39px in on a 390px page. */
+.pdir-topichost[class][class] { padding-left: 0 !important; padding-right: 0 !important; }
+.pdir-cardbody.is-topic[class][class] { padding-right: 0 !important; }
+
+/* ── the Settings popover, on every prompt preview ───────────────────────── */
+/* The prompt panel is the same component wherever a prompt opens — the topic
+   rail, the phone's Prompts tab, the directory, the featured rail, Search.
+   Settings behaves the same in all of them: full width of the panel, on the
+   white surface the model menu uses, notched back at the button. */
+.aii-pc .aii-pc-foot[class] { position: relative; }
+.aii-pc .aii-pc-set[class][class] {
+  position: relative;
+  width: 100% !important; max-width: 100% !important;
+  margin: 12px 0 4px !important;
+  padding: 14px !important;
+  background: #fff !important;
+  border: 1px solid #dde4ef !important;
+  border-radius: 12px !important;
+  box-shadow: 0 14px 34px -20px rgba(15, 26, 46, 0.45) !important;
+}
+.aii-pc .aii-pc-set[class][class]::before {
+  content: ''; position: absolute; top: -6px; right: 30px;
+  width: 11px; height: 11px; transform: rotate(45deg);
+  background: #fff; border-left: 1px solid #dde4ef; border-top: 1px solid #dde4ef;
+  border-radius: 2px 0 0 0;
+}
+.aii-pc .aii-pc-sethead[class] { margin-bottom: 10px !important; }
+.aii-pc .aii-pc-set .aii-review-fld[class],
+.aii-pc .aii-pc-set select[class],
+.aii-pc .aii-pc-set input[class],
+.aii-pc .aii-pc-set textarea[class],
+.aii-pc .aii-pc-set .aii-explore-select-wrap[class] {
+  width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+}
+@media (max-width: 560px) {
+  .aii-pc .aii-pc-set .aii-review-grid[class] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+.aii-pc [data-pc-settings][aria-expanded="true"][class] {
+  background: #e8edf6 !important; border-color: #b9c8e4 !important; color: #16307a !important;
+}
