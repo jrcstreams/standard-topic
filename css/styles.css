@@ -40843,3 +40843,86 @@ body:not(.tt-on):has(.topic-home) .tbh-desc[class][class] { margin-bottom: 0 !im
 .pc--v2 .pc-item[class][class] { border-bottom: 1px solid #f0f3f8 !important; }
 .pc--v2 .pc-sec .pc-links[class][class][class] { padding-top: 2px !important; }
 .pc--v2 .pc-item:last-of-type[class][class] { border-bottom: 0 !important; }
+
+/* ═══ revamp1490 — the prompt's controls, in order and on one line ════════
+   revamp1489 let the control row wrap so it would stop overflowing the
+   rail, and wrapping is what broke it: Settings ended up left of the model
+   picker with Copy stacked under it. The row reads model, then copy, then
+   settings, and it earns the space by dropping the "Model:" prefix and
+   letting the model name shorten rather than by folding. */
+.pc--v2 .pc-item-host .aii-pc-tools[class][class][class] {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  min-width: 0;
+}
+.pc--v2 .pc-item-host .aii-pc-modelwrap[class][class] { order: 1 !important; flex: 0 1 auto; min-width: 0; }
+.pc--v2 .pc-item-host [data-pc-copy][class][class] { order: 2 !important; flex: 0 0 auto; }
+.pc--v2 .pc-item-host [data-pc-settings][class][class] { order: 3 !important; flex: 0 0 auto; }
+.pc--v2 .pc-item-host .aii-pc-model-pre[class] { display: none !important; }
+.pc--v2 .pc-item-host .aii-pc-btn[class][class] { font-size: 0.8rem !important; padding: 4px 2px !important; min-width: 0; }
+.pc--v2 .pc-item-host .aii-pc-modelbtn[class][class] { min-width: 0; }
+.pc--v2 .pc-item-host .aii-pc-modelbtn [data-pc-mn] { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+
+/* ═══ revamp1490b — the tab strip is thinner ══════════════════════════════ */
+body.tt-on .topic-viewtabs[class][class][class],
+body.tt-on .family-tabs[class][class][class] { min-height: 0 !important; }
+body.tt-on .topic-viewtabs .tvt[class][class][class][class],
+body.tt-on .family-tabs .tvt[class][class][class][class] {
+  padding: 9px 12px 7px !important;
+}
+@media (max-width: 480px) {
+  body.tt-on .topic-viewtabs .tvt[class][class][class][class],
+  body.tt-on .family-tabs .tvt[class][class][class][class] { padding: 9px 9px 7px !important; }
+}
+
+/* ═══ revamp1490c — the section headers, and "View more" ══════════════════
+   The tab already says "AI Prompts" in tab mode, so the card's own head
+   stands down there. The section labels go up a step and darken — they are
+   the only headers left in the card, so they carry it. The icons stand on
+   their own colour with no tile behind them.
+
+   "View all snapshots" becomes "+ View more": it sits on its own line
+   under a rule, aligned with the names above it, and stays faint — it is
+   the end of a list, not a call to action. */
+body.tt-on .topic-top-side .pc-head[class][class],
+body.tt-on #home-pcard .pc-head[class][class] { display: none !important; }
+
+.pc--v2 .pc-seclabel[class][class][class][class] {
+  font-size: 0.9rem !important; font-weight: 700 !important;
+  letter-spacing: 0.055em; color: #1b2a52 !important;
+}
+.pc--v2 .pc-sec-ic[class][class][class][class] {
+  background: none !important; width: 20px; height: 20px; border-radius: 0;
+  color: var(--pcc, #2f4d9e) !important;
+}
+.pc--v2 .pc-sec-ic[class][class][class][class] svg { width: 19px; height: 19px; }
+.pc--v2 .pc-sechead--static[class][class][class][class] { gap: 9px; }
+
+.pc--v2 .pc-more[class][class][class] {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 7px;
+  width: 100%; margin: 0 !important;
+  padding: 10px 2px 4px !important;
+  border-top: 1px solid #f0f3f8 !important;
+  background: none; border-left: 0; border-right: 0; border-bottom: 0;
+  font-family: var(--font-family); font-size: 0.82rem !important; font-weight: 500 !important;
+  color: #8592ad !important; cursor: pointer; text-align: left;
+}
+.pc--v2 .pc-more-ic[class] {
+  flex: none; width: 16px; height: 16px; border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid #dfe5ef; color: #8592ad; font-size: 0.86rem; line-height: 1;
+}
+@media (hover: hover) {
+  .pc--v2 .pc-more[class][class][class]:hover { color: #3c4a68 !important; }
+  .pc--v2 .pc-more[class][class][class]:hover .pc-more-ic { border-color: #c3cddd; color: #3c4a68; }
+}
+/* revamp1490d: the tab cells are square. A 9px top radius showed its
+   corners the moment you hovered the tab beside the one you were on, which
+   read as a floating chip rather than a cell of the bar. */
+body.tt-on .topic-viewtabs .tvt[class][class][class][class][class],
+body.tt-on .family-tabs .tvt[class][class][class][class][class] { border-radius: 0 !important; }

@@ -30,10 +30,13 @@ const ARROW_R = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" str
 // revamp1489: one glyph per KIND of prompt, each in its own colour (set in
 // CSS, not from the page's topic tint). A camera for the day's snapshots, a
 // dial for the things you track, a leaf for what keeps.
+// revamp1490: filled glyphs, standing on their own — a camera for the day's
+// snapshots, a tool for the things you track, a leaf for what keeps. No tile
+// behind them; the colour is the mark.
 const BUCKET_ICON = {
-  snapshot: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.2a1.5 1.5 0 0 0 1.25-.67l.7-1.05A1.5 1.5 0 0 1 9.9 4.6h4.2a1.5 1.5 0 0 1 1.25.68l.7 1.05A1.5 1.5 0 0 0 17.3 7h2.2A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.6" r="3.4"/></svg>',
-  tracker: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-5"/><path d="M4 12V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-3"/><path d="M20 14V3"/><circle cx="4" cy="14" r="2"/><circle cx="12" cy="10" r="2"/><circle cx="20" cy="16" r="2"/></svg>',
-  evergreen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10Z"/><path d="M2 21c0-3 1.9-5.5 5-6.5"/></svg>',
+  snapshot: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.6a2 2 0 0 0-1.66.89L7.05 5.5H4.6A2.6 2.6 0 0 0 2 8.1v9.3a2.6 2.6 0 0 0 2.6 2.6h14.8a2.6 2.6 0 0 0 2.6-2.6V8.1a2.6 2.6 0 0 0-2.6-2.6h-2.45l-.69-1.01a2 2 0 0 0-1.66-.89zM12 16.9a4.2 4.2 0 1 1 0-8.4 4.2 4.2 0 0 1 0 8.4zm0-1.9a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6z"/></svg>',
+  tracker: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.9 4.6a.9.9 0 0 0-1.46-.28l-2.5 2.5-1.76-1.76 2.5-2.5A.9.9 0 0 0 17.4 1.1a5.6 5.6 0 0 0-6.6 7.2L3.2 15.9a2.9 2.9 0 0 0 4.1 4.1l7.6-7.6a5.6 5.6 0 0 0 6-7.8zM6.1 18.8a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4z"/></svg>',
+  evergreen: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.4 1.9c-2.1 2.4-3.7 2.8-9.1 3.9A7.9 7.9 0 0 0 9.5 20.4c.5-3.6 2.3-6.7 5.4-9.1a.8.8 0 0 1 1 1.26c-2.8 2.2-4.4 5-4.8 8.35A8 8 0 0 0 22 10.3c0-4-1.1-6.3-1.6-8.4z"/><path d="M2.8 21.8a.9.9 0 0 1-.9-.9c0-3.4 2.1-6.2 5.6-7.4a.9.9 0 0 1 .58 1.7c-2.8 1-4.38 3.06-4.38 5.7a.9.9 0 0 1-.9.9z"/></svg>',
 };
 
 const ORDER = ['snapshot', 'tracker', 'evergreen'];
@@ -97,7 +100,7 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
     const cap = peek > 0 ? peek : (collapsed ? 4 : 0);
     const peeking = cap > 0 && g.id !== 'evergreen' && g.items.length > cap && !expanded.has(g.id);
     const rows = peeking ? g.items.slice(0, cap) : g.items;
-    const more = peeking ? `<button type="button" class="pc-more" data-pc-more="${g.id}">View all ${esc(g.label.toLowerCase())}${ARROW_R}</button>` : '';
+    const more = peeking ? `<button type="button" class="pc-more" data-pc-more="${g.id}"><span class="pc-more-ic" aria-hidden="true">+</span><span>View more</span></button>` : '';
     return `<section class="pc-sec is-open is-static" data-pc-bucket="${g.id}">
       <div class="pc-sechead pc-sechead--static">
         <span class="pc-sec-ic" aria-hidden="true">${BUCKET_ICON[g.id] || SPARK}</span>
