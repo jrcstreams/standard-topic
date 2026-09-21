@@ -801,9 +801,12 @@ function wireTopicRail(root) {
       if (!on) return;
       const max = track.scrollWidth - track.clientWidth;
       if (max <= 4) return;
+      // The first chip (Home, on the homepage) parks at a true zero — the
+      // track's own 12px inset would otherwise read as a scroll offset and
+      // light the "more to the left" arrow over a list already at its start.
       const before = on.previousElementSibling;
       const lead = before ? Math.min(before.offsetWidth + 8, 140) : 0;
-      const target = Math.max(0, Math.min(max, on.offsetLeft - lead - 4));
+      const target = before ? Math.max(0, Math.min(max, on.offsetLeft - lead - 4)) : 0;
       const prior = track.style.scrollBehavior;
       track.style.scrollBehavior = 'auto';
       track.scrollLeft = target;
@@ -2448,6 +2451,22 @@ const PAGE_TAB_ICON = {
   tools: PROMPTS_HEAD_ICON,
 };
 const pageTabIcon = (k) => PAGE_TAB_ICON[k] ? `<span class="tvt-ic" aria-hidden="true">${PAGE_TAB_ICON[k]}</span>` : '';
+// revamp1468: the tab strip is back. It shows only in tab mode (CSS), sits
+// directly under the rail, and Briefing leads it — on a phone the briefing IS
+// the front page, and landing on the feed buried it. Home carries a fourth
+// tab, Trending, which it has its own section for; a topic page does not.
+const VIEW_TABS = {
+  home: [['brief', 'Briefing', 'brief'], ['news', 'News', 'news'], ['tools', 'Prompts', 'tools'], ['trend', 'Trending', 'trend']],
+  topic: [['brief', 'Briefing', 'brief'], ['news', 'News', 'news'], ['tools', 'Prompts', 'tools']],
+};
+function viewTabsHTML(kind, active = 'brief') {
+  const attr = kind === 'home' ? 'data-hview' : 'data-tview';
+  const rows = (VIEW_TABS[kind] || VIEW_TABS.topic).map(([v, label, ic]) => {
+    const on = v === active;
+    return `<button type="button" class="tvt${on ? ' is-active' : ''}" role="tab" aria-selected="${on}" ${attr}="${v}">${pageTabIcon(ic)}<span class="tvt-tx">${escapeHTML(label)}</span></button>`;
+  }).join('');
+  return `<div class="topic-viewtabs${kind === 'home' ? ' home-viewtabs' : ''}" data-viewtabs role="tablist" aria-label="Sections">${rows}</div>`;
+}
 const DI_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6L17 17M7 7L5.4 5.4"/></svg>';
 const DI_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 14.4A8.6 8.6 0 0 1 9.6 3.8a8.6 8.6 0 1 0 10.6 10.6z"/></svg>';
 // Morning/evening briefing art (revamp980). The edition isn't known until the
@@ -3295,9 +3314,10 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // last component in the right column, so it can simply run long (John:
     // "whether there's 30 or 100").
     const featuredPrompts = shortcuts;
-    body.innerHTML = `<div class="topic-home">
+    body.innerHTML = `<div class="topic-home tview-brief">
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
+      ${viewTabsHTML('topic', 'brief')}
       <div class="topic-top topic-top--lead">
         <section class="topic-top-main">
           <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition tdi-card--topicedition" data-tdi>${topicEditionCardHTML(topic)}
@@ -3345,7 +3365,11 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         // revamp1098: each tab is its own state — switching tabs always opens at
         // the top, never carrying the previous tab's scroll position.
         try { (document.scrollingElement || document.documentElement).scrollTop = 0; window.scrollTo(0, 0); } catch (_) {}
+        // revamp1468: News is its own class now, not "no class". The old
+        // scheme read the news view as the absence of a state, which every
+        // later rule had to restate as a pile of :not()s.
         home.classList.toggle('tview-brief', v === 'brief');
+        home.classList.toggle('tview-news', v === 'news');
         home.classList.toggle('tview-tools', v === 'tools');
         body.querySelectorAll('[data-tview]').forEach((x) => {
           const on = x === b;
@@ -5051,11 +5075,12 @@ function updateTopicViewMode() {
   // for and the tabs already solve. Home goes to tab mode at the same width its
   // second column stops fitting, so the stacked state no longer exists.
   const isHome = document.body.classList.contains('home-search');
-  // revamp1290: home has no tabs any more — the briefing card links out to
-  // briefings by topic and trending links to its own page, so there is nothing
-  // for a tab strip to switch between. It stacks instead: briefing, trending,
-  // feed. Everywhere else still goes tabbed under 900.
-  const isTt = !isHome && cw < 900;
+  // revamp1290 stacked home instead of tabbing it, because the strip had
+  // nothing left to switch between. revamp1468 gives it four real sections
+  // again — Briefing, News, Prompts, Trending — so home tabs like every other
+  // page, at the same width its second column stops fitting.
+  void isHome;
+  const isTt = cw < 900;
   document.body.classList.toggle('tt-on', isTt);
   document.body.classList.toggle('tnews-1col', cw < 1160);
   // revamp1087: leaving tab mode → desktop shows every section at once, so an
@@ -5063,11 +5088,14 @@ function updateTopicViewMode() {
   // must not carry over — the crossing here doesn't hit the 640px breakpoint
   // that would otherwise re-render, so reset the state explicitly.
   if (wasTt && !isTt) {
-    document.querySelectorAll('.topic-home').forEach((h) => h.classList.remove('tview-brief', 'tview-tools'));
-    document.querySelectorAll('.topic-top.is-di-open').forEach((t) => t.classList.remove('is-di-open'));
-    document.querySelectorAll('[data-tview]').forEach((b) => { const on = b.dataset.tview === 'news'; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
-    document.querySelectorAll('.home-sections.home-v2').forEach((g) => g.classList.remove('hview-brief', 'hview-trend', 'hview-tools'));
-    document.querySelectorAll('[data-hview]').forEach((b) => { const on = b.dataset.hview === 'news'; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
+    // revamp1468: the view classes are inert on the wide layout (every rule
+    // that reads them is scoped to body.tt-on), so they stay ON through the
+    // crossing — coming back to tab mode lands on Briefing, the default,
+    // rather than on whatever the reset happened to pick.
+    document.querySelectorAll('.topic-home').forEach((h) => { h.classList.add('tview-brief'); h.classList.remove('tview-news', 'tview-tools'); });
+    document.querySelectorAll('[data-tview]').forEach((b) => { const on = b.dataset.tview === 'brief'; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
+    document.querySelectorAll('.home-sections.home-v2').forEach((g) => { g.classList.add('hview-brief'); g.classList.remove('hview-news', 'hview-trend', 'hview-tools'); });
+    document.querySelectorAll('[data-hview]').forEach((b) => { const on = b.dataset.hview === 'brief'; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
   }
 }
 
@@ -5733,7 +5761,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
              Home no longer has a tab strip either — the briefing card links
              out to briefings by topic and trending links to its own page, so
              there is nothing left for tabs to switch between. -->
-        <div class="home-sections home-v2">
+        ${viewTabsHTML('home', 'brief')}
+        <div class="home-sections home-v2 hview-brief">
           <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Morning Briefing"></section>
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
@@ -5795,13 +5824,15 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       // wide layout, where the section sits beside the feed and the full page is
       // one click away; here the tab IS the page, so go to it. News Feed is the
       // one that stays put: it's what Home is.
-      const HVIEW_PAGE = { brief: '#/intelligence', trend: '#/trending', tools: '#/prompts' };
+      // revamp1176 made the home tabs a doorway: in tab mode each one navigated
+      // away to its own page. revamp1468 makes them tabs again — home holds all
+      // four sections, so switching shows the section rather than leaving.
       document.querySelectorAll('[data-hview]').forEach((b) => b.addEventListener('click', () => {
         const v = b.dataset.hview;
-        if (document.body.classList.contains('tt-on') && HVIEW_PAGE[v]) { navigate(HVIEW_PAGE[v]); return; }
         // revamp1098: each home tab is its own state — always opens at the top.
         try { (document.scrollingElement || document.documentElement).scrollTop = 0; window.scrollTo(0, 0); } catch (_) {}
         grid.classList.toggle('hview-brief', v === 'brief');
+        grid.classList.toggle('hview-news', v === 'news');
         grid.classList.toggle('hview-trend', v === 'trend');
         grid.classList.toggle('hview-tools', v === 'tools');
         document.querySelectorAll('[data-hview]').forEach((x) => {

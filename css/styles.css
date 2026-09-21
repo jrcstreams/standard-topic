@@ -39899,3 +39899,94 @@ html body.app-mode.nav-docked:not(.tt-on):not(.home-search).has-subnav[class][cl
   padding-left: 0; border-left: 0;
 }
 .topic-subnav-inner.is-railrow--full > .trail--bar .trail-arrow--prev { left: -2px; }
+
+/* ═══ revamp1468 — tabular navigation, back, on home and topic pages ═══════
+   Under 900 content px every page is one column, and a column that stacks
+   Briefing over News over Prompts over Trending is a page nobody reaches the
+   bottom of. The strip sits under the rail; Briefing leads it, because on a
+   phone the briefing IS the front page.
+
+   Each view is an explicit class (tview-news / hview-news included) rather
+   than the absence of one — the old "no class means news" scheme is what left
+   the Briefing tab rendering the feed underneath it. */
+
+/* ── the strip ─────────────────────────────────────────────────────────── */
+.topic-viewtabs { display: none; }
+body.tt-on .topic-viewtabs[class] {
+  display: flex !important; align-items: stretch; gap: 2px;
+  position: sticky; top: calc(var(--nav-h) + var(--subnav-height, 56px));
+  z-index: 60; background: #fff;
+  margin: 0 -1rem !important; padding: 0 1rem;
+  border-bottom: 1px solid #e3e8f2;
+  overflow-x: auto; scrollbar-width: none;
+}
+body.tt-on .topic-viewtabs[class]::-webkit-scrollbar { display: none; }
+body.tt-on .topic-viewtabs .tvt[class] {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 0; border-bottom: 2px solid transparent;
+  padding: 11px 12px 9px; margin: 0;
+  font-family: var(--font-family); font-size: 0.92rem; font-weight: 600;
+  color: #5b6b8f; cursor: pointer; white-space: nowrap;
+}
+body.tt-on .topic-viewtabs .tvt.is-active[class] {
+  color: #1d4ed8; border-bottom-color: #1d4ed8; font-weight: 680;
+}
+body.tt-on .topic-viewtabs .tvt .tvt-ic[class] { display: inline-flex; }
+body.tt-on .topic-viewtabs .tvt .tvt-ic svg { width: 15px; height: 15px; }
+@media (max-width: 480px) {
+  body.tt-on .topic-viewtabs .tvt[class] { padding: 11px 9px 9px; font-size: 0.88rem; }
+  body.tt-on .topic-viewtabs .tvt .tvt-ic[class] { display: none; }
+}
+
+/* ── topic page: one section per tab ───────────────────────────────────── */
+body.tt-on .topic-band .topic-home.tview-brief > .topic-top--lead[class][class] { display: block !important; }
+body.tt-on .topic-band .topic-home.tview-brief > .topic-body-cols > .topic-news-wrap[class],
+body.tt-on .topic-band .topic-home.tview-brief > .topic-body-cols > .topic-top-side[class] { display: none !important; }
+
+body.tt-on .topic-band .topic-home.tview-news > .topic-top--lead[class][class] { display: none !important; }
+body.tt-on .topic-band .topic-home.tview-news > .topic-body-cols > .topic-news-wrap[class] { display: block !important; }
+body.tt-on .topic-band .topic-home.tview-news > .topic-body-cols > .topic-top-side[class] { display: none !important; }
+
+body.tt-on .topic-band .topic-home.tview-tools > .topic-top--lead[class][class] { display: none !important; }
+body.tt-on .topic-band .topic-home.tview-tools > .topic-body-cols > .topic-news-wrap[class] { display: none !important; }
+body.tt-on .topic-band .topic-home.tview-tools > .topic-body-cols > .topic-top-side[class] { display: block !important; }
+
+/* ── home: one section per tab ─────────────────────────────────────────── */
+body.tt-on .home-v2[class] { display: block !important; }
+body.tt-on .home-v2.hview-brief .home-main[class],
+body.tt-on .home-v2.hview-brief #home-pcard[class],
+body.tt-on .home-v2.hview-brief #home-trending[class] { display: none !important; }
+
+body.tt-on .home-v2.hview-news .home-featbriefs[class],
+body.tt-on .home-v2.hview-news #home-pcard[class],
+body.tt-on .home-v2.hview-news #home-trending[class] { display: none !important; }
+body.tt-on .home-v2.hview-news .home-main[class] { display: block !important; }
+
+body.tt-on .home-v2.hview-tools .home-featbriefs[class],
+body.tt-on .home-v2.hview-tools .home-main[class],
+body.tt-on .home-v2.hview-tools #home-trending[class] { display: none !important; }
+body.tt-on .home-v2.hview-tools #home-pcard[class] { display: block !important; }
+
+body.tt-on .home-v2.hview-trend .home-featbriefs[class],
+body.tt-on .home-v2.hview-trend .home-main[class],
+body.tt-on .home-v2.hview-trend #home-pcard[class] { display: none !important; }
+body.tt-on .home-v2.hview-trend #home-trending[class] { display: block !important; }
+body.tt-on .home-v2 .home-side[class] { display: block !important; }
+
+/* ── in tab mode the tab IS the label: no section headers ──────────────── */
+body.tt-on #section-newsfeed .newsfeed-head[class][class][class],
+body.tt-on .home-v2 .home-featbriefs .hb-head[class][class],
+body.tt-on .home-v2 #home-pcard .pc-head[class][class],
+body.tt-on .topic-top-side .trail-head[class][class],
+body.tt-on .topic-top-side .tpr-head[class][class],
+body.tt-on #home-trending .trending-topics-titlerow[class][class] { display: none !important; }
+/* revamp1468b: sticky at every width — the old strip went `position: fixed`
+   under 900px, which needed its own height reserved in #content and drifted
+   whenever the bar above it changed. Sticky occupies normal flow, so it
+   reserves itself. Beats both the earlier fixed rule and revamp1463's
+   blanket hide of `.home-viewtabs`. */
+body.tt-on .topic-viewtabs[class][class] { position: sticky !important; top: calc(var(--nav-h) + var(--subnav-height, 56px)) !important; }
+body.tt-on .home-viewtabs[class][class] { display: flex !important; }
+/* The page's own hero is hidden in tab mode, so the strip is the first thing
+   under the bar — it needs no margin above it. */
+body.tt-on .topic-viewtabs[class][class] { margin-top: 0 !important; }
