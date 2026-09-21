@@ -40694,3 +40694,24 @@ body.tt-on .pc--v2 .pc-links[class][class] { padding: 6px 14px 12px !important; 
 .tdi-card--topicedition.is-open .ec-headline[class][class][class][class] { margin-bottom: 0 !important; padding-bottom: 0 !important; }
 .tdi-card--topicedition.is-open .ec-lead[class][class][class] { margin-bottom: 0 !important; padding-bottom: 0 !important; }
 .tdi-card--topicedition.is-open .di-focus--bare .di-summary[class][class][class][class][class][class] { margin-top: 0 !important; }
+
+/* ═══ revamp1485 — the underline was drawn twice ══════════════════════════
+   revamp1482 set a 3.5px bottom border AND an inset 3.5px shadow on the
+   active tab. The shadow paints inside the padding box, the border outside
+   it, so they stacked into roughly seven pixels of blue — which is why it
+   read as a bar rather than an underline. One line, three pixels, and the
+   filled cell carries the rest of the state. The label comes down a step
+   too: at 1rem it was larger than the section headers under it. */
+body.tt-on .topic-viewtabs .tvt.is-active[class][class][class],
+body.tt-on .family-tabs .tvt.is-active[class][class][class] {
+  box-shadow: none !important;
+}
+body.tt-on .topic-viewtabs .tvt[class][class][class],
+body.tt-on .family-tabs .tvt[class][class][class] {
+  border-bottom-width: 3px !important;
+  font-size: 0.94rem !important;
+}
+@media (max-width: 480px) {
+  body.tt-on .topic-viewtabs .tvt[class][class][class],
+  body.tt-on .family-tabs .tvt[class][class][class] { font-size: 0.9rem !important; }
+}
