@@ -39717,3 +39717,38 @@ body.nav-docked .trail--hero { display: none !important; }
 /* revamp1463c — the page panel opened 9px over the grey bar's own edge; it
    clears it now. */
 #sub-header .topic-subnav-picker .tsp-panelwrap[class] { padding-top: 8px; }
+
+/* ═══ revamp1464 — the rail's fade, and its hover ═══
+   The fade was a colour gradient painted over the track, and its colour
+   (#eef1f7) did not match the bar it sat on (#e7ecf3) — so it read as a pale
+   block beside the arrow. A MASK fades the chips themselves, so nothing has
+   to match any background, on either host. And a chip in the bar takes a
+   neutral hover: the topic tint belonged to the hero, where the chip is the
+   page you are choosing, not a strip you are scrolling past. */
+.trail::before, .trail::after { display: none !important; }
+.trail-track {
+  -webkit-mask-image: none; mask-image: none;
+  transition: -webkit-mask-image .18s ease, mask-image .18s ease;
+}
+.trail.has-next:not(.has-prev) .trail-track {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 46px), transparent);
+          mask-image: linear-gradient(to right, #000 calc(100% - 46px), transparent);
+}
+.trail.has-prev:not(.has-next) .trail-track {
+  -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 46px), transparent);
+          mask-image: linear-gradient(to left, #000 calc(100% - 46px), transparent);
+}
+.trail.has-prev.has-next .trail-track {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 46px, #000 calc(100% - 46px), transparent);
+          mask-image: linear-gradient(to right, transparent, #000 46px, #000 calc(100% - 46px), transparent);
+}
+/* The arrows sit clear of the track's edge rather than on top of it. */
+#sub-header.is-home-ident .trail--bar .trail-arrow--prev { left: 8px; }
+.trail-arrow { box-shadow: 0 2px 10px -2px rgba(15, 26, 46, .30); }
+/* Neutral hover in the bar. */
+@media (hover: hover) {
+  #sub-header.is-home-ident .trail--bar .trail-chip[class][class]:hover {
+    background: #f4f7fc !important; border-color: #c3cddd !important; color: #1e3a8a !important;
+  }
+  #sub-header.is-home-ident .trail--bar .trail-chip[class][class]:hover .home-hero-chip-ic { color: #3a5698 !important; }
+}
