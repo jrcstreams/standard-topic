@@ -40328,3 +40328,77 @@ body.tt-on .home-grid > .family-tabs[class][class] {
    a 12px margin on the inline page. Two of those go. */
 .tdi-card--topicedition.is-open .tdi-expand-inner[class][class][class] { padding-top: 6px !important; }
 .tdi-card--topicedition.is-open .di-page--inline[class][class][class] { margin-top: 0 !important; }
+
+/* ═══ revamp1475 — the strip reads as navigation; the wash steps back ══════ */
+
+/* ── the tab strip: bigger, darker, and sitting on one line ──────────────
+   0.92rem read as a caption under a bar of 0.84rem chips. It is the page's
+   navigation, so it takes a navigation's size. The active blue moves from
+   #1d4ed8 to #1e40af — still unmistakably blue, but it stops glowing. */
+body.tt-on .topic-viewtabs[class][class],
+body.tt-on .family-tabs[class][class] {
+  align-items: stretch !important;
+  min-height: 46px;
+}
+body.tt-on .topic-viewtabs .tvt[class][class],
+body.tt-on .family-tabs .tvt[class][class] {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  padding: 13px 13px 11px !important;
+  align-items: center !important;
+  color: #47597f !important;
+  border-bottom-width: 2.5px !important;
+}
+body.tt-on .topic-viewtabs .tvt.is-active[class][class],
+body.tt-on .family-tabs .tvt.is-active[class][class] {
+  color: #1e40af !important; border-bottom-color: #1e40af !important; font-weight: 700 !important;
+}
+body.tt-on .topic-viewtabs .tvt.is-active[class][class] .tvt-ic,
+body.tt-on .family-tabs .tvt.is-active[class][class] .tvt-ic { color: #1e40af !important; }
+body.tt-on .topic-viewtabs .tvt .tvt-ic[class] svg,
+body.tt-on .family-tabs .tvt .tvt-ic[class] svg { width: 16px; height: 16px; display: block; }
+body.tt-on .topic-viewtabs .tvt .tvt-tx[class],
+body.tt-on .family-tabs .tvt .tvt-tx[class] { display: inline-block; line-height: 1.2; }
+@media (max-width: 480px) {
+  body.tt-on .topic-viewtabs .tvt[class][class],
+  body.tt-on .family-tabs .tvt[class][class] { font-size: 0.95rem !important; padding: 13px 10px 11px !important; }
+}
+
+/* ── the topic title is a title, and it sits under the band ──────────────
+   The chevron is gone with the dropdown it opened, and the block closes the
+   gap the trigger's own padding was holding open. */
+.tbh-titlebtn--plain[class] {
+  display: flex; align-items: center; gap: 12px;
+  background: none !important; border: 0 !important; padding: 0 !important; margin: 0 !important;
+  cursor: default;
+}
+.tbh-titlerow[class] { margin: 0 !important; }
+body:not(.tt-on):has(.topic-home) .topic-bodyhead[class][class][class] {
+  padding-top: 0 !important; margin-top: 0 !important;
+}
+html body.app-mode.nav-docked:not(.tt-on):not(.home-search).has-subnav[class][class][class][class] #content:not(#_),
+html body.app-mode:not(.nav-docked):not(.tt-on):not(.home-search).has-subnav[class][class][class][class] #content:not(#_) {
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 56px) + 8px) !important;
+}
+
+/* ── the wash ────────────────────────────────────────────────────────────
+   Desktop keeps it at roughly half strength: enough to tie the intro to the
+   briefing, not enough to tint the reading. Tab mode drops it entirely —
+   a phone shows one section at a time, so there is nothing for it to join. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--tc, #2f4d9e) 8%, #fff) 0%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 3.5%, #fff) 34%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 1.2%, #fff) 66%,
+      #ffffff 100%) !important;
+}
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::after { opacity: 0.12 !important; }
+body:not(.tt-on):has(.topic-top--lead.is-di-open) .topic-bodyhead::after { opacity: 0.06 !important; }
+body.tt-on .topic-home.tview-brief::before,
+body.tt-on .topic-home.tview-brief::after,
+body.tt-on .topic-home::before,
+body.tt-on .topic-home::after { display: none !important; content: none !important; }
+body.tt-on .topic-home .topic-top--lead .ec[class][class],
+body.tt-on .topic-home .topic-top--lead .tdi-card[class][class] { background: #fff !important; }

@@ -945,12 +945,14 @@ function topicBodyHeadHTML(topic) {
   return `
     <header class="topic-bodyhead topic-subnav-picker" data-topic-picker${topicArtStyle(topic)}>
       <a class="tbh-back" href="#/topics">${TBH_BACK_CHEV}<span>Topics</span></a>
+      <!-- revamp1475: the title is a title. It used to be a dropdown trigger
+           for switching topics; the rail above it does that now, in one row
+           you can see, so the chevron was a second door to the same place. -->
       <div class="tbh-titlerow">
-        <button type="button" class="tbh-titlebtn tsp-btn" aria-expanded="false" aria-controls="tsp-panel-body" aria-label="Change topic">
+        <div class="tbh-titlebtn tbh-titlebtn--plain">
           <span class="tbh-titleic" aria-hidden="true"${topicColorStyle(topic)}>${topicIconSVG(topic.icon || 'globe', '')}</span>
           <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
-          ${TSP_IDENT_CHEV}
-        </button>
+        </div>
       </div>
       ${desc ? `<p class="tbh-desc">${escapeHTML(desc)}</p>` : ''}
       ${pills ? `<div class="tbh-subswrap">
@@ -2189,10 +2191,6 @@ function topicEditionCardHTML(topic) {
         <div class="ec-lead">
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
-          <!-- revamp1470: the briefing's long read, on the CLOSED card. A
-               topic page opened on a headline and two lines, and everything
-               that made it worth reading was behind a button. -->
-          <div class="ec-overview" data-ec-overview hidden></div>
         </div>
         <div class="ec-actions">
           <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
@@ -2483,8 +2481,8 @@ const pageTabIcon = (k) => PAGE_TAB_ICON[k] ? `<span class="tvt-ic" aria-hidden=
 // the front page, and landing on the feed buried it. Home carries a fourth
 // tab, Trending, which it has its own section for; a topic page does not.
 const VIEW_TABS = {
-  home: [['brief', 'Briefing', 'brief'], ['news', 'News', 'news'], ['tools', 'Prompts', 'tools'], ['trend', 'Trending', 'trend']],
-  topic: [['brief', 'AI Briefing', 'brief'], ['news', 'News', 'news'], ['tools', 'Prompts', 'tools']],
+  home: [['news', 'News', 'news'], ['brief', 'Briefing', 'brief'], ['tools', 'Prompts', 'tools'], ['trend', 'Trending', 'trend']],
+  topic: [['news', 'News', 'news'], ['brief', 'AI Briefing', 'brief'], ['tools', 'Prompts', 'tools']],
 };
 // revamp1468: in tab mode the Briefing tab lands OPEN. Closed, the tab is a
 // headline, two lines of summary and then a screen of nothing — the page reads
@@ -2517,8 +2515,8 @@ function openBriefWhenTabbed(root, delay = 60) {
 // of each page, which is what keeps the edition card, the trending grid and
 // the prompts directory from fighting over their singletons and ids.
 const FAMILY_TABS = [
-  ['brief', 'AI Briefings', 'brief', '#/intelligence'],
   ['news', 'News', 'news', '#/'],
+  ['brief', 'AI Briefings', 'brief', '#/intelligence'],
   ['tools', 'Prompts', 'tools', '#/prompts'],
   ['trend', 'Trending', 'trend', '#/trending'],
 ];
@@ -2529,7 +2527,7 @@ function familyTabsHTML(active = 'news') {
   }).join('');
   return `<div class="topic-viewtabs home-viewtabs family-tabs" data-viewtabs role="tablist" aria-label="Sections">${rows}</div>`;
 }
-function viewTabsHTML(kind, active = 'brief') {
+function viewTabsHTML(kind, active = 'news') {
   const attr = kind === 'home' ? 'data-hview' : 'data-tview';
   const rows = (VIEW_TABS[kind] || VIEW_TABS.topic).map(([v, label, ic]) => {
     const on = v === active;
@@ -3387,10 +3385,10 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // last component in the right column, so it can simply run long (John:
     // "whether there's 30 or 100").
     const featuredPrompts = shortcuts;
-    body.innerHTML = `<div class="topic-home tview-brief"${topicArtStyle(topic)}>
+    body.innerHTML = `<div class="topic-home tview-news"${topicArtStyle(topic)}>
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
-      ${viewTabsHTML('topic', 'brief')}
+      ${viewTabsHTML('topic', 'news')}
       <div class="topic-top topic-top--lead">
         <section class="topic-top-main">
           <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--edition tdi-card--topicedition" data-tdi>${topicEditionCardHTML(topic)}
@@ -3428,7 +3426,6 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       const host = body.querySelector('.topic-top-side [data-pr-host]');
       if (host) renderPromptCard(host, { topic: topic.name, slug: topic.slug, shortcuts, peek: 3 });
     }
-    openBriefWhenTabbed(body, 120);
     // Topic view tabs: container classes drive which section shows in the
     // narrow tabbed layout; on wide screens the tabs row is display:none and
     // the classes are inert (all sections show in the two-column grid).
@@ -3485,8 +3482,6 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       if (!d || !body.isConnected) return;
       const sEl = body.querySelector('[data-tdi-summary]');
       const dEl = body.querySelector('[data-tdi-date]');
-      { const ov = body.querySelector('[data-ec-overview]'); const tx = briefOverview(d);
-        if (ov && tx) { ov.textContent = tx; ov.hidden = false; } }
       if (sEl && d.summary) { sEl.textContent = d.summary; sEl.hidden = false; }
       else if (sEl && d.content) { sEl.textContent = String(d.content).replace(/^##.+$/gm, '').replace(/^\s*HEADLINE:.*$/gmi, '').replace(/\*\*/g, '').trim().split(/(?<=[.!?])\s/)[0] || ''; sEl.hidden = !sEl.textContent; }
       // revamp1387: the topic card's headline and stamp pill.
@@ -5167,8 +5162,8 @@ function updateTopicViewMode() {
     // that reads them is scoped to body.tt-on), so they stay ON through the
     // crossing — coming back to tab mode lands on Briefing, the default,
     // rather than on whatever the reset happened to pick.
-    document.querySelectorAll('.topic-home').forEach((h) => { h.classList.add('tview-brief'); h.classList.remove('tview-news', 'tview-tools'); });
-    document.querySelectorAll('[data-tview]').forEach((b) => { const on = b.dataset.tview === 'brief'; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
+    document.querySelectorAll('.topic-home').forEach((h) => { h.classList.add('tview-news'); h.classList.remove('tview-brief', 'tview-tools'); });
+    document.querySelectorAll('[data-tview]').forEach((b) => { const on = b.dataset.tview === 'news'; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
     document.querySelectorAll('.home-sections.home-v2').forEach((g) => { g.classList.add('hview-brief'); g.classList.remove('hview-news', 'hview-trend', 'hview-tools'); });
     document.querySelectorAll('[data-hview]').forEach((b) => { const on = b.dataset.hview === 'brief'; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
   }
