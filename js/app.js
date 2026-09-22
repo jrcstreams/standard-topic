@@ -1621,7 +1621,7 @@ function wirePromptsDropdown(panel, initialView) {
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head ph-sec-head--card">
             <div class="ph-sec-headrow">
-              <h3 class="ph-sec-title">Featured</h3>
+              <h3 class="ph-sec-title">Featured Prompts</h3>
             </div>
           </div>
           <div class="ph-flist" data-ph-rail></div>
@@ -1632,7 +1632,7 @@ function wirePromptsDropdown(panel, initialView) {
           <div class="ph-sec-head ph-sec-head--card ph-sec-head--hastoggle">
             <div class="ph-sec-head-tx">
               <div class="ph-sec-headrow">
-                <h3 class="ph-sec-title">By Topic</h3>
+                <h3 class="ph-sec-title">Prompts by Topic</h3>
               </div>
               <div class="ph-sec-subrow">
                 <button type="button" class="trend-sports-toggle pdir-expandall" data-pdir-expandall role="switch" aria-checked="false" title="Expand every category"><span class="trend-sports-toggle-label">Expand all</span><span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span></button>
@@ -1683,7 +1683,14 @@ function wirePromptsDropdown(panel, initialView) {
           const CAP = 5;   // revamp1457: phones show five, then "View more prompts"
           if (picks.length > CAP) {
             moreBtn.hidden = false;
-            const sync = () => { moreBtn.textContent = sec.classList.contains('is-expanded') ? 'Show fewer' : 'View more prompts'; };
+            // revamp1504: the glyph follows the words and points the way the
+            // list goes — a chevron down to open it, up to close. A "+" ahead
+            // of the label read as an add button.
+            const MORE_CHEV = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+            const sync = () => {
+              const open = sec.classList.contains('is-expanded');
+              moreBtn.innerHTML = `<span class="ph-more-tx">${open ? 'Show fewer' : 'View more prompts'}</span><span class="ph-more-ic${open ? ' is-up' : ''}" aria-hidden="true">${MORE_CHEV}</span>`;
+            };
             sync();
             moreBtn.addEventListener('click', () => { sec.classList.toggle('is-expanded'); sync(); });
           }

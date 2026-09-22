@@ -41741,3 +41741,84 @@ html body:not(.tt-on).home-search.app-mode.home-mode.nav-docked[class][class][cl
     padding-top: calc(var(--nav-h, 0px) + var(--subnav-height, 56px) + 8px) !important;
   }
 }
+
+/* ═══ revamp1504 — the Prompts page, measured ══════════════════════════════ */
+
+/* (1) The two section heads. They label the page's two halves; at 0.98rem
+   they were a step UNDER the section labels inside the lists they head. */
+.prompts-home--v2 .ph-sec-title[class][class][class] {
+  font-size: 1.16rem !important;
+  font-weight: 780 !important;
+}
+@media (max-width: 560px) {
+  .prompts-home--v2 .ph-sec-title[class][class][class] { font-size: 1.1rem !important; }
+}
+/* "Prompts by Topic" sits closer to the list above it — 53px read as two
+   unrelated pages stacked. */
+body.tt-on .prompts-home--v2 .ph-lib[class][class][class] { margin-top: 16px !important; }
+
+/* (2) The first name uses the section's rule as its top border, the way
+   every row below it uses the line above it. 4px of list padding put it
+   4px lower than the rhythm of the rest. */
+.pc--v2 .pc-sec .pc-links[class][class][class][class][class][class] { padding-top: 0 !important; }
+
+/* (3) "View more prompts" / "View more": a link, its glyph AFTER the words
+   and pointing the way the list opens, sitting with the row it ends rather
+   than floating under it. */
+.prompts-home--v2 .ph-flist-more[class][class][class],
+.pc--v2 .pc-more[class][class][class][class][class][class] {
+  display: inline-flex !important; align-items: center !important; gap: 6px !important;
+  width: auto !important; justify-self: start !important; justify-content: flex-start !important;
+  margin: 6px 0 2px !important;
+  padding: 8px 0 !important;
+  border: 0 !important; background: none !important; box-shadow: none !important;
+  font-family: var(--font-family);
+  font-size: 0.91rem !important; font-weight: 640 !important;
+  color: #2563eb !important; cursor: pointer;
+}
+.prompts-home--v2 .ph-flist-more[class][class][class]::before { content: none !important; }
+.prompts-home--v2 .ph-more-ic[class],
+.pc--v2 .pc-more .pc-more-ic[class][class][class][class] {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  width: 18px !important; height: 18px !important;
+  border: 0 !important; border-radius: 0 !important; background: none !important;
+  color: #2563eb !important;
+  transition: transform .16s ease;
+}
+.prompts-home--v2 .ph-more-ic svg,
+.pc--v2 .pc-more .pc-more-ic svg { width: 17px !important; height: 17px !important; }
+.prompts-home--v2 .ph-more-ic.is-up[class] { transform: rotate(180deg); }
+@media (hover: hover) {
+  .prompts-home--v2 .ph-flist-more[class][class][class]:hover,
+  .pc--v2 .pc-more[class][class][class][class][class][class]:hover { color: #16307a !important; }
+  .prompts-home--v2 .ph-flist-more[class][class][class]:hover .ph-more-ic,
+  .pc--v2 .pc-more[class][class][class][class][class][class]:hover .pc-more-ic { color: #16307a !important; transform: translateY(1px); }
+}
+
+/* (4) The section labels are not headlines. At #14224a they were darker
+   than the prompt names under them and a world away from the quiet slate
+   of the glyph beside them — the two read as different systems. */
+.pc--v2 .pc-seclabel[class][class][class][class][class][class] {
+  color: #4f5f81 !important;
+  font-weight: 720 !important;
+  letter-spacing: 0.06em;
+}
+
+/* (5) Inside a By-Topic accordion the list is INSIDE a card, so it keeps a
+   margin off that card's edge — full-bleed there runs the names into the
+   border. (On a topic page and on the phone's Prompts tab the card is the
+   page, which is why those stay flush.) */
+.pdir-topichost[class][class][class] { padding-left: 14px !important; padding-right: 14px !important; }
+.pdir-cardbody.is-topic[class][class][class] { padding-right: 6px !important; }
+/* …and its first section head sits closer to the row that opened it. */
+.pdir-topichost .pc.pc--v2[class][class][class] { padding-top: 0 !important; }
+.pdir-topichost .pc--v2 .pc-sec:first-of-type .pc-sechead--static[class][class][class][class][class][class][class][class] {
+  padding-top: 4px !important;
+}
+/* The page is a flex column with a 27px row-gap, so the section's own margin
+   stacks on top of it. The gap carries the spacing; the margin stands down. */
+.prompts-home--v2[class][class] { row-gap: 18px !important; }
+body.tt-on .prompts-home--v2 .ph-lib[class][class][class] { margin-top: 0 !important; }
+.prompts-home--v2 .ph-lib[class][class] { margin-top: 0 !important; }
+/* A section head under a divider needs less air than one between two lists. */
+.pdir-cardbody.is-topic[class][class][class][class] { padding-top: 6px !important; }

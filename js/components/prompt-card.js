@@ -100,7 +100,9 @@ export function renderPromptCard(host, { topic, slug, shortcuts, subtitle, head 
     const cap = peek > 0 ? peek : (collapsed ? 4 : 0);
     const peeking = cap > 0 && g.id !== 'evergreen' && g.items.length > cap && !expanded.has(g.id);
     const rows = peeking ? g.items.slice(0, cap) : g.items;
-    const more = peeking ? `<button type="button" class="pc-more" data-pc-more="${g.id}"><span class="pc-more-ic" aria-hidden="true">+</span><span>View more</span></button>` : '';
+    // revamp1504: the glyph follows the words and points down the list it
+    // opens, rather than a "+" ahead of them that reads as an add button.
+    const more = peeking ? `<button type="button" class="pc-more" data-pc-more="${g.id}"><span class="pc-more-tx">View more</span><span class="pc-more-ic" aria-hidden="true">${CHEV_D}</span></button>` : '';
     return `<section class="pc-sec is-open is-static" data-pc-bucket="${g.id}">
       <div class="pc-sechead pc-sechead--static">
         <span class="pc-sec-ic" aria-hidden="true">${BUCKET_ICON[g.id] || SPARK}</span>
