@@ -41648,3 +41648,20 @@ body.tt-on.tt-cond[class][class][class] .topic-viewtabs .tvt[class][class][class
 body.tt-on.tt-cond[class][class][class] .family-tabs .tvt[class][class][class][class] {
   border-bottom-width: 2.5px !important;
 }
+
+/* ═══ revamp1501 — the rail lines up with the page on a wide screen ════════
+   `#content` is capped at 1280 and LEFT-aligned once the sidebar docks
+   (`margin-left: var(--sbw)`, margin-right 0), but the band's inner is capped
+   at the same 1280 and CENTRED — inside a `#sub-header` that already starts
+   at the sidebar's edge. So past a ~1600px viewport the two disagree and the
+   gap grows with the window: at 1920 the rail's first chip sat 160px right of
+   the headline under it, at 2200 it sat 300px right.
+
+   Undocked, `#content` is centred and the band already agrees with it, so
+   this is the docked case only. */
+body.nav-docked #sub-header .topic-banner[class],
+body.nav-docked #sub-header .topic-subnav-inner[class],
+body.nav-docked #sub-header .topic-subnav-title > .topic-subnav-inner[class] {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
