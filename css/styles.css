@@ -41493,8 +41493,8 @@ body.tt-on .search-page .search-panel-results[class][class] { padding-top: 4px !
 body.tt-on .search-page .sr[class][class] { padding-top: 0 !important; }
 body.tt-on .search-page .sr > .sr-sec:first-child[class][class] { margin-top: 0 !important; }
 /* Trending's switch hangs a little closer to the strip it belongs under. */
-body.tt-on .ndp.aii-nav-dd-trend[class][class] { padding-top: 0 !important; }
-body.tt-on .ndp.aii-nav-dd-trend .aii-nav-dd-subbar[class][class] { padding-top: 8px !important; margin-bottom: 4px !important; }
+body.tt-on .ndp.aii-nav-dd-trending[class][class] { padding-top: 0 !important; }
+body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-subbar[class][class] { padding-top: 8px !important; margin-bottom: 4px !important; }
 
 /* ═══ revamp1498 — the briefing tabs, measured ═════════════════════════════
    Two things the eye caught that a rule had not:
@@ -41822,3 +41822,220 @@ body.tt-on .prompts-home--v2 .ph-lib[class][class][class] { margin-top: 0 !impor
 .prompts-home--v2 .ph-lib[class][class] { margin-top: 0 !important; }
 /* A section head under a divider needs less air than one between two lists. */
 .pdir-cardbody.is-topic[class][class][class][class] { padding-top: 6px !important; }
+
+/* ═══ revamp1505 — a pass over the whole site from the screenshots ═════════ */
+
+/* ── (1) the rail's chips: flat ─────────────────────────────────────────────
+   A drop shadow under every chip and a lift on hover read as glossy — the
+   chips looked like buttons on a toy. A chip is a white tile with a hairline;
+   hover fills it a shade and firms the line, and nothing moves. */
+.trail-chip[class][class][class] {
+  box-shadow: none !important;
+  border: 1px solid #dde3ee !important;
+  transform: none !important;
+  transition: background .12s ease, border-color .12s ease, color .12s ease;
+}
+@media (hover: hover) {
+  .trail-chip:not(.is-active)[class][class][class][class]:hover {
+    background: #f3f5fa !important;
+    border-color: #c5cfe0 !important;
+    color: #16223d !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+}
+.trail-chip.is-active[class][class][class][class][class] {
+  box-shadow: none !important;
+  border-color: transparent !important;
+  transform: none !important;
+}
+.trail-track[class][class][class] { padding: 4px 0 !important; }
+
+/* ── (2) the band never draws a hairline before the rail ────────────────────
+   The line was for a page name to the rail's left. There is no page name on
+   the left any more, on any page — Trending's toggle sits on the RIGHT — so
+   the line just shoved Home over by 13px on that one page. */
+#sub-header .topic-subnav-inner.is-railrow > .trail--bar[class][class][class] {
+  border-left: 0 !important; padding-left: 0 !important;
+}
+
+/* ── (3) Home is not "active" on the wide layout's other pages ──────────────
+   AI Briefings, Trending and Prompts are reached from the main nav (or the
+   sidebar), and that is where the active state shows. A lit Home chip above
+   a page called Trending said two things at once. In tab mode these pages
+   ARE home's tabs, so the chip stays lit there. */
+body:not(.tt-on).pagenav-mode #sub-header .trail-chip.is-active[data-rail-slug="home"][class][class][class] {
+  background: #fff !important;
+  color: #26334f !important;
+  border-color: #dde3ee !important;
+}
+body:not(.tt-on).pagenav-mode #sub-header .trail-chip.is-active[data-rail-slug="home"][class][class] .home-hero-chip-ic,
+body:not(.tt-on).pagenav-mode #sub-header .trail-chip.is-active[data-rail-slug="home"][class][class] .home-hero-chip-ic svg {
+  color: #2f4d9e !important; stroke: #2f4d9e !important;
+}
+
+/* ── (4) the topic wash, fainter still ──────────────────────────────────────
+   Half of half. At this weight it tints the top of the page the way a sheet
+   of coloured paper under white would. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--tc, #2f4d9e) 2.4%, #fff) 0%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 1.1%, #fff) 34%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 0.4%, #fff) 66%,
+      #ffffff 100%) !important;
+}
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::after { opacity: 0.07 !important; }
+body.tt-on .topic-home.tview-brief::before {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--tc, #2f4d9e) 2.2%, #fff) 0%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 0.9%, #fff) 45%,
+      #ffffff 100%);
+}
+body.tt-on .topic-home.tview-brief::after { opacity: 0.06; }
+
+/* ── (5) the topic briefing card: white, square-edged corners, one blue ─────
+   The card sat on the wash as translucent white with a blur behind it and a
+   border mixed from the topic colour — which is what painted a tinted line
+   along its top edge, and what left its corners looking chewed (a blurred
+   backdrop under a rounded corner does not anti-alias cleanly). Solid white,
+   a neutral hairline, no filter. And "AI BRIEFING" stops taking the topic's
+   colour: it is the same label on every topic, so it takes the site's blue. */
+body:not(.tt-on):has(.topic-home) .topic-top--lead .ec[class][class],
+body:not(.tt-on):has(.topic-home) .topic-top--lead .tdi-card[class][class] {
+  background: #fff !important;
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  border-color: #dfe5ef !important;
+}
+.ec--topic .ec-whatis[class][class] { color: #2b3a6b !important; }
+
+/* ── (6) the feed's first card keeps its top edge on the wide layout ────────
+   revamp1487 took the first story's top border off so it would sit on the
+   tab strip's line. On the wide layout the stories are bordered cards in
+   two columns, and the first one was a box with no lid. Tab mode keeps
+   the flush start; everywhere else the card is whole. */
+body:not(.tt-on) .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child[class][class][class][class] {
+  border-top: 1px solid #d6ddea !important;
+}
+
+/* ── (7) the AI Prompts rail wears a header ─────────────────────────────────
+   On the wide layout the card's title, its sections and its rows all sat on
+   the same white and ran together. The title becomes a bar: the site's navy,
+   white text, the sparkle in white, square with the card's top corners — and
+   it does the separating, so the rule under it goes. Tab mode keeps hiding
+   the head (the strip already says AI Prompts). */
+body:not(.tt-on) .topic-top-side .pc.pc--v2[class][class],
+body:not(.tt-on) #home-pcard .pc.pc--v2[class][class] {
+  padding-top: 0 !important;
+  overflow: hidden;
+  border-radius: 12px !important;
+  border-color: #d9e0ec !important;
+}
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head[class][class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head[class][class][class] {
+  display: flex !important; align-items: center !important;
+  margin: 0 -14px 10px !important;
+  padding: 12px 16px !important;
+  background: #1f2f5c !important;
+  border-bottom: 0 !important; border-radius: 0 !important;
+}
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head-row[class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head-row[class] { display: flex; align-items: center; gap: 10px; }
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head-ic[class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head-ic[class][class] {
+  width: 26px; height: 26px; border-radius: 7px;
+  background: rgba(255, 255, 255, 0.14) !important; color: #fff !important;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head-ic svg,
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head-ic svg { width: 15px; height: 15px; }
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head-title[class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head-title[class][class] {
+  color: #fff !important; font-size: 1.12rem !important; font-weight: 750 !important; letter-spacing: -0.01em;
+}
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-sec:first-of-type .pc-sechead--static[class][class][class][class][class][class][class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-sec:first-of-type .pc-sechead--static[class][class][class][class][class][class][class][class] {
+  padding-top: 6px !important;
+}
+
+/* ── (8) the opened story's publisher stays legible ─────────────────────────
+   Open, the card's head takes a blue tint, and the grey publisher pill
+   dissolved into it. It goes white with a hairline while the card is open. */
+.news-card--open .news-card-foot--lead .news-card-source[class][class][class][class] {
+  background: #fff !important;
+  border: 1px solid #cbd5e6 !important;
+  color: #1e2d5a !important;
+}
+
+/* ── (9) the Topics page has no white box ───────────────────────────────────
+   Its body was the one grey ground on the site (#f4f5f9) and the list sat in
+   a white panel on top of it. Every other page is white; so is this one. */
+body:has(.ndp.aii-nav-dd-topics) { background: #fff !important; }
+.ndp.aii-nav-dd-topics[class][class] { background: transparent !important; }
+
+/* ── (10) the Prompts page, on the wide layout ──────────────────────────────
+   The featured list and each opened topic were wearing the prompt card's
+   frame — a bordered, shadowed box inside a page that is already the
+   container — so the rows sat in a box within a box. No frame, anywhere on
+   this page. And "Expand all" goes: it was the only switch on the site that
+   opened fifteen accordions at once, and nobody had asked it to. */
+.prompts-home--v2 .ph-featured .pc.pc--v2[class][class][class],
+.prompts-home--v2 .pdir-topichost .pc.pc--v2[class][class][class] {
+  border: 0 !important; background: none !important; box-shadow: none !important;
+  border-radius: 0 !important; padding-left: 0 !important; padding-right: 0 !important;
+}
+.prompts-home--v2 .ph-sec-subrow[class][class],
+.prompts-home--v2 [data-pdir-expandall][class][class] { display: none !important; }
+/* "View more prompts" only when there are more to view: the five-row cap is a
+   phone rule, so above it every featured prompt is already on the page. */
+@media (min-width: 900px) {
+  .prompts-home--v2 .ph-flist-more[class][class][class][class] { display: none !important; }
+}
+
+/* ── (11) Trending in tab mode: the switch, then the list, on one rhythm ────
+   The switch sat 19px under the strip and the first trend 20px under the
+   switch with no line over it, while every other trend sat 13px under a
+   line. The switch comes up, the list opens on a line, and the first trend
+   sits under it like the rest. */
+body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-subbar[class][class][class] {
+  padding-top: 4px !important; padding-bottom: 10px !important; margin-bottom: 0 !important;
+}
+body.tt-on .aii-nav-dd-trending .trend-card-grid[class][class] { border-top: 1px solid #e9ecf2 !important; }
+body.tt-on .aii-nav-dd-trending .trend-card-grid > .trend-card:first-child[class][class],
+body.tt-on .aii-nav-dd-trending .trend-card-grid > .trend-card:nth-child(2)[class][class] { border-top: 0 !important; }
+
+/* ── (12) an opened trend's actions share a line ────────────────────────────
+   Search trend, Sources and Close were stacked full-width on a phone — three
+   bars, each as wide as the card, for three small controls. They sit on one
+   row and wrap only when they must; an open Sources drawer takes the row
+   beneath. */
+body.tt-on .trend-exp-drawers.ni-actions[class][class][class][class][class] {
+  display: flex !important; flex-wrap: wrap !important; align-items: flex-start !important;
+  gap: 8px !important;
+}
+body.tt-on .trend-exp-drawers.ni-actions[class][class][class][class][class] > .te-drawer {
+  flex: 0 1 auto !important; width: auto !important; min-width: 0 !important;
+}
+body.tt-on .trend-exp-drawers.ni-actions[class][class][class][class][class] > .te-drawer[open] { flex: 1 1 100% !important; }
+body.tt-on .trend-exp-drawers.ni-actions[class][class][class][class][class] > .te-drawer > .te-drawer-sum {
+  width: auto !important; min-height: 38px !important; padding: 0 14px !important;
+}
+body.tt-on .trend-exp-drawers.ni-actions[class][class][class][class][class] > .te-drawer--close {
+  margin-left: auto !important;
+}
+
+/* (12b) …and the row is a ROW: the drawers' container was a flex column with
+   each item centred, which is why three auto-width buttons still took three
+   lines. */
+body.tt-on .trend-exp-drawers.ni-actions[class][class][class][class][class][class] {
+  flex-direction: row !important; justify-content: flex-start !important;
+}
+body.tt-on .trend-exp-drawers.ni-actions[class][class][class][class][class][class] > .te-drawer { align-self: auto !important; }
+
+/* (13) the Topics page starts where the other pages start. With no band of
+   its own (revamp1497) it reserved 32px under the nav where the others
+   reserve 8 under the band; its title sat 46px down against their 20. */
+html body:not(.nav-docked):not(.tt-on):has(.ndp.aii-nav-dd-topics)[class][class][class][class][class][class] #content:not(#_) {
+  padding-top: calc(var(--nav-h, 56px) + 8px) !important;
+}

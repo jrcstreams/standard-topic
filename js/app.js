@@ -2660,7 +2660,10 @@ function renderNavDdPage(container, cfg) {
         ${backBarHTML()}
         <div class="aii-nav-dd-head">
           <div class="aii-nav-dd-titles">
-            <div class="aii-nav-dd-title">${navDdTitleHTML(cfg)}</div>
+            <!-- revamp1505: no page picker on the title. The chevron opened a
+                 "Change page" panel — but the main nav and the sidebar already
+                 say where you are and where else you can go. -->
+            <div class="aii-nav-dd-title">${navDdTitleHTML({ ...cfg, pickerKey: null })}</div>
             ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
             ${Array.isArray(cfg.headButtons) && cfg.headButtons.length
               ? `<div class="aii-nav-dd-headbtns">${cfg.headButtonsLabel ? `<span class="aii-nav-dd-headbtns-label">${escapeHTML(cfg.headButtonsLabel)}</span>` : ''}${cfg.headButtons.map((b, i) => `<a href="${escapeAttr(b.href || '#')}" class="aii-nav-dd-headbtn${b.primary ? ' is-primary' : ''}" data-navdd-headbtn="${i}">${b.icon || ''}<span>${escapeHTML(b.label)}</span></a>`).join('')}</div>`

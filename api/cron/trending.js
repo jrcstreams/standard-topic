@@ -18,6 +18,8 @@
 //   500 — { error }                               (SerpAPI key missing / upstream error)
 
 const { getSql, bulkInsert } = require('../../lib/db');
+let waitUntil = null;
+try { ({ waitUntil } = require('@vercel/functions')); } catch (_) { waitUntil = null; }
 const { withHealthcheck } = require('../../lib/healthcheck');
 
 const GEOS = ['US'];
@@ -151,6 +153,23 @@ module.exports = withHealthcheck('HC_PING_TRENDING', async function handler(req,
       );
       pruned = (Array.isArray(del) ? del : (del && del.rows) || []).length;
     } catch (_) { /* pruning is best-effort; never fail the snapshot on it */ }
+    // revamp1505: brief the new snapshot NOW rather than at :05/:25. The two
+    // pregenerate crons ran 5 and 25 minutes after this one, so for that
+    // window every newly-trending term showed on the page with no summary
+    // (seen on the phone at 20:01: Rays Vs Yankees, Taylor Swift, Case
+    // Keenum, all blank; all filled by 20:25). Fire the trend pass as soon as
+    // the rows are in — best-effort, and kept alive past the response.
+    try {
+      const host = req.headers['x-forwarded-host'] || req.headers.host;
+      if (host && inserted > 0) {
+        const proto = /^localhost|^127\./.test(host) ? 'http' : 'https';
+        const kick = fetch(`${proto}://${host}/api/cron/pregenerate?type=trends&n=40`, {
+          headers: { Authorization: `Bearer ${secret}`, Accept: 'application/json' },
+        }).then((r) => { if (!r.ok) console.warn('trending cron: brief pass returned', r.status); })
+          .catch((e) => console.warn('trending cron: brief pass failed', e && e.message));
+        if (waitUntil) waitUntil(kick);
+      }
+    } catch (_) { /* the snapshot is the job; the brief pass is a courtesy */ }
     return res.status(200).json({ ok: true, snapshotAt, inserted, pruned });
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err) });

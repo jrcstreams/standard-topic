@@ -1253,7 +1253,10 @@ ${A}`),C.length?C.join(`
         ${ps()}
         <div class="aii-nav-dd-head">
           <div class="aii-nav-dd-titles">
-            <div class="aii-nav-dd-title">${Qc(t)}</div>
+            <!-- revamp1505: no page picker on the title. The chevron opened a
+                 "Change page" panel \u2014 but the main nav and the sidebar already
+                 say where you are and where else you can go. -->
+            <div class="aii-nav-dd-title">${Qc({...t,pickerKey:null})}</div>
             ${t.subtitle?`<div class="aii-nav-dd-sub">${O(t.subtitle)}</div>`:""}
             ${Array.isArray(t.headButtons)&&t.headButtons.length?`<div class="aii-nav-dd-headbtns">${t.headButtonsLabel?`<span class="aii-nav-dd-headbtns-label">${O(t.headButtonsLabel)}</span>`:""}${t.headButtons.map((n,s)=>`<a href="${ie(n.href||"#")}" class="aii-nav-dd-headbtn${n.primary?" is-primary":""}" data-navdd-headbtn="${s}">${n.icon||""}<span>${O(n.label)}</span></a>`).join("")}</div>`:""}
           </div>
