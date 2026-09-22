@@ -2030,6 +2030,21 @@ export function renderAIIntelligence(container, scope) {
     // state in step whichever one was used.
     const setBtn = host.querySelector('.aii-pc-foot [data-pc-settings]');
     const panel = host.querySelector('[data-pc-set]');
+    // revamp1503: the popover's notch points back at the button that opened
+    // it. A fixed `right:` only lands on it in the narrow phone column, where
+    // Settings is the last thing on a row that fills the width; on a wide
+    // panel the row is left-aligned and the notch pointed at empty space.
+    const aimNotch = () => {
+      if (!panel || !setBtn || panel.hidden) return;
+      try {
+        const pb = panel.getBoundingClientRect();
+        const bb = setBtn.getBoundingClientRect();
+        if (!pb.width || !bb.width) return;
+        const x = (bb.left + bb.width / 2) - pb.left;
+        // Keep the notch inside the popover's own corners.
+        panel.style.setProperty('--pc-notch-x', Math.max(18, Math.min(pb.width - 18, x)).toFixed(1) + 'px');
+      } catch (_) {}
+    };
     host.querySelectorAll('[data-pc-settings]').forEach((t) => {
       t.addEventListener('click', () => {
         const open = !!(panel && panel.hidden);
@@ -2038,8 +2053,10 @@ export function renderAIIntelligence(container, scope) {
           setBtn.classList.toggle('is-open', open);
           setBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
         }
+        if (open) requestAnimationFrame(aimNotch);
       });
     });
+    try { window.addEventListener('resize', aimNotch, { passive: true }); } catch (_) {}
     host.querySelector('.aii-review-reasoning')?.addEventListener('change', (e) => { ps.reasoning = e.target.value; refreshPreview(); });
     host.querySelector('.aii-review-output')?.addEventListener('change', (e) => { ps.outputType = e.target.value; refreshPreview(); });
     host.querySelector('.aii-review-secondary')?.addEventListener('input', (e) => { ps.secondaryTopic = e.target.value; refreshPreview(); });

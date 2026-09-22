@@ -475,14 +475,18 @@ function setSubnavHeightVar(force) {
 function wireTabStripCondense() {
   if (window.__tabCondenseWire) return;
   window.__tabCondenseWire = true;
-  let on = false;
-  const sync = () => {
+  let on = false; let queued = false;
+  const apply = () => {
+    queued = false;
     const y = window.scrollY || document.documentElement.scrollTop || 0;
     if (!on && y > 120) { on = true; document.body.classList.add('tt-cond'); }
     else if (on && y < 70) { on = false; document.body.classList.remove('tt-cond'); }
   };
+  // One class flip per frame at most. Reading scrollY and restyling on every
+  // scroll event is what made a momentum scroll stutter on a phone.
+  const sync = () => { if (queued) return; queued = true; requestAnimationFrame(apply); };
   window.addEventListener('scroll', sync, { passive: true });
-  window.addEventListener('hashchange', () => { on = false; document.body.classList.remove('tt-cond'); });
+  window.addEventListener('hashchange', () => { on = false; queued = false; document.body.classList.remove('tt-cond'); });
   // The family tabs are links to four different routes. Each is its own page,
   // and a page opens at its top — never at the scroll position the tab you
   // came from happened to be left at. Delegated, so it survives every
@@ -492,7 +496,7 @@ function wireTabStripCondense() {
     on = false; document.body.classList.remove('tt-cond', 'home-scrolled');
     try { (document.scrollingElement || document.documentElement).scrollTop = 0; window.scrollTo(0, 0); } catch (_) {}
   }, true);
-  sync();
+  apply();
 }
 function observeSubnavHeight() {
   const sub = document.getElementById('sub-header');
@@ -5323,7 +5327,7 @@ function renderStickyHeroBar(container, route) {
       </div>
       <button type="button" class="navbtn nav-searchbar" id="nav-search" aria-label="Search">
         <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-        <span class="navbtn-label nav-searchbar-ph">Search news, topics…</span>
+        <span class="navbtn-label nav-searchbar-ph">Search</span>
       </button>
       <button type="button" class="navbtn navbtn--topics-right" id="nav-topics" aria-label="Topics" aria-haspopup="dialog">
         <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>

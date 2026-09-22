@@ -40135,7 +40135,7 @@ body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
     linear-gradient(180deg,
       color-mix(in srgb, var(--tc, #2f4d9e) 15%, #fff) 0%,
       color-mix(in srgb, var(--tc, #2f4d9e) 7%, #fff) 34%,
-      color-mix(in srgb, var(--tc, #2f4d9e) 2.5%, #fff) 66%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 2.5%, #fff) 66%,  /* revamp1503b halves these below */
       #ffffff 100%) !important;
 }
 /* The art rides the same band, pinned right, faded almost out. At this
@@ -41243,7 +41243,10 @@ body.tt-on .home-v2 .home-main .newsfeed-scroll-wrap[class] { margin-top: 0 !imp
   box-shadow: 0 14px 34px -20px rgba(15, 26, 46, 0.45) !important;
 }
 .pc--v2 .pc-item-host .aii-pc-set[class][class][class]::before {
-  content: ''; position: absolute; top: -6px; right: 30px;
+  content: ''; position: absolute; top: -6px;
+  left: var(--pc-notch-x, auto);
+  right: 30px;
+  margin-left: -5.5px;
   width: 11px; height: 11px; transform: rotate(45deg);
   background: #fff; border-left: 1px solid #dde4ef; border-top: 1px solid #dde4ef;
   border-radius: 2px 0 0 0;
@@ -41300,7 +41303,10 @@ body.tt-on .home-v2 .home-main .newsfeed-scroll-wrap[class] { margin-top: 0 !imp
   box-shadow: 0 14px 34px -20px rgba(15, 26, 46, 0.45) !important;
 }
 .aii-pc .aii-pc-set[class][class]::before {
-  content: ''; position: absolute; top: -6px; right: 30px;
+  content: ''; position: absolute; top: -6px;
+  left: var(--pc-notch-x, auto);
+  right: 30px;
+  margin-left: -5.5px;
   width: 11px; height: 11px; transform: rotate(45deg);
   background: #fff; border-left: 1px solid #dde4ef; border-top: 1px solid #dde4ef;
   border-radius: 2px 0 0 0;
@@ -41379,29 +41385,29 @@ body.tt-on .ndp .trend-sports-row[class][class] { padding-top: 8px !important; m
    at, so it cannot move between the two states. One geometry for both:
    a little air off the band, the sublede tight to the field it introduces,
    and the field in the same place whether there are results under it or not. */
-body.tt-on .search-page .search-panel-topfold[class][class][class],
-body.tt-on .search-page .search-topzone[class][class][class] {
+.search-page .search-panel-topfold[class][class][class],
+.search-page .search-topzone[class][class][class] {
   margin-top: 0 !important;
   /* The fold's own top padding was 10px collapsed and 34px expanded, which is
      the other half of the jump. One value. */
   padding-top: 14px !important;
   padding-bottom: 18px !important;
 }
-body.tt-on .search-page .search-panel-hero[class][class][class],
-body.custom-mode.tt-on .search-page .search-panel-hero[class][class][class] {
+.search-page .search-panel-hero[class][class][class],
+body.custom-mode .search-page .search-panel-hero[class][class][class] {
   padding-top: 18px !important;
   padding-bottom: 10px !important;
 }
 /* "Find the insights and resources you need." belongs to the field under it,
    not to the title above it — 30px of air read as two separate things. */
-body.tt-on .search-page .search-panel-sublede[class][class] {
+.search-page .search-panel-sublede[class][class] {
   margin-top: 4px !important; margin-bottom: 0 !important;
 }
-body.tt-on .search-page .search-panel-barrow[class][class] { padding-top: 0 !important; margin-top: 0 !important; }
+.search-page .search-panel-barrow[class][class] { padding-top: 0 !important; margin-top: 0 !important; }
 
 /* One rule under the field, not two. The stickzone drew a 2px line 33px
    below the bar and the first result head drew its own directly under it. */
-body.tt-on .search-page .search-stickzone[class][class] {
+.search-page .search-stickzone[class][class] {
   border-bottom: 0 !important;
   padding-bottom: 0 !important;
 }
@@ -41624,20 +41630,33 @@ body.tt-on[class][class][class] .family-tabs[class][class] {
   top: calc(var(--nav-h, 0px) + var(--subnav-height, 56px)) !important;
   z-index: 60 !important;
   background: #fff !important;
-  transition: min-height .18s ease, box-shadow .18s ease;
+  /* Only the shadow animates. A sticky element's HEIGHT is a layout
+     property: animating it moves every story under it for 180ms, in the
+     middle of a scroll, which is the jank (revamp1502). */
+  transition: box-shadow .18s ease;
+  /* The strip is a horizontal scroller that never has anything to scroll
+     (the cells are flex: 1). Saying so stops it competing for a vertical
+     drag that belongs to the page. */
+  touch-action: pan-y;
 }
 
 /* ── condensed ───────────────────────────────────────────────────────────── */
+/* The bar shrinks by 8px and hands the same 8px back as margin, so its FLOW
+   footprint stays 42px. A stuck element paints at `top` but still occupies
+   its slot in the column, so shrinking it without this moves everything
+   below up by 8px — a jump under the reader's thumb, every time the
+   threshold is crossed. The margin lives in the slot, far above the
+   viewport, so nothing shows it. */
 body.tt-on.tt-cond[class][class][class] .topic-viewtabs[class][class],
 body.tt-on.tt-cond[class][class][class] .family-tabs[class][class] {
   min-height: 34px !important;
+  margin-bottom: 8px !important;
   box-shadow: 0 6px 14px -12px rgba(15, 26, 46, 0.5);
 }
 body.tt-on.tt-cond[class][class][class] .topic-viewtabs[class][class] .tvt,
 body.tt-on.tt-cond[class][class][class] .family-tabs[class][class] .tvt {
   font-size: 0.79rem !important;
   gap: 0 !important;
-  transition: font-size .18s ease;
 }
 body.tt-on.tt-cond[class][class][class] .topic-viewtabs .tvt .tvt-ic[class][class],
 body.tt-on.tt-cond[class][class][class] .family-tabs .tvt .tvt-ic[class][class] {
@@ -41664,4 +41683,61 @@ body.nav-docked #sub-header .topic-subnav-inner[class],
 body.nav-docked #sub-header .topic-subnav-title > .topic-subnav-inner[class] {
   margin-left: 0 !important;
   margin-right: auto !important;
+}
+
+/* revamp1502b — the briefing's headline belongs to the edition line above it.
+   12px under a two-line lockup ("THE MAIN BRIEFING" over "Evening Edition")
+   read as a separate block rather than the same one. */
+.dih-edition .ec-head[class][class],
+.ec--topic .ec-head[class][class] { margin-bottom: 5px !important; }
+
+/* revamp1502c — the search page opens on the band, at every width.
+   `pagenav-mode` reserves `--subnav-height + 22px`, which on this page is
+   22px of white between the rail and the tinted hero that should start on
+   it. (Tab mode already had no reserve to spare; this is the wide layout.) */
+html body:has(.search-page)[class][class][class][class][class][class][class] #content:not(#_) {
+  padding-top: calc(var(--nav-h, 0px) + var(--subnav-height, 56px)) !important;
+}
+
+/* The notch's left offset is measured from the Settings button when the
+   popover opens; `right` stays as the fallback for the frame before that. */
+.aii-pc-set[style*="--pc-notch-x"]::before { right: auto !important; }
+
+/* ═══ revamp1503 — a lighter hand at the top of a page ═════════════════════ */
+
+/* (1) The topic wash. It is meant to say which topic you are on before you
+   read the word; at 15% it was saying it at the volume of a banner. Half
+   the tint at every stop, and the art behind it quieter still — the colour
+   is still there, it just stops being the first thing on the page. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::before {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--tc, #2f4d9e) 7%, #fff) 0%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 3.4%, #fff) 34%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 1.2%, #fff) 66%,
+      #ffffff 100%) !important;
+}
+body:not(.tt-on):has(.topic-home) .topic-bodyhead::after { opacity: 0.12 !important; }
+body.tt-on .topic-home.tview-brief::before {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--tc, #2f4d9e) 6.5%, #fff) 0%,
+      color-mix(in srgb, var(--tc, #2f4d9e) 2.4%, #fff) 45%,
+      #ffffff 100%);
+}
+body.tt-on .topic-home.tview-brief::after { opacity: 0.10; }
+
+/* (2) Every page starts where a topic page starts. Topic pages reserve
+   `--subnav-height + 8px` under the band; the page-nav family (AI Briefings,
+   Trending, Prompts) reserved +22 and home +18, so their titles sat 11-19px
+   lower than the same title on a topic page. One number. */
+html body:not(.tt-on).pagenav-mode.sticky-always.has-subnav[class][class][class] #content:not(#_),
+html body:not(.tt-on).home-search.app-mode.home-mode:not(.nav-docked)[class][class][class] #content:not(#_),
+html body:not(.tt-on).home-search.app-mode.home-mode.nav-docked[class][class][class] #content:not(#_) {
+  padding-top: calc(var(--nav-h, 0px) + var(--subnav-height, 56px) + 8px) !important;
+}
+@media (min-width: 1024px) {
+  html body:not(.tt-on).home-search.app-mode.home-mode:not(.nav-docked)[class][class][class] #content:not(#_) {
+    padding-top: calc(var(--nav-h, 0px) + var(--subnav-height, 56px) + 8px) !important;
+  }
 }
