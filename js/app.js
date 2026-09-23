@@ -2166,7 +2166,7 @@ function editionCardHTML(o) {
         <div class="ec-head">
           <div class="ec-headrow">
             <div class="ec-titlewrap">
-              <h3 class="tdi-brieftitle ec-title">The Main Briefing</h3>
+              <h3 class="tdi-brieftitle ec-title"><span class="ec-title-ic" aria-hidden="true">${DI_SPARK_TWO}</span><span class="ec-title-tx">The Main <span class="ec-title-ai">AI </span>Briefing</span></h3>
               <span class="ec-edlabel" data-ec-edlabel>${escapeHTML(homeEditionTitle().replace(/Briefing$/, 'Edition'))}</span>
             </div>
             <div class="ec-stamp" data-ec-stamp></div>
@@ -2226,7 +2226,13 @@ function topicEditionCardHTML(topic) {
             <!-- revamp1474: a topic's card names the EDITION. "Evening
                  Briefing" said "briefing" twice over — the tab above it
                  already does. -->
-            <h3 class="tdi-brieftitle ec-title" data-ec-edtitle>${escapeHTML(homeEditionTitle().replace(/Briefing$/, 'Edition'))}</h3>
+            <div class="ec-titlewrap ec-titlewrap--topic">
+              <h3 class="tdi-brieftitle ec-title" data-ec-edtitle>${escapeHTML(homeEditionTitle().replace(/Briefing$/, 'Edition'))}</h3>
+              <!-- revamp1514: open, the card reads as an editorial intro — the
+                   edition as the title, the topic as the sub-label under it. -->
+              <h3 class="ec-edtitle-open" data-ec-edtitle-open>${escapeHTML(homeEditionTitle().replace(/ Briefing$/, ' AI Briefing'))}</h3>
+              <div class="ec-topicsub"><span class="di-mast-ic" aria-hidden="true">${topicIconSVG((topic && topic.icon) || 'globe', '')}</span><span class="ec-topicsub-name">${escapeHTML((topic && topic.name) || '')}</span></div>
+            </div>
             <div class="ec-stamp" data-ec-stamp></div>
           </div>
           <div class="ec-stamp ec-stamp--below" data-ec-stamp></div>
@@ -2644,10 +2650,28 @@ function fillEcStamp(card, iso) {
   // revamp1461: the edition sub-label follows the brief that loaded.
   try { const el = card.querySelector('[data-ec-edlabel]'); if (el) el.textContent = editionTitleFor(iso).replace(/Briefing$/, 'Edition'); } catch (_) {}
   try { const t = card.querySelector('[data-ec-edtitle]'); if (t) t.textContent = editionTitleFor(iso).replace(/Briefing$/, 'Edition'); } catch (_) {}
+  try { const t = card.querySelector('[data-ec-edtitle-open]'); if (t) t.textContent = editionTitleFor(iso).replace(/ Briefing$/, ' AI Briefing'); } catch (_) {}
   const html = ecStampHTML(iso);
   if (html) card.querySelectorAll('[data-ec-stamp]').forEach((el) => { el.innerHTML = html; });
 }
 function fmtClock(ms) { const t = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; }
+// revamp1514: an opened briefing reads as an editorial intro, not an expanded
+// preview card. The edition is the title — "Morning AI Briefing" / "Evening AI
+// Briefing", in the site's blue — with the topic as the sub-label under it,
+// its tile and name in black; the sun/moon stamp rides the title line on the
+// right. The main briefing's own card head does the same job for itself (see
+// editionCardHTML: "The Main AI Briefing" over "Morning Edition").
+function briefingMastHTML(tObj, iso) {
+  const ed = editionTitleFor(iso).replace(/ Briefing$/, ' AI Briefing');
+  return `<div class="di-mast-toprow di-mast-toprow--ed">
+      <h2 class="di-mast-ed">${escapeHTML(ed)}</h2>
+      ${iso ? `<span class="ec-stamp di-mast-stamp">${ecStampHTML(iso)}</span>` : ''}
+    </div>
+    <div class="di-mast-sub">
+      <span class="di-mast-ic" aria-hidden="true">${topicIconSVG((tObj && tObj.icon) || 'globe', '')}</span>
+      <span class="di-mast-name">${escapeHTML((tObj && tObj.name) || '')}</span>
+    </div>`;
+}
 function diEditionStampHTML(iso) {
   const p = diEditionParts(iso);
   if (!p) return '';
@@ -2798,13 +2822,16 @@ function renderFeaturedBriefings(host, opts) {
   // icon, as the accordions below use it — not the filled chip), and the
   // edition stamp under the name, so a card says when its briefing was written
   // before you open it.
+  // revamp1514: the AI Briefings page's card exactly — the tile, the name and
+  // the sun/moon stamp on ONE line, then headline, summary, Read briefing.
+  // (The stamp used to sit under the name in the old calendar-and-clock form.)
   const card = (t) => `
     <button type="button" class="dih-item" data-fb-item="${escapeAttr(t.name)}" data-fb-slug="${escapeAttr(t.slug)}"${topicColorStyle(t)}>
       <span class="dih-item-head">
-        <span class="dih-item-ic dih-item-ic--tc" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
+        <span class="dih-item-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
         <span class="dih-item-name">${escapeHTML(t.name)}</span>
+        <span class="tdi-date dih-item-stamp" data-fb-stamp></span>
       </span>
-      <span class="dih-item-stamp" data-fb-stamp></span>
       <span class="dih-item-sum" data-fb-sum>Loading your briefing…</span>
       <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
     </button>`;
@@ -2947,7 +2974,7 @@ function renderFeaturedBriefings(host, opts) {
       const sum = btn.querySelector('[data-fb-sum]');
       if (sum) fillDihFocus(sum, d);
       const stamp = btn.querySelector('[data-fb-stamp]');
-      if (stamp && d && d.generatedAt) stamp.innerHTML = diEditionStampHTML(d.generatedAt);
+      if (stamp && d && d.generatedAt) stamp.innerHTML = ecStampHTML(d.generatedAt);
     }).catch(() => {});
   });
 
@@ -2969,7 +2996,8 @@ function renderFeaturedBriefings(host, opts) {
       // carries topic + date + last-updated on one line, so this duplicated it.
       briefTitle.innerHTML = '';
       briefHost.innerHTML = '';
-      renderDailyIntelligence(briefHost, { topic: name, label: name, slug, inline: true });
+      const tObj = getTopicBySlug(slug) || { name, slug, icon: 'globe' };
+      renderDailyIntelligence(briefHost, { topic: name, label: name, slug, inline: true, mastHTML: (iso) => briefingMastHTML(tObj, iso), mastStyle: topicColorStyle(tObj) });
       list.hidden = true; brief.hidden = false;
       if (foot) foot.hidden = true;
       host.classList.add('is-brief');
@@ -3268,12 +3296,7 @@ function renderIntelligenceHub(container) {
         // name, the sun/moon stamp on the right — with the edition as the small
         // caps kicker under it, the way the topic page's card reads.
         const tObj = getTopicBySlug(slug) || { name, slug, icon: 'globe' };
-        const mastHTML = (iso) => `<div class="di-mast-toprow">
-            <span class="di-mast-ic" aria-hidden="true">${topicIconSVG(tObj.icon || 'globe', '')}</span>
-            <h2 class="di-mast-name">${escapeHTML(tObj.name || name)}</h2>
-            ${iso ? `<span class="ec-stamp di-mast-stamp">${ecStampHTML(iso)}</span>` : ''}
-          </div>
-          <div class="di-mast-kicker">${escapeHTML(editionTitleFor(iso))}</div>`;
+        const mastHTML = (iso) => briefingMastHTML(tObj, iso);
         if (host) { host.innerHTML = ''; renderDailyIntelligence(host, { topic: name, label: name, slug, inline: true, mastHTML, mastStyle: topicColorStyle(tObj) }); }
         group.querySelectorAll('[data-dih-item].is-openitem').forEach((b) => b.classList.remove('is-openitem'));
         btn.classList.add('is-openitem');

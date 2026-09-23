@@ -42352,3 +42352,113 @@ body:not(.tt-on) .home-v2 #home-trending .trend-card:nth-of-type(n + 5)[class][c
 body:not(.tt-on) .home-v2 .home-main[class][class][class] { display: block !important; order: 0 !important; }
 body:not(.tt-on) .home-v2 .home-side[class][class][class] { display: flex !important; flex-direction: column !important; gap: 18px !important; order: 0 !important; }
 body:not(.tt-on) .home-v2 #section-newsfeed[class][class] { order: 0 !important; }
+
+/* ═══ revamp1514 — one card shape closed, an editorial intro open ══════════ */
+
+/* ── closed: every preview card is the AI Briefings page's card ──────────── */
+/* The slider's topic cards put the stamp under the name in the old
+   calendar-and-clock form. They carry the hub card's head now: tile, name,
+   the sun/moon pill on the right, on one line. */
+.hb-slide-card .dih-item-head[class][class] { display: flex !important; align-items: center !important; gap: 10px !important; width: 100%; }
+.hb-slide-card .dih-item-head .dih-item-stamp[class][class][class] { margin: 0 0 0 auto !important; align-self: center !important; display: inline-flex !important; }
+.hb-slide-card .dih-item-ic[class] {
+  width: 34px; height: 34px; border-radius: 9px; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--tc, #1e3a8a); color: #fff;
+}
+.hb-slide-card .dih-item-ic svg { width: 18px; height: 18px; }
+.hb-slide-card .dih-item-sum[class] { margin-top: 4px; }
+
+/* The main card's head takes the same shape: a tile, "The Main Briefing",
+   the stamp on the right. No edition label on a preview — "Morning Edition"
+   under the name was the one thing the topic cards did not carry. */
+.ec--v2 .ec-title[class][class] { display: inline-flex; align-items: center; gap: 10px; font-size: 1.12rem !important; letter-spacing: -0.01em !important; text-transform: none !important; }
+.ec--v2 .ec-title-ic {
+  width: 34px; height: 34px; border-radius: 9px; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #2f4d9e; color: #fff;
+}
+.ec--v2 .ec-title-ic svg { width: 18px; height: 18px; }
+.ec--v2 .ec-title-ai { display: none; }
+.ec--v2 .ec-edlabel[class][class] { display: none !important; }
+.ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap)[class][class][class] { align-items: center !important; }
+.ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap) .ec-stamp[class][class][class] { margin-top: 0 !important; }
+/* The tab strip already says AI Briefings; the row's own card head still says
+   which briefing, so nothing changes in tab mode. */
+
+/* ── open: the editorial intro ──────────────────────────────────────────── */
+/* The edition is the title, the topic the sub-label. Sized to the card with
+   a clamp, so it wraps to two lines on a phone rather than shrinking to fit. */
+.di-mast--topic .di-mast-toprow--ed[class] { display: flex; align-items: flex-start; gap: 14px; }
+.di-mast-ed {
+  margin: 0; flex: 1 1 auto; min-width: 0;
+  font-family: var(--font-display, var(--font-family));
+  font-size: clamp(1.5rem, 1.1rem + 1.5cqi, 2.1rem); line-height: 1.12;
+  font-weight: 800; letter-spacing: -0.015em; color: #1a2c66;
+  text-wrap: balance;
+}
+.di-mast--topic .di-mast-toprow--ed .di-mast-stamp[class] { margin-left: auto; margin-top: 4px; flex: none; }
+.di-mast-sub { display: flex; align-items: center; gap: 9px; margin: 10px 0 0; }
+.di-mast-sub .di-mast-ic[class] { width: 26px !important; height: 26px !important; border-radius: 7px !important; }
+.di-mast-sub .di-mast-ic[class] svg { width: 14px !important; height: 14px !important; }
+.di-mast-sub .di-mast-name[class] { font-size: 1.02rem !important; font-weight: 700 !important; color: #14213d !important; letter-spacing: 0 !important; line-height: 1.2 !important; }
+.di-mast--topic .di-metaline { margin-top: 12px; }
+
+/* The main card, open: "The Main AI Briefing" with its tile, and the edition
+   under it. The card's own head IS the intro, so it takes the intro's size. */
+.tdi-card--edition.is-open .ec--v2 .ec-title[class][class][class] {
+  font-size: clamp(1.5rem, 1.1rem + 1.5cqi, 2.1rem) !important; line-height: 1.12 !important;
+  font-weight: 800 !important; letter-spacing: -0.015em !important; color: #1a2c66 !important;
+  gap: 12px;
+}
+.tdi-card--edition.is-open .ec--v2 .ec-title-ai { display: inline; }
+.tdi-card--edition.is-open .ec--v2 .ec-edlabel[class][class][class] {
+  display: block !important; margin-top: 6px;
+  font-size: 1.02rem; font-weight: 700; color: #14213d; letter-spacing: 0;
+}
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap)[class][class][class] { align-items: flex-start !important; }
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap) .ec-stamp[class][class][class] { margin-top: 6px !important; }
+
+/* revamp1514b — the same, over the rules that had the last word. */
+/* Closed: the main card's title is a name beside a tile, not a small-caps
+   label (revamp1414 set that at eleven classes). */
+.tdi-card--edition .ec-title[class][class][class][class][class][class][class][class][class][class][class][class] {
+  display: inline-flex !important; align-items: center !important; gap: 10px !important;
+  font-size: 1.12rem !important; font-weight: 750 !important;
+  color: #14213d !important; letter-spacing: -0.01em !important; text-transform: none !important;
+  line-height: 1.2 !important; margin: 0 !important;
+}
+/* Open: the intro. */
+.tdi-card--edition.is-open .ec-title[class][class][class][class][class][class][class][class][class][class][class][class] {
+  font-size: clamp(1.5rem, 1.1rem + 1.5cqi, 2.1rem) !important; line-height: 1.12 !important;
+  font-weight: 800 !important; letter-spacing: -0.015em !important; color: #1a2c66 !important;
+  gap: 12px !important;
+}
+.tdi-card--edition.is-open .ec-title-ic[class] { width: 38px; height: 38px; border-radius: 10px; }
+.tdi-card--edition.is-open .ec-title-ic[class] svg { width: 20px; height: 20px; }
+
+/* The topic page's own card. Closed it keeps its "AI Briefing / Morning
+   Edition" lockup; open, the edition is the title and the topic the
+   sub-label, the same intro the slider and the directory open into. */
+.ec--topic .ec-edtitle-open, .ec--topic .ec-topicsub { display: none; }
+.tdi-card--topicedition.is-open .ec-whatis[class][class][class],
+.tdi-card--topicedition.is-open .ec-title[data-ec-edtitle][class][class][class] { display: none !important; }
+.tdi-card--topicedition.is-open .ec-edtitle-open[class] {
+  display: block; margin: 0;
+  font-family: var(--font-display, var(--font-family));
+  font-size: clamp(1.5rem, 1.1rem + 1.5cqi, 2.1rem); line-height: 1.12;
+  font-weight: 800; letter-spacing: -0.015em; color: #1a2c66; text-wrap: balance;
+}
+.tdi-card--topicedition.is-open .ec-topicsub[class] { display: flex; align-items: center; gap: 9px; margin-top: 8px; }
+.tdi-card--topicedition.is-open .ec-topicsub .di-mast-ic[class] { width: 26px !important; height: 26px !important; border-radius: 7px !important; }
+.tdi-card--topicedition.is-open .ec-topicsub .di-mast-ic[class] svg { width: 14px !important; height: 14px !important; }
+.tdi-card--topicedition.is-open .ec-topicsub-name { font-family: var(--font-family); font-size: 1.02rem; font-weight: 700; color: #14213d; }
+.tdi-card--topicedition.is-open .ec-headrow:has(.ec-titlewrap--topic)[class][class] { align-items: flex-start !important; }
+.tdi-card--topicedition.is-open .ec-headrow:has(.ec-titlewrap--topic) .ec-stamp[class][class] { margin-top: 6px !important; }
+.tdi-card--topicedition.is-open .ec-titlewrap--topic > .ec-title[data-ec-edtitle][class][class][class][class][class][class][class][class][class][class][class][class] { display: none !important; }
+/* revamp1514c — the expanded page's overview stands down only when the card
+   carries its own copy above the player (the main briefing). The topic card
+   is also `.tdi-card--edition`, and revamp1506's blanket rule had hidden its
+   only overview. */
+.tdi-card--edition.is-open .tdi-expand .di-focus[class][class] { display: block !important; }
+.tdi-card--edition.is-open:has(.ec-overview:not([hidden])) .tdi-expand .di-focus[class][class][class] { display: none !important; }
