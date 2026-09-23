@@ -75,14 +75,15 @@ function barsFor(peaks) {
   return out;
 }
 
-export function playerHTML(ep, { bare = false } = {}) {
+export function playerHTML(ep, { bare = false, label = false } = {}) {
   const durMin = ep && ep.duration_ms ? Math.round(ep.duration_ms / 60000) : 0;
   const chapters = (ep && Array.isArray(ep.chapters) ? ep.chapters : []).filter((c) => c && c.beat !== 'intro');
   const bars = barsFor(ep && ep.peaks);
   // bare: transport + speed + chapters only. The edition card carries the
   // title, the AI label and the duration itself.
   return `
-    <div class="bp${bare ? ' bp--bare' : ''}" data-bp>
+    <div class="bp${bare ? ' bp--bare' : ''}${bare && label ? ' bp--labelled' : ''}" data-bp>
+      ${bare && label ? `<div class="bp-barelead"><span class="bp-barelead-ic" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="bp-barelead-tx">Listen to the Briefing</span>${durMin ? `<span class="bp-barelead-dur">${durMin} min</span>` : ''}</div>` : ''}
       <div class="bp-row">
         ${bare ? '' : `<div class="bp-lead">
           <span class="bp-tile" aria-hidden="true">${EP_ICON}</span>

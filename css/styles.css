@@ -42039,3 +42039,146 @@ body.tt-on .trend-exp-drawers.ni-actions[class][class][class][class][class][clas
 html body:not(.nav-docked):not(.tt-on):has(.ndp.aii-nav-dd-topics)[class][class][class][class][class][class] #content:not(#_) {
   padding-top: calc(var(--nav-h, 56px) + 8px) !important;
 }
+
+/* ═══ revamp1506 — the page heads level, the main briefing in reading order,
+       and the prompts rail's header ═══════════════════════════════════════ */
+
+/* ── (1) every page title sits 21px under the band ──────────────────────────
+   Measured with the sidebar collapsed: a topic page 21, Trending 20, Topics
+   22, Prompts 26 (its inner reserved 8 where Trending's reserves 2) and AI
+   Briefings 36 (its title was a BUTTON — the page picker — with its own
+   padding, over a hero with 18). The picker is gone from every title
+   (revamp1506 in app.js), and the numbers meet. */
+.aii-nav-dd-pagelike .aii-nav-dd-inner[class][class] { padding-top: 2px !important; }
+body:not(.tt-on) .page-hero[class][class] { padding-top: 13px !important; }
+body:not(.tt-on) .page-hero .page-hero-title[class] { margin: 0 !important; padding: 0 !important; }
+body:not(.tt-on) .page-hero .page-hero-headrow[class] { padding-top: 0 !important; margin-top: 0 !important; }
+
+/* ── (2) the main briefing, open: headline, teaser, the day, then listen ───
+   The cold open used to render inside the expanded page, under the player,
+   so the card read headline → teaser → player → the day. The day now sits
+   under the teaser, in the same measure, and the player follows it with air.
+   The expanded page's copy of the same paragraph is hidden on this card. */
+.ec-overview { display: none; }
+.tdi-card--edition.is-open .ec-overview[class][class][class]:not([hidden]) {
+  display: block !important; margin: 12px 0 0;
+  font-family: var(--font-family); font-size: 1.02rem; line-height: 1.6; color: #3a4864;
+}
+.tdi-card--edition.is-open .tdi-expand .di-focus[class][class] { display: none !important; }
+.tdi-card--edition.is-open .ec--v2 .ec-actions[class][class] { margin-top: 18px !important; }
+
+/* ── (3) the player says what it is ────────────────────────────────────────
+   In the open card the transport had no name: a play button and a waveform,
+   with the paragraph under it. A label above it — five green bars, "Listen
+   to the Briefing", the length — and the card grows to hold it. */
+.bp--labelled { padding-top: 12px !important; }
+.bp-barelead {
+  display: flex; align-items: center; gap: 9px;
+  margin: 0 0 10px; padding: 0 2px;
+  font-family: var(--font-family); font-size: 0.92rem; font-weight: 700; color: #14213d;
+}
+.bp-barelead-ic { display: inline-flex; align-items: flex-end; gap: 2px; height: 16px; }
+.bp-barelead-ic i { display: block; width: 3px; border-radius: 2px; background: #16a34a; }
+.bp-barelead-ic i:nth-child(1) { height: 7px; }
+.bp-barelead-ic i:nth-child(2) { height: 13px; }
+.bp-barelead-ic i:nth-child(3) { height: 16px; }
+.bp-barelead-ic i:nth-child(4) { height: 11px; }
+.bp-barelead-ic i:nth-child(5) { height: 6px; }
+.bp-barelead-dur { font-weight: 500; color: #7488ad; }
+.bp-barelead-dur::before { content: '·'; margin-right: 6px; color: #9aa7c2; }
+
+/* ── (4) the prompts rail ──────────────────────────────────────────────────
+   The header: taller, a step lighter, a bigger word and glyph. Its bottom
+   edge lines up with the News Feed head's rule beside it (measured: the
+   rule at 466, the header's edge at 473 on a 50px header — a 58px header
+   over a card pulled up 15 lands on the line). The section labels move in
+   toward their glyphs, and the last row in a section keeps its line — it
+   was the one row on the card with no edge under it. */
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head[class][class][class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head[class][class][class][class] {
+  min-height: 58px !important; padding: 12px 18px !important;
+  background: #2b3d70 !important;
+}
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head-title[class][class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head-title[class][class][class] { font-size: 1.28rem !important; }
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head-ic[class][class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head-ic[class][class][class] { width: 32px; height: 32px; border-radius: 8px; }
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head-ic[class][class][class] svg,
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head-ic[class][class][class] svg { width: 18px; height: 18px; }
+body:not(.tt-on) .topic-body-cols > .topic-top-side .tpr-card[class][class] { margin-top: -15px !important; }
+.pc--v2 .pc-sechead--static[class][class][class][class][class][class][class] { gap: 6px !important; }
+.pc--v2 .pc-item:last-of-type[class][class][class] { border-bottom: 1px solid #f0f3f8 !important; }
+
+/* ═══ revamp1507 — the opened prompt, and the prompt lists ═════════════════ */
+
+/* ── (1) no line into the top of an open prompt ────────────────────────────
+   The row above an opened prompt kept its bottom hairline, so the panel's
+   grey head sat under a line — "Watch, Listen, Play" ruled off, then the
+   panel starting a pixel under the rule. The row before an open one gives
+   up its line; the panel's own edge is the break. */
+.pc--v2 .pc-item:has(+ .pc-item.is-open)[class][class][class][class] { border-bottom-color: transparent !important; }
+.sr-sec--prompts .aii-fi-acc:has(+ .aii-fi-acc.is-open)[class][class][class] { border-bottom-color: transparent !important; }
+
+/* ── (2) the panel's head gets air under it ────────────────────────────────
+   The PROMPT chip sat 4px under the head's rule. */
+.pc--v2 .pc-item.is-open .aii-pc-prevwrap[class][class][class],
+.sr-sec--prompts .aii-fi-acc.is-open .aii-pc-prevwrap[class][class][class] { padding-top: 14px !important; }
+
+/* ── (3) the controls: three of a kind, evenly divided ─────────────────────
+   Model, Copy and Settings each drew their own divider with their own
+   margin — Copy's sat 12px from its left rule and 0 from its right, so it
+   read as right-aligned in its cell. One rule between neighbours, the same
+   space either side of it, everything on one centre line. */
+.aii-pc .aii-pc-tools[class][class][class][class] {
+  display: flex !important; align-items: center !important; gap: 0 !important;
+}
+.aii-pc .aii-pc-tools > .aii-pc-modelwrap[class][class][class],
+.aii-pc .aii-pc-tools > .aii-pc-btn[class][class][class] {
+  margin: 0 !important; padding: 0 !important;
+  border: 0 !important; border-radius: 0 !important;
+  display: inline-flex !important; align-items: center !important;
+}
+.aii-pc .aii-pc-tools > .aii-pc-modelwrap[class][class][class] > .aii-pc-btn { padding: 4px 0 !important; margin: 0 !important; border: 0 !important; }
+.aii-pc .aii-pc-tools > .aii-pc-btn[class][class][class] { padding: 4px 0 !important; }
+.aii-pc .aii-pc-tools > .aii-pc-modelwrap + .aii-pc-btn[class][class][class][class],
+.aii-pc .aii-pc-tools > .aii-pc-btn + .aii-pc-btn[class][class][class][class] {
+  margin-left: 12px !important; padding-left: 12px !important;
+  border-left: 1px solid #d9e0ec !important;
+}
+.aii-pc .aii-pc-tools > .aii-pc-modelwrap[class][class][class] { border-right: 0 !important; }
+
+/* ── (4) the names, a step lighter ─────────────────────────────────────────
+   At 550 the prompt names sat at the same weight as the section labels over
+   them; they are the list, not its headings. */
+.pc--v2 .pc-row-name[class][class][class][class] { font-weight: 470 !important; color: #32405f !important; }
+.pc--v2 .pc-item.is-open .pc-row-name[class][class][class][class] { font-weight: 640 !important; }
+.sr-sec--prompts .aii-fi-acclist > .aii-fi-acc[class][class] .aii-fi-acc-name[class][class] { font-weight: 470 !important; }
+
+/* ── (5) never a name cut off: three across at most, and only with room ────
+   auto-fill at 210px put five names in a wide accordion and cut two of
+   them. A column now needs 260px for a name and there are never more than
+   three; a name that still cannot fit wraps rather than ends in an
+   ellipsis. The rail and the phone stay one column. */
+.pc--v2 .pc-links[class][class][class][class][class][class] {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  column-gap: 28px !important;
+}
+@media (min-width: 900px) {
+  .pdir-topichost .pc--v2 .pc-links[class][class][class][class][class][class],
+  .prompts-home--v2 .ph-featured .pc--v2 .pc-links[class][class][class][class][class][class] {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+@media (min-width: 900px) and (max-width: 1279px) {
+  .pdir-topichost .pc--v2 .pc-links[class][class][class][class][class][class],
+  .prompts-home--v2 .ph-featured .pc--v2 .pc-links[class][class][class][class][class][class] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+.topic-top-side .pc--v2 .pc-links[class][class][class][class][class][class],
+#home-pcard .pc--v2 .pc-links[class][class][class][class][class][class] { grid-template-columns: 1fr !important; }
+.pc--v2 .pc-row-name[class][class][class][class][class] {
+  white-space: normal !important; overflow: visible !important; text-overflow: clip !important;
+  line-height: 1.3;
+}
+body:not(.tt-on) .about-page[class], body:not(.tt-on) .terms-page[class] { padding-top: 0 !important; }

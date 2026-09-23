@@ -856,6 +856,9 @@ function wireTopicRail(root) {
 }
 
 function pageHeroHeadHTML(iconSVG, title, pickerKey) {
+  // revamp1506: no picker chevron on a page title, on any page. The main nav
+  // and the sidebar already say where you are and where else you can go.
+  pickerKey = null;
   const ic = `<span class="page-hero-ic" aria-hidden="true">${iconSVG}</span>`;
   if (!pickerKey) {
     return `<div class="page-hero-headrow">
@@ -2174,6 +2177,7 @@ function editionCardHTML(o) {
         <div class="ec-lead">
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
+          <p class="ec-overview" data-ec-overview hidden></p>
         </div>
         <div class="ec-actions">
           <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Listen</span><span class="ec-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span><span class="ec-btn-x" aria-hidden="true">${X}</span></button>
@@ -2235,6 +2239,7 @@ function topicEditionCardHTML(topic) {
         <div class="ec-lead">
           <h4 class="ec-headline" data-ec-headline>Preparing today\u2019s briefing\u2026</h4>
           <p class="ec-summary tdi-summary" data-tdi-summary data-ec-summary hidden></p>
+          <p class="ec-overview" data-ec-overview hidden></p>
         </div>
         <div class="ec-actions">
           <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
@@ -2301,6 +2306,18 @@ function applyEpisodeToCard(card, ep) {
   if (!card || !ep) return;
   const h = card.querySelector('[data-ec-headline]'); if (h && ep.title) { h.textContent = ep.title; h.dataset.filled = '1'; }
   const sm = card.querySelector('[data-ec-summary]'); if (sm && ep.teaser) { sm.textContent = ep.teaser; sm.hidden = false; sm.dataset.filled = '1'; }
+  // revamp1506: the cold open — the briefing's own read of the day — sits
+  // under the teaser once the card is open, ahead of the player, so the card
+  // reads headline, teaser, the day, then listen. (It used to render below
+  // the player, inside the expanded page; CSS hides that copy on this card.)
+  try {
+    const ov = card.querySelector('[data-ec-overview]');
+    const fill = (e) => { const segs = (e && e.script && e.script.segments) || []; const cold = String((segs.find((x) => x && x.beat === 'cold_open') || {}).written || '').trim(); if (ov) { ov.textContent = cold; ov.hidden = !cold; } return !!cold; };
+    // The list payload carries no script; the cold open needs the full row.
+    if (ov && !fill(ep) && ep.edition_date) {
+      loadEpisode({ date: ep.edition_date, edition: ep.edition, full: true }).then((full) => { if (card.isConnected && full) fill(full); }).catch(() => {});
+    }
+  } catch (_) {}
   const mins = ep.duration_ms ? `${Math.round(ep.duration_ms / 60000)} min` : '';
   card.querySelectorAll('[data-ec-dur]').forEach((d) => { d.textContent = mins; });
 }
@@ -2372,7 +2389,7 @@ function wireEditionCard(card) {
     if (!ep || !card.isConnected) { bindListen(card, null); return; }
     card._ecEpisode = ep;
     applyEpisodeToCard(card, ep);
-    const ctl = mountBriefingPlayer(card.querySelector('[data-briefing-player]'), ep, { bare: true });
+    const ctl = mountBriefingPlayer(card.querySelector('[data-briefing-player]'), ep, { bare: true, label: true });
     bindListen(card, ctl);
   });
 }
@@ -3098,7 +3115,7 @@ function renderIntelligenceHub(container) {
         const ep = await loadEpisode({ date, edition, full: true });
         if (!ep || !card.isConnected) return;
         applyEpisodeToCard(card, ep);
-        bindListen(card, mountBriefingPlayer(card.querySelector('[data-briefing-player]'), ep, { bare: true }));
+        bindListen(card, mountBriefingPlayer(card.querySelector('[data-briefing-player]'), ep, { bare: true, label: true }));
         // In Focus from the episode
         const raw = (ep.script && Array.isArray(ep.script.in_focus) && ep.script.in_focus.length) ? ep.script.in_focus
           : (ep.chapters || []).filter((c) => ['lead', 'developing'].includes(c.beat)).map((c) => c.label);
