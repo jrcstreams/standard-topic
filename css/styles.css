@@ -42462,3 +42462,112 @@ body:not(.tt-on) .home-v2 #section-newsfeed[class][class] { order: 0 !important;
    only overview. */
 .tdi-card--edition.is-open .tdi-expand .di-focus[class][class] { display: block !important; }
 .tdi-card--edition.is-open:has(.ec-overview:not([hidden])) .tdi-expand .di-focus[class][class][class] { display: none !important; }
+
+/* ═══ revamp1515 — the intro title down a size, the player off its button,
+       the model list as a card, the settings fields in proportion ═════════ */
+
+/* (1) "Morning AI Briefing" was a page title inside a card. A step under
+   the card's own width now — 24px on a wide card, 20px on a phone — so the
+   stamp keeps its place on the title line and never rides into the ✕. */
+.di-mast-ed[class],
+.tdi-card--edition.is-open .ec-title[class][class][class][class][class][class][class][class][class][class][class][class][class],
+.tdi-card--topicedition.is-open .ec-edtitle-open[class][class] {
+  font-size: clamp(1.22rem, 1.05rem + 0.6cqi, 1.5rem) !important; line-height: 1.15 !important;
+}
+.tdi-card--edition.is-open .ec-title-ic[class][class] { width: 32px; height: 32px; border-radius: 9px; }
+.tdi-card--edition.is-open .ec-title-ic[class][class] svg { width: 17px; height: 17px; }
+.di-mast--topic .di-mast-toprow--ed[class][class] { flex-wrap: wrap; row-gap: 8px; align-items: center; }
+.di-mast--topic .di-mast-toprow--ed .di-mast-stamp[class][class] { margin-top: 0; }
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap)[class][class][class][class] { align-items: center !important; flex-wrap: wrap !important; row-gap: 8px; }
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap) .ec-stamp[class][class][class][class] { margin-top: 0 !important; }
+.tdi-card--edition.is-open .ec-head[class][class][class] { padding-right: 52px !important; }
+/* the sub-label, and air before the AI label */
+.di-mast-sub[class], .tdi-card--topicedition.is-open .ec-topicsub[class][class] { margin-top: 8px; }
+.di-mast--topic .di-metaline[class][class] { margin-top: 16px !important; }
+.tdi-card--topicedition.is-open .ec-provrow[class][class] { margin-top: 16px !important; }
+.tdi-card--edition.is-open .ec--v2 .ec-edlabel[class][class][class][class] { margin-top: 4px; font-size: 0.98rem; }
+
+/* (2) The player hangs off "Play the Briefing" with a notch, and room. */
+.ec--v2 .ec-actions .ec-listenwrap[class][class][class] { position: relative; margin-top: 14px !important; }
+.ec--v2 .ec-actions .ec-listenwrap[class][class][class]::before {
+  content: ''; position: absolute; top: -6px; left: var(--ec-notch-x, 40px); margin-left: -5.5px;
+  width: 11px; height: 11px; transform: rotate(45deg);
+  background: #fff; border-left: 1px solid #cbd5e6; border-top: 1px solid #cbd5e6; border-radius: 2px 0 0 0;
+}
+.ec--v2 .ec-actions .ec-listenwrap[class][class][class] > .ec-player > .bp,
+.ec--v2 .ec-actions .ec-listenwrap[class][class][class] .bp--bare { border: 1px solid #cbd5e6; border-radius: 12px; background: #fff; }
+.tdi-card--edition.is-open .ec--v2 .ec-actions .ec-listenwrap[class][class][class]::before { display: none; }
+.tdi-card--edition.is-open .ec--v2 .ec-actions .ec-listenwrap[class][class][class] { margin-top: 0 !important; }
+@media (max-width: 639.98px) {
+  .ec--v2 .ec-actions .ec-listenwrap[class][class][class] { margin-top: 14px !important; border: 0 !important; padding: 0 !important; background: none !important; border-radius: 0 !important; }
+  .ec--v2 .ec-actions .ec-btn--listen.is-drop[class][class][class][class][class][class][class][class] {
+    border-radius: 10px !important; border: 1px solid #cfd8e8 !important;
+  }
+}
+
+/* (3) The model list: a card under the controls, the shape Settings has.
+   revamp958 pinned it absolute under its button at 320px tall with a
+   scroll, and the panel's overflow clipped it. */
+.aii-pc .aii-pc-foot > .aii-pc-menu[class][class][class][class] {
+  position: relative !important; top: auto !important; left: auto !important; right: auto !important;
+  width: 100% !important; min-width: 0 !important; max-width: 100% !important; max-height: none !important; overflow: visible !important;
+  margin: 12px 0 4px !important; padding: 14px !important;
+  background: #fff !important; border: 1px solid #dde4ef !important; border-radius: 12px !important;
+  box-shadow: 0 14px 34px -20px rgba(15, 26, 46, 0.45) !important;
+  display: block;
+}
+.aii-pc .aii-pc-foot > .aii-pc-menu[hidden][class][class][class] { display: none !important; }
+.aii-pc .aii-pc-foot > .aii-pc-menu[class][class][class]::before {
+  content: ''; position: absolute; top: -6px; left: var(--pc-notch-x, 40px); margin-left: -5.5px;
+  width: 11px; height: 11px; transform: rotate(45deg);
+  background: #fff; border-left: 1px solid #dde4ef; border-top: 1px solid #dde4ef; border-radius: 2px 0 0 0;
+}
+.aii-pc .aii-pc-foot > .aii-pc-menu .aii-pc-sethead[class] { margin-bottom: 8px !important; }
+.aii-pc .aii-pc-foot > .aii-pc-menu .aii-pc-menu-opt[class] { width: 100%; padding: 9px 10px; border-radius: 8px; font-size: 0.9rem; }
+.aii-pc .aii-pc-foot > .aii-pc-menu .aii-pc-menu-opt + .aii-pc-menu-opt { margin-top: 2px; }
+.aii-pc .aii-pc-foot > .aii-pc-menu[class] .aii-pc-settitle svg { width: 14px; height: 14px; }
+/* the trigger's own chevron turns while the card is open */
+.aii-pc .aii-pc-modelbtn[aria-expanded="true"] .aii-pc-btn-chev svg { transform: rotate(180deg); }
+.aii-pc .aii-pc-modelbtn[aria-expanded="true"][class][class] { color: #16307a !important; }
+
+/* (4) Settings fields in proportion to the panel. */
+.aii-pc .aii-pc-set .aii-review-flbl[class] { font-size: 0.74rem; margin-bottom: 4px; }
+.aii-pc .aii-pc-set .aii-explore-select[class],
+.aii-pc .aii-pc-set select[class],
+.aii-pc .aii-pc-set input[class],
+.aii-pc .aii-pc-set textarea[class] {
+  font-size: 0.86rem !important; font-weight: 550 !important;
+  padding: 7px 28px 7px 11px !important; border-radius: 8px !important;
+}
+.aii-pc .aii-pc-set input[class], .aii-pc .aii-pc-set textarea[class] { padding-right: 11px !important; }
+.aii-pc .aii-pc-set .aii-review-grid[class] { gap: 10px !important; }
+.aii-pc .aii-pc-set[class][class] { gap: 10px !important; }
+@media (max-width: 899.98px) {
+  .aii-pc .aii-pc-set select[class]:focus, .aii-pc .aii-pc-set input[class]:focus, .aii-pc .aii-pc-set textarea[class]:focus { font-size: 16px !important; }
+}
+
+/* revamp1516 — Apply / Cancel under an edit, in the Edit link's own style,
+   with room off the text box; and the day headline fills its measure. */
+.aii-pc .aii-pc-editrow { display: flex; align-items: center; gap: 18px; margin-top: 8px; }
+.aii-pc .aii-pc-prevwrap.is-editing .aii-pc-editrow[class] { margin-top: 14px; }
+.aii-pc .aii-pc-editrow .aii-pc-edit[class][class][class] { margin-top: 0 !important; }
+.aii-pc .aii-pc-editrow .aii-pc-edit[hidden][class][class][class] { display: none !important; }
+.aii-pc .aii-pc-prevwrap .aii-pc-edit--apply[class][class][class],
+.aii-pc .aii-pc-prevwrap .aii-pc-edit--apply[class][class][class] span,
+.aii-pc .aii-pc-prevwrap .aii-pc-edit--apply[class][class][class] svg { color: #15803d !important; font-weight: 650 !important; }
+.aii-pc .aii-pc-prevwrap .aii-pc-edit--cancel[class][class][class],
+.aii-pc .aii-pc-prevwrap .aii-pc-edit--cancel[class][class][class] span,
+.aii-pc .aii-pc-prevwrap .aii-pc-edit--cancel[class][class][class] svg { color: #b91c1c !important; font-weight: 600 !important; }
+@media (hover: hover) {
+  .aii-pc .aii-pc-prevwrap .aii-pc-edit--apply[class][class][class]:hover,
+  .aii-pc .aii-pc-prevwrap .aii-pc-edit--apply[class][class][class]:hover span,
+  .aii-pc .aii-pc-prevwrap .aii-pc-edit--apply[class][class][class]:hover svg { color: #166534 !important; }
+  .aii-pc .aii-pc-prevwrap .aii-pc-edit--cancel[class][class][class]:hover,
+  .aii-pc .aii-pc-prevwrap .aii-pc-edit--cancel[class][class][class]:hover span,
+  .aii-pc .aii-pc-prevwrap .aii-pc-edit--cancel[class][class][class]:hover svg { color: #991b1b !important; }
+}
+/* `text-wrap: balance` split "India's Economic Outlook Improves Amid Taiwan
+   Tensions" into two even lines when the first could have run the width.
+   The headline takes the measure it is given. */
+.di-focus .di-dayhead[class][class][class][class] { text-wrap: pretty !important; }
+.di-mast--topic .di-metaline[class][class][class][class] { margin-top: 16px !important; }

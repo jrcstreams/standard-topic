@@ -1888,7 +1888,11 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-pc-prevwrap">
         <span class="aii-pc-lbl">Prompt</span>
         <blockquote class="aii-pc-preview" data-pc-preview>${esc(ctx.prompt)}</blockquote>
-        <button type="button" class="aii-pc-edit" data-pc-edit>${ICON_PENCIL}<span data-pc-edit-tx>Edit</span></button>
+        <div class="aii-pc-editrow">
+          <button type="button" class="aii-pc-edit" data-pc-edit>${ICON_PENCIL}<span data-pc-edit-tx>Edit</span></button>
+          <button type="button" class="aii-pc-edit aii-pc-edit--apply" data-pc-edit-apply hidden>${ICON_CHECK_MINI}<span>Apply</span></button>
+          <button type="button" class="aii-pc-edit aii-pc-edit--cancel" data-pc-edit-cancel hidden><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Cancel</span></button>
+        </div>
       </div>
       <div class="aii-pc-foot">
         <div class="aii-pc-tools">
@@ -1979,22 +1983,36 @@ export function renderAIIntelligence(container, scope) {
       }, 1300);
     });
     // Edit — make the preview directly editable (toggle "Edit" ↔ "Done").
+    // revamp1516: editing has a way out. "Edit" opens the text; Apply keeps
+    // what was typed, Cancel puts back what was there — a "Done" alone could
+    // only keep. Edit stands down while the pair is up.
     const editBtn = host.querySelector('[data-pc-edit]');
-    const editTx = host.querySelector('[data-pc-edit-tx]');
+    const applyBtn = host.querySelector('[data-pc-edit-apply]');
+    const cancelBtn = host.querySelector('[data-pc-edit-cancel]');
+    let beforeEdit = ''; let wasEdited = false;
+    const endEdit = () => {
+      preview.removeAttribute('contenteditable');
+      host.querySelector('.aii-pc-prevwrap')?.classList.remove('is-editing');
+      if (editBtn) editBtn.hidden = false;
+      if (applyBtn) applyBtn.hidden = true;
+      if (cancelBtn) cancelBtn.hidden = true;
+    };
     editBtn && editBtn.addEventListener('click', () => {
       if (!preview) return;
-      const editing = preview.getAttribute('contenteditable') === 'true';
-      if (editing) {
-        preview.removeAttribute('contenteditable');
-        editBtn.classList.remove('is-editing');
-        if (editTx) editTx.textContent = 'Edit';
-      } else {
-        preview.setAttribute('contenteditable', 'true');
-        editBtn.classList.add('is-editing');
-        if (editTx) editTx.textContent = 'Done';
-        preview.focus();
-        try { const r = document.createRange(); r.selectNodeContents(preview); r.collapse(false); const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); } catch (_) {}
-      }
+      beforeEdit = preview.textContent || ''; wasEdited = userEdited;
+      preview.setAttribute('contenteditable', 'true');
+      host.querySelector('.aii-pc-prevwrap')?.classList.add('is-editing');
+      editBtn.hidden = true;
+      if (applyBtn) applyBtn.hidden = false;
+      if (cancelBtn) cancelBtn.hidden = false;
+      preview.focus();
+      try { const r = document.createRange(); r.selectNodeContents(preview); r.collapse(false); const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); } catch (_) {}
+    });
+    applyBtn && applyBtn.addEventListener('click', () => { if (preview) endEdit(); });
+    cancelBtn && cancelBtn.addEventListener('click', () => {
+      if (!preview) return;
+      preview.textContent = beforeEdit; userEdited = wasEdited;
+      endEdit();
     });
     preview && preview.addEventListener('input', () => { userEdited = true; });
     // Change model — a clean dropdown off the button; picking one persists the
@@ -2002,22 +2020,46 @@ export function renderAIIntelligence(container, scope) {
     const modelBtn = host.querySelector('[data-pc-model]');
     const menu = host.querySelector('[data-pc-menu]');
     const mwrap = host.querySelector('.aii-pc-modelwrap');
+    // revamp1515: the model list is an inline card under the controls — the
+    // same shape as Settings — not a dropdown hanging off the button. The
+    // dropdown was clipped by the panel's overflow (unreadable on a phone,
+    // a scroll on a desktop rail). It moves out of the button's wrapper to sit
+    // beside the settings panel, takes a head with Done, and its notch is
+    // aimed at the button that opened it.
+    const foot = host.querySelector('.aii-pc-foot');
+    const setPanel = host.querySelector('[data-pc-set]');
+    if (menu && foot && !menu.dataset.inline) {
+      menu.dataset.inline = '1';
+      menu.insertAdjacentHTML('afterbegin', `<div class="aii-pc-sethead"><span class="aii-pc-settitle">${SPARK_MINI}<span>AI model</span></span><button type="button" class="aii-pc-setdone" data-pc-model-done>Done</button></div>`);
+      foot.insertBefore(menu, setPanel || null);
+    }
+    const aimModelNotch = () => {
+      if (!menu || !modelBtn || menu.hidden) return;
+      try {
+        const pb = menu.getBoundingClientRect(); const bb = modelBtn.getBoundingClientRect();
+        if (!pb.width || !bb.width) return;
+        const x = (bb.left + bb.width / 2) - pb.left;
+        menu.style.setProperty('--pc-notch-x', Math.max(18, Math.min(pb.width - 18, x)).toFixed(1) + 'px');
+      } catch (_) {}
+    };
     const closeMenu = () => {
       if (!menu || menu.hidden) return;
       menu.hidden = true;
       modelBtn && modelBtn.setAttribute('aria-expanded', 'false');
       document.removeEventListener('click', onDocClick, true);
     };
-    const onDocClick = (e) => { if (mwrap && !mwrap.contains(e.target)) closeMenu(); };
+    const onDocClick = (e) => { if (mwrap && !mwrap.contains(e.target) && !(menu && menu.contains(e.target))) closeMenu(); };
     modelBtn && modelBtn.addEventListener('click', () => {
       if (!menu) return;
       if (menu.hidden) {
         menu.hidden = false;
         modelBtn.setAttribute('aria-expanded', 'true');
         document.addEventListener('click', onDocClick, true);
+        requestAnimationFrame(aimModelNotch);
       } else closeMenu();
     });
     menu && menu.addEventListener('click', (e) => {
+      if (e.target.closest('[data-pc-model-done]')) { closeMenu(); return; }
       const opt = e.target.closest('.aii-pc-menu-opt'); if (!opt) return;
       setPreferredModelId(opt.dataset.modelId);
       syncPromptCards();
