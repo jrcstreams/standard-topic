@@ -42192,3 +42192,121 @@ body:not(.tt-on) #home-pcard .pc--v2 .pc-head[class][class][class][class][class]
 }
 body:not(.tt-on) .topic-top-side .pc.pc--v2[class][class][class],
 body:not(.tt-on) #home-pcard .pc.pc--v2[class][class][class] { padding-left: 16px !important; padding-right: 16px !important; }
+
+/* ═══ revamp1509 — the briefings slide across the top of the homepage ══════
+   The main briefing led the page as one wide card and the day's other
+   briefings were a click away on their own page. They are one run now: the
+   main card first, then every topic's briefing as the same square card the
+   AI Briefings page lays out as a grid — snap-scrolled, with the neighbour
+   peeking on each side so the row says there is more. A topic card opens its
+   briefing where the run was; the main card opens itself and, open, takes the
+   whole width. (Tab mode never sees this: AI Briefings is a tab there.) */
+.hb-slider { position: relative; }
+.hb-slider-frame { position: relative; }
+.hb-slider-track {
+  display: flex; align-items: stretch; gap: 16px;
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  scrollbar-width: none; -ms-overflow-style: none;
+  padding: 2px 0 6px; margin: 0;
+  scroll-padding-inline: 0;
+}
+.hb-slider-track::-webkit-scrollbar { display: none; }
+.hb-slide {
+  flex: 0 0 min(66%, 640px); min-width: 0;
+  scroll-snap-align: center; scroll-snap-stop: always;
+  display: flex;
+}
+.hb-slide > * { width: 100%; min-width: 0; }
+.hb-slide--lead { flex-basis: min(78%, 760px); }
+/* The main card fills its slide; the section's old rules sized it for a
+   full-width section. */
+.home-featbriefs--lead .hb-slider .hb-hero[class][class] { width: 100% !important; max-width: none !important; margin: 0 !important; }
+.home-featbriefs--lead .hb-slider .tdi-card[class][class] { height: 100%; box-sizing: border-box; }
+/* "Briefings by Topic" on the main card: the run beside it IS the briefings by
+   topic, so the link would point at what is already there. */
+.hb-slider .ec-btn--topics[class][class][class][class][class][class][class][class][class] { display: none !important; }
+
+/* A topic's card: the AI Briefings page's card, as a tile. */
+.hb-slide-card[class][class] {
+  height: 100%; margin: 0 !important;
+  padding: 18px 20px 16px !important;
+  border: 1px solid #dfe5ef !important; border-radius: 12px !important;
+  background: #fbfcfe !important;
+  display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
+  transition: border-color .14s ease, background .14s ease;
+}
+@media (hover: hover) {
+  .hb-slide-card[class][class]:hover { background: #f4f7fc !important; border-color: #c9d4e6 !important; }
+}
+.hb-slide-card .dih-item-head[class] { width: 100%; display: flex; align-items: center; gap: 10px; }
+.hb-slide-card .dih-item-name[class] { font-size: 1.12rem; font-weight: 750; color: #14213d; }
+.hb-slide-card .dih-item-stamp[class] { margin: 0 0 0 auto !important; }
+.hb-slide-card .dih-item-sum[class] { flex: 1 1 auto; }
+.hb-slide-card .dih-item-hl { display: block; font-size: 1.02rem; font-weight: 700; color: #1a2c56; line-height: 1.3; margin: 4px 0 4px; }
+.hb-slide-card .dih-item-sum .dih-item-sum { display: block; font-size: 0.93rem; line-height: 1.5; color: #4a5875; }
+.hb-slide-card .dih-item-go[class] { margin-top: auto; }
+
+/* The arrows sit in the frame's corners, over the fade of the peeking card. */
+.hb-slider-arrow {
+  position: absolute; z-index: 3; top: 50%; transform: translateY(-50%);
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid #d7dfee; background: #fff; color: #2f4d9e;
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+  box-shadow: 0 4px 14px -6px rgba(15, 26, 46, .35);
+}
+.hb-slider-arrow[hidden] { display: none !important; }
+.hb-slider-arrow--prev { left: -12px; }
+.hb-slider-arrow--next { right: -12px; }
+@media (hover: hover) { .hb-slider-arrow:hover { background: #f1f4fa; border-color: #b9c6dd; } }
+/* The peeking card fades at the frame's edge so the row reads as continuing,
+   not cut. */
+.hb-slider-frame::after {
+  content: ''; position: absolute; top: 0; bottom: 0; right: 0; width: 56px; pointer-events: none; z-index: 2;
+  background: linear-gradient(to right, rgba(255,255,255,0), #fff 85%);
+}
+.hb-slider-frame:has([data-hbs-next][hidden])::after { display: none; }
+
+/* Open states. A topic's briefing replaces the run (the grid's own
+   `is-brief`); the main card, open, hides the rest and takes the width. */
+.hb-slider .is-brief [data-hbs-frame], .home-featbriefs.is-brief [data-hbs-frame] { display: none; }
+.home-featbriefs.is-lead-open .hb-slide:not(.hb-slide--lead) { display: none; }
+.home-featbriefs.is-lead-open .hb-slide--lead { flex-basis: 100%; }
+.home-featbriefs.is-lead-open .hb-slider-arrow,
+.home-featbriefs.is-lead-open .hb-slider-frame::after { display: none !important; }
+.home-featbriefs.is-lead-open .hb-slider-track { overflow: visible; scroll-snap-type: none; }
+
+/* revamp1510 — the rail, minimal: no glyph on a chip, and one colour for the
+   active one. Every chip carried its topic's icon in its topic's colour, and
+   the active chip filled with that colour — fifteen colours in a bar whose
+   job is to say where you are. The word is the chip now, and the active one
+   takes the home blue on every page. */
+#sub-header .trail-chip .home-hero-chip-ic[class][class] { display: none !important; }
+#sub-header .trail-chip[class][class][class] { gap: 0 !important; padding: 0 14px !important; }
+#sub-header .trail-chip.is-active[class][class][class] { --tc: #2f4d9e !important; }
+
+/* revamp1511 — the topic wash, actually. Every restatement of the wash since
+   revamp1503 was on `.topic-bodyhead::before`; revamp1200's rule is on
+   `.topic-bodyhead[style*="--tc"]::before`, and the attribute selector outranks
+   any number of later class-only rules, so the page kept painting 22% and 12%
+   whatever the file said further down. Restated on the same selector: a sheet
+   of coloured paper under white, and no more. */
+body:not(.tt-on):has(.topic-home) .topic-bodyhead[style*="--tc"][class][class]::before {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--tc) 4%, #fff) 0%,
+    color-mix(in srgb, var(--tc) 1.8%, #fff) 45%,
+    #ffffff 100%) !important;
+}
+
+/* revamp1512 — the topic page's briefing card wears the homepage card's
+   surface on the wide layout: the faint grey ground, the same hairline, the
+   same corner. (revamp1505 had made it flat white to stop the blurred corner;
+   the home card never had the blur, so its scheme is safe to share.) */
+body:not(.tt-on) .topic-top--lead .tdi-card[class][class][class][class] {
+  background: #f8f9fc !important;
+  border: 1px solid #ccd5e4 !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+}
+body:not(.tt-on) .topic-top--lead .tdi-card .ec[class][class][class] { background: transparent !important; }

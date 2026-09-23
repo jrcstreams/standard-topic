@@ -2849,6 +2849,77 @@ function renderFeaturedBriefings(host, opts) {
     return;
   }
 
+  // revamp1509 — the SLIDER (homepage, wide layout): the main briefing leads a
+  // horizontal run of every topic's briefing, the same cards the AI Briefings
+  // page lays out as a grid. Snap-scrolled, with the neighbour peeking on each
+  // side so the row reads as a row; arrows for a mouse, a vertical wheel
+  // scrolls it sideways. A topic card opens its briefing in place of the run
+  // (the fb-brief panel below); the main card opens itself (Read Briefing), and
+  // while it is open the run stands down and the card takes the whole width.
+  // In tab mode the section is hidden outright — AI Briefings is a tab there.
+  if (o.slider) {
+    let all = [];
+    try { all = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 15); } catch (_) {}
+    const CHEV_L = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>';
+    const CHEV_R = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
+    host.innerHTML = `
+      <div class="hb-slider" data-hb-slider>
+        <div class="hb-slider-frame" data-hbs-frame>
+          <button type="button" class="hb-slider-arrow hb-slider-arrow--prev" data-hbs-prev aria-label="Previous briefing" hidden>${CHEV_L}</button>
+          <div class="hb-slider-track" data-hbs-track>
+            <div class="hb-slide hb-slide--lead" data-hbs-slide>
+              <div class="hb-hero hb-hero--side" data-home-briefing>
+                <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home tdi-card--edition">${editionCardHTML({})}</div>
+              </div>
+            </div>
+            ${all.map((t) => `<div class="hb-slide" data-hbs-slide>${card(t).replace('class="dih-item"', 'class="dih-item hb-slide-card"')}</div>`).join('')}
+          </div>
+          <button type="button" class="hb-slider-arrow hb-slider-arrow--next" data-hbs-next aria-label="Next briefing">${CHEV_R}</button>
+        </div>
+        <div class="fb-brief" data-fb-brief hidden>
+          <div class="fb-briefbar">
+            <button type="button" class="fb-closelink" data-fb-close>${X_SVG}<span>Close Briefing</span></button>
+            <button type="button" class="fb-closex" data-fb-close aria-label="Close briefing">${X_BIG}</button>
+          </div>
+          <div class="fb-brieftitle" data-fb-brieftitle></div>
+          <div data-fb-host></div>
+        </div>
+      </div>`;
+    wireHomeDailyIntelligence(host);
+    fetchDailyBrief('home', false, true).then((d) => {
+      if (d && d.generatedAt && host.isConnected) applyBriefArt(host, d.generatedAt);
+    }).catch(() => {});
+    // The run stands down while the main briefing is open.
+    const lead = host.querySelector('.hb-slide--lead .tdi-card');
+    if (lead) {
+      const sync = () => host.classList.toggle('is-lead-open', lead.classList.contains('is-open'));
+      try { new MutationObserver(sync).observe(lead, { attributes: true, attributeFilter: ['class'] }); } catch (_) {}
+      sync();
+    }
+    // Arrows, and a vertical wheel that scrolls sideways.
+    const track = host.querySelector('[data-hbs-track]');
+    const prev = host.querySelector('[data-hbs-prev]');
+    const next = host.querySelector('[data-hbs-next]');
+    const syncArrows = () => {
+      const max = track.scrollWidth - track.clientWidth; const x = track.scrollLeft;
+      prev.hidden = !(max > 4 && x > 4); next.hidden = !(max > 4 && x < max - 4);
+    };
+    const slideW = () => { const s = track.querySelector('[data-hbs-slide]:not(.hb-slide--lead)'); return s ? s.getBoundingClientRect().width + 16 : Math.round(track.clientWidth * 0.7); };
+    prev.addEventListener('click', () => track.scrollBy({ left: -slideW(), behavior: 'smooth' }));
+    next.addEventListener('click', () => track.scrollBy({ left: slideW(), behavior: 'smooth' }));
+    track.addEventListener('scroll', syncArrows, { passive: true });
+    track.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      const max = track.scrollWidth - track.clientWidth; if (max <= 4) return;
+      const x = track.scrollLeft;
+      if ((e.deltaY < 0 && x <= 0) || (e.deltaY > 0 && x >= max - 1)) return;
+      track.scrollLeft = x + e.deltaY; e.preventDefault();
+    }, { passive: false });
+    try { new ResizeObserver(syncArrows).observe(track); } catch (_) {}
+    requestAnimationFrame(syncArrows);
+    // The rest — summaries, opening a topic's briefing in place — is the grid's
+    // own wiring below; the frame stands in for its list.
+  } else
   host.innerHTML = `
     <div class="hf-head fb-head">
       <div class="hf-headrow">
@@ -2880,7 +2951,7 @@ function renderFeaturedBriefings(host, opts) {
     }).catch(() => {});
   });
 
-  const list = host.querySelector('.fb-items');
+  const list = host.querySelector('.fb-items, [data-hbs-frame]');
   const brief = host.querySelector('[data-fb-brief]');
   const briefHost = host.querySelector('[data-fb-host]');
   const briefTitle = host.querySelector('[data-fb-brieftitle]');
@@ -6018,7 +6089,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // revamp949: the homepage leads with a Featured AI Briefings row built from
     // the same cards as the AI Briefings page.
     renderFeaturedBriefings(container.querySelector('[data-home-featbriefs]'), {
-      compact: true,
+      slider: true,
       title: 'AI Briefings',
       // A briefing page with a spark — reads at chip size, unlike the bare
       // sparkle, and sits with the grid/wand marks on the cards below.
