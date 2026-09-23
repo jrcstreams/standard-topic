@@ -42310,3 +42310,45 @@ body:not(.tt-on) .topic-top--lead .tdi-card[class][class][class][class] {
   backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
 }
 body:not(.tt-on) .topic-top--lead .tdi-card .ec[class][class][class] { background: transparent !important; }
+
+/* ═══ revamp1513 — the slider at every width, and no half-way layout ═══════ */
+
+/* (1) The run sized the page. A grid's `1fr` track has an `auto` minimum,
+   and a block's min-content contribution counts its children's content even
+   when the child scrolls — so the sixteen slides (2657px of them) set the
+   width of the home grid's single column below 1024px, and the section ran
+   off the right of the page. `contain: inline-size` makes the track
+   contribute nothing to its ancestors' intrinsic size; it takes the width
+   the grid gives it and the slides size from that. */
+.home-featbriefs, .hb-slider, .hb-slider-frame { min-width: 0; }
+.hb-slider-track[class] { contain: inline-size; }
+
+/* (2) The slides: a fixed measure, not a share of the frame. At 66% of a
+   1216px frame a topic card was 640px wide — a two-line headline and a
+   three-line summary spread across a card built for a grid. The main card
+   holds 560, a topic card 400; on a wide page that is the main card, a
+   full topic card and most of a third, and on a 952px frame the main card
+   and a real look at the next one. */
+.hb-slide[class] { flex-basis: min(400px, 44%) !important; }
+.hb-slide--lead[class] { flex-basis: min(560px, 62%) !important; }
+
+/* (3) No single-column layout that is not tab mode. Below 1024px the home
+   grid dropped to one column with the sidebar card ordered ABOVE the feed —
+   a leftover from before the tab strip took that job. Tab mode starts at 900
+   content px, so with the sidebar closed there was a 124px band that was
+   neither: one column, prompts stacked over the news. The two columns hold
+   until tab mode, with the side column a step narrower under 1100. */
+body:not(.tt-on) .home-sections.home-v2[class][class] { grid-template-columns: minmax(0, 1fr) 348px !important; }
+@media (max-width: 1100px) {
+  body:not(.tt-on) .home-sections.home-v2[class][class] { grid-template-columns: minmax(0, 1fr) 300px !important; gap: 1.4rem !important; }
+}
+body:not(.tt-on) .home-v2 .home-side[class][class] { order: 0 !important; }
+body:not(.tt-on) .home-v2 .home-main[class][class] { order: 0 !important; }
+body:not(.tt-on) .home-v2 #home-trending .trend-card:nth-of-type(n + 4)[class][class],
+body:not(.tt-on) .home-v2 #home-trending .trend-card:nth-of-type(n + 5)[class][class] { display: block !important; }
+/* (4) …and under 1024 the two column wrappers were `display: contents`, so
+   their cells auto-placed across the grid — prompts in column 1, trending in
+   column 2, the feed last. Off tab mode the wrappers are real columns. */
+body:not(.tt-on) .home-v2 .home-main[class][class][class] { display: block !important; order: 0 !important; }
+body:not(.tt-on) .home-v2 .home-side[class][class][class] { display: flex !important; flex-direction: column !important; gap: 18px !important; order: 0 !important; }
+body:not(.tt-on) .home-v2 #section-newsfeed[class][class] { order: 0 !important; }
