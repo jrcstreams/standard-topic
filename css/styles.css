@@ -42741,7 +42741,7 @@ body:not(.tt-on) .home-featbriefs .hb-sechead[class] {
 /* A top margin on the card collapses out through the list; the list takes
    the space instead. */
 body.tt-on #section-newsfeed .news-list:has(> .news-card--open:first-child)[class][class],
-body.tt-on .news-list:has(> .news-card--open:first-child)[class][class] { padding-top: 24px !important; }
+body.tt-on .news-list:has(> .news-card--open:first-child)[class][class] { padding-top: 14px !important; }
 
 /* revamp1525 — every briefing preview card wears the main card's ground, on
    the AI Briefings page and the topic-briefing grids too (they were white on
