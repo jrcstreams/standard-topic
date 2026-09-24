@@ -42790,7 +42790,7 @@ body.tt-on .news-card .news-card-body > .news-card-actions[class][class][class] 
 /* (2) The main nav folded into the hamburger at 899px, where the five links,
    the brand and a search field still fit — the compact header is right on a
    phone, early on a small laptop. It holds to 820. */
-@media (min-width: 820px) and (max-width: 899.98px) {
+@media (min-width: 740px) and (max-width: 899.98px) {
   body:not(.nav-docked) #site-header #nav-links[class][class] { display: flex !important; }
   body:not(.nav-docked) #site-header .nav-hamburger[class][class] { display: none !important; }
   body:not(.nav-docked) .sticky-hero-inner #nav-topics.navbtn--topics-right[class][class] { display: none !important; }
@@ -42894,3 +42894,17 @@ body.tt-on .topic-home .topic-top--lead .tdi-card[class][class][class][class] { 
 body.tt-on .aii-nav-dd-trending .trend-card-grid > .trend-card.is-expanded[class][class][class] {
   border-top: 1px solid #cbd5e6 !important;
 }
+
+/* revamp1531 — the Topics page's head sits where every other page's does.
+   In tab mode it reserved nav + 32px (its title landed 50px under the bar
+   against everyone else's 22); it has no band of its own, so nav + 8. */
+html body.tt-on:has(.ndp.aii-nav-dd-topics)[class][class][class][class][class][class] #content:not(#_) {
+  padding-top: calc(var(--nav-h, 56px) + 8px) !important;
+}
+
+/* revamp1531b — the main briefing takes the row when it opens. revamp1519
+   pinned every slide to 400px with !important, which outranked revamp1509's
+   `flex-basis: 100%` for the open state, so the briefing unfolded inside a
+   400px column. */
+.home-featbriefs.is-lead-open .hb-slide--lead[class][class][class] { flex-basis: 100% !important; max-width: 100% !important; }
+.home-featbriefs.is-lead-open .hb-slider-track[class][class] { display: block !important; }
