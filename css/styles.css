@@ -42571,3 +42571,59 @@ body:not(.tt-on) .home-v2 #section-newsfeed[class][class] { order: 0 !important;
    The headline takes the measure it is given. */
 .di-focus .di-dayhead[class][class][class][class] { text-wrap: pretty !important; }
 .di-mast--topic .di-metaline[class][class][class][class] { margin-top: 16px !important; }
+
+/* ═══ revamp1517 — the slider's cards are one card, and the rail meets the
+       feed's rule on home ═══════════════════════════════════════════════════ */
+
+/* The main card takes the topic card's measure: same padding, the same
+   34px tile and 1.12rem name, the same headline and summary sizes, the
+   stamp on the right edge like the topic cards carry it. And every topic
+   card gets the filled Read Briefing button the main card has — the same
+   height, radius and weight — so the run reads as one row of one thing. */
+.hb-slide--lead .tdi-card[class][class][class] { padding: 18px 20px 16px !important; }
+.hb-slide--lead .ec--v2[class] { padding: 0 !important; }
+.hb-slide--lead .ec--v2 .ec-head[class][class] { margin-bottom: 10px !important; }
+.hb-slide--lead .ec--v2 .ec-head .ec-headrow[class][class] { display: flex !important; align-items: center !important; gap: 10px !important; }
+.hb-slide--lead .ec--v2 .ec-head .ec-headrow .ec-stamp[class][class] { margin-left: auto !important; }
+.hb-slide--lead .ec--v2 .ec-title[class][class][class][class][class][class][class][class][class][class][class][class][class] { font-size: 1.12rem !important; font-weight: 750 !important; }
+.hb-slide--lead .ec--v2 .ec-title-ic[class][class] { width: 30px; height: 30px; border-radius: 8px; }
+.hb-slide--lead .ec--v2 .ec-title-ic[class][class] svg { width: 16px; height: 16px; }
+.hb-slide--lead .tdi-card--edition .ec-headline[class][class][class][class][class][class][class][class] { font-size: 1.02rem !important; font-weight: 600 !important; line-height: 1.3 !important; margin: 4px 0 4px !important; }
+.hb-slide--lead .ec--v2 .ec-summary[class][class][class][class] { font-size: 0.93rem !important; line-height: 1.5 !important; color: #4a5875 !important; }
+.hb-slide--lead .ec--v2 .ec-actions[class][class] { margin-top: auto !important; padding-top: 12px !important; }
+.hb-slide--lead .ec--v2 .ec-actions .ec-btn[class][class][class] { height: 34px !important; padding: 0 14px !important; font-size: 0.84rem !important; }
+.hb-slide--lead .ec--v2 { display: flex; flex-direction: column; height: 100%; }
+.hb-slide--lead .ec--v2 .ec-lead { flex: 1 1 auto; }
+
+.hb-slide-card .dih-item-ic[class][class] { width: 30px; height: 30px; border-radius: 8px; }
+.hb-slide-card .dih-item-ic[class][class] svg { width: 16px; height: 16px; }
+.hb-slide-card .dih-item-go--btn[class][class] {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 34px; padding: 0 14px; margin-top: auto;
+  border-radius: 8px; background: #2c4f9e; color: #fff;
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 650;
+}
+.hb-slide-card .dih-item-go--btn svg { width: 15px; height: 15px; color: #fff; }
+@media (hover: hover) {
+  .hb-slide-card:hover .dih-item-go--btn { background: #24356a; }
+  .hb-slide-card:hover .dih-item-go--btn svg { transform: none; }
+}
+
+/* The AI Prompts rail on home lands its header's bottom edge on the News
+   Feed head's rule, as it does on a topic page. The side column carried a
+   12px top margin the topic page's column does not; the rule on home sits
+   at 48px under the head's top where the header is 58 tall, so the card
+   pulls up the difference. */
+body:not(.tt-on) .home-sections.home-v2 > .home-side[class][class][class] { margin-top: 1px !important; }
+
+/* The open Settings / model button: no fill. revamp1507 moved the row's
+   dividers into each button's left padding, so a filled active state
+   painted a box that started at the divider and read as misaligned. The
+   open state is the darker blue on the word alone. */
+.aii-pc .aii-pc-foot .aii-pc-btn[aria-expanded="true"][class][class][class][class],
+.aii-pc .aii-pc-foot [data-pc-settings][aria-expanded="true"][class][class][class][class],
+.aii-pc .aii-pc-foot .aii-pc-btn.is-open[class][class][class][class] {
+  background: none !important; border-color: transparent !important; box-shadow: none !important;
+  color: #16307a !important;
+}
+.aii-pc .aii-pc-foot .aii-pc-btn + .aii-pc-btn[aria-expanded="true"][class][class][class][class] { border-left: 1px solid #d9e0ec !important; }

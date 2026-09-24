@@ -2180,7 +2180,7 @@ function editionCardHTML(o) {
           <p class="ec-overview" data-ec-overview hidden></p>
         </div>
         <div class="ec-actions">
-          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Play the Briefing</span><span class="ec-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span><span class="ec-btn-x" aria-hidden="true">${X}</span></button>
+          <button type="button" class="ec-btn ec-btn--listen" data-ec-listen aria-expanded="false" hidden>${HEAD}<span data-ec-listen-lbl>Play briefing</span><span class="ec-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span><span class="ec-btn-x" aria-hidden="true">${X}</span></button>
           <button type="button" class="ec-btn ec-btn--read tdi-go tdi-go--brief ec-read" data-di-toggle aria-expanded="false">
             ${BOOK}<span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}<span class="ec-btn-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>
           </button>
@@ -2351,7 +2351,7 @@ function bindListen(card, ctl) {
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
     const stacked = window.matchMedia('(max-width: 639.98px)').matches;
     btn.classList.toggle('is-drop', open && stacked);
-    if (lbl) lbl.textContent = (open && !stacked) ? 'Close player' : 'Play the Briefing';
+    if (lbl) lbl.textContent = (open && !stacked) ? 'Close player' : 'Play briefing';
     // revamp1515: the strip hangs off the button with a notch, like the
     // prompt panel's popovers — aimed at the button's centre.
     try {
@@ -2804,6 +2804,7 @@ function setClampedSummary(el, text) {
   el.textContent = out || full;
 }
 
+const BOOK_MINI = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>';
 function renderFeaturedBriefings(host, opts) {
   if (!host) return;
   const o = opts || {};
@@ -2841,7 +2842,7 @@ function renderFeaturedBriefings(host, opts) {
         <span class="tdi-date dih-item-stamp" data-fb-stamp></span>
       </span>
       <span class="dih-item-sum" data-fb-sum>Loading your briefing…</span>
-      <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
+      <span class="dih-item-go dih-item-go--btn">${BOOK_MINI}<span>Read Briefing</span>${SUBPAGE_ARROW}</span>
     </button>`;
   // revamp951: header matches the Featured Topics / Prompts cards — icon chip,
   // same title size, subtext beneath.
