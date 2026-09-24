@@ -42672,3 +42672,20 @@ body.tt-on .news-card--open .news-card-foot--lead[class][class][class] { padding
 body.tt-on .topic-band .topic-home #section-newsfeed .news-card--open .news-card-foot--lead[class][class][class],
 body.tt-on #section-newsfeed .news-card--open .news-card-foot--lead[class][class][class],
 body.tt-on .news-card--open .news-card-foot--lead[class][class][class][class] { padding-left: 15px !important; padding-right: 15px !important; }
+
+/* revamp1520 — the main card's head sits where the topic cards' heads sit.
+   Its tile was 7px higher (the edition card's own 5.6px top padding plus the
+   .ec's 6, against the topic card's 18) and its head carried 10px under it
+   to their 6.4. */
+.hb-slide--lead .tdi-card[class][class][class][class][class] { padding-top: 18px !important; }
+.hb-slide--lead .ec--v2[class][class] { padding-top: 0 !important; }
+.hb-slide--lead .ec--v2 .ec-head[class][class][class] { margin-bottom: 6.4px !important; }
+.hb-slide--lead .ec--v2 .ec-lead[class] { margin-top: 3px; }
+.hb-slide--lead .ec--v2 .ec-lead[class][class] { margin-top: 11px !important; }
+
+/* revamp1521 — the settings popover's head on one line. In the 300px rail
+   "PROMPT SETTINGS" broke over two lines beside Done. */
+.aii-pc .aii-pc-sethead[class][class] { flex-wrap: nowrap !important; gap: 10px !important; }
+.aii-pc .aii-pc-settitle[class][class] { white-space: nowrap; letter-spacing: 0.05em !important; font-size: 0.76rem !important; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.aii-pc .aii-pc-settitle[class][class] svg { flex: none; }
+.aii-pc .aii-pc-setdone[class][class] { flex: none; padding: 0.3rem 0.75rem !important; }

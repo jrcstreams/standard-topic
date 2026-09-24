@@ -2417,7 +2417,27 @@ function fillEditionFallback(card, d) {
   const h = card.querySelector('[data-ec-headline]');
   if (h && h.dataset.filled !== '1') { const t = briefHeadline(d); if (t) h.textContent = t; }
   const sm = card.querySelector('[data-ec-summary]');
-  if (sm && d && d.summary) { sm.textContent = d.summary; sm.hidden = false; sm.dataset.filled = '2'; }
+  if (sm && d && d.summary) { sm.textContent = editionCardSummary(d); sm.hidden = false; sm.dataset.filled = '2'; }
+}
+// revamp1520: the main card's summary runs to the length of the topic cards'.
+// Home's daily summary is written shorter than a topic's (138 characters to
+// their ~180), so beside them the card read as half-filled. When it is short,
+// the overview's opening sentences follow it until it reaches the measure —
+// skipping any sentence the summary already says.
+function editionCardSummary(d) {
+  const base = String((d && d.summary) || '').trim();
+  if (base.length >= 170) return base;
+  let out = base;
+  try {
+    const norm = (t) => t.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const seen = new Set(splitSentences(base).map(norm));
+    for (const sent of splitSentences(briefOverview(d) || '')) {
+      if (out.length >= 170) break;
+      const n = norm(sent); if (!n || seen.has(n)) continue;
+      out = (out ? out + ' ' : '') + sent.trim(); seen.add(n);
+    }
+  } catch (_) {}
+  return out || base;
 }
 
 function diHeroCardHTML(o) {
