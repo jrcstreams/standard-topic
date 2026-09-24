@@ -42689,3 +42689,70 @@ body.tt-on .news-card--open .news-card-foot--lead[class][class][class][class] { 
 .aii-pc .aii-pc-settitle[class][class] { white-space: nowrap; letter-spacing: 0.05em !important; font-size: 0.76rem !important; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .aii-pc .aii-pc-settitle[class][class] svg { flex: none; }
 .aii-pc .aii-pc-setdone[class][class] { flex: none; padding: 0.3rem 0.75rem !important; }
+
+/* ═══ revamp1522 — the briefings run has a section head, like the feed ══════
+   Same tile, same title size and colour, the same 2px rule the News Feed
+   head draws on this page — and one line under the name saying what a
+   briefing is and when the two editions land. Its own classes: borrowing
+   the feed head's put it inside rules that size that head as a flex column
+   of a fixed height, which floated the tile off the title. Wide layout only. */
+.hb-sechead { display: none; }
+body:not(.tt-on) .home-featbriefs .hb-sechead[class] {
+  display: block; padding: 0 0 14px; margin: 0 0 16px;
+  border-bottom: 2px solid #e0e5ee;
+}
+.hb-sechead-title {
+  margin: 0; display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-display, var(--font-family)); font-size: 1.55rem; font-weight: 800;
+  color: #14213d; letter-spacing: -0.015em; line-height: 1.1;
+}
+.hb-sechead-ic {
+  width: 34px; height: 34px; border-radius: 10px; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #1e3a8a; color: #fff;
+}
+.hb-sechead-ic svg { width: 19px; height: 19px; }
+.hb-sechead-sub { margin: 8px 0 0; font-family: var(--font-family); font-size: 0.9rem; line-height: 1.45; color: #5b6b8f; }
+/* revamp1523 — the main briefing, open, is "The Main Briefing" with the
+   edition ("Morning Edition" / "Evening Edition") under it; the "AI" that
+   revamp1514 inserted into the open title goes. Topic briefings keep
+   "Morning AI Briefing" / "Evening AI Briefing" as their open title. */
+.tdi-card--edition.is-open .ec--v2 .ec-title-ai[class] { display: none !important; }
+
+/* revamp1524 — the stamp rides the open briefing's title line and wraps only
+   when the title leaves it no room, and the opened first story keeps its
+   distance from the strip. */
+.tdi-card--topicedition.is-open .ec-headrow:has(.ec-titlewrap--topic)[class][class][class] {
+  display: flex !important; flex-wrap: wrap !important; align-items: baseline !important;
+  column-gap: 12px !important; row-gap: 6px !important;
+}
+.tdi-card--topicedition.is-open .ec-titlewrap--topic[class][class] { display: contents; }
+/* The stamp is a SIBLING of the title's wrapper, so `display: contents`
+   alone put it after the sub-label — three lines. Order puts it back on the
+   title's line, with the sub-label below both. */
+.tdi-card--topicedition.is-open .ec-edtitle-open[class][class][class] { flex: 0 1 auto; min-width: 0; order: 1; }
+.tdi-card--topicedition.is-open .ec-headrow .ec-stamp[class][class][class] { flex: 0 0 auto; margin: 0 auto 0 0 !important; align-self: baseline; order: 2; }
+.tdi-card--topicedition.is-open .ec-topicsub[class][class][class] { flex: 1 0 100%; margin-top: 8px !important; order: 3; }
+.di-mast--topic .di-mast-toprow--ed[class][class][class] { align-items: baseline !important; column-gap: 12px !important; }
+.di-mast--topic .di-mast-toprow--ed .di-mast-stamp[class][class][class] { margin-left: 0 !important; margin-right: auto !important; }
+
+/* The opened story is a bordered panel; against the strip's own hairline it
+   read as stuck to it. */
+/* A top margin on the card collapses out through the list; the list takes
+   the space instead. */
+body.tt-on #section-newsfeed .news-list:has(> .news-card--open:first-child)[class][class],
+body.tt-on .news-list:has(> .news-card--open:first-child)[class][class] { padding-top: 24px !important; }
+
+/* revamp1525 — every briefing preview card wears the main card's ground, on
+   the AI Briefings page and the topic-briefing grids too (they were white on
+   white beside a tinted main card). */
+.dih-items > .dih-item[class][class],
+.dih .dih-items > .dih-item[class][class] {
+  background: #f8f9fc !important;
+  border: 1px solid #ccd5e4 !important;
+  border-radius: 6px !important;
+}
+@media (hover: hover) {
+  .dih-items > .dih-item[class][class]:hover { background: #f1f4fa !important; border-color: #b9c6dd !important; }
+}
+body.tt-on .dih .dih-items[class][class] { display: grid; gap: 12px; }

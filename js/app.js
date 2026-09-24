@@ -2923,6 +2923,14 @@ function renderFeaturedBriefings(host, opts) {
     const CHEV_L = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>';
     const CHEV_R = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
     host.innerHTML = `
+      <!-- revamp1522: the run gets the section head the News Feed has — a tile,
+           the name, a rule — with one line on what a briefing is and when the
+           two editions land. Wide layout only: in tab mode the strip above
+           already says AI Briefings, and CSS hides this. -->
+      <div class="hb-sechead" data-hb-sechead>
+        <h3 class="hb-sechead-title"><span class="hb-sechead-ic" aria-hidden="true">${DI_SPARK_TWO}</span><span>AI Briefings</span></h3>
+        <p class="hb-sechead-sub">The day's news on every topic, written and read by AI from sourced reporting. New editions at 5 AM and 5 PM ET.</p>
+      </div>
       <div class="hb-slider" data-hb-slider>
         <div class="hb-slider-frame" data-hbs-frame>
           <button type="button" class="hb-slider-arrow hb-slider-arrow--prev" data-hbs-prev aria-label="Previous briefing" hidden>${CHEV_L}</button>
