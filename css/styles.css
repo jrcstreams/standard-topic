@@ -42002,8 +42002,8 @@ body.tt-on .ndp.aii-nav-dd-trending .aii-nav-dd-subbar[class][class][class] {
   padding-top: 4px !important; padding-bottom: 10px !important; margin-bottom: 0 !important;
 }
 body.tt-on .aii-nav-dd-trending .trend-card-grid[class][class] { border-top: 1px solid #e9ecf2 !important; }
-body.tt-on .aii-nav-dd-trending .trend-card-grid > .trend-card:first-child[class][class],
-body.tt-on .aii-nav-dd-trending .trend-card-grid > .trend-card:nth-child(2)[class][class] { border-top: 0 !important; }
+body.tt-on .aii-nav-dd-trending .trend-card-grid > .trend-card:first-child:not(.is-expanded)[class][class],
+body.tt-on .aii-nav-dd-trending .trend-card-grid > .trend-card:nth-child(2):not(.is-expanded)[class][class] { border-top: 0 !important; }
 
 /* ── (12) an opened trend's actions share a line ────────────────────────────
    Search trend, Sources and Close were stacked full-width on a phone — three
@@ -42775,9 +42775,12 @@ body.tt-on .news-card .news-card-body[class][class][class] {
   row-gap: 10px !important;
   align-items: flex-start !important;
 }
+/* The basis has to be a MIN-WIDTH, not a flex-basis: this same body is a
+   flex COLUMN at narrower widths, where `flex: 1 1 360px` sizes the
+   summary's HEIGHT — which is the 360px void that opened under it. */
 body.tt-on #section-newsfeed .news-card-body > .news-card-desc[class][class],
 body.tt-on .news-card .news-card-body > .news-card-desc[class][class][class] {
-  flex: 1 1 360px !important; min-width: 0 !important;
+  flex: 1 1 auto !important; min-width: min(360px, 100%) !important;
 }
 body.tt-on #section-newsfeed .news-card-body > .news-card-actions[class][class],
 body.tt-on .news-card .news-card-body > .news-card-actions[class][class][class] {
@@ -42838,4 +42841,56 @@ body.tt-on .news-card .news-card-body > .news-card-actions[class][class][class] 
 }
 .tdi-card--topicedition .ec-headline[class][class][class][class][class][class][class][class][class][class] {
   font-size: 1.1rem !important; font-weight: 700 !important; color: #14213d !important;
+}
+
+/* revamp1529 — the topic card's lockup: the name and its stamp stand off the
+   headline, and the summary follows the headline closely. */
+.tdi-card--topicedition .ec-head[class][class][class][class][class] { margin-bottom: 14px !important; }
+.tdi-card--topicedition .ec-headline[class][class][class][class][class][class][class][class][class][class][class] { margin-bottom: 4px !important; }
+.tdi-card--topicedition .ec-summary[class][class][class][class][class] { margin-top: 0 !important; }
+
+/* revamp1529b — the AI Briefings page's main card matches the topic cards
+   beside it: a 30px tile to their 30 (it was 34 against a 17.9px name), and
+   12px from the head to the headline (it was 5). revamp1527 had set this for
+   the homepage slider only. */
+.dih-edition .ec--v2 .ec-title-ic[class][class][class] { width: 30px; height: 30px; border-radius: 8px; }
+.dih-edition .ec--v2 .ec-title-ic[class][class][class] svg { width: 16px; height: 16px; }
+.dih-edition .ec--v2 .ec-head[class][class][class][class] { margin-bottom: 12px !important; }
+.dih-edition .ec--v2 .ec-lead[class][class][class] { margin-top: 0 !important; }
+
+/* ═══ revamp1530 — the opened briefing's head, on a phone ══════════════════
+   Four measurements off: the ✕ sat 16px inside a card whose own side
+   padding is 2, so it read as floating away from the edge the title starts
+   on; the title sat 13px under the tab strip; the topic tile's glyph rode
+   2px high inside it (an svg is inline, so its line box, not its box,
+   was being centred); and the day's first paragraph sat 19px under the
+   headline it belongs to. */
+.tdi-card--topicedition.is-open .tdi-openx[class][class][class] { right: 2px !important; top: 6px !important; }
+body.tt-on .topic-home .topic-top--lead .tdi-card[class][class][class][class] { padding-top: 22px !important; }
+.ec-topicsub .di-mast-ic[class][class][class],
+.di-mast-sub .di-mast-ic[class][class][class] { display: grid !important; place-items: center !important; line-height: 0 !important; }
+.ec-topicsub .di-mast-ic[class][class][class] svg,
+.di-mast-sub .di-mast-ic[class][class][class] svg { display: block !important; }
+.tdi-card--topicedition.is-open .ec-headline[class][class][class][class][class][class][class][class][class][class][class][class] { margin-bottom: 0 !important; }
+/* The 18px under the headline is the head block's own trailing space, inside
+   `.ec`; the summary's margin sat on top of it. Zero the one, set the other. */
+.tdi-card--topicedition.is-open .ec[class][class][class][class] { padding-bottom: 0 !important; }
+.tdi-card--topicedition.is-open .ec-lead[class][class][class][class] { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+/* …and the empty actions row under it still carried its 18px top margin. */
+.tdi-card--topicedition.is-open .ec--v2 .ec-actions[class][class][class][class] { margin-top: 0 !important; }
+.tdi-card--topicedition.is-open .tdi-expand .di-focus .di-summary[class][class][class][class][class] { margin-top: 12px !important; }
+/* The first story under TOP STORIES sits where every story after it sits:
+   its 20px of padding against their 15 plus a 1px rule. */
+.tdi-card--topicedition.is-open .di-briefs .dib:first-of-type[class][class][class][class] { padding-top: 15px !important; }
+.tdi-card--topicedition.is-open .tdi-expand[class][class] { margin-top: 0 !important; }
+.tdi-card--topicedition.is-open .tdi-expand-inner[class][class] { padding-top: 0 !important; }
+
+/* revamp1530b — an EXPANDED trend is a bordered panel, so it keeps its top
+   edge. The rules that drop the first two cards' top border exist to stop a
+   doubled rule under the list's own hairline; open, there is no doubled rule
+   and the panel was missing its lid. (revamp1109 states it at two classes
+   for the first two children, so this needs more.) */
+.trend-card-grid > .trend-card.is-expanded[class][class][class],
+body.tt-on .aii-nav-dd-trending .trend-card-grid > .trend-card.is-expanded[class][class][class] {
+  border-top: 1px solid #cbd5e6 !important;
 }
