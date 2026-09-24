@@ -42627,3 +42627,48 @@ body:not(.tt-on) .home-sections.home-v2 > .home-side[class][class][class] { marg
   color: #16307a !important;
 }
 .aii-pc .aii-pc-foot .aii-pc-btn + .aii-pc-btn[aria-expanded="true"][class][class][class][class] { border-left: 1px solid #d9e0ec !important; }
+
+/* ═══ revamp1518 — the share sheet comes off its button, and the opened story's head has its margins ═══ */
+
+/* The sheet drops under the share button with a notch at the button, on the
+   same white card the prompt popovers use. And it paints ABOVE the story:
+   `.news-card-link` is positioned at z-index 1 and follows the foot in the
+   DOM, so at the foot's own z-index 1 the headline painted over the sheet
+   (on a phone you read the title through it). The foot lifts while its
+   sheet is open. */
+.news-card .news-card-foot--lead:has(.news-share-panel.is-open)[class][class] { z-index: 40 !important; position: relative; }
+.news-card .news-card-foot--lead .news-share-wrap[class][class] { position: relative; }
+.news-card .news-card-foot--lead .news-share-panel[class][class][class] {
+  top: calc(100% + 10px) !important; bottom: auto !important; left: auto !important; right: 0 !important;
+  z-index: 40 !important;
+}
+.news-card .news-card-foot--lead .news-share-panel[class][class]::before {
+  content: ''; position: absolute; top: -6px; right: 9px;
+  width: 11px; height: 11px; transform: rotate(45deg);
+  background: #fff; border-left: 1px solid #dde4ef; border-top: 1px solid #dde4ef; border-radius: 2px 0 0 0;
+  z-index: 1;
+}
+.news-card .news-card-foot--lead .news-share-panel-inner[class][class] {
+  border: 1px solid #dde4ef !important; border-radius: 12px !important;
+  box-shadow: 0 14px 34px -20px rgba(15, 26, 46, 0.45) !important;
+  padding: 8px !important; gap: 8px !important;
+}
+.news-card .news-card-foot--lead .news-share-toggle[aria-expanded="true"][class][class] { color: #16307a !important; background: #e8edf6 !important; border-radius: 8px; }
+
+/* The opened story: the source pill and the share glyph were 1px off the
+   card's edges on a phone (the card pads 12px 0 0; the headline's own link
+   pads 15) and the headline sat 0-5px over its buttons. */
+body.tt-on .news-card--open .news-card-foot--lead[class][class][class] { padding-left: 15px !important; padding-right: 15px !important; }
+.news-card--open .news-card-title[class][class][class],
+.news-card--open .news-card-link h3[class][class] { margin-bottom: 12px !important; }
+
+/* revamp1519 — one card, one width, one ground. The main card takes the
+   topic cards' 400px, every card in the run takes the main card's grey
+   ground and hairline, and the opened story's foot gets its side margins
+   on a phone (two ID rules had pinned them to 0). */
+.hb-slide--lead[class][class] { flex-basis: min(400px, 44%) !important; }
+.hb-slide-card[class][class][class] { background: #f8f9fc !important; border-color: #ccd5e4 !important; }
+@media (hover: hover) { .hb-slide-card[class][class][class]:hover { background: #f1f4fa !important; border-color: #b9c6dd !important; } }
+body.tt-on .topic-band .topic-home #section-newsfeed .news-card--open .news-card-foot--lead[class][class][class],
+body.tt-on #section-newsfeed .news-card--open .news-card-foot--lead[class][class][class],
+body.tt-on .news-card--open .news-card-foot--lead[class][class][class][class] { padding-left: 15px !important; padding-right: 15px !important; }

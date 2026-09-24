@@ -2311,7 +2311,11 @@ function briefHeadline(d) {
 function applyEpisodeToCard(card, ep) {
   if (!card || !ep) return;
   const h = card.querySelector('[data-ec-headline]'); if (h && ep.title) { h.textContent = ep.title; h.dataset.filled = '1'; }
-  const sm = card.querySelector('[data-ec-summary]'); if (sm && ep.teaser) { sm.textContent = ep.teaser; sm.hidden = false; sm.dataset.filled = '1'; }
+  // revamp1519: the card's summary is the BRIEFING's summary — the same field
+  // the topic cards show — not the episode's one-line teaser, which made the
+  // main card read shorter than every card beside it. The teaser fills in
+  // only until the briefing lands.
+  const sm = card.querySelector('[data-ec-summary]'); if (sm && ep.teaser && sm.dataset.filled !== '2') { sm.textContent = ep.teaser; sm.hidden = false; sm.dataset.filled = '1'; }
   // revamp1506: the cold open — the briefing's own read of the day — sits
   // under the teaser once the card is open, ahead of the player, so the card
   // reads headline, teaser, the day, then listen. (It used to render below
@@ -2413,7 +2417,7 @@ function fillEditionFallback(card, d) {
   const h = card.querySelector('[data-ec-headline]');
   if (h && h.dataset.filled !== '1') { const t = briefHeadline(d); if (t) h.textContent = t; }
   const sm = card.querySelector('[data-ec-summary]');
-  if (sm && sm.dataset.filled !== '1' && d && d.summary) { sm.textContent = d.summary; sm.hidden = false; }
+  if (sm && d && d.summary) { sm.textContent = d.summary; sm.hidden = false; sm.dataset.filled = '2'; }
 }
 
 function diHeroCardHTML(o) {
