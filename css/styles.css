@@ -42756,3 +42756,86 @@ body.tt-on .news-list:has(> .news-card--open:first-child)[class][class] { paddin
   .dih-items > .dih-item[class][class]:hover { background: #f1f4fa !important; border-color: #b9c6dd !important; }
 }
 body.tt-on .dih .dih-items[class][class] { display: grid; gap: 12px; }
+
+/* ═══ revamp1526 — the story's summary keeps its distance, and the nav holds
+       its links a little longer ═════════════════════════════════════════════ */
+
+/* (1) In tab mode the card's body is a flex ROW above ~760px with NO gap, so
+   the summary ran into "View AI Insights" (measured 0px between them at 820
+   and 899). A real gap, and the row breaks on its own terms: the summary
+   claims 360px, and when the buttons beside it leave less than that, it
+   takes the line to itself and they drop below. No new breakpoint — it
+   stacks exactly when it stops fitting. */
+/* (`#section-newsfeed .news-card-body` zeroes the gap with an ID, so this
+   needs one too.) */
+body.tt-on #section-newsfeed .news-card-body[class][class][class],
+body.tt-on .news-card .news-card-body[class][class][class] {
+  flex-wrap: wrap !important;
+  column-gap: 22px !important;
+  row-gap: 10px !important;
+  align-items: flex-start !important;
+}
+body.tt-on #section-newsfeed .news-card-body > .news-card-desc[class][class],
+body.tt-on .news-card .news-card-body > .news-card-desc[class][class][class] {
+  flex: 1 1 360px !important; min-width: 0 !important;
+}
+body.tt-on #section-newsfeed .news-card-body > .news-card-actions[class][class],
+body.tt-on .news-card .news-card-body > .news-card-actions[class][class][class] {
+  flex: 0 0 auto !important;
+}
+
+/* (2) The main nav folded into the hamburger at 899px, where the five links,
+   the brand and a search field still fit — the compact header is right on a
+   phone, early on a small laptop. It holds to 820. */
+@media (min-width: 820px) and (max-width: 899.98px) {
+  body:not(.nav-docked) #site-header #nav-links[class][class] { display: flex !important; }
+  body:not(.nav-docked) #site-header .nav-hamburger[class][class] { display: none !important; }
+  body:not(.nav-docked) .sticky-hero-inner #nav-topics.navbtn--topics-right[class][class] { display: none !important; }
+  body:not(.nav-docked) #nav-search.navbtn.nav-searchbar[class][class][class] {
+    width: clamp(140px, 16vw, 220px) !important; padding: 8px 14px !important;
+  }
+  body:not(.nav-docked) #nav-search.navbtn.nav-searchbar[class][class][class] .nav-searchbar-ph { display: block !important; }
+}
+
+/* ═══ revamp1527 — the slider cards' heads ═════════════════════════════════
+   The tiles were 30px beside a 17.9px name — the mark outweighed the thing
+   it marks. 26px, with a 15px glyph. The headline sat 21px under the head
+   (a 6.4px head margin, a 4px headline margin and the line box between
+   them); 12px reads as one block. And the main card's tile stops being the
+   section header's: its own glyph (stacked layers — the briefing that
+   covers every topic) on graphite, which no topic uses and which the navy
+   sparkle above it can no longer be mistaken for. */
+.hb-slide--lead .ec--v2 .ec-title-ic[class][class][class] {
+  width: 26px; height: 26px; border-radius: 7px;
+  background: #1f2937 !important;
+}
+.hb-slide--lead .ec--v2 .ec-title-ic[class][class][class] svg { width: 15px; height: 15px; }
+/* (`.dih-item .dih-item-ic[class]×4` pins it at 30px with !important.) */
+.hb-slide-card.dih-item .dih-item-ic[class][class][class][class][class] {
+  width: 26px !important; height: 26px !important; border-radius: 7px !important;
+}
+.hb-slide-card.dih-item .dih-item-ic[class][class][class][class][class] svg { width: 15px !important; height: 15px !important; }
+
+.hb-slide--lead .ec--v2 .ec-head[class][class][class][class] { margin-bottom: 11px !important; }
+.hb-slide--lead .ec--v2 .ec-lead[class][class][class] { margin-top: 0 !important; }
+.hb-slide--lead .tdi-card--edition .ec-headline[class][class][class][class][class][class][class][class][class] { margin-top: 0 !important; }
+.hb-slide-card .dih-item-head[class][class][class] { margin-bottom: 2px !important; }
+.hb-slide-card .dih-item-hl[class][class] { margin-top: 0 !important; }
+
+/* revamp1528 — a topic card says the briefing once. "AI BRIEFING" over
+   "Morning Edition" was the same fact split across two lines; the title is
+   "Morning AI Briefing" / "Evening AI Briefing" (the form the open card
+   already used) and the eyebrow goes. */
+.ec--topic .ec-whatis[class][class][class] { display: none !important; }
+
+/* revamp1528b — on a topic page the card's own name leads and the day's
+   headline follows it: the name was 17.9px under a 19.5px headline, and both
+   were the same near-black navy. The name goes up and takes the site's blue;
+   the headline comes down and stays the darker ink. */
+.tdi-card--topicedition .ec-title[data-ec-edtitle][class][class][class][class][class][class][class][class][class][class][class][class][class] {
+  font-size: 1.18rem !important; font-weight: 750 !important; color: #2c4f9e !important;
+  letter-spacing: -0.008em !important;
+}
+.tdi-card--topicedition .ec-headline[class][class][class][class][class][class][class][class][class][class] {
+  font-size: 1.1rem !important; font-weight: 700 !important; color: #14213d !important;
+}

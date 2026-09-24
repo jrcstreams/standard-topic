@@ -2021,6 +2021,11 @@ function diEditionParts(iso) {
 // — sun for the morning wave, moon for the night — then the date and the
 // edition name. No chrome, no pulsing dot.
 // The same filled spark every other AI surface uses for provenance.
+// revamp1527: the main briefing's own mark — stacked layers, for the one
+// briefing that covers every topic. The sparkle belongs to the AI Briefings
+// section head above it; the two were the same glyph on two shades of the
+// same navy, so the card read as a second copy of the header.
+const MAIN_BRIEF_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.6 2.8 7.3 12 12l9.2-4.7z"/><path d="m2.8 12.4 9.2 4.7 9.2-4.7"/><path d="m2.8 17.1 9.2 4.7 9.2-4.7"/></svg>';
 const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg>';
 // revamp852 — the AI Briefings preview card, shared by the homepage, the
 // topic pages and the hub's Today's Briefing. A darker-blue header band carries
@@ -2166,7 +2171,7 @@ function editionCardHTML(o) {
         <div class="ec-head">
           <div class="ec-headrow">
             <div class="ec-titlewrap">
-              <h3 class="tdi-brieftitle ec-title"><span class="ec-title-ic" aria-hidden="true">${DI_SPARK_TWO}</span><span class="ec-title-tx">The Main <span class="ec-title-ai">AI </span>Briefing</span></h3>
+              <h3 class="tdi-brieftitle ec-title"><span class="ec-title-ic" aria-hidden="true">${MAIN_BRIEF_IC}</span><span class="ec-title-tx">The Main <span class="ec-title-ai">AI </span>Briefing</span></h3>
               <span class="ec-edlabel" data-ec-edlabel>${escapeHTML(homeEditionTitle().replace(/Briefing$/, 'Edition'))}</span>
             </div>
             <div class="ec-stamp" data-ec-stamp></div>
@@ -2227,7 +2232,7 @@ function topicEditionCardHTML(topic) {
                  Briefing" said "briefing" twice over — the tab above it
                  already does. -->
             <div class="ec-titlewrap ec-titlewrap--topic">
-              <h3 class="tdi-brieftitle ec-title" data-ec-edtitle>${escapeHTML(homeEditionTitle().replace(/Briefing$/, 'Edition'))}</h3>
+              <h3 class="tdi-brieftitle ec-title" data-ec-edtitle>${escapeHTML(homeEditionTitle().replace(/ Briefing$/, ' AI Briefing'))}</h3>
               <!-- revamp1514: open, the card reads as an editorial intro — the
                    edition as the title, the topic as the sub-label under it. -->
               <h3 class="ec-edtitle-open" data-ec-edtitle-open>${escapeHTML(homeEditionTitle().replace(/ Briefing$/, ' AI Briefing'))}</h3>
@@ -2681,7 +2686,7 @@ function fillEcStamp(card, iso) {
   if (!card || !iso) return;
   // revamp1461: the edition sub-label follows the brief that loaded.
   try { const el = card.querySelector('[data-ec-edlabel]'); if (el) el.textContent = editionTitleFor(iso).replace(/Briefing$/, 'Edition'); } catch (_) {}
-  try { const t = card.querySelector('[data-ec-edtitle]'); if (t) t.textContent = editionTitleFor(iso).replace(/Briefing$/, 'Edition'); } catch (_) {}
+  try { const t = card.querySelector('[data-ec-edtitle]'); if (t) t.textContent = editionTitleFor(iso).replace(/ Briefing$/, ' AI Briefing'); } catch (_) {}
   try { const t = card.querySelector('[data-ec-edtitle-open]'); if (t) t.textContent = editionTitleFor(iso).replace(/ Briefing$/, ' AI Briefing'); } catch (_) {}
   const html = ecStampHTML(iso);
   if (html) card.querySelectorAll('[data-ec-stamp]').forEach((el) => { el.innerHTML = html; });
