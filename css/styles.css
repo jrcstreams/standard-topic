@@ -42908,3 +42908,34 @@ html body.tt-on:has(.ndp.aii-nav-dd-topics)[class][class][class][class][class][c
    400px column. */
 .home-featbriefs.is-lead-open .hb-slide--lead[class][class][class] { flex-basis: 100% !important; max-width: 100% !important; }
 .home-featbriefs.is-lead-open .hb-slider-track[class][class] { display: block !important; }
+
+/* revamp1532 — the story's buttons sit closer to the summary they follow. In
+   the stacked layout the actions row carried an 18px top margin ON TOP of the
+   body's 10px row-gap: 28px between the last line and View AI Insights. */
+/* (`.topic-band .topic-home #section-newsfeed .news-card .news-card-actions`
+   states the 18px at four classes plus an ID, so this carries both.) */
+body.tt-on .topic-band .topic-home #section-newsfeed .news-card .news-card-actions[class][class][class][class],
+body.tt-on #section-newsfeed .news-card-body > .news-card-actions[class][class][class],
+body.tt-on .news-card .news-card-body > .news-card-actions[class][class][class][class] { margin-top: 0 !important; }
+body.tt-on #section-newsfeed .news-card-body[class][class][class][class],
+body.tt-on .news-card .news-card-body[class][class][class][class] { row-gap: 14px !important; }
+
+/* revamp1532 — the story's buttons sit closer to the summary they follow. In
+   the stacked layout the actions row carried an 18px top margin ON TOP of the
+   body's 10px row-gap: 28px between the last line and View AI Insights. */
+/* (`.topic-band .topic-home #section-newsfeed .news-card .news-card-actions`
+   states the 18px at four classes plus an ID, so this carries both.) */
+body.tt-on .topic-band .topic-home #section-newsfeed .news-card .news-card-actions[class][class][class][class],
+body.tt-on #section-newsfeed .news-card-body > .news-card-actions[class][class][class],
+body.tt-on .news-card .news-card-body > .news-card-actions[class][class][class][class] { margin-top: 0 !important; }
+body.tt-on #section-newsfeed .news-card-body[class][class][class][class],
+body.tt-on .news-card .news-card-body[class][class][class][class] { row-gap: 14px !important; }
+
+/* …and the briefing's ✕ is a real target on a phone: 30px was small for the
+   one control that closes a full-page read. */
+@media (max-width: 899.98px) {
+  .tdi-card--topicedition.is-open .tdi-openx[class][class][class][class] {
+    width: 38px !important; height: 38px !important;
+  }
+  .tdi-card--topicedition.is-open .tdi-openx[class][class][class][class] svg { width: 17px !important; height: 17px !important; }
+}
