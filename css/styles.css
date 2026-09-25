@@ -42939,3 +42939,11 @@ body.tt-on .news-card .news-card-body[class][class][class][class] { row-gap: 14p
   }
   .tdi-card--topicedition.is-open .tdi-openx[class][class][class][class] svg { width: 17px !important; height: 17px !important; }
 }
+
+/* revamp1533 — the run fades on BOTH edges. The right one said "there is more
+   this way"; scrolled in, the left edge cut a card off with no such signal. */
+.hb-slider-frame::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 56px; pointer-events: none; z-index: 2;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0), #fff 85%);
+}
+.hb-slider-frame:has([data-hbs-prev][hidden])::before { display: none; }
