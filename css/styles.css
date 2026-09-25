@@ -43110,3 +43110,153 @@ body:not(.tt-on) #home-pcard .pc--v2 .pc-head-ic[class][class][class][class] { b
    is Model and Settings only. */
 .aii-pc .aii-pc-editrow .aii-pc-copy[class][class][class] { margin-left: 0; }
 .aii-pc .aii-pc-editrow .aii-pc-copy[class][class][class] svg { width: 14px; height: 14px; }
+
+/* ═══ revamp1537 — the topic briefings' corners, the slider panel's mast,
+       the topic page's head ═══════════════════════════════════════════════ */
+
+/* (1) The topic cards and the opened panel take the main card's 6px corner
+   (they were 12 and 14 beside its 6). */
+.hb-slide-card[class][class][class] { border-radius: 6px !important; }
+.hb-slider .fb-brief[class][class][class][class] { border-radius: 6px !important; }
+
+/* (2) The slider panel's mast: the stamp rides right after the edition title
+   (not the far edge), the topic row stands 14px under it with its tile and
+   name on one centre line, and the AI label gets its ground back — a small
+   pill, not the full-size one. */
+.fb-brief .di-mast--topic .di-mast-toprow--ed[class][class][class][class] { justify-content: flex-start !important; column-gap: 12px !important; align-items: center !important; }
+.fb-brief .di-mast-ed[class][class][class][class] { flex: 0 1 auto !important; }
+.fb-brief .di-mast--topic .di-mast-toprow--ed .di-mast-stamp[class][class][class][class] { margin-left: 0 !important; }
+.fb-brief .di-page .di-mast.di-mast--v2.di-mast--topic[class][class][class][class][class][class][class] { row-gap: 14px !important; }
+.fb-brief .di-mast--topic .di-mast-sub[class][class][class][class] { align-items: center !important; }
+.fb-brief .di-mast-sub .di-mast-name[class][class][class][class] { line-height: 1 !important; display: block; padding-top: 1px; }
+.fb-brief .di-page .di-metaline[class][class][class] .di-prov2[class][class][class][class][class][class] {
+  padding: 3px 9px !important; border-radius: 6px !important;
+  background: #eaeff8 !important; border: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+}
+
+/* (3) The topic page's card. Closed: 6px more between the card's top and
+   "Morning AI Briefing". Open: the stamp right after the title, the title
+   lighter still, the AI label 6px under the row and 9px over the headline. */
+.tdi-card--topicedition:not(.is-open) .ec-head[class][class][class][class][class][class] { margin-top: 6px !important; }
+.tdi-card--topicedition.is-open .ec-headrow:has(.ec-titlewrap--topic)[class][class][class][class][class] { justify-content: flex-start !important; column-gap: 12px !important; }
+.tdi-card--topicedition.is-open .ec-headrow:has(.ec-titlewrap--topic) .ec-titlewrap--topic[class][class][class] { flex: 0 1 auto !important; }
+.tdi-card--topicedition.is-open .ec-headrow:has(.ec-titlewrap--topic) .ec-stamp[class][class][class][class][class] { margin-left: 0 !important; }
+.tdi-card--topicedition.is-open .ec-edtitle-open[class][class][class][class][class][class] { font-weight: 460 !important; }
+.tdi-card--topicedition.is-open .ec-provrow[class][class][class][class][class] { margin-top: 6px !important; margin-bottom: 9px !important; }
+
+/* revamp1537b — a topic page's title is a title: no hover ground on the
+   plain (chevron-less) head; revamp1156 lit any .tbh-titlebtn. */
+@media (hover: hover) {
+  .tbh-titlebtn.tbh-titlebtn--plain[class][class][class]:hover { background: none !important; }
+}
+
+/* revamp1537c — the blue wash behind the page heads, a step fainter: the
+   misc pages (Prompts, AI Briefings, Trending, Topics) and the home hero.
+   #c7dbf4 → #dbe7fa → white was a band; it is a tint now. Topic pages keep
+   their own colour wash (revamp1511). */
+body:not(.tt-on) .page-hero[class]::before,
+body:not(.tt-on) .page-hero::before {
+  background: linear-gradient(180deg, #dde8f7 62%, #eaf0fa 84%, #ffffff 100%) !important;
+}
+.home-hero[class]::before, .home-hero::before {
+  background: linear-gradient(180deg, #dde8f7 0%, #eaf0fa 55%, #ffffff 100%) !important;
+}
+
+/* revamp1537d — the topic card, open: the head's own 14px bottom margin
+   collapsed over the label's 6px, so the label never came closer. */
+.tdi-card--topicedition.is-open .ec-head[class][class][class][class][class][class][class] { margin-bottom: 6px !important; }
+
+/* ═══ revamp1538 — the home sidebar's Trending as a card, the section
+       heads without their tiles, the prompt titles a step down ═══════════ */
+
+/* (1) Trending on the desktop home sidebar: above the prompts, in the same
+   card the prompts have — header band, one column, three trends. The
+   641–1023px rule that laid it out in two columns was for the old stacked
+   layout and still fired with the sidebar collapsed. */
+body:not(.tt-on) .home-v2 .home-side #home-trending[class][class][class] {
+  order: -1 !important;
+  border: 1px solid #d9e0ec !important; border-radius: 12px !important; background: #fff !important;
+  overflow: hidden !important; padding: 0 16px 4px !important; margin: 0 !important;
+}
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-titlerow[class][class][class][class] {
+  display: flex !important; align-items: center !important; flex-wrap: wrap !important; gap: 8px 10px !important;
+  margin: 0 -16px 8px !important; padding: 12px 16px !important;
+  background: #eef1f6 !important; border-bottom: 1px solid #dfe5ef !important;
+}
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-title[class][class][class][class][class][class] {
+  display: inline-flex !important; align-items: center !important; gap: 10px !important; margin: 0 !important;
+  font-size: 1.12rem !important; font-weight: 750 !important; color: #1a2c66 !important; letter-spacing: -0.01em !important; line-height: 1.2 !important;
+}
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-title-ic[class][class][class][class],
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-logo[class][class][class][class] {
+  display: inline-grid !important; place-items: center !important; width: 26px !important; height: 26px !important;
+  border-radius: 7px !important; background: #16a34a !important; color: #fff !important; flex: none;
+}
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-title-ic[class][class][class][class] svg,
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-logo[class][class][class][class] svg,
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-title[class][class][class][class] svg { width: 15px !important; height: 15px !important; }
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][class][class] { margin: 0 0 0 auto !important; font-size: 0.82rem !important; }
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-updated[class][class][class] { display: none !important; }
+body:not(.tt-on) .home-v2 #home-trending .trend-card-grid[class][class][class] { grid-template-columns: 1fr !important; column-gap: 0 !important; }
+body:not(.tt-on) .home-v2 #home-trending .trend-card:nth-of-type(n + 4)[class][class][class][class][class] { display: none !important; }
+body:not(.tt-on) .home-v2 #home-trending .trend-card:nth-of-type(-n + 3)[class][class][class][class][class] { display: block !important; }
+
+/* (2) The section heads keep their names and lose their tiles on desktop —
+   News Feed (home + topic), AI Prompts (both sidebars), AI Briefings (home).
+   Tab mode keeps its icons. */
+body:not(.tt-on) .newsfeed-head .newsfeed-title-ic[class][class][class] { display: none !important; }
+body:not(.tt-on) .home-v2 .hf-head .hf-ic[class][class][class] { display: none !important; }
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head-ic[class][class][class][class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head-ic[class][class][class][class][class] { display: none !important; }
+
+/* (3) The prompt titles a step smaller: the sidebar cards, and the Featured
+   prompts in tab mode. */
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-row-name[class][class][class][class][class][class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-row-name[class][class][class][class][class][class][class],
+body.tt-on .pc--v2 .pc-row-name[class][class][class][class][class][class][class] { font-size: 0.88rem !important; }
+
+/* revamp1538b — the home "AI Briefings" head's tile lives inside its h3. */
+body:not(.tt-on) .home-v2 .hb-sechead .hb-sechead-ic[class][class][class] { display: none !important; }
+
+/* ═══ revamp1539 — an opened story on desktop: the buttons up under the
+       title, Close Insight in red, and one border all the way round ═══════ */
+/* The summary goes when the insight opens, but the actions kept the 18px
+   they had under it. */
+body:not(.tt-on) #section-newsfeed .news-card.news-card--open .news-card-actions[class][class][class][class] { margin-top: 6px !important; }
+/* Close Insight reads as a close. */
+body:not(.tt-on) #section-newsfeed .news-card.news-card--open .news-act-ai[class][class][class][class] {
+  color: #b91c1c !important; background: #fef2f2 !important; border-color: #fecaca !important;
+}
+@media (hover: hover) {
+  body:not(.tt-on) #section-newsfeed .news-card.news-card--open .news-act-ai[class][class][class][class]:hover { color: #991b1b !important; background: #fee2e2 !important; border-color: #fca5a5 !important; }
+}
+/* The open card's border, all four sides, on every card: revamp1194 lit the
+   first card's sides (and 1443 relit its top light), revamp1212 lit only
+   the others' tops. */
+body:not(.tt-on) #section-newsfeed .news-list > .news-card.news-card--open[class][class][class][class][class],
+body:not(.tt-on) .home-v2 #section-newsfeed .news-list > .news-card.news-card--open:first-child[class][class][class][class][class],
+body:not(.tt-on) .topic-band .topic-home #section-newsfeed .news-list > .news-card.news-card--open:first-child[class][class][class][class][class] {
+  border: 1px solid #b9c6e4 !important;
+}
+
+/* ═══ revamp1540 — the main briefing, open: its head and body ════════════ */
+/* The stamp rides right after "The Main Briefing" (as on the topic cards);
+   the AI label is the small pill, centred on the "Morning Edition" line. */
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap) .ec-stamp[class][class][class][class][class][class][class][class] { margin-left: 0 !important; }
+.tdi-card--edition.is-open .ec--v2 .ec-edrow[class][class][class] { align-items: center !important; column-gap: 12px !important; }
+.tdi-card--edition.is-open .ec-edrow .ec-edprov.tdi-cardprov[class][class][class][class][class][class][class][class] {
+  padding: 3px 9px !important; border-radius: 6px !important;
+  background: #eaeff8 !important; border: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+}
+/* The player sits closer under the summary and Top Stories stands off it;
+   the expand block's side padding (the slider's) had inset Top Stories. */
+.tdi-card--edition.is-open .ec--v2 .ec-actions[class][class][class][class] { margin-top: 8px !important; padding-top: 4px !important; }
+.tdi-card--edition.is-open .ec--v2 .tdi-expand[class][class][class][class] { padding-top: 14px !important; padding-left: 0 !important; padding-right: 0 !important; }
+/* revamp1540b — the expand block is the head's SIBLING, not the ec's child. */
+.tdi-card--edition.is-open .tdi-expand[class][class][class][class] { padding-top: 16px !important; padding-left: 0 !important; padding-right: 0 !important; }
+/* revamp1540c — the main briefing's tile is the site's blue, a step darker,
+   on the slider and the AI Briefings page alike (the slider's had gone to
+   near-black). */
+.ec--v2 .ec-title-ic[class][class][class][class],
+.hb-slide--lead .ec--v2 .ec-title-ic[class][class][class][class],
+.dih-edition .ec--v2 .ec-title-ic[class][class][class][class] { background: #1e3372 !important; color: #fff !important; }
