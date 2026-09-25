@@ -42947,3 +42947,94 @@ body.tt-on .news-card .news-card-body[class][class][class][class] { row-gap: 14p
   background: linear-gradient(to left, rgba(255, 255, 255, 0), #fff 85%);
 }
 .hb-slider-frame:has([data-hbs-prev][hidden])::before { display: none; }
+
+/* ═══ revamp1534 — the briefing heads: names lighter, headlines heavier ════
+
+   Every briefing surface had the same inversion: the card's NAME ("World",
+   "The Main Briefing", "Morning AI Briefing") at 750–800 over a headline at
+   600–700. The name is the label; the headline is the news. Names come down
+   to 600, headlines go up to 720, and the open intros stop being page titles. */
+
+/* ── preview cards (slider, AI Briefings page, topic page) ── */
+.dih-item .dih-item-name[class][class][class] { font-weight: 600 !important; }
+.tdi-card--edition:not(.is-open) .ec-title[class][class][class][class][class][class][class][class][class][class][class][class][class][class] { font-weight: 600 !important; }
+.dih-item .dih-item-hl[class][class][class] { font-weight: 720 !important; }
+.tdi-card--edition .ec-headline[class][class][class][class][class][class][class][class][class][class][class][class] { font-weight: 720 !important; }
+/* the topic page's own card: the darker ink, the lighter weight */
+.tdi-card--topicedition:not(.is-open) .ec-title[data-ec-edtitle][class][class][class][class][class][class][class][class][class][class][class][class][class][class] {
+  color: #1a2c66 !important; font-weight: 600 !important;
+}
+
+/* ── the main briefing, open ── */
+/* "The Main Briefing" keeps its preview colour and weight; "Morning Edition"
+   under it is lighter still; the stamp rides the title line beside the name
+   instead of floating at the far edge. */
+.tdi-card--edition.is-open .ec--v2 .ec-title[class][class][class][class][class][class][class][class][class][class][class][class][class][class] {
+  font-weight: 600 !important; color: #14213d !important; letter-spacing: -0.01em !important;
+}
+.tdi-card--edition.is-open .ec--v2 .ec-edlabel[class][class][class][class][class] { font-weight: 480 !important; color: #2d3748 !important; margin-top: 0 !important; }
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap)[class][class][class][class][class] {
+  justify-content: flex-start !important; align-items: flex-start !important; column-gap: 14px !important; row-gap: 6px !important;
+}
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap) .ec-titlewrap[class][class][class] { flex: 0 1 auto !important; min-width: 0; }
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap) .ec-stamp[class][class][class][class][class] { margin-left: 0 !important; margin-top: 0 !important; align-self: flex-start; }
+/* the edition line with the AI label beside it (closed, the label goes) */
+.ec--v2 .ec-edrow { display: none; }
+.tdi-card--edition.is-open .ec--v2 .ec-edrow[class] { display: flex; flex-wrap: wrap; align-items: center; column-gap: 14px; row-gap: 4px; margin-top: 4px; }
+.tdi-card--edition.is-open .ec--v2 .ec-edrow .ec-edprov[class][class] { margin: 0 !important; padding: 0 !important; min-height: 0 !important; }
+
+/* ── the topic page's card, open ── */
+/* The page already says which topic: the tile-and-name line goes. The edition
+   title comes down from a page title to the card's own size, the headline
+   takes the weight, and the summary follows it closely. */
+.tdi-card--topicedition.is-open .ec-topicsub[class][class][class] { display: none !important; }
+.tdi-card--topicedition.is-open .ec-edtitle-open[class][class][class][class] {
+  font-size: 1.12rem !important; line-height: 1.2 !important; font-weight: 600 !important; color: #14213d !important; letter-spacing: -0.01em !important;
+}
+.tdi-card--topicedition.is-open .ec-provrow[class][class][class] { margin-top: 10px !important; }
+.tdi-card--topicedition.is-open .ec-lead[class][class][class] { margin-bottom: 0 !important; }
+.tdi-card--topicedition.is-open .tdi-expand .di-focus[class][class][class] { margin-top: 0 !important; padding-top: 0 !important; }
+.tdi-card--topicedition.is-open .tdi-expand .di-focus .di-summary[class][class][class] { margin-top: 4px !important; }
+/* the ✕ off the edge on a wide card (revamp1532 pulled it to 2px for the phone) */
+@media (min-width: 900px) {
+  .tdi-card--topicedition.is-open .tdi-openx[class][class][class][class] { right: 14px !important; top: 8px !important; }
+}
+
+/* ── a topic briefing opened inside the homepage slider ── */
+/* The panel takes the cards' grey and their border, the "Close Briefing" bar
+   and the rule under it go (the ✕ stays, in the corner, as on the main card),
+   the intro matches the main briefing's, and the AI label sits beside the
+   topic name when the line has room. */
+.fb-brief[class][class][class] { position: relative !important; background: #f8f9fc !important; border-color: #ccd5e4 !important; box-shadow: none !important; }
+.fb-brief .fb-briefbar[class][class][class] { position: absolute !important; top: 10px !important; right: 12px !important; margin: 0 !important; z-index: 6; }
+.fb-brief .fb-briefbar .fb-closelink[class][class] { display: none !important; }
+.fb-brief .fb-brieftitle[class][class] { border-bottom: 0 !important; padding: 0 !important; margin: 0 !important; }
+.fb-brief .fb-brieftitle:empty { display: none !important; }
+.fb-brief .di-mast.di-mast--topic[class][class][class] { padding-right: 52px !important; }
+.fb-brief .di-mast-ed[class][class][class] {
+  font-size: 1.12rem !important; line-height: 1.2 !important; font-weight: 600 !important; color: #14213d !important; letter-spacing: -0.01em !important;
+}
+.fb-brief .di-mast-sub .di-mast-name[class][class][class] { font-weight: 560 !important; }
+.fb-brief .di-page .di-mast.di-mast--v2.di-mast--topic[class][class][class][class][class] {
+  display: flex !important; flex-flow: row wrap !important; align-items: center !important;
+  column-gap: 16px !important; row-gap: 8px !important;
+}
+.fb-brief .di-mast--topic .di-mast-toprow--ed[class][class][class] { flex: 0 0 100% !important; }
+.fb-brief .di-mast--topic .di-mast-sub[class][class][class] { flex: 0 0 auto !important; margin-top: 0 !important; }
+.fb-brief .di-mast--topic .di-metaline[class][class][class][class][class] { flex: 0 1 auto !important; min-width: 0; margin-top: 0 !important; }
+.fb-brief .di-focus .di-dayhead[class][class][class][class][class] { font-weight: 720 !important; }
+
+/* ═══ revamp1534b — the topic rail's prompts card on a grey ground ═══════ */
+/* The white card in a pale blue outline read as a stray border. It takes the
+   grey the briefing cards use, the outline goes, and the rows' ink darkens
+   to hold on the grey. */
+.tpr-inline .pc.pc--v2[class][class] { background: #f4f6fa !important; border-color: #e3e8f0 !important; box-shadow: none !important; }
+.tpr-inline .pc--v2 .pc-row-name[class][class][class][class][class] { color: #1c2740 !important; font-weight: 500 !important; }
+.tpr-inline .pc--v2 .pc-sechead[class][class] { color: #1f2a44 !important; }
+.tpr-inline .pc--v2 .pc-row-desc[class][class] { color: #4a5875 !important; }
+/* revamp1534c — the two that lost on specificity: the topic card's summary
+   (revamp1529c held 12px at five classes) and the slider panel's provenance
+   rule, which revamp1201 draws as a full-width separator on every .di-page. */
+.tdi-card--topicedition.is-open .tdi-expand .di-focus .di-summary[class][class][class][class][class][class][class] { margin-top: 2px !important; }
+.fb-brief .di-page .di-metaline[class][class][class] .di-metasep--prov[class][class] { display: none !important; }
+.fb-brief .di-page .di-metaline[class][class][class] { width: auto !important; }

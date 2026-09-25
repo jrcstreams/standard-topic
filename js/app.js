@@ -2172,7 +2172,12 @@ function editionCardHTML(o) {
           <div class="ec-headrow">
             <div class="ec-titlewrap">
               <h3 class="tdi-brieftitle ec-title"><span class="ec-title-ic" aria-hidden="true">${MAIN_BRIEF_IC}</span><span class="ec-title-tx">The Main <span class="ec-title-ai">AI </span>Briefing</span></h3>
-              <span class="ec-edlabel" data-ec-edlabel>${escapeHTML(homeEditionTitle().replace(/Briefing$/, 'Edition'))}</span>
+              <!-- revamp1534: open, the edition line carries the AI label
+                   beside it, the way the topic cards' heads do. -->
+              <div class="ec-edrow">
+                <span class="ec-edlabel" data-ec-edlabel>${escapeHTML(homeEditionTitle().replace(/Briefing$/, 'Edition'))}</span>
+                <button type="button" class="tdi-cardprov how-aigen ec-edprov" data-how-it-works>${DI_SPARK}<span>AI-generated content included</span>${DI_INFO_ICON}</button>
+              </div>
             </div>
             <div class="ec-stamp" data-ec-stamp></div>
           </div>
