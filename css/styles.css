@@ -43038,3 +43038,75 @@ body.tt-on .news-card .news-card-body[class][class][class][class] { row-gap: 14p
 .tdi-card--topicedition.is-open .tdi-expand .di-focus .di-summary[class][class][class][class][class][class][class] { margin-top: 2px !important; }
 .fb-brief .di-page .di-metaline[class][class][class] .di-metasep--prov[class][class] { display: none !important; }
 .fb-brief .di-page .di-metaline[class][class][class] { width: auto !important; }
+
+/* ═══ revamp1535 — the stamp flush right, the inline AI label quiet, the
+       topic card's lockup ═══════════════════════════════════════════════ */
+
+/* (1) "Right-aligned" meant the edge, not the name: the stamp rides the
+   title line at the head's right, just short of the ✕, on the main card and
+   in the slider panel alike. The head's ✕ allowance comes in so the two
+   sit ~10px apart instead of ~28. */
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap) .ec-stamp[class][class][class][class][class][class] { margin-left: auto !important; }
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap)[class][class][class][class][class][class] { column-gap: 12px !important; }
+.tdi-card--edition.is-open .ec-head[class][class][class][class] { padding-right: 36px !important; }
+.fb-brief .di-mast.di-mast--topic[class][class][class][class] { padding-right: 34px !important; }
+
+/* (2) The AI label beside a text line is a line of text, not a pill: sparkle,
+   words, info glyph, in the stamp's grey, a step smaller. The topic page's
+   own label keeps its pill — it stands on a line of its own there. */
+.tdi-card--edition.is-open .ec-edrow .ec-edprov.tdi-cardprov[class][class][class][class][class][class][class],
+.fb-brief .di-page .di-metaline[class][class][class] .di-prov2[class][class][class][class][class] {
+  padding: 0 !important; border: 0 !important; background: none !important; border-radius: 0 !important;
+  gap: 5px !important; font-size: 0.72rem !important; font-weight: 520 !important; color: #5b6b8c !important;
+  letter-spacing: 0 !important; line-height: 1.2 !important;
+}
+.tdi-card--edition.is-open .ec-edrow .ec-edprov .tdi-cardprov-ic[class][class] { width: 11px !important; height: 11px !important; }
+.tdi-card--edition.is-open .ec-edrow .ec-edprov svg.how-info-ic[class][class],
+.fb-brief .di-page .di-metaline .di-prov2 svg.how-info-ic[class][class] { width: 12px !important; height: 12px !important; }
+.fb-brief .di-page .di-metaline .di-prov2 .tdi-cardprov-ic[class][class],
+.fb-brief .di-page .di-metaline .di-prov2 > svg:first-child[class] { width: 11px !important; height: 11px !important; }
+.tdi-card--edition.is-open .ec--v2 .ec-edrow[class][class] { column-gap: 12px; align-items: baseline; }
+.fb-brief .di-page .di-mast.di-mast--v2.di-mast--topic[class][class][class][class][class][class] { column-gap: 14px !important; }
+
+/* (3) The topic page's card, closed: the edition label a step down, the
+   headline a step up. */
+.tdi-card--topicedition:not(.is-open) .ec-title[data-ec-edtitle][class][class][class][class][class][class][class][class][class][class][class][class][class][class][class] { font-size: 1.04rem !important; }
+.tdi-card--topicedition:not(.is-open) .ec-headline[class][class][class][class][class][class][class][class][class][class][class][class][class] { font-size: 1.16rem !important; }
+
+/* (4) Open: lighter still, centred on the stamp's line, a little air above
+   the row, and air under the AI label before the headline. */
+.tdi-card--topicedition.is-open .ec-edtitle-open[class][class][class][class][class] { font-weight: 520 !important; }
+.tdi-card--topicedition.is-open .ec-headrow:has(.ec-titlewrap--topic)[class][class][class][class] { align-items: center !important; }
+.tdi-card--topicedition.is-open .ec-headrow:has(.ec-titlewrap--topic) .ec-stamp[class][class][class][class] { margin-top: 0 !important; }
+.tdi-card--topicedition.is-open .ec-head[class][class][class][class][class][class] { margin-top: 6px !important; }
+.tdi-card--topicedition.is-open .ec-provrow[class][class][class][class] { margin-bottom: 12px !important; }
+@media (min-width: 900px) {
+  .tdi-card--topicedition.is-open .tdi-openx[class][class][class][class][class] { top: 14px !important; }
+}
+
+/* revamp1535b — the main card's stamp carried a 46px right margin from
+   revamp1366 (the ✕'s old allowance), which is why it stopped short. */
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap) .ec-stamp[class][class][class][class][class][class][class] { margin-right: 0 !important; }
+
+/* ═══ revamp1536 — the prompts card: white again, the grey on its HEADER;
+       Copy on the Edit line ═══════════════════════════════════════════════ */
+/* revamp1534b read "the sidebar" as the card. The card goes back to white
+   on the news cards' border; the AI Prompts header takes the grey, with the
+   name and tile in navy on it. */
+.tpr-inline .pc.pc--v2[class][class][class] { background: #fff !important; border: 1px solid #dfe5ef !important; box-shadow: none !important; }
+.tpr-inline .pc--v2 .pc-row-name[class][class][class][class][class][class] { color: #32405f !important; font-weight: 470 !important; }
+.tpr-inline .pc--v2 .pc-sechead[class][class][class] { color: inherit !important; }
+.tpr-inline .pc--v2 .pc-row-desc[class][class][class] { color: inherit !important; }
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head[class][class][class][class][class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head[class][class][class][class][class][class] {
+  background: #eef1f6 !important; border-bottom: 1px solid #dfe5ef !important;
+}
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head-title[class][class][class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head-title[class][class][class][class] { color: #1a2c66 !important; }
+body:not(.tt-on) .topic-top-side .pc--v2 .pc-head-ic[class][class][class][class],
+body:not(.tt-on) #home-pcard .pc--v2 .pc-head-ic[class][class][class][class] { background: #2b3d70 !important; color: #fff !important; }
+
+/* The preview's Copy rides the Edit line in Edit's grey; the blue row below
+   is Model and Settings only. */
+.aii-pc .aii-pc-editrow .aii-pc-copy[class][class][class] { margin-left: 0; }
+.aii-pc .aii-pc-editrow .aii-pc-copy[class][class][class] svg { width: 14px; height: 14px; }

@@ -1892,6 +1892,8 @@ export function renderAIIntelligence(container, scope) {
           <button type="button" class="aii-pc-edit" data-pc-edit>${ICON_PENCIL}<span data-pc-edit-tx>Edit</span></button>
           <button type="button" class="aii-pc-edit aii-pc-edit--apply" data-pc-edit-apply hidden>${ICON_CHECK_MINI}<span>Apply</span></button>
           <button type="button" class="aii-pc-edit aii-pc-edit--cancel" data-pc-edit-cancel hidden><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Cancel</span></button>
+          <!-- revamp1536: Copy rides the Edit line, in its grey; the blue row below is Model and Settings. -->
+          <button type="button" class="aii-pc-edit aii-pc-copy" data-pc-copy>${ICON_COPY_MINI}<span data-pc-copy-tx>Copy</span></button>
         </div>
       </div>
       <div class="aii-pc-foot">
@@ -1900,7 +1902,6 @@ export function renderAIIntelligence(container, scope) {
             <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${SPARK_MINI}<span><span class="aii-pc-model-pre">Model: </span><span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
             <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${modelOpts}</div>
           </span>
-          <button type="button" class="aii-pc-btn" data-pc-copy>${ICON_COPY_MINI}<span data-pc-copy-tx>Copy</span></button>
           <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${ICON_GEAR}<span>Settings</span></button>
         </div>
         <div class="aii-pc-set" data-pc-set hidden>

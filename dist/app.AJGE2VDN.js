@@ -819,6 +819,8 @@ ${A}`),C.length?C.join(`
           <button type="button" class="aii-pc-edit" data-pc-edit>${a1}<span data-pc-edit-tx>Edit</span></button>
           <button type="button" class="aii-pc-edit aii-pc-edit--apply" data-pc-edit-apply hidden>${Li}<span>Apply</span></button>
           <button type="button" class="aii-pc-edit aii-pc-edit--cancel" data-pc-edit-cancel hidden><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Cancel</span></button>
+          <!-- revamp1536: Copy rides the Edit line, in its grey; the blue row below is Model and Settings. -->
+          <button type="button" class="aii-pc-edit aii-pc-copy" data-pc-copy>${Sc}<span data-pc-copy-tx>Copy</span></button>
         </div>
       </div>
       <div class="aii-pc-foot">
@@ -827,7 +829,6 @@ ${A}`),C.length?C.join(`
             <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${wc}<span><span class="aii-pc-model-pre">Model: </span><span data-pc-mn>${D(v?v.name:"AI")}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${Ne}</span></button>
             <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${C}</div>
           </span>
-          <button type="button" class="aii-pc-btn" data-pc-copy>${Sc}<span data-pc-copy-tx>Copy</span></button>
           <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${xs}<span>Settings</span></button>
         </div>
         <div class="aii-pc-set" data-pc-set hidden>
