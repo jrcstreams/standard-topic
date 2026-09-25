@@ -43260,3 +43260,50 @@ body:not(.tt-on) .topic-band .topic-home #section-newsfeed .news-list > .news-ca
 .ec--v2 .ec-title-ic[class][class][class][class],
 .hb-slide--lead .ec--v2 .ec-title-ic[class][class][class][class],
 .dih-edition .ec--v2 .ec-title-ic[class][class][class][class] { background: #1e3372 !important; color: #fff !important; }
+
+/* ═══ revamp1541 — the main briefing's stamp after the TITLE, not after the
+       title's wrapper. The wrapper (title over "Morning Edition + label")
+       is as wide as its widest line, so the stamp stood off the title by
+       the label's width. The wrapper dissolves while open: title, stamp,
+       then the edition line on its own row with 10px above it. ═══════════ */
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap) .ec-titlewrap[class][class][class][class] { display: contents !important; }
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap)[class][class][class][class][class][class][class] {
+  align-items: center !important; row-gap: 10px !important; column-gap: 12px !important;
+}
+.tdi-card--edition.is-open .ec--v2 .ec-headrow .ec-title[class][class][class] { order: 0; }
+.tdi-card--edition.is-open .ec--v2 .ec-head .ec-headrow:has(.ec-titlewrap) .ec-stamp[class][class][class][class][class][class][class][class][class] { order: 1; align-self: center !important; margin: 0 !important; }
+.tdi-card--edition.is-open .ec--v2 .ec-edrow[class][class][class][class] { order: 2; flex: 0 0 100% !important; margin-top: 0 !important; align-items: center !important; }
+.tdi-card--edition.is-open .ec--v2 .ec-edlabel[class][class][class][class][class][class] { line-height: 1.2 !important; }
+/* revamp1541b — 1540b's padding reset was for the slider's card, whose
+   head already carries the inset; on the topic page the expand block's
+   1.35rem IS the inset. Restored there, with no top padding. */
+.tdi-card--topicedition.is-open .tdi-expand[class][class][class][class][class] { padding-top: 0 !important; padding-left: 1.35rem !important; padding-right: 1.35rem !important; }
+
+/* ═══ revamp1542 — the home sidebar's Trending, laid out like AI Prompts:
+       the band is the card's top edge at every width, "View all trending"
+       is the blue link at the bottom, three trends between. The titlerow
+       dissolves so its title (the band) and link (the foot) order around
+       the list; the inner wrapper's own padding stood the band off the
+       card edges under 1100px. ═══════════════════════════════════════════ */
+body:not(.tt-on) .home-v2 .home-side #home-trending[class][class][class][class] { padding: 0 !important; }
+body:not(.tt-on) .home-v2 #home-trending .trending-topics[class][class][class] { display: flex !important; flex-direction: column !important; padding: 0 !important; margin: 0 !important; gap: 0 !important; }
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-titlerow[class][class][class][class][class] { display: contents !important; }
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-title[class][class][class][class][class][class][class] {
+  order: 0 !important; display: flex !important; align-items: center !important; gap: 10px !important;
+  margin: 0 !important; padding: 12px 16px !important; width: auto !important;
+  background: #eef1f6 !important; border-bottom: 1px solid #dfe5ef !important;
+}
+body:not(.tt-on) .home-v2 #home-trending .trend-card-grid[class][class][class][class] { order: 1 !important; padding: 8px 16px 0 !important; margin: 0 !important; border-top: 0 !important; }
+body:not(.tt-on) .home-v2 #home-trending .trend-card-grid > .trend-card:first-child[class][class][class] { border-top: 0 !important; }
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][class][class][class] {
+  order: 2 !important; margin: 8px 16px 14px !important; padding: 0 !important; align-self: flex-start !important;
+  font-size: 0.95rem !important; font-weight: 650 !important; color: #1d4ed8 !important;
+}
+/* revamp1542b — there is a .trending-topics-head between the wrapper and
+   the titlerow; it dissolves too, so the band spans the card. */
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-head[class][class][class][class] { display: contents !important; }
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-title[class][class][class][class][class][class][class][class] { align-self: stretch !important; }
+
+/* revamp1542c — the slider panel's topic row: the same air under it as
+   over it (15px) before the headline. */
+.fb-brief .di-page .di-mast.di-mast--v2.di-mast--topic[class][class][class][class][class][class][class][class] { margin-bottom: 4px !important; }
