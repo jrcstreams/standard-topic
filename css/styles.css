@@ -43461,3 +43461,40 @@ body.tt-on #section-newsfeed .news-list > .news-card .news-card-actions[class][c
   margin: 11px 0 0; padding-top: 10px; border-top: 1px solid #edf1f7;
   font-size: 0.76rem; line-height: 1.4; color: #6b7488;
 }
+
+/* ═══ revamp1551 — the rail's arrows sit on the chips' own edges ═══════════
+   The arrows had four different insets from as many passes: on desktop the
+   left one sat 8px inside the track (a sliver of chip showed beside it) and
+   the right one hung 2px past it; with the tabs on, both sat 4px from the
+   band's edge while the chips started 16px in. One rule now: an arrow's outer
+   edge is where the first (or last) chip rests when the rail is scrolled to
+   that end — the track's edge on desktop, its 16px inset with the tabs on. */
+#sub-header .trail--bar { --rail-inset: 0px; }
+body.tt-on #sub-header .trail--bar { --rail-inset: 16px; }
+body #sub-header .trail--bar .trail-arrow--prev[class][class][class] { left: var(--rail-inset) !important; }
+body #sub-header .trail--bar .trail-arrow--next[class][class][class] { right: var(--rail-inset) !important; }
+
+/* ── revamp1552: the story card's source and time, a step smaller ──────────
+   The meta row read nearly as loud as the headline under it. The source pill
+   drops 0.78 → 0.74rem with a tighter pad, the time 0.86 → 0.8rem. */
+.news-card .news-card-foot--lead .news-card-source[class][class][class][class] {
+  font-size: 0.74rem !important;
+  padding: 3px 9px !important;
+  border-radius: 6px !important;
+}
+.news-card .news-card-foot--lead .news-card-time[class][class][class] { font-size: 0.8rem !important; }
+/* The fade starts where the arrow does, so nothing shows in the inset
+   beside it (with the tabs on, the 16px between the band's edge and the
+   arrow). On desktop the inset is 0 and this is revamp1469b's fade. */
+body #sub-header .trail--bar.has-next:not(.has-prev) .trail-track[class][class] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 64px - var(--rail-inset)), transparent calc(100% - var(--rail-inset)));
+          mask-image: linear-gradient(to right, #000 calc(100% - 64px - var(--rail-inset)), transparent calc(100% - var(--rail-inset)));
+}
+body #sub-header .trail--bar.has-prev:not(.has-next) .trail-track[class][class] {
+  -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 64px - var(--rail-inset)), transparent calc(100% - var(--rail-inset)));
+          mask-image: linear-gradient(to left, #000 calc(100% - 64px - var(--rail-inset)), transparent calc(100% - var(--rail-inset)));
+}
+body #sub-header .trail--bar.has-prev.has-next .trail-track[class][class] {
+  -webkit-mask-image: linear-gradient(to right, transparent var(--rail-inset), #000 calc(64px + var(--rail-inset)), #000 calc(100% - 64px - var(--rail-inset)), transparent calc(100% - var(--rail-inset)));
+          mask-image: linear-gradient(to right, transparent var(--rail-inset), #000 calc(64px + var(--rail-inset)), #000 calc(100% - 64px - var(--rail-inset)), transparent calc(100% - var(--rail-inset)));
+}
