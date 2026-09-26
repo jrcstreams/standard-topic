@@ -43498,3 +43498,22 @@ body #sub-header .trail--bar.has-prev.has-next .trail-track[class][class] {
   -webkit-mask-image: linear-gradient(to right, transparent var(--rail-inset), #000 calc(64px + var(--rail-inset)), #000 calc(100% - 64px - var(--rail-inset)), transparent calc(100% - var(--rail-inset)));
           mask-image: linear-gradient(to right, transparent var(--rail-inset), #000 calc(64px + var(--rail-inset)), #000 calc(100% - 64px - var(--rail-inset)), transparent calc(100% - var(--rail-inset)));
 }
+
+/* ═══ revamp1553 — the sidebar Trending's "View all trending", set like the
+   prompts card's "View more" ════════════════════════════════════════════
+   It sat 8px left of the trend titles above it, 6px under the last row's
+   rule and 13px off the card's floor — jammed into the corner. It now
+   starts on the titles' left edge (20px into the card's content box, the
+   grid's 8px + the row's 12px), in the prompts card's link: same size,
+   weight and blue, a 36px row with air above and below. */
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][class][class][class][class][class] {
+  display: inline-flex !important; align-items: center !important; align-self: flex-start !important;
+  min-height: 36px !important; padding: 0 !important;
+  margin: 8px 20px 10px !important;
+  font-size: 0.91rem !important; font-weight: 640 !important; color: #2563eb !important;
+  gap: 6px !important;
+}
+body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][class][class] svg { width: 16px !important; height: 16px !important; color: currentColor !important; }
+@media (hover: hover) {
+  body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][class][class][class][class][class]:hover { color: #1e40af !important; background: none !important; }
+}
