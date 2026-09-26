@@ -3088,7 +3088,7 @@ function renderIntelligenceHub(container) {
         <span class="tdi-date dih-item-stamp" data-dih-stamp-for="${escapeAttr(t.name)}"></span>
       </span>
       <span class="dih-item-focus" data-dih-sum="${escapeAttr(t.name)}"><span class="dih-item-focus-li dih-item-focus-li--pending">Loading your briefing…</span></span>
-      <span class="dih-item-go dih-item-go--btn">${BOOK_MINI}<span>Read Briefing</span>${SUBPAGE_ARROW}</span>
+      <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
     </button>`;
 
   // revamp1093: page hero (blue band, icon + title + subtext) matching the

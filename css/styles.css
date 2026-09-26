@@ -43351,3 +43351,17 @@ body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][
 /* The expanded trend's top border was a lighter #cbd5e6 than its #b9c6e4
    sides (the first card had its own rule), so it read as half-drawn. */
 body:not(.tt-on) .trend-card-grid > .trend-card.is-expanded[class][class][class][class] { border-top: 1px solid #b9c6e4 !important; }
+
+/* revamp1546 — the AI Briefings page's cards go back to the blue link
+   (1545's button was too heavy beside fifteen of them), a step more
+   present than before: bigger, bolder, a larger arrow. */
+.dih-items .dih-item .dih-item-go[class][class][class][class] {
+  display: inline-flex !important; align-items: center !important; gap: 6px !important;
+  font-size: 0.98rem !important; font-weight: 700 !important; color: #1d4ed8 !important;
+  background: none !important; border: 0 !important; padding: 0 !important; height: auto !important; border-radius: 0 !important;
+}
+.dih-items .dih-item .dih-item-go[class][class][class][class] svg { width: 17px !important; height: 17px !important; color: #1d4ed8 !important; }
+@media (hover: hover) {
+  .dih-items .dih-item:hover .dih-item-go[class][class][class][class] { color: #1e3a8a !important; background: none !important; }
+  .dih-items .dih-item:hover .dih-item-go[class][class][class][class] svg { color: #1e3a8a !important; transform: translateX(2px); }
+}
