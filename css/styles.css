@@ -43333,3 +43333,21 @@ body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][
   margin: 6px 12px 12px !important; font-size: 0.86rem !important; font-weight: 640 !important; gap: 5px !important;
 }
 body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][class] svg { width: 15px !important; height: 15px !important; }
+
+/* ═══ revamp1545 — the AI Briefings page's cards take the slider's blue
+       Read Briefing button; an expanded trend's top edge in the same ink
+       as its sides ═════════════════════════════════════════════════════ */
+.dih-items .dih-item .dih-item-go--btn[class][class][class] {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 34px; padding: 0 14px; margin-top: auto;
+  border-radius: 8px; background: #2c4f9e; color: #fff;
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 650;
+}
+.dih-items .dih-item .dih-item-go--btn[class][class][class] svg { width: 15px; height: 15px; color: #fff; transform: none; }
+@media (hover: hover) {
+  .dih-items .dih-item:hover .dih-item-go--btn[class][class][class] { background: #24356a; color: #fff; }
+  .dih-items .dih-item:hover .dih-item-go--btn[class][class][class] svg { transform: none; }
+}
+/* The expanded trend's top border was a lighter #cbd5e6 than its #b9c6e4
+   sides (the first card had its own rule), so it read as half-drawn. */
+body:not(.tt-on) .trend-card-grid > .trend-card.is-expanded[class][class][class][class] { border-top: 1px solid #b9c6e4 !important; }
