@@ -43365,3 +43365,26 @@ body:not(.tt-on) .trend-card-grid > .trend-card.is-expanded[class][class][class]
   .dih-items .dih-item:hover .dih-item-go[class][class][class][class] { color: #1e3a8a !important; background: none !important; }
   .dih-items .dih-item:hover .dih-item-go[class][class][class][class] svg { color: #1e3a8a !important; transform: translateX(2px); }
 }
+
+/* revamp1547 — the topic card's AI pill, open, centred between the title
+   row and the headline: 8px above and 8px below. The pill carried its own
+   10px bottom margin under the row's 9, so it sat 6 up and 19 down. */
+.tdi-card--topicedition.is-open .ec-head[class][class][class][class][class][class][class][class] { margin-bottom: 8px !important; }
+.tdi-card--topicedition.is-open .ec-provrow[class][class][class][class][class][class] { margin-top: 8px !important; margin-bottom: 8px !important; }
+.tdi-card--topicedition.is-open .ec-provrow .tdi-cardprov[class][class][class][class][class][class][class] { margin: 0 !important; }
+
+/* revamp1548 — the story's buttons closer under its summary: the actions
+   row carried 18px of top padding, and in tab mode the body's 14px row
+   gap on top of that (32). 8px on desktop; 4px + the gap in tab mode. */
+body:not(.tt-on) #section-newsfeed .news-card .news-card-actions[class][class][class][class] { padding-top: 8px !important; }
+body.tt-on #section-newsfeed .news-card .news-card-actions[class][class][class][class] { padding-top: 4px !important; }
+body:not(.tt-on) #section-newsfeed .news-card.news-card--open .news-card-actions[class][class][class][class][class] { padding-top: 4px !important; margin-top: 6px !important; }
+/* revamp1548b — over revamp1240's grid rule (eleven classes and an id),
+   which also pinned the buttons to the card's bottom with margin-top:
+   auto, so a short summary in a row with a long one left a hole above
+   its buttons. The buttons follow the summary now. */
+body:not(.tt-on) .topic-band .topic-home #section-newsfeed .news-list > .news-card .news-card-actions[class][class][class][class][class][class],
+body:not(.tt-on) .home-v2 #section-newsfeed .news-list > .news-card .news-card-actions[class][class][class][class][class][class][class] {
+  margin-top: 0 !important; padding-top: 8px !important;
+}
+body.tt-on #section-newsfeed .news-list > .news-card .news-card-actions[class][class][class][class][class][class][class] { margin-top: 0 !important; padding-top: 4px !important; }
