@@ -43419,7 +43419,8 @@ body.tt-on #section-newsfeed .news-list > .news-card .news-card-actions[class][c
 }
 .navmenu-quicklinks--about[class][class] { padding-top: 4px !important; }
 
-/* (2) The latest edition of the AI Briefing, playable from the sidebar. */
+/* (2) The latest edition of The Front Page, from the sidebar (revamp1556:
+   Read / Listen, a mini player in the card, the next edition as a row). */
 .navmenu-brief {
   margin: 6px 16px 4px;
   padding: 13px 14px 12px;
@@ -43428,7 +43429,7 @@ body.tt-on #section-newsfeed .news-list > .news-card .news-card-actions[class][c
   border-radius: 12px;
   font-family: var(--font-family);
 }
-.navmenu-brief[hidden] { display: none; }
+.navmenu-brief[hidden], .navmenu-brief [hidden] { display: none !important; }
 .sbb-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .sbb-ed {
   display: inline-flex; align-items: center; gap: 6px;
@@ -43437,30 +43438,83 @@ body.tt-on #section-newsfeed .news-list > .news-card .news-card-actions[class][c
 }
 .sbb-ed svg { color: #d98a2b; flex: none; }
 .sbb-when { font-size: 0.72rem; font-weight: 600; color: #8d97a9; white-space: nowrap; }
-.sbb-title {
+.navmenu-brief .sbb-title[class] {
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
   margin-top: 8px;
   font-size: 0.9rem; font-weight: 650; line-height: 1.32; letter-spacing: -0.005em;
   color: #16223d; text-decoration: none;
 }
-@media (hover: hover) { .sbb-title:hover { color: #2f4d9e; text-decoration: underline; text-underline-offset: 2px; } }
-.sbb-row { display: flex; align-items: center; gap: 10px; margin-top: 11px; }
-.sbb-play {
+@media (hover: hover) { .navmenu-brief .sbb-title[class]:hover { color: #2f4d9e; text-decoration: underline; text-underline-offset: 2px; } }
+
+/* Read / Listen: two equal buttons, Read the filled one. */
+.sbb-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.sbb-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 34px; padding: 0 10px; border-radius: 8px; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 650; white-space: nowrap;
+  transition: background .12s ease, border-color .12s ease;
+}
+.sbb-btn svg { flex: none; }
+.sbb-btn--read { background: #2c4f9e; border: 1px solid #2c4f9e; color: #fff; }
+.sbb-btn--listen { background: #fff; border: 1px solid #cfd8e8; color: #1e3a8a; }
+.sbb-btn-dur { font-weight: 550; color: #8d97a9; }
+@media (hover: hover) {
+  .sbb-btn--read:hover { background: #24356a; border-color: #24356a; }
+  .sbb-btn--listen:hover { background: #f1f4fa; border-color: #b9c6dd; }
+}
+.sbb-btn:focus-visible, .sbb-mini button:focus-visible, .sbb-mini-track:focus-visible { outline: 2px solid #2f4d9e; outline-offset: 2px; }
+
+/* The mini player: play, a progress line with the time under it, close. */
+.sbb-mini {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 12px; padding: 8px 8px 8px 8px;
+  background: #f3f6fc; border: 1px solid #e1e8f4; border-radius: 10px;
+}
+.sbb-mini-play {
   display: inline-flex; align-items: center; justify-content: center; flex: none;
   width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%;
-  background: #2f4d9e; color: #fff; cursor: pointer;
-  transition: background .12s ease;
+  background: #2c4f9e; color: #fff; cursor: pointer;
 }
-.sbb-play svg { margin-left: 2px; }
-.navmenu-brief.is-playing .sbb-play svg { margin-left: 0; }
-@media (hover: hover) { .sbb-play:hover { background: #243d80; } }
-.sbb-play:focus-visible { outline: 2px solid #2f4d9e; outline-offset: 2px; }
-.sbb-listen { display: inline-flex; align-items: baseline; gap: 7px; font-size: 0.85rem; font-weight: 650; color: #26324d; }
-.sbb-dur { font-size: 0.78rem; font-weight: 550; color: #8d97a9; }
+.sbb-mini-play svg { margin-left: 2px; }
+.navmenu-brief.is-playing .sbb-mini-play svg { margin-left: 0; }
+@media (hover: hover) { .sbb-mini-play:hover { background: #24356a; } }
+.sbb-mini-mid { flex: 1 1 auto; min-width: 0; }
+.sbb-mini-track {
+  position: relative; height: 14px; cursor: pointer;
+  display: flex; align-items: center;
+}
+.sbb-mini-track::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 4px; margin-top: -2px;
+  border-radius: 2px; background: #d5deee;
+}
+.sbb-mini-track > i {
+  position: relative; display: block; height: 4px; width: 0; border-radius: 2px; background: #2c4f9e;
+}
+.sbb-mini-times {
+  display: flex; justify-content: space-between;
+  font-size: 0.7rem; font-weight: 600; color: #7b8aa1; font-variant-numeric: tabular-nums;
+}
+.sbb-mini-x {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 28px; height: 28px; padding: 0; border: 0; border-radius: 7px;
+  background: transparent; color: #6b7488; cursor: pointer;
+}
+@media (hover: hover) { .sbb-mini-x:hover { background: #e3e9f5; color: #1e2d5a; } }
+
+/* Next edition: a labelled row, not a sentence. */
 .sbb-next {
-  margin: 11px 0 0; padding-top: 10px; border-top: 1px solid #edf1f7;
-  font-size: 0.76rem; line-height: 1.4; color: #6b7488;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid #edf1f7;
 }
+.sbb-next-lbl {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #8d97a9;
+}
+.sbb-next-val {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.78rem; font-weight: 650; color: #26324d; white-space: nowrap;
+}
+.sbb-next-val svg { color: #d98a2b; flex: none; }
 
 /* ═══ revamp1551 — the rail's arrows sit on the chips' own edges ═══════════
    The arrows had four different insets from as many passes: on desktop the
@@ -43529,3 +43583,17 @@ body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][
 .tdi-card--edition .ec-headline[class][class][class][class][class][class][class][class] { text-wrap: wrap !important; }
 .tdi-card--edition.is-open:has(.ec-overview:not([hidden])) .ec-summary[class][class][class][class] { display: none !important; }
 .tdi-card--edition.is-open .ec-overview[class][class][class][class]:not([hidden]) { margin-top: 4px !important; }
+
+/* ═══ revamp1557 — The Front Page card holds still on hover ═══════════════
+   Hovering anywhere on the card slid BOTH of the Read button's icons 3px
+   right (the book closing in on its label), and hovering the button lifted
+   it 1px on a drop shadow. Nothing moves now: the button only deepens a
+   shade, like the Listen button beside it. */
+.tdi-card--edition .ec-read[class][class][class][class][class][class][class][class],
+.tdi-card--edition .ec-read[class][class][class][class][class][class][class][class] svg { transform: none !important; }
+@media (hover: hover) {
+  .tdi-card--edition:hover .ec-read[class][class][class][class][class][class][class][class],
+  .tdi-card--edition .ec-read[class][class][class][class][class][class][class][class]:hover { transform: none !important; box-shadow: none !important; }
+  .tdi-card--edition:hover .ec-read[class][class][class][class][class][class][class][class] svg,
+  .tdi-card--edition .ec-read[class][class][class][class][class][class][class][class]:hover svg { transform: none !important; }
+}
