@@ -43388,3 +43388,18 @@ body:not(.tt-on) .home-v2 #section-newsfeed .news-list > .news-card .news-card-a
   margin-top: 0 !important; padding-top: 8px !important;
 }
 body.tt-on #section-newsfeed .news-list > .news-card .news-card-actions[class][class][class][class][class][class][class] { margin-top: 0 !important; padding-top: 4px !important; }
+
+/* ═══ revamp1549 — the rail's hover, one you can see ═══════════════════════
+   revamp1505's hover (#f3f5fa fill, #c5cfe0 line) sat a shade off white on a
+   grey band — the eye could barely find it. Still flat, nothing moves: the
+   chip takes the active chip's blue as a firm ring and ink, over a pale blue
+   wash, so hovering reads as a lighter step toward being chosen. The ring is
+   an inset shadow on top of the 1px border, so the chip does not resize. */
+@media (hover: hover) {
+  .trail-chip:not(.is-active)[class][class][class][class][class]:hover {
+    background: color-mix(in srgb, #2f4d9e 7%, #fff) !important;
+    border-color: color-mix(in srgb, #2f4d9e 72%, #fff) !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, #2f4d9e 72%, #fff) !important;
+    color: #2f4d9e !important;
+  }
+}
