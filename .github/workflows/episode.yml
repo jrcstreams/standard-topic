@@ -83,6 +83,17 @@ jobs:
           ffmpeg -version | head -1
           ffprobe -version | head -1
 
+      # revamp1554: a failed attempt's stages (rundown, script, audio) ride to
+      # the next run, and make-episode resumes from them — so a catch-up after
+      # a failed publish retries the publish, not the whole paid pipeline.
+      # Saved under a fresh key every run; restored from the newest.
+      - name: Restore the last run's episode files
+        uses: actions/cache/restore@v4
+        with:
+          path: out
+          key: episode-out-${{ github.run_id }}
+          restore-keys: episode-out-
+
       - name: Build and publish the episode
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -95,6 +106,8 @@ jobs:
           # can find them. Left to itself the script writes to a temp dir.
           OUTDIR="$GITHUB_WORKSPACE/out"
           mkdir -p "$OUTDIR"
+          # Only the last two days' editions are worth resuming.
+          find "$OUTDIR" -type f -mtime +2 -delete 2>/dev/null || true
           FLAGS="--publish --out=$OUTDIR"
           if [ "${{ inputs.force }}" = "true" ]; then FLAGS="$FLAGS --force"; fi
           for attempt in 1 2 3; do
@@ -106,19 +119,22 @@ jobs:
             fi
             echo "::endgroup::"
             echo "attempt $attempt failed"
-            # Reuse the finished script if one was written: a retry after a
-            # voice failure redoes the voice alone, so the copy a reader gets
-            # is the copy that was fact-checked, and the text calls are not
-            # paid for twice.
-            SCRIPT=$(ls -t "$OUTDIR"/script-*.json 2>/dev/null | head -1 || true)
-            if [ -n "$SCRIPT" ]; then
-              echo "reusing $SCRIPT on the next attempt"
-              FLAGS="--publish --out=$OUTDIR --script=$SCRIPT"
-            fi
+            # The next attempt resumes from what this one finished (see
+            # make-episode's RESUME): the copy a reader gets is the copy that
+            # was fact-checked, and nothing already paid for is paid twice.
+            # --force is dropped so it does resume.
+            FLAGS="--publish --out=$OUTDIR"
             sleep $((attempt * 45))
           done
           echo "all attempts failed — the edition stays held and the next catch-up will try again"
           exit 1
+
+      - name: Keep this run's episode files for the next one
+        if: always() && hashFiles('out/**') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: out
+          key: episode-out-${{ github.run_id }}
 
       - name: Release the edition, and say whether it is whole
         if: always()

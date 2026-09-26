@@ -253,7 +253,15 @@ async function main() {
   // slowest and most expensive stage, and when only the writing needs another
   // pass there is no reason to re-decide the show.
   let storyboard;
-  const reuse = arg('storyboard');
+  // revamp1554: a failed attempt leaves its stages in OUT, and the workflow
+  // carries OUT from one run to the next. Pick up where it stopped — this
+  // edition's rundown, then its script, then its audio — unless --force asks
+  // for a fresh build. On 2026-09-26 every catch-up rebuilt the whole episode
+  // (desk, writer, QA, fact check, voice) only to fail at the same database
+  // write, twenty-odd times over.
+  const RESUME = !arg('force');
+  const saved = (name) => { const f = path.join(OUT, name); return RESUME && fs.existsSync(f) ? f : null; };
+  const reuse = arg('storyboard') || saved(`storyboard-${edition}.json`);
   if (reuse) {
     storyboard = JSON.parse(fs.readFileSync(path.resolve(String(reuse)), 'utf8'));
     log(`Stage 1 · desk … reused ${reuse}`);
@@ -306,7 +314,7 @@ async function main() {
   // 3. Writer ---------------------------------------------------------------
   // --script=<file> reuses finished copy, for when only the AUDIO is being
   // worked on (voice, pacing, music). Skips stages 2 and 3 entirely.
-  const reuseScript = arg('script');
+  const reuseScript = arg('script') || saved(`script-${edition}.json`);
   if (reuseScript) {
     const script0 = JSON.parse(fs.readFileSync(path.resolve(String(reuseScript)), 'utf8'));
     const w0 = script0.segments.reduce((n, s) => n + String(s.text || '').split(/\s+/).filter(Boolean).length, 0);
@@ -400,20 +408,36 @@ async function finish(script, storyboard, briefs, { edition, ed, dateLabel, micr
   // 5. Voice ----------------------------------------------------------------
   const chars = script.segments.reduce((n, s) => n + String(s.text || '').length, 0);
   log(`\nStage 4 · voice (${VOICE}) — ${chars.toLocaleString()} chars`);
-  const t4 = Date.now();
-  const notes2 = [];
-  const { pcm, rate, chapters, durationMs } = await E.voiceScript(script.segments, {
-    voice: VOICE,
-    music: !arg('no-music'),
-    check: !arg('no-check'),
-    onNote: (m) => notes2.push(m),
-    onProgress: (done, total) => process.stdout.write(`\r  spoken ${done}/${total} chunks`),
-  });
-  if (notes2.length) { log(''); notes2.forEach((m) => log(`  ! ${m}`)); }
-  log(`\r  spoken in ${((Date.now() - t4) / 1000).toFixed(1)}s · ${(durationMs / 60000).toFixed(1)} min of audio`);
-
   const mp3 = path.join(OUT, `standard-topic-${edition}.mp3`);
-  encodeMP3(pcm, rate, mp3, { title, chapters, durationMs });
+  const voiceFile = path.join(OUT, `voice-${edition}.json`);
+  // The audio is reused only if it was spoken from this exact copy.
+  const scriptSig = require('crypto').createHash('sha1').update(JSON.stringify(script.segments.map((s) => s.text))).digest('hex');
+  let voiced = null;
+  if (!arg('force')) {
+    try {
+      const v = JSON.parse(fs.readFileSync(voiceFile, 'utf8'));
+      if (v.scriptSig === scriptSig && fs.existsSync(mp3)) voiced = v;
+    } catch (_) {}
+  }
+  if (voiced) log(`  reused ${mp3} (spoken on an earlier attempt from this script)`);
+  const { chapters, durationMs } = voiced || await voiceAndEncode();
+  async function voiceAndEncode() {
+    const t4 = Date.now();
+    const notes2 = [];
+    const { pcm, rate, chapters, durationMs } = await E.voiceScript(script.segments, {
+      voice: VOICE,
+      music: !arg('no-music'),
+      check: !arg('no-check'),
+      onNote: (m) => notes2.push(m),
+      onProgress: (done, total) => process.stdout.write(`\r  spoken ${done}/${total} chunks`),
+    });
+    if (notes2.length) { log(''); notes2.forEach((m) => log(`  ! ${m}`)); }
+    log(`\r  spoken in ${((Date.now() - t4) / 1000).toFixed(1)}s · ${(durationMs / 60000).toFixed(1)} min of audio`);
+
+    encodeMP3(pcm, rate, mp3, { title, chapters, durationMs });
+    fs.writeFileSync(voiceFile, JSON.stringify({ scriptSig, chapters, durationMs }));
+    return { chapters, durationMs };
+  }
   const size = fs.statSync(mp3).size;
   // revamp1374: judge the pace from the finished file, per chapter, so an
   // episode is checked by numbers rather than by listening to it.
@@ -429,7 +453,13 @@ async function finish(script, storyboard, briefs, { edition, ed, dateLabel, micr
       const r = await publishEpisode({ mp3, script, storyboard, chapters, durationMs, briefs, edition, ed, dateLabel, title, chars, micros });
       log(`uploaded ${(r.bytes / 1024 / 1024).toFixed(1)} MB → ${r.url}`);
       log(`  ai_audio row #${r.id} · home briefing text ${r.homeUpdated ? 'UPDATED' : 'left alone'}`);
-    } catch (e) { log(`FAILED: ${e.message}`); }
+    } catch (e) {
+      // revamp1554: this used to log and exit 0, so the workflow reported
+      // success, GitHub sent no email, and the edition sat held all morning.
+      log(`FAILED: ${e.message}`);
+      log(`  the finished files stay in ${OUT}; the next attempt publishes them without rebuilding`);
+      process.exitCode = 1;
+    }
   }
 
   log(`\n${title}`);
