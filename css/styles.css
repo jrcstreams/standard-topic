@@ -43430,9 +43430,9 @@ body.tt-on #section-newsfeed .news-list > .news-card .news-card-actions[class][c
   font-family: var(--font-family);
 }
 .navmenu-brief[hidden], .navmenu-brief [hidden] { display: none !important; }
-.sbb-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sbb-top { display: flex; align-items: center; justify-content: space-between; gap: 2px 8px; flex-wrap: wrap; }
 .sbb-ed {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
   font-size: 0.7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
   color: #2f4d9e;
 }
@@ -43596,4 +43596,101 @@ body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][
   .tdi-card--edition .ec-read[class][class][class][class][class][class][class][class]:hover { transform: none !important; box-shadow: none !important; }
   .tdi-card--edition:hover .ec-read[class][class][class][class][class][class][class][class] svg,
   .tdi-card--edition .ec-read[class][class][class][class][class][class][class][class]:hover svg { transform: none !important; }
+}
+
+/* ═══ revamp1558 — an opened briefing's header ═════════════════════════════
+   One header for every opened edition card, sized by the card rather than
+   the viewport (a container query on the header itself).
+   Wide: a single line — the edition's sun or moon beside its name, a hairline,
+   the full date and time; the topic chip and the AI label on the right.
+   Narrow: the topic as a kicker over a rule, the edition with its glyph and
+   the date beneath it, then the AI label on its own line.
+   The closed card's head (title, stamp pill, AI chip row) stands down while
+   the card is open, and this one stands in. */
+.ec-oh { display: none; }
+.tdi-card--edition.is-open .ec-oh[class] {
+  display: block;
+  container-type: inline-size; container-name: ecoh;
+  margin: 0 0 18px; padding: 0 0 16px;
+  border-bottom: 1px solid #e3e9f3;
+  font-family: var(--font-family);
+}
+.tdi-card--edition.is-open .ec-head[class][class][class][class][class][class][class][class],
+.tdi-card--edition.is-open .ec-provrow[class][class][class][class][class][class][class][class],
+.tdi-card--edition.is-open .ec-rule[class][class][class][class][class][class][class][class] { display: none !important; }
+
+.ec-oh-kicker { display: none; }
+.ec-oh-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-right: 44px; }
+.ec-oh-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.ec-oh-ic {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 30px; height: 30px; color: #e3a23b;
+}
+.ec-oh-ic svg[class] { width: 28px !important; height: 28px !important; }
+.ec-oh.is-evening-ed .ec-oh-ic { color: #5d6fb8; }
+.ec-oh.is-evening-ed .ec-oh-ic svg[class] { width: 24px !important; height: 24px !important; }
+.ec-oh-tx { display: flex; align-items: center; gap: 14px; min-width: 0; flex-wrap: wrap; row-gap: 2px; }
+.tdi-card--edition .ec-oh-title[class][class] {
+  margin: 0; padding: 0;
+  font-family: var(--font-display, var(--font-family));
+  font-size: 1.42rem; line-height: 1.15; font-weight: 800; letter-spacing: -0.018em;
+  color: #14213d; white-space: nowrap;
+}
+.ec-oh-sep { width: 1px; height: 20px; background: #cfd8e8; flex: none; }
+.ec-oh-date {
+  display: inline-flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  font-size: 0.86rem; font-weight: 550; color: #5b6880; white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.ec-oh-ed { font-weight: 700; color: #2f4d9e; }
+.ec-oh-dot { color: #aab4c6; font-size: 0.8em; }
+.ec-oh-dayshort { display: none; }
+.ec-oh-side { display: flex; align-items: center; gap: 8px; flex: none; }
+.ec-oh-topic {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 32px; padding: 0 12px 0 5px; border-radius: 9px;
+  background: color-mix(in srgb, var(--tc, #2f4d9e) 9%, #fff);
+  border: 1px solid color-mix(in srgb, var(--tc, #2f4d9e) 22%, #fff);
+  font-size: 0.86rem; font-weight: 700; color: #16223d; white-space: nowrap;
+}
+.ec-oh-topic-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 6px;
+  background: var(--tc, #2f4d9e); color: #fff;
+}
+.ec-oh-topic-ic svg { width: 14px; height: 14px; }
+.tdi-card--edition .ec-oh .ec-oh-prov.how-aigen[class][class][class][class][class][class] {
+  display: inline-flex !important; align-items: center !important; gap: 6px !important;
+  height: 32px !important; padding: 0 11px !important; margin: 0 !important; border-radius: 9px !important;
+  background: #eef3fd !important; border: 1px solid #d3def6 !important; color: #3a5698 !important;
+  font-family: var(--font-family) !important; font-size: 0.8rem !important; font-weight: 600 !important; white-space: nowrap; cursor: pointer;
+}
+.tdi-card--edition .ec-oh .ec-oh-prov.how-aigen[class][class][class][class][class][class] svg { width: 13px !important; height: 13px !important; flex: none; color: #3a5698 !important; }
+@media (hover: hover) { .tdi-card--edition .ec-oh .ec-oh-prov.how-aigen[class][class][class][class][class][class]:hover { background: #e3ebfb !important; border-color: #bccdf1 !important; } }
+
+/* Mid width: the date drops under the name, the side stays on the right. */
+@container ecoh (max-width: 860px) {
+  .ec-oh-tx { flex-direction: column; align-items: flex-start; gap: 3px; }
+  .ec-oh-sep { display: none; }
+  .ec-oh-ic { width: 36px; height: 36px; }
+  .ec-oh-day { display: none; }
+  .ec-oh-dayshort { display: inline; }
+}
+/* Narrow: the stack — kicker, edition + date, AI label. */
+@container ecoh (max-width: 600px) {
+  .ec-oh-kicker {
+    display: flex; align-items: center; gap: 10px; margin: 0 44px 12px 0;
+    font-size: 0.72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--tc, #2f4d9e);
+  }
+  .ec-oh-kicker::after { content: ""; flex: 0 1 90px; height: 1px; background: color-mix(in srgb, var(--tc, #2f4d9e) 30%, #fff); }
+  .ec-oh-row { flex-direction: column; align-items: flex-start; gap: 12px; padding-right: 0; }
+  /* The Front Page's edition moves up to the kicker, the topic cards' slot. */
+  .ec-oh--front .ec-oh-ed, .ec-oh--front .ec-oh-ed + .ec-oh-dot { display: none; }
+  .ec-oh-main { align-items: flex-start; }
+  .ec-oh-ic { width: 34px; height: 34px; }
+  .tdi-card--edition .ec-oh-title[class][class] { font-size: 1.28rem; white-space: normal; }
+  .ec-oh-date { font-size: 0.82rem; }
+  .ec-oh-topic { display: none; }
+  .tdi-card--edition .ec-oh .ec-oh-prov.how-aigen[class][class][class][class][class][class] { height: 28px !important; font-size: 0.76rem !important; }
 }

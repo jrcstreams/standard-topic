@@ -2170,7 +2170,7 @@ function editionCardHTML(o) {
   // headline and summary come from the episode; the briefing text's own
   // summary fills in until it loads.
   return `
-      <div class="ec ec--v2">
+      <div class="ec ec--v2">${openHeadHTML(null)}
         <div class="ec-head">
           <div class="ec-headrow">
             <div class="ec-titlewrap">
@@ -2229,7 +2229,7 @@ function topicEditionCardHTML(topic) {
   const X = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const BOOK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>';
   return `
-      <div class="ec ec--v2 ec--topic"${topicColorStyle(topic)}>
+      <div class="ec ec--v2 ec--topic"${topicColorStyle(topic)}>${openHeadHTML(topic)}
         <div class="ec-head">
           <!-- revamp1492: the card says what it IS before it says which one.
                The edition line alone left "Evening Edition" to stand for the
@@ -2693,6 +2693,56 @@ function ecStampHTML(iso) {
     return `<span class="ec-stamp-pill">${mark}<span class="ec-stamp-day">${escapeHTML(day)}</span><span class="ec-stamp-time">${escapeHTML(time)}</span></span>`;
   } catch (_) { return ''; }
 }
+// revamp1558: an opened briefing's header, one component for every edition
+// card (The Front Page and the topic briefings). It sizes itself to the card
+// with a container query, not the viewport:
+//   wide  — one line: [sun] Morning AI Briefing │ Saturday, Sep 26, 2026 •
+//           5:00 AM ET ............ [World chip] [AI-generated content ⓘ]
+//   narrow — the topic as a kicker over a rule, the edition with its sun
+//           beside it and the date under it, the AI label under that.
+// fillEcStamp fills the edition, the glyph and the date once the brief lands;
+// until then it reads as the current edition. Shown only while the card is
+// open; the closed card keeps its own head.
+function openHeadHTML(topic) {
+  const name = topic && topic.name ? escapeHTML(topic.name) : '';
+  const title = topic ? escapeHTML(homeEditionTitle().replace(/ Briefing$/, ' AI Briefing')) : 'The Front Page';
+  return `
+        <div class="ec-oh${topic ? '' : ' ec-oh--front'}" data-oh>
+          <div class="ec-oh-kicker"><span${topic ? '' : ' data-oh-edk'}>${topic ? name : 'Morning Edition'}</span></div>
+          <div class="ec-oh-row">
+            <div class="ec-oh-main">
+              <span class="ec-oh-ic" data-oh-ic aria-hidden="true">${EC_SUN}</span>
+              <div class="ec-oh-tx">
+                <h3 class="ec-oh-title" data-oh-title>${title}</h3>
+                <span class="ec-oh-sep" aria-hidden="true"></span>
+                <span class="ec-oh-date">${topic ? '' : '<span class="ec-oh-ed" data-oh-ed></span><span class="ec-oh-dot" aria-hidden="true">•</span>'}<span class="ec-oh-day" data-oh-day></span><span class="ec-oh-dayshort" data-oh-dayshort></span><span class="ec-oh-dot" aria-hidden="true">•</span><span data-oh-time></span></span>
+              </div>
+            </div>
+            <div class="ec-oh-side">
+              ${topic ? `<span class="ec-oh-topic"><span class="ec-oh-topic-ic" aria-hidden="true">${topicIconSVG(topic.icon || 'globe', '')}</span><span>${name}</span></span>` : ''}
+              <button type="button" class="ec-oh-prov how-aigen" data-how-it-works>${DI_SPARK}<span>AI-generated content included</span>${DI_INFO_ICON}</button>
+            </div>
+          </div>
+        </div>`;
+}
+function fillOpenHead(card, iso) {
+  try {
+    const oh = card.querySelector('[data-oh]'); if (!oh) return;
+    const d = new Date(iso);
+    const et = (opts) => new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', ...opts }).format(d);
+    const evening = currentEditionName(iso) === 'evening';
+    const set = (sel, v) => { const el = oh.querySelector(sel); if (el) el.textContent = v; };
+    const front = oh.classList.contains('ec-oh--front');
+    if (!front) set('[data-oh-title]', editionTitleFor(iso).replace(/ Briefing$/, ' AI Briefing'));
+    set('[data-oh-ed]', evening ? 'Evening Edition' : 'Morning Edition');
+    set('[data-oh-edk]', evening ? 'Evening Edition' : 'Morning Edition');
+    set('[data-oh-day]', et({ weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' }));
+    set('[data-oh-dayshort]', et({ weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
+    set('[data-oh-time]', `${et({ hour: 'numeric', minute: '2-digit' })} ET`);
+    const ic = oh.querySelector('[data-oh-ic]'); if (ic) ic.innerHTML = evening ? EC_MOON : EC_SUN;
+    oh.classList.toggle('is-evening-ed', evening);
+  } catch (_) {}
+}
 function fillEcStamp(card, iso) {
   if (!card || !iso) return;
   // revamp1461: the edition sub-label follows the brief that loaded.
@@ -2701,6 +2751,7 @@ function fillEcStamp(card, iso) {
   try { const t = card.querySelector('[data-ec-edtitle-open]'); if (t) t.textContent = editionTitleFor(iso).replace(/ Briefing$/, ' AI Briefing'); } catch (_) {}
   const html = ecStampHTML(iso);
   if (html) card.querySelectorAll('[data-ec-stamp]').forEach((el) => { el.innerHTML = html; });
+  fillOpenHead(card, iso);
 }
 function fmtClock(ms) { const t = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; }
 // revamp1514: an opened briefing reads as an editorial intro, not an expanded
