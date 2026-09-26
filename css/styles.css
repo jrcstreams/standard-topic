@@ -43307,3 +43307,19 @@ body:not(.tt-on) .home-v2 #home-trending .trending-topics-title[class][class][cl
 /* revamp1542c — the slider panel's topic row: the same air under it as
    over it (15px) before the headline. */
 .fb-brief .di-page .di-mast.di-mast--v2.di-mast--topic[class][class][class][class][class][class][class][class] { margin-bottom: 4px !important; }
+
+/* ═══ revamp1543 — the AI label's set: the story insight's chip, the
+       sidebar trend's chip, the first expanded trend's top edge ═════════ */
+/* Story insight: the sparkle 2px further in, the words closer to it, the
+   info glyph the sparkle's size. */
+#section-newsfeed .ni-aitag.how-aigen[class][class][class][class][class][class][class] { padding-left: 8px !important; gap: 5px !important; }
+#section-newsfeed .ni-aitag.how-aigen[class][class][class] svg.how-info-ic[class][class] { width: 13px !important; height: 13px !important; align-self: center !important; }
+/* Sidebar trend: the chip is its own width at one line, not a centred
+   block that wraps in the 300px column. */
+body:not(.tt-on) .home-v2 #home-trending .trend-exp-aitag[class][class][class][class][class][class][class] {
+  width: auto !important; max-width: 100% !important; white-space: nowrap !important; font-size: 0.72rem !important; text-align: left !important; justify-content: flex-start !important;
+}
+body:not(.tt-on) .home-v2 #home-trending .trend-exp-aitag[class][class][class] > span { text-align: left !important; white-space: nowrap !important; }
+/* The first trend, expanded, gets its top edge back (1542 took the flat
+   first row's top rule). */
+body:not(.tt-on) .home-v2 #home-trending .trend-card-grid > .trend-card.is-expanded:first-child[class][class][class][class] { border-top: 1px solid #b9c6e4 !important; }
