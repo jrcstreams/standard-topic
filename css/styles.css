@@ -43694,3 +43694,11 @@ body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][
   .ec-oh-topic { display: none; }
   .tdi-card--edition .ec-oh .ec-oh-prov.how-aigen[class][class][class][class][class][class] { height: 28px !important; font-size: 0.76rem !important; }
 }
+
+/* ═══ revamp1559 — the AI Briefings slider's arrow moves one whole card ════
+   The slides snapped to their CENTRE (from when one slide filled two-thirds
+   of the row). With three 400px cards abreast, the arrow's one-card step
+   (416px) was snapped back to the nearest centred position — 108px in — so
+   the first click barely moved. Slides snap to their left edge now, which
+   is where the arrow's step lands them. */
+.hb-slider-track .hb-slide[class][class] { scroll-snap-align: start; }
