@@ -47,7 +47,7 @@ function ensure() {
   au.addEventListener('play', () => {
     if (!('mediaSession' in navigator) || !ep) return;
     try {
-      navigator.mediaSession.metadata = new MediaMetadata({ title: ep.title || editionName(ep), artist: 'Standard Topic', album: `${editionName(ep)} · ${ep.edition_date || ''}` });
+      navigator.mediaSession.metadata = new MediaMetadata({ title: ep.title || editionName(ep), artist: 'Standard Topic', album: `${editionName(ep)} · ${editionTag(ep)} · ${ep.edition_date || ''}` });
       navigator.mediaSession.setActionHandler('play', () => briefingAudio.play());
       navigator.mediaSession.setActionHandler('pause', () => briefingAudio.pause());
       navigator.mediaSession.setActionHandler('seekbackward', () => { au.currentTime = Math.max(0, au.currentTime - 15); });
@@ -60,7 +60,9 @@ function ensure() {
 // revamp1433: an episode names itself by its edition — the evening one is not
 // the morning briefing, and the dock is the one place a reader sees it while
 // the page behind it has moved on.
-function editionName(ep) { return (ep && ep.edition === 'evening') ? 'Evening Briefing' : 'Morning Briefing'; }
+// revamp1555: the show is The Front Page; the edition rides beside it.
+function editionName() { return 'The Front Page'; }
+function editionTag(ep) { return (ep && ep.edition === 'evening') ? 'Evening' : 'Morning'; }
 
 export const briefingAudio = {
   get el() { return ensure(); },

@@ -2026,7 +2026,9 @@ function diEditionParts(iso) {
 // briefing that covers every topic. The sparkle belongs to the AI Briefings
 // section head above it; the two were the same glyph on two shades of the
 // same navy, so the card read as a second copy of the header.
-const MAIN_BRIEF_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.6 2.8 7.3 12 12l9.2-4.7z"/><path d="m2.8 12.4 9.2 4.7 9.2-4.7"/><path d="m2.8 17.1 9.2 4.7 9.2-4.7"/></svg>';
+// revamp1555: The Front Page — a newspaper, for the briefing that pulls the
+// day's top stories from every topic (it was layers, for "The Main Briefing").
+const MAIN_BRIEF_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="10" y="6" rx="1"/></svg>';
 const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg>';
 // revamp852 — the AI Briefings preview card, shared by the homepage, the
 // topic pages and the hub's Today's Briefing. A darker-blue header band carries
@@ -2172,7 +2174,7 @@ function editionCardHTML(o) {
         <div class="ec-head">
           <div class="ec-headrow">
             <div class="ec-titlewrap">
-              <h3 class="tdi-brieftitle ec-title"><span class="ec-title-ic" aria-hidden="true">${MAIN_BRIEF_IC}</span><span class="ec-title-tx">The Main <span class="ec-title-ai">AI </span>Briefing</span></h3>
+              <h3 class="tdi-brieftitle ec-title"><span class="ec-title-ic" aria-hidden="true">${MAIN_BRIEF_IC}</span><span class="ec-title-tx">The Front Page</span></h3>
               <!-- revamp1534: open, the edition line carries the AI label
                    beside it, the way the topic cards' heads do. -->
               <div class="ec-edrow">
@@ -2333,7 +2335,10 @@ function applyEpisodeToCard(card, ep) {
   // the player, inside the expanded page; CSS hides that copy on this card.)
   try {
     const ov = card.querySelector('[data-ec-overview]');
-    const fill = (e) => { const segs = (e && e.script && e.script.segments) || []; const cold = String((segs.find((x) => x && x.beat === 'cold_open') || {}).written || '').trim(); if (ov) { ov.textContent = cold; ov.hidden = !cold; } return !!cold; };
+    // revamp1555: the briefing's whole Overview (cold open + why it matters,
+    // as lib/episode-core renderBriefingText builds it), not the cold open
+    // alone — open, the card shows this one paragraph in place of the teaser.
+    const fill = (e) => { const segs = (e && e.script && e.script.segments) || []; const w = (beat) => String((segs.find((x) => x && x.beat === beat) || {}).written || '').trim(); const cold = [w('cold_open'), w('why')].filter(Boolean).join(' '); if (ov) { ov.textContent = cold; ov.hidden = !cold; } return !!cold; };
     // The list payload carries no script; the cold open needs the full row.
     if (ov && !fill(ep) && ep.edition_date) {
       loadEpisode({ date: ep.edition_date, edition: ep.edition, full: true }).then((full) => { if (card.isConnected && full) fill(full); }).catch(() => {});
@@ -2703,7 +2708,7 @@ function fmtClock(ms) { const t = Math.max(0, Math.round(ms / 1000)); return `${
 // Briefing", in the site's blue — with the topic as the sub-label under it,
 // its tile and name in black; the sun/moon stamp rides the title line on the
 // right. The main briefing's own card head does the same job for itself (see
-// editionCardHTML: "The Main AI Briefing" over "Morning Edition").
+// editionCardHTML: "The Front Page" over "Morning Edition").
 function briefingMastHTML(tObj, iso) {
   const ed = editionTitleFor(iso).replace(/ Briefing$/, ' AI Briefing');
   return `<div class="di-mast-toprow di-mast-toprow--ed">
@@ -6072,7 +6077,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
              there is nothing left for tabs to switch between. -->
         ${familyTabsHTML('news')}
         <div class="home-sections home-v2 hview-news">
-          <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="Morning Briefing"></section>
+          <section class="home-featbriefs home-featbriefs--lead hs-block" data-home-featbriefs aria-label="The Front Page"></section>
           <!-- revamp999: the hero and its grey band are gone (search lives in
                the sidebar now). Column 1 is ALL news — one feed whose first tab
                is Today's News. Column 2 stacks the briefing, trending, AI
@@ -7442,7 +7447,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   // width runs out, so the first three (Today's Briefing, Trending, World) are
   // the ones that always survive.
   const QUICK_LINKS = [
-    { key: 'briefing', label: 'Morning Briefing', icon: QL_BRIEF_IC },
+    { key: 'briefing', label: 'The Front Page',   icon: QL_BRIEF_IC },
     { key: 'trending', label: 'Trending',         icon: QL_TREND_IC },
     { key: 'topic',    label: 'World',            slug: 'world' },
     { key: 'topic',    label: 'Politics',         slug: 'politics' },

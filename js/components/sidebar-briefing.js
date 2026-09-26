@@ -1,4 +1,4 @@
-// The sidebar's briefing promo (revamp1550).
+// The sidebar's briefing promo (revamp1550; The Front Page since revamp1555).
 //
 // A small card in the expanded sidebar for the latest released edition of the
 // AI Briefing podcast: which edition and when it went out, its headline, a
@@ -34,9 +34,9 @@ function releasedLabel(ep) {
 // first of those still ahead on the New York clock.
 function nextEditionLine(now = new Date()) {
   const h = Number(etFmt(now, { hour: 'numeric', hourCycle: 'h23' }));
-  if (h < 5) return 'Next: the Morning Briefing, today at 5 AM ET';
-  if (h < 17) return 'Next: the Evening Briefing, today at 5 PM ET';
-  return 'Next: the Morning Briefing, tomorrow at 5 AM ET';
+  if (h < 5) return 'Next edition: today at 5 AM ET';
+  if (h < 17) return 'Next edition: today at 5 PM ET';
+  return 'Next edition: tomorrow at 5 AM ET';
 }
 
 export async function mountSidebarBriefing(host) {
@@ -49,7 +49,7 @@ export async function mountSidebarBriefing(host) {
   const when = releasedLabel(ep);
   host.innerHTML = `
     <div class="sbb-top">
-      <span class="sbb-ed">${evening ? MOON : SUN}<span>${evening ? 'Evening' : 'Morning'} AI Briefing</span></span>
+      <span class="sbb-ed">${evening ? MOON : SUN}<span>The Front Page</span></span>
       ${when ? `<span class="sbb-when">${esc(when)}</span>` : ''}
     </div>
     <a href="#/intelligence" class="sbb-title">${esc(ep.title || 'Listen to the latest briefing')}</a>

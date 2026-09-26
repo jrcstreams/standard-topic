@@ -43517,3 +43517,15 @@ body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][
 @media (hover: hover) {
   body:not(.tt-on) .home-v2 #home-trending .trending-topics-viewall[class][class][class][class][class][class][class]:hover { color: #1e40af !important; background: none !important; }
 }
+
+/* ═══ revamp1555 — The Front Page's card ════════════════════════════════════
+   (1) The headline fills the card's width. Every earlier fix wrote
+   `text-wrap: normal`, which is not a value of the `text-wrap` shorthand, so
+   browsers dropped it and the base rule's `balance` kept splitting the
+   headline into two even halves. `wrap` is the greedy fill.
+   (2) Open, the card shows ONE summary: the briefing's Overview in place of
+   the closed card's teaser, which had been sitting above it and repeating
+   its opening sentence. */
+.tdi-card--edition .ec-headline[class][class][class][class][class][class][class][class] { text-wrap: wrap !important; }
+.tdi-card--edition.is-open:has(.ec-overview:not([hidden])) .ec-summary[class][class][class][class] { display: none !important; }
+.tdi-card--edition.is-open .ec-overview[class][class][class][class]:not([hidden]) { margin-top: 4px !important; }
