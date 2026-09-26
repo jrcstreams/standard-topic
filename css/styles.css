@@ -43403,3 +43403,61 @@ body.tt-on #section-newsfeed .news-list > .news-card .news-card-actions[class][c
     color: #2f4d9e !important;
   }
 }
+
+/* ═══ revamp1550 — the sidebar's briefing card, and About & Info in line ═══
+   (1) The About & Info head sat at the panel's 11px while every link's icon
+   starts at 27px (the list's 16px + the row's 11px), and docked, the scroll
+   area's own 4px pushed the About links right of the five pages above. The
+   scroll area loses its side padding and the head takes the row's inset, so
+   head, icons and the pages above share one left edge. The list under the
+   head drops its 13.6px top pad: the head names the rows, it sits on them. */
+.navmenu-scroll[class][class] { padding-left: 0 !important; padding-right: 0 !important; }
+.navmenu-topics-label[class][class] {
+  padding-left: 27px !important;
+  padding-right: 27px !important;
+  margin-bottom: 0 !important;
+}
+.navmenu-quicklinks--about[class][class] { padding-top: 4px !important; }
+
+/* (2) The latest edition of the AI Briefing, playable from the sidebar. */
+.navmenu-brief {
+  margin: 6px 16px 4px;
+  padding: 13px 14px 12px;
+  background: #fff;
+  border: 1px solid #dbe3f2;
+  border-radius: 12px;
+  font-family: var(--font-family);
+}
+.navmenu-brief[hidden] { display: none; }
+.sbb-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sbb-ed {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: #2f4d9e;
+}
+.sbb-ed svg { color: #d98a2b; flex: none; }
+.sbb-when { font-size: 0.72rem; font-weight: 600; color: #8d97a9; white-space: nowrap; }
+.sbb-title {
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  margin-top: 8px;
+  font-size: 0.9rem; font-weight: 650; line-height: 1.32; letter-spacing: -0.005em;
+  color: #16223d; text-decoration: none;
+}
+@media (hover: hover) { .sbb-title:hover { color: #2f4d9e; text-decoration: underline; text-underline-offset: 2px; } }
+.sbb-row { display: flex; align-items: center; gap: 10px; margin-top: 11px; }
+.sbb-play {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%;
+  background: #2f4d9e; color: #fff; cursor: pointer;
+  transition: background .12s ease;
+}
+.sbb-play svg { margin-left: 2px; }
+.navmenu-brief.is-playing .sbb-play svg { margin-left: 0; }
+@media (hover: hover) { .sbb-play:hover { background: #243d80; } }
+.sbb-play:focus-visible { outline: 2px solid #2f4d9e; outline-offset: 2px; }
+.sbb-listen { display: inline-flex; align-items: baseline; gap: 7px; font-size: 0.85rem; font-weight: 650; color: #26324d; }
+.sbb-dur { font-size: 0.78rem; font-weight: 550; color: #8d97a9; }
+.sbb-next {
+  margin: 11px 0 0; padding-top: 10px; border-top: 1px solid #edf1f7;
+  font-size: 0.76rem; line-height: 1.4; color: #6b7488;
+}

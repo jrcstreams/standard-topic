@@ -21,6 +21,7 @@ import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief, splitSe
 import { renderPromptCard } from './components/prompt-card.js?v=20260921-revamp1490';
 import { mountLatestBriefingPlayer, mountBriefingPlayer, loadEpisode, loadEpisodeList } from './components/briefing-player.js?v=20260914-revamp1341';
 import { briefingAudio, mountBriefingDock } from './components/briefing-audio.js';
+import { mountSidebarBriefing } from './components/sidebar-briefing.js';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -5659,6 +5660,8 @@ function renderStickyHeroBar(container, route) {
            rail in the band at the top of every page, and Topics above opens
            the full list — three copies of one list was two too many. The
            space belongs to the pages that had nowhere else to sit. -->
+      <!-- revamp1550: the latest briefing edition, playable from here. -->
+      <div class="navmenu-brief" id="navmenu-brief" hidden></div>
       <div class="navmenu-topics-label">About &amp; Info</div>
       <nav class="navmenu-quicklinks navmenu-quicklinks--about">
         <a href="#/about" class="navmenu-quicklink navmenu-cta" data-nav-key="about">
@@ -5684,6 +5687,7 @@ function renderStickyHeroBar(container, route) {
   // The panel re-renders on data loads and layout changes, so re-mark the
   // current row each time rather than only on navigation.
   try { syncNavmenuActive(getCurrentRoute()); } catch (_) {}
+  mountSidebarBriefing(navPanel.querySelector('#navmenu-brief'));
 
   const scrollEl = navPanel.querySelector('.navmenu-scroll');
   const updateScrollOverflow = () => {
